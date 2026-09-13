@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Upload Musik</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .upload-area { border: 2px dashed #ccc; padding: 20px; text-align: center; margin: 20px 0; }
+        button { background: #775a19; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .music-list { margin-top: 20px; }
+        .music-item { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Upload Musik</h1>
+        
+        <div class="upload-area">
+            <input type="file" id="musicFile" accept="audio/*">
+            <br><br>
+            <button onclick="uploadMusic()">Upload Musik</button>
+        </div>
+        
+        <div id="result"></div>
+        
+        <h2>Daftar Musik</h2>
+        <div id="musicList" class="music-list"></div>
+        
+        <h2>Test Musik API</h2>
+        <button onclick="testMusicAPI()">Test Music API</button>
+        <div id="apiResult"></div>
+    </div>
+
+    <script>
+        function uploadMusic() {
+            const fileInput = document.getElementById('musicFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Pilih file musik terlebih dahulu!');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('music', file);
+            
+            fetch('api/admin_api.php?action=upload_music&inv_id=1', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = 
+                    `<p style="color: ${data.success ? 'green' : 'red'}">
+                        ${data.success ? 'Upload berhasil!' : 'Upload gagal: ' + data.message}
+                    </p>`;
+                if (data.success) {
+                    loadMusicList();
+                }
+            })
+            .catch(error => {
+                document.getElementById('result').innerHTML = 
+                    `<p style="color: red">Error: ${error.message}</p>`;
+            });
+        }
+        
+        function loadMusicList() {
+            fetch('api/admin_api.php?action=get_music&inv_id=1')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const list = document.getElementById('musicList');
+                    list.innerHTML = data.data.map(music => `
+                        <div class="music-item">
+                            <strong>${music.file_name}</strong><br>
+                            Status: ${music.is_active ? 'Aktif' : 'Tidak Aktif'}<br>
+                            Size: ${formatFileSize(music.file_size)}<br>
+                            <audio controls style="width: 100%; margin-top: 10px;">
+                                <source src="${music.file_path}" type="audio/mpeg">
+                            </audio>
+                        </div>
+                    `).join('');
+                }
+            });
+        }
+        
+        function testMusicAPI() {
+            fetch('api/music.php?inv_id=1')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('apiResult').innerHTML = `
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            });
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Load music list on page load
+        loadMusicList();
+    </script>
+</body>
+</html>

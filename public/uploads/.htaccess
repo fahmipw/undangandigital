@@ -1,0 +1,17 @@
+# Allow access to uploaded files
+<Files "*">
+    Order Allow,Deny
+    Allow from all
+</Files>
+
+# Prevent execution of PHP files
+<Files "*.php">
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# Set proper MIME types for audio files
+AddType audio/mpeg .mp3
+AddType audio/wav .wav
+AddType audio/ogg .ogg
+AddType audio/mp4 .m4a
