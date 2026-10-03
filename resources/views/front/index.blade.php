@@ -72,6 +72,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
   <meta name="twitter:image" content="<?php echo $previewImage; ?>" />
 
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -445,6 +446,58 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 
     .copy-success {
       animation: flashGreen 0.6s ease;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+    }
+
+    .toast {
+      background: #4e342e;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      animation: slideInToast 0.3s ease-out, fadeOutToast 0.3s ease-in 2.7s;
+      max-width: 300px;
+    }
+
+    .toast-success {
+      background: #2e7d32;
+    }
+
+    .toast-error {
+      background: #c62828;
+    }
+
+    @keyframes slideInToast {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOutToast {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(100%);
+      }
     }
 
     @keyframes flashGreen {
@@ -1350,7 +1403,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
                   <?php echo getSet('gift_address', 'Ds. Pagerwojo Dsn. Pagerwojo Kec. Perak Kab. Jombang RT/RW. 05/04'); ?>
                 </p>
                 <p class="font-body-md text-[10px] opacity-60">Penerima:
-                  <?php echo getSet('gift_owner', 'Hawa Ananda'); ?>
+                  <?php echo getSet('gift_recipient_name', getSet('gift_owner', 'Hawa Ananda')); ?>
                 </p>
               </div>
               <div class="flex items-center gap-1">
@@ -1434,13 +1487,14 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 
       <!-- Quote from Index -->
       <div class="pt-16"></div>
+      <?php if (getSet('quotes')): ?>
       <section class="px-margin-page py-section-gap relative flex flex-col items-center text-center reveal">
 
         <div class="max-w-xl space-y-6">
           <span class="material-symbols-outlined text-secondary text-4xl">format_quote</span>
 
           <p class="font-body-md text-body-md text-on-surface italic leading-relaxed">
-            "Allah akan memudahkan jalan bagi hamba-Nya yang bersungguh-sungguh menapaki jalan kebaikan"<br />
+            <?php echo nl2br(getSet('quotes', '"Allah akan memudahkan jalan bagi hamba-Nya yang bersungguh-sungguh menapaki jalan kebaikan"')); ?>
           </p>
 
           <div class="font-label-caps text-label-caps text-secondary tracking-widest">
@@ -1448,6 +1502,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           </div>
         </div>
       </section>
+      <?php endif; ?>
       <footer class="spa-footer">
         <div class="font-label-caps text-[10px] text-secondary tracking-[0.2em] opacity-80">
           &copy; <?php echo date('Y'); ?> <?php echo (getSet('bride_nickname') ?: getSet('bride_name', 'Hawa')) . ' & ' . (getSet('groom_nickname') ?: getSet('groom_name', 'Adam')); ?>. All Rights Reserved.
@@ -1618,7 +1673,8 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
                 if (attendance === "hadir") msg += "\nJumlah Tamu : " + count + " orang";
                 if (alasan) msg += "\nAlasan : " + alasan;
                 msg += "\n\nTerima kasih atas undangannya 🙏🏻";
-                window.open("https://wa.me/6288210841990?text=" + encodeURIComponent(msg), "_blank");
+                var waNumber = "<?php echo getSet('rsvp_whatsapp', '6288210841990'); ?>".replace(/[^0-9]/g, '');
+                window.open("https://wa.me/" + waNumber + "?text=" + encodeURIComponent(msg), "_blank");
                 document.getElementById("rsvp-name").value = "";
                 document.getElementById("rsvp-alasan").value = "";
                 attendance = "";
@@ -1635,21 +1691,56 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         }
 
         /* ---- Copy norek ---- */
+        function showToast(message, type = 'success') {
+          var container = document.querySelector('.toast-container');
+          if (!container) {
+            container = document.createElement('div');
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+          }
+
+          var toast = document.createElement('div');
+          toast.className = 'toast toast-' + type;
+          toast.innerHTML = '<span class="material-symbols-outlined">' + (type === 'success' ? 'check_circle' : 'error') + '</span>' + message;
+
+          container.appendChild(toast);
+
+          setTimeout(function() {
+            toast.remove();
+          }, 3000);
+        }
+
         /* ---- Generic Copy function ---- */
         function copyText(id) {
           var text = document.getElementById(id).textContent.trim();
-          var iconId = id === "norek" ? "copy-icon-norek" : "copy-icon-alamat";
+          var iconId = "copy-icon-" + id;
           navigator.clipboard.writeText(text).then(function () {
             var icon = document.getElementById(iconId);
-            icon.textContent = "done";
-            icon.classList.add("copy-success");
-            setTimeout(function () {
-              icon.textContent = "content_copy";
-              icon.classList.remove("copy-success");
-            }, 2000);
+            if (icon) {
+                icon.textContent = "done";
+                icon.classList.add("copy-success");
+                setTimeout(function () {
+                  icon.textContent = "content_copy";
+                  icon.classList.remove("copy-success");
+                }, 2000);
+            }
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                text: "Rekening berhasil disalin",
+                icon: 'success',
+                confirmButtonColor: '#775a19',
+                confirmButtonText: 'OK',
+                customClass: {
+                  popup: 'rounded-2xl',
+                  confirmButton: 'px-6 py-2 rounded-xl text-sm tracking-wider font-bold uppercase'
+                }
+              });
+            } else {
+              showToast("Rekening berhasil disalin");
+            }
           });
         }
-
+        
         /* ---- Real-time date ---- */
         function updateDate() {
           var now = new Date();

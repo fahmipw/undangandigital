@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // Override default alert with SweetAlert2
-        window.alert = function(message) {
+        window.alert = function (message) {
             let iconType = 'info';
             let msgStr = String(message).toLowerCase();
             if (msgStr.includes('berhasil') || msgStr.includes('sukses') || msgStr.includes('disalin') || msgStr.includes('disimpan')) {
@@ -20,7 +20,7 @@
             } else if (msgStr.includes('peringatan') || msgStr.includes('harus diisi') || msgStr.includes('pilih')) {
                 iconType = 'warning';
             }
-            
+
             Swal.fire({
                 text: message,
                 icon: iconType,
@@ -172,7 +172,7 @@
                 padding: 5.25rem 1rem 2rem !important;
             }
 
-            main > div {
+            main>div {
                 width: 100%;
             }
 
@@ -181,15 +181,15 @@
                 line-height: 1.2;
             }
 
-            .tab-content > div:first-child {
+            .tab-content>div:first-child {
                 align-items: flex-start;
                 flex-wrap: wrap;
                 gap: 1rem;
                 margin-bottom: 1.5rem;
             }
 
-            .tab-content > div:first-child > button,
-            .tab-content > div:first-child > label {
+            .tab-content>div:first-child>button,
+            .tab-content>div:first-child>label {
                 width: 100%;
                 text-align: center;
             }
@@ -227,14 +227,14 @@
                 min-width: 38rem;
             }
 
-            #tab-guests > div:first-child > div {
+            #tab-guests>div:first-child>div {
                 display: grid;
                 grid-template-columns: 1fr;
                 width: 100%;
             }
 
-            #tab-guests > div:first-child input,
-            #tab-guests > div:first-child button {
+            #tab-guests>div:first-child input,
+            #tab-guests>div:first-child button {
                 width: 100%;
             }
 
@@ -242,7 +242,7 @@
                 padding: 1rem;
             }
 
-            .modal > div {
+            .modal>div {
                 max-height: calc(100vh - 2rem);
                 overflow-y: auto;
             }
@@ -374,7 +374,7 @@
                                     <div class="rsvp-field"><label>PANGGILAN PRIA</label><input type="text"
                                             id="set-groom_nickname"></div>
                                 </div>
-                                <div class="w-24 text-center">
+                                <div class="w-24 text-center relative">
                                     <label
                                         class="block aspect-[3/4] bg-secondary/5 rounded-xl border border-dashed border-secondary/30 flex flex-col items-center justify-center cursor-pointer overflow-hidden group">
                                         <img id="preview-groom_photo" src="cowok.jpeg"
@@ -387,6 +387,17 @@
                                             onchange="uploadProfilePhoto('groom')">
                                         <input type="hidden" id="set-groom_photo">
                                     </label>
+                                    <?php 
+                                    $groomPhoto = '';
+// Karena di Admin index kita tidak punya akses langsung ke settings di view ini, 
+// kita gunakan logika check existensi dari input hidden atau default.
+// Tombol hapus hanya muncul jika ada foto.
+                                    ?>
+                                    <button onclick="deletePhoto('groom')"
+                                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors z-10"
+                                        id="btn-delete-groom_photo" style="display:none;">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
                                 </div>
                             </div>
                             <div class="grid grid-cols-1 gap-4">
@@ -412,7 +423,7 @@
                                     <div class="rsvp-field"><label>PANGGILAN WANITA</label><input type="text"
                                             id="set-bride_nickname"></div>
                                 </div>
-                                <div class="w-24 text-center">
+                                <div class="w-24 text-center relative">
                                     <label
                                         class="block aspect-[3/4] bg-secondary/5 rounded-xl border border-dashed border-secondary/30 flex flex-col items-center justify-center cursor-pointer overflow-hidden group">
                                         <img id="preview-bride_photo" src="cewek.jpeg"
@@ -425,6 +436,11 @@
                                             onchange="uploadProfilePhoto('bride')">
                                         <input type="hidden" id="set-bride_photo">
                                     </label>
+                                    <button onclick="deletePhoto('bride')"
+                                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors z-10"
+                                        id="btn-delete-bride_photo" style="display:none;">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
                                 </div>
                             </div>
                             <div class="grid grid-cols-1 gap-4">
@@ -504,7 +520,8 @@
                             <input type="text" id="set-reception_map_link"
                                 placeholder="Contoh: https://maps.app.goo.gl/xxxxx">
                         </div>
-                        <div id="location-mode-status" class="location-mode-status rounded-lg px-4 py-3 text-xs leading-relaxed">
+                        <div id="location-mode-status"
+                            class="location-mode-status rounded-lg px-4 py-3 text-xs leading-relaxed">
                             Pilih mode lokasi acara untuk menentukan tampilan peta pada undangan.
                         </div>
                         <div class="rsvp-field pt-2">
@@ -514,27 +531,50 @@
                         </div>
                     </div>
 
-                        <div class="data-card p-8 rounded-3xl space-y-6 md:col-span-2">
-                            <div class="flex justify-between items-center">
-                                <h3 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest">
-                                    <span class="material-symbols-outlined">payments</span> Gift & Alamat
-                                </h3>
-                                <button onclick="addBankRow()" class="text-[10px] bg-secondary text-white px-3 py-1 rounded-full font-bold uppercase hover:bg-secondary/80 transition-all">+ Tambah Bank</button>
-                            </div>
+                    <div class="data-card p-8 rounded-3xl space-y-6 md:col-span-2">
+                        <div class="flex justify-between items-center">
+                            <h3
+                                class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest">
+                                <span class="material-symbols-outlined">payments</span> Gift & Alamat
+                            </h3>
+                            <button onclick="addBankRow()"
+                                class="text-[10px] bg-secondary text-white px-3 py-1 rounded-full font-bold uppercase hover:bg-secondary/80 transition-all">+
+                                Tambah Bank</button>
+                        </div>
 
-                            <div id="bank-list-container" class="space-y-4">
-                                <!-- Bank rows will be injected here -->
-                            </div>
+                        <div id="bank-list-container" class="space-y-4">
+                            <!-- Bank rows will be injected here -->
+                        </div>
 
-                            <div class="rsvp-field">
-                                <label>ALAMAT PENGIRIMAN</label>
-                                <textarea id="set-gift_address" rows="3"
-                                    class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm mt-4"></textarea>
-                            </div>
+                        <div class="rsvp-field">
+                            <label>NAMA PENERIMA HADIAH</label>
+                            <input type="text" id="set-gift_recipient_name" placeholder="Nama penerima hadiah"
+                                class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm mt-4">
+                        </div>
+                        <div class="rsvp-field">
+                            <label>ALAMAT PENGIRIMAN</label>
+                            <textarea id="set-gift_address" rows="3"
+                                class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm mt-4"></textarea>
+                        </div>
                         <div class="rsvp-field">
                             <label>LINK GOOGLE MAPS ALAMAT PENGIRIMAN</label>
                             <input type="text" id="set-gift_maps_link"
                                 placeholder="Contoh: https://maps.app.goo.gl/xxxxx">
+                        </div>
+                        <div class="rsvp-field">
+                            <label>NOMOR WHATSAPP RSVP</label>
+                            <input type="text" id="set-rsvp_whatsapp" placeholder="Contoh: 628123456789"
+                                class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm mt-4">
+                            <p class="text-[10px] opacity-50 mt-2 italic">*Nomor WhatsApp untuk menerima konfirmasi
+                                kehadiran tamu</p>
+                        </div>
+                        <div class="rsvp-field">
+                            <label>QUOTES (OPSIONAL)</label>
+                            <textarea id="set-quotes" rows="3"
+                                class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm mt-4"
+                                placeholder="Contoh: Allah akan memudahkan jalan bagi hamba-Nya yang bersungguh-sungguh"></textarea>
+                            <p class="text-[10px] opacity-50 mt-2 italic">*Quotes akan ditampilkan di halaman utama
+                                undangan dengan tanda — Hawa & Adam</p>
                         </div>
                         <div class="rsvp-field">
                             <label>TEMPLATE PESAN WHATSAPP</label>
@@ -689,7 +729,8 @@
                             </div>
                             <div class="rsvp-field">
                                 <label>PILIH ICON</label>
-                                <select id="new-story-icon" class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm">
+                                <select id="new-story-icon"
+                                    class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm">
                                     <option value="favorite">❤️ favorite (Hati)</option>
                                     <option value="diamond">💎 diamond (Berlian)</option>
                                     <option value="star">⭐ star (Bintang)</option>
@@ -1360,7 +1401,8 @@
                     <div class="rsvp-field"><label>TAHUN / LABEL</label><input type="text" id="edit-story-tahun"></div>
                     <div class="rsvp-field">
                         <label>PILIH ICON</label>
-                        <select id="edit-story-icon" class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm">
+                        <select id="edit-story-icon"
+                            class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm">
                             <option value="favorite">❤️ favorite (Hati)</option>
                             <option value="diamond">💎 diamond (Berlian)</option>
                             <option value="star">⭐ star (Bintang)</option>
@@ -1468,25 +1510,35 @@
                 alert('Undangan utama tidak dapat dihapus.');
                 return;
             }
-            
-            const selectedInv = document.getElementById('inv-selector');
-            const invName = selectedInv.options[selectedInv.selectedIndex].text;
-            document.getElementById('delete-inv-title-text').innerText = `Hapus undangan "${invName}"? Tindakan ini tidak dapat dibatalkan.`;
-            openModal('delete-invitation');
-        }
 
-        async function confirmDeleteInvitation() {
-            const res = await fetch(`api/admin_api?action=delete_invitation&id=${currentInvId}`);
-            const data = await res.json();
-            closeModal('delete-invitation');
-            if (data.success) {
-                alert('Undangan berhasil dihapus.');
-                currentInvId = 1;
-                await loadInvitations();
-                changeInvitation();
-            } else {
-                alert(data.message || 'Gagal menghapus undangan.');
-            }
+            Swal.fire({
+                title: 'Hapus undangan?',
+                text: "Semua data terkait undangan ini akan dihapus secara permanen.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#775a19',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase',
+                    cancelButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase'
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const res = await fetch(`api/admin_api?action=delete_invitation&id=${currentInvId}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        alert('Undangan berhasil dihapus.');
+                        currentInvId = 1;
+                        await loadInvitations();
+                        changeInvitation();
+                    } else {
+                        alert(data.message || 'Gagal menghapus undangan.');
+                    }
+                }
+            });
         }
 
         function openGenerator() {
@@ -1527,7 +1579,7 @@
         async function loadSettings() {
             const res = await fetch(`api/admin_api?action=get_settings&inv_id=${currentInvId}`);
             const data = await res.json();
-            const keys = ['groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'gift_address', 'gift_maps_link', 'wa_template', 'music_volume', 'music_autoplay', 'theme_preset', 'theme_primary', 'theme_secondary', 'theme_background', 'theme_primary_container', 'theme_secondary_container', 'theme_surface_container_low'];
+            const keys = ['groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'gift_address', 'gift_maps_link', 'gift_recipient_name', 'rsvp_whatsapp', 'quotes', 'wa_template', 'music_volume', 'music_autoplay', 'theme_preset', 'theme_primary', 'theme_secondary', 'theme_background', 'theme_primary_container', 'theme_secondary_container', 'theme_surface_container_low'];
             keys.forEach(k => {
                 const el = document.getElementById('set-' + k);
                 if (el) el.value = data.data[k] || (k === 'music_volume' ? '50' : (k === 'music_autoplay' ? '1' : ''));
@@ -1536,13 +1588,16 @@
                 if (k === 'groom_photo' || k === 'bride_photo') {
                     const preview = document.getElementById('preview-' + k);
                     const placeholder = document.getElementById('placeholder-' + k);
+                    const btnDelete = document.getElementById('btn-delete-' + k);
                     if (data.data[k]) {
                         preview.src = data.data[k];
                         preview.classList.remove('hidden');
                         placeholder.classList.add('hidden');
+                        if (btnDelete) btnDelete.style.display = 'block';
                     } else {
                         preview.classList.add('hidden');
                         placeholder.classList.remove('hidden');
+                        if (btnDelete) btnDelete.style.display = 'none';
                     }
                 }
             });
@@ -1622,10 +1677,10 @@
             document.querySelectorAll('[id^="set-"]').forEach(el => {
                 settings[el.id.replace('set-', '')] = el.value;
             });
-            
+
             const banks = collectBankData();
             settings['gift_banks'] = JSON.stringify(banks);
-            
+
             const res = await fetch(`api/admin_api?action=update_settings&inv_id=${currentInvId}`, {
                 method: 'POST',
                 body: JSON.stringify(settings)
@@ -1648,12 +1703,74 @@
                 <div class="relative gallery-item group aspect-square overflow-hidden rounded-2xl bg-gray-100">
                     <img src="${img.image_path}" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center delete-overlay">
-                        <button onclick="deletePhoto(${img.id})" class="bg-red-500 text-white p-2 rounded-full hover:scale-110 transition-all">
+                        <button onclick="deleteGalleryItem(${img.id})" class="bg-red-500 text-white p-2 rounded-full hover:scale-110 transition-all">
                             <span class="material-symbols-outlined">delete</span>
                         </button>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function deleteGalleryItem(id) {
+            Swal.fire({
+                title: 'Hapus foto galeri?',
+                text: "Foto akan dihapus dari galeri secara permanen.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#775a19',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase',
+                    cancelButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase'
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const res = await fetch(`api/admin_api?action=delete_gallery&id=${id}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        alert('Foto berhasil dihapus!');
+                        loadGallery();
+                    } else {
+                        alert(data.message || 'Gagal menghapus foto.');
+                    }
+                }
+            });
+        }
+
+        function deletePhoto(type) {
+            Swal.fire({
+                title: 'Hapus foto?',
+                text: "Foto akan dihapus dari data utama.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#775a19',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase',
+                    cancelButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const input = document.getElementById('set-' + type + '_photo');
+                    const preview = document.getElementById('preview-' + type + '_photo');
+                    const placeholder = document.getElementById('placeholder-' + type + '_photo');
+                    const btnDelete = document.getElementById('btn-delete-' + type + '_photo');
+
+                    input.value = '';
+                    preview.src = '';
+                    preview.classList.add('hidden');
+                    placeholder.classList.remove('hidden');
+                    if (btnDelete) btnDelete.style.display = 'none';
+
+                    saveSettings();
+                }
+            });
         }
 
         async function uploadPhoto() {
@@ -1704,11 +1821,8 @@
             }
         }
 
-        async function deletePhoto(id) {
-            if (!confirm('Hapus foto ini dari galeri?')) return;
-            await fetch(`api/admin_api?action=delete_gallery&id=${id}`);
-            loadGallery();
-        }
+        // Fungsi ini sudah digantikan oleh deleteGalleryItem di atas
+        // async function deletePhoto(id) { }
 
         async function loadGuests() {
             const res = await fetch(`api/admin_api?action=get_guests&inv_id=${currentInvId}`);
@@ -1820,14 +1934,26 @@
         }
 
         function deleteGuest(id) {
-            document.getElementById('confirm-delete-text').innerText = 'Hapus tamu ini dari daftar undangan?';
-            const btn = document.getElementById('btn-confirm-delete-action');
-            btn.onclick = async function() {
-                await fetch(`api/admin_api?action=delete_guest&id=${id}`);
-                closeModal('confirm-delete');
-                loadGuests();
-            };
-            openModal('confirm-delete');
+            Swal.fire({
+                title: 'Hapus tamu?',
+                text: "Tamu ini akan dihapus dari daftar undangan.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#775a19',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase',
+                    cancelButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase'
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await fetch(`api/admin_api?action=delete_guest&id=${id}`);
+                    loadGuests();
+                }
+            });
         }
 
         function copyToClipboard(text) {
@@ -1933,15 +2059,31 @@
         }
 
         function deleteItem(type, id) {
-            document.getElementById('confirm-delete-text').innerText = `Hapus data ${type.toUpperCase()} ini?`;
-            const btn = document.getElementById('btn-confirm-delete-action');
-            btn.onclick = async function() {
-                await fetch(`api/admin_api?action=delete_${type}&id=${id}`);
-                closeModal('confirm-delete');
-                if (type === 'rsvp') loadRSVP();
-                if (type === 'ucapan') loadUcapan();
-            };
-            openModal('confirm-delete');
+            Swal.fire({
+                title: 'Hapus data?',
+                text: "Data ini akan dihapus secara permanen.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#775a19',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase',
+                    cancelButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`api/admin_api?action=delete_${type}&id=${id}`).then(() => {
+                        if (type === 'gallery') loadGallery();
+                        if (type === 'rsvp') loadRSVP();
+                        if (type === 'ucapan') loadUcapan();
+                        if (type === 'music') loadMusic();
+                        if (type === 'story') loadStories();
+                    });
+                }
+            });
         }
 
         // Music Management Functions
@@ -2007,6 +2149,15 @@
                     method: 'POST',
                     body: formData
                 });
+
+                const contentType = res.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await res.text();
+                    console.error('Response is not JSON:', text);
+                    alert('Server error: Response bukan JSON. Cek console untuk detail.');
+                    return;
+                }
+
                 const data = await res.json();
 
                 if (data.success) {
@@ -2016,6 +2167,7 @@
                     alert(data.message || 'Gagal upload lagu');
                 }
             } catch (error) {
+                console.error('Upload error:', error);
                 alert('Error: ' + error.message);
             }
 
@@ -2036,18 +2188,34 @@
         }
 
         async function deleteMusic(id) {
-            if (!confirm('Hapus file musik ini?')) return;
+            Swal.fire({
+                title: 'Hapus musik?',
+                text: "File audio ini akan dihapus permanen.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#775a19',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase',
+                    cancelButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase'
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const res = await fetch(`api/admin_api?action=delete_music&id=${id}`, {
+                        method: 'POST'
+                    });
+                    const data = await res.json();
 
-            const res = await fetch(`api/admin_api?action=delete_music&id=${id}`, {
-                method: 'POST'
+                    if (data.success) {
+                        loadMusic();
+                    } else {
+                        alert(data.message || 'Gagal menghapus musik');
+                    }
+                }
             });
-            const data = await res.json();
-
-            if (data.success) {
-                loadMusic();
-            } else {
-                alert(data.message || 'Gagal menghapus musik');
-            }
         }
 
         async function saveMusicSettings() {
@@ -2590,17 +2758,20 @@
                     <span class="material-symbols-outlined text-red-600 text-4xl">delete_forever</span>
                 </div>
                 <h3 class="font-display-lg text-2xl text-primary mb-2">Hapus Undangan?</h3>
-                <p class="text-sm text-on-surface-variant" id="delete-inv-title-text">Undangan ini akan dihapus permanen</p>
+                <p class="text-sm text-on-surface-variant" id="delete-inv-title-text">Undangan ini akan dihapus permanen
+                </p>
             </div>
             <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
                 <p class="text-xs text-red-800 font-semibold">⚠️ Peringatan:</p>
-                <p class="text-xs text-red-700 mt-1">Semua data terkait (tamu, RSVP, ucapan, foto) akan terhapus dan tidak dapat dikembalikan.</p>
+                <p class="text-xs text-red-700 mt-1">Semua data terkait (tamu, RSVP, ucapan, foto) akan terhapus dan
+                    tidak dapat dikembalikan.</p>
             </div>
             <div class="flex gap-3">
                 <button onclick="closeModal('delete-invitation')"
                     class="flex-1 py-3 rounded-xl font-bold text-xs uppercase bg-gray-100">Batal</button>
                 <button onclick="confirmDeleteInvitation()"
-                    class="flex-1 py-3 rounded-xl font-bold text-xs uppercase bg-red-600 text-white hover:bg-red-700">Hapus Sekarang</button>
+                    class="flex-1 py-3 rounded-xl font-bold text-xs uppercase bg-red-600 text-white hover:bg-red-700">Hapus
+                    Sekarang</button>
             </div>
         </div>
     </div>
@@ -2611,7 +2782,8 @@
                 <span class="material-symbols-outlined text-red-600 text-3xl">delete</span>
             </div>
             <h3 class="font-display-lg text-2xl text-primary mb-2">Hapus Data?</h3>
-            <p class="text-xs text-secondary/70 mb-6" id="confirm-delete-text">Data yang dihapus tidak dapat dikembalikan.</p>
+            <p class="text-xs text-secondary/70 mb-6" id="confirm-delete-text">Data yang dihapus tidak dapat
+                dikembalikan.</p>
             <div class="flex gap-3">
                 <button onclick="closeModal('confirm-delete')"
                     class="flex-1 py-3 rounded-xl font-bold text-xs uppercase bg-gray-100">Batal</button>

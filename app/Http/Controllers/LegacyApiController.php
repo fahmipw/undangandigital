@@ -29,6 +29,12 @@ class LegacyApiController extends Controller
         $action = $request->query('action', '') ?: $request->input('action', '');
         $inv_id = $request->query('inv_id', 1) ?: $request->input('inv_id', 1);
 
+        if (ob_get_length()) ob_clean(); 
+        
+        // Disable error reporting for JSON responses to avoid warnings/notices leaking
+        error_reporting(0);
+        ini_set('display_errors', 0);
+
         if (!$action) {
             return response()->json(['success' => false, 'message' => 'Action parameter required'], 400);
         }
@@ -191,6 +197,12 @@ class LegacyApiController extends Controller
                 if (!$request->hasFile('image')) {
                     return response()->json(['success' => false, 'message' => 'No file uploaded'], 400);
                 }
+                
+                $galleryCount = Gallery::where('invitation_id', $inv_id)->count();
+                if ($galleryCount >= 50) {
+                    return response()->json(['success' => false, 'message' => 'Maksimal 50 foto per undangan. Hapus foto lama untuk menambahkan yang baru.'], 400);
+                }
+                
                 $filename = $this->convertToWebp($request->file('image'), public_path('uploads'), 'img_');
                 Gallery::create([
                     'invitation_id' => $inv_id,
@@ -217,18 +229,26 @@ class LegacyApiController extends Controller
                 ]);
 
             case 'upload_music':
+                \Log::info('Upload music started for inv_id: ' . $inv_id);
                 if (!$request->hasFile('music')) {
+                    \Log::error('No file in request');
                     return response()->json(['success' => false, 'message' => 'No file uploaded'], 400);
                 }
                 $file = $request->file('music');
-                
+                \Log::info('File received: ' . $file->getClientOriginalName() . ' Type: ' . $file->getMimeType());
+
                 $allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/m4a'];
                 if (!in_array($file->getMimeType(), $allowedTypes) && !in_array($file->getClientMimeType(), $allowedTypes)) {
                     return response()->json(['success' => false, 'message' => 'Tipe file tidak didukung.'], 400);
                 }
                 
-                if ($file->getSize() > 10 * 1024 * 1024) {
+                $fileSize = $file->getSize();
+                if ($fileSize > 10 * 1024 * 1024) {
                     return response()->json(['success' => false, 'message' => 'Ukuran file maksimal 10MB'], 400);
+                }
+
+                if (!file_exists(public_path('uploads'))) {
+                    mkdir(public_path('uploads'), 0777, true);
                 }
 
                 $filename = uniqid('music_') . '.' . $file->getClientOriginalExtension();
@@ -236,15 +256,19 @@ class LegacyApiController extends Controller
 
                 Music::where('invitation_id', $inv_id)->update(['is_active' => 0]);
                 
-                Music::create([
+                $music = Music::create([
                     'invitation_id' => $inv_id,
                     'file_name' => $file->getClientOriginalName(),
                     'file_path' => 'uploads/' . $filename,
-                    'file_size' => $file->getSize(),
+                    'file_size' => $fileSize,
                     'is_active' => 1
                 ]);
                 
-                return response()->json(['success' => true, 'path' => 'uploads/' . $filename]);
+                return response()->json([
+                    'success' => true, 
+                    'path' => 'uploads/' . $filename,
+                    'data' => $music
+                ]);
 
             case 'toggle_active_music':
                 $id = $request->input('id') ?? $request->query('id');
