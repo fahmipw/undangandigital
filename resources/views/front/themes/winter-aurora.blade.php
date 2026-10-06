@@ -218,7 +218,8 @@ background:linear-gradient(135deg,#3a6ea5,#5aa8c8);box-shadow:0 10px 26px rgba(5
 /* === fitur bawaan default: lightbox, menu, progress, musik === */
 .pbar{position:fixed;top:0;left:0;right:0;height:3px;z-index:96;background:transparent}
 .pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7fe3d0,#a8c8ff)}
-.lb{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.35s;padding:20px}
+.lb{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.35s;padding:20px;touch-action:pan-y}
+#lbImg{max-width:100%;max-height:86vh;border-radius:8px;will-change:transform,opacity}
 .lb.show{opacity:1;visibility:visible}
 .lb img{max-width:100%;max-height:86vh;border:2px solid #7fe3d0}
 .lb-x{position:absolute;top:16px;right:22px;font-size:40px;color:#fff;cursor:pointer;line-height:1;z-index:201}
@@ -592,16 +593,31 @@ function openLb(src){
   lbIdx = i < 0 ? 0 : i;
   showLb();
 }
+var lbDir = 1;
 function showLb(){
   var im = lbList[lbIdx];
   if(!im) return;
-  document.getElementById('lbImg').src = im.src;
+  var el = document.getElementById('lbImg');
+  el.style.transition = 'none';
+  el.style.transform = 'translateX(' + (46 * lbDir) + 'px)';
+  el.style.opacity = '0';
+  el.src = im.src;
   document.getElementById('lbCount').textContent = (lbIdx+1) + ' / ' + lbList.length;
   document.getElementById('lb').classList.add('show');
   document.body.style.overflow = 'hidden';
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    el.style.transition = 'transform .28s ease, opacity .28s ease';
+    el.style.transform = 'translateX(0)';
+    el.style.opacity = '1';
+  }); });
+  [1, -1].forEach(function(d){
+    var n = lbList[(lbIdx + d + lbList.length) % lbList.length];
+    if(n){ var pre = new Image(); pre.src = n.src; }
+  });
 }
 function stepLb(d){
   if(!lbList.length) return;
+  lbDir = d >= 0 ? 1 : -1;
   lbIdx = (lbIdx + d + lbList.length) % lbList.length;
   showLb();
 }
@@ -622,11 +638,17 @@ document.addEventListener('keydown', function(e){
   else if(e.key === 'Escape') closeLb();
 });
 (function(){
-  var lb = document.getElementById('lb'), sx = 0;
-  lb.addEventListener('touchstart', function(e){ sx = e.changedTouches[0].clientX; }, {passive:true});
-  lb.addEventListener('touchend', function(e){
-    var dx = e.changedTouches[0].clientX - sx;
-    if(Math.abs(dx) > 40) stepLb(dx < 0 ? 1 : -1);
+  var lb = document.getElementById('lb'), sx = 0, sy = 0, swiped = false;
+  lb.addEventListener('touchstart', function(e){
+    sx = e.changedTouches[0].clientX; sy = e.changedTouches[0].clientY; swiped = false;
+  }, {passive:true});
+  lb.addEventListener('touchmove', function(e){
+    if(swiped) return;
+    var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4){
+      swiped = true;
+      stepLb(dx < 0 ? 1 : -1);
+    }
   }, {passive:true});
 })();
 
