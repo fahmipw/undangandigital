@@ -46,7 +46,39 @@ class FrontController extends Controller
         $inv_id = $invitation->id;
         $invSlug = $invitation->slug;
         
-        return view('front.index', compact('invitation', 'settings', 'guestName', 'gallery', 'stories', 'musicRecord', 'guestSlug', 'inv_id', 'invSlug'));
+        $viewData = compact('invitation', 'settings', 'guestName', 'gallery', 'stories', 'musicRecord', 'guestSlug', 'inv_id', 'invSlug');
+
+        // Pilihan tema via settings: 'theme' => key di bawah.
+        // Tema default (front.index) tetap dipakai bila key 'theme' kosong / tidak dikenal.
+        $themeViews = [
+            'minecraft'           => 'front.themes.minecraft',
+            'minecraft-adventure' => 'front.themes.minecraft-adventure',
+            'royal-emerald'       => 'front.themes.royal-emerald',
+            'jawa-premium'        => 'front.themes.jawa-premium',
+            'islamic-elegance'    => 'front.themes.islamic-elegance',
+            'sakura-dream'        => 'front.themes.sakura-dream',
+            'midnight-galaxy'     => 'front.themes.midnight-galaxy',
+            'rustic-boho'         => 'front.themes.rustic-boho',
+            'minang-gadang'       => 'front.themes.minang-gadang',
+            'taman-janur'         => 'front.themes.taman-janur',
+            'senja-pesisir'       => 'front.themes.senja-pesisir',
+            'empat-musim'         => 'front.themes.empat-musim',
+            'bawah-laut'          => 'front.themes.bawah-laut',
+            'gunung-berkabut'     => 'front.themes.gunung-berkabut',
+            'sogan-parallax'      => 'front.themes.sogan-parallax',
+            'rimba-watercolor'    => 'front.themes.rimba-watercolor',
+            'neon-metropolis'     => 'front.themes.neon-metropolis',
+            'arabian-nights'      => 'front.themes.arabian-nights',
+            'origami-dreams'      => 'front.themes.origami-dreams',
+            'galaksi-cinta'       => 'front.themes.galaksi-cinta',
+            'winter-aurora'       => 'front.themes.winter-aurora',
+        ];
+        $theme = $settings['theme'] ?? 'default';
+        if (isset($themeViews[$theme])) {
+            return view($themeViews[$theme], $viewData);
+        }
+
+        return view('front.index', $viewData);
     }
     public function generator(Request $request, $slug)
     {

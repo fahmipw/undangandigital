@@ -795,6 +795,38 @@
                 </div>
 
                 <div class="space-y-8">
+                    <!-- Model Tampilan Tema (template undangan) -->
+                    <div class="data-card p-8 rounded-3xl space-y-4">
+                        <h3
+                            class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
+                            <span class="material-symbols-outlined">style</span> Model Tampilan Tema
+                        </h3>
+                        <p class="text-xs text-gray-500">Pilih desain tampilan undangan. Pilihan warna di bawah hanya berlaku untuk tema Default.</p>
+                        <select id="set-theme" class="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm bg-white focus:border-secondary focus:outline-none">
+                            <option value="default">Default — Klasik Emas (ikuti preset warna)</option>
+                            <option value="minecraft">Premium — Minecraft</option>
+                            <option value="minecraft-adventure">Premium — Minecraft Petualangan</option>
+                            <option value="royal-emerald">Premium — Royal Emerald</option>
+                            <option value="jawa-premium">Premium — Jawa Premium</option>
+                            <option value="islamic-elegance">Premium — Islamic Elegance</option>
+                            <option value="sakura-dream">Premium — Sakura Dream</option>
+                            <option value="midnight-galaxy">Premium — Midnight Galaxy</option>
+                            <option value="rustic-boho">Premium — Rustic Boho</option>
+                            <option value="minang-gadang">Premium — Minang Gadang</option>
+                            <option value="taman-janur">Premium — Taman Janur</option>
+                            <option value="senja-pesisir">Premium — Senja Pesisir (scroll)</option>
+                            <option value="empat-musim">Premium — Empat Musim (scroll)</option>
+                            <option value="bawah-laut">Premium — Bawah Laut (scroll)</option>
+                            <option value="gunung-berkabut">Premium — Gunung Berkabut (scroll)</option>
+                            <option value="sogan-parallax">Premium — Sogan Parallax</option>
+                            <option value="rimba-watercolor">Premium — Rimba Watercolor</option>
+                            <option value="neon-metropolis">Premium — Neon Metropolis (3D)</option>
+                            <option value="arabian-nights">Premium — Arabian Nights (3D)</option>
+                            <option value="origami-dreams">Premium — Origami Dreams (3D)</option>
+                            <option value="galaksi-cinta">Premium — Galaksi Cinta (3D)</option>
+                            <option value="winter-aurora">Premium — Winter Aurora (3D)</option>
+                        </select>
+                    </div>
                     <!-- Preset Themes Selection -->
                     <div class="data-card p-8 rounded-3xl space-y-6">
                         <h3
@@ -1579,7 +1611,7 @@
         async function loadSettings() {
             const res = await fetch(`api/admin_api?action=get_settings&inv_id=${currentInvId}`);
             const data = await res.json();
-            const keys = ['groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'gift_address', 'gift_maps_link', 'gift_recipient_name', 'rsvp_whatsapp', 'quotes', 'wa_template', 'music_volume', 'music_autoplay', 'theme_preset', 'theme_primary', 'theme_secondary', 'theme_background', 'theme_primary_container', 'theme_secondary_container', 'theme_surface_container_low'];
+            const keys = ['theme', 'groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'gift_address', 'gift_maps_link', 'gift_recipient_name', 'rsvp_whatsapp', 'quotes', 'wa_template', 'music_volume', 'music_autoplay', 'theme_preset', 'theme_primary', 'theme_secondary', 'theme_background', 'theme_primary_container', 'theme_secondary_container', 'theme_surface_container_low'];
             keys.forEach(k => {
                 const el = document.getElementById('set-' + k);
                 if (el) el.value = data.data[k] || (k === 'music_volume' ? '50' : (k === 'music_autoplay' ? '1' : ''));
