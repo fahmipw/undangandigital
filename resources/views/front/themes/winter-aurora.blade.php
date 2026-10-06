@@ -220,6 +220,9 @@ background:linear-gradient(135deg,#3a6ea5,#5aa8c8);box-shadow:0 10px 26px rgba(5
 .lb.show{opacity:1;visibility:visible}
 .lb img{max-width:100%;max-height:86vh;border:2px solid #7fe3d0}
 .lb-x{position:absolute;top:16px;right:22px;font-size:40px;color:#fff;cursor:pointer;line-height:1;z-index:201}
+.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);font-size:32px;color:#fff;cursor:pointer;padding:16px 12px;z-index:201;user-select:none;opacity:.85;line-height:1}
+.lb-prev{left:6px}.lb-next{right:6px}.lb-prev:hover,.lb-next:hover{opacity:1}
+.lb-count{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:#fff;font-size:13px;letter-spacing:.15em;z-index:201;font-family:inherit}
 .fmenu{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:90;display:flex;gap:2px;background:#0e1c2ef2;border:1px solid #7fe3d055;border-radius:999px;padding:7px 9px;backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:96vw;overflow-x:auto;scrollbar-width:none}
 .fmenu::-webkit-scrollbar{display:none}
 .fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:50px;padding:6px 7px;border-radius:12px;color:#f2f8ff;opacity:.6;text-decoration:none;font-size:9px;letter-spacing:.06em;transition:.25s;font-family:'Jost',sans-serif}
@@ -391,7 +394,8 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 <div class="rv"><div class="sec-kicker">Perjalanan Kami</div><div class="sec-title">Kisah Cinta</div></div>
 <div class="tl">
 @foreach($stories as $st)
-<div class="tl-item rv"><svg class="tic" viewBox="0 0 100 100"><use href="#iceheart"/></svg><h4>{{ $st->title ?? 'Cerita' }}</h4><p>{{ $st->description ?? $st->content ?? '' }}</p></div>
+<div class="tl-item rv"><svg class="tic" viewBox="0 0 100 100"><use href="#iceheart"/></svg>@if(!empty($st->tahun))<div style="font-size:11px;letter-spacing:.25em;opacity:.55;margin-bottom:6px">{{ $st->tahun }}</div>@endif
+<h4>{{ $st->judul ?? 'Cerita' }}</h4><p>{{ $st->isi ?? '' }}</p></div>
 @endforeach
 </div>
 </section>
@@ -467,7 +471,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 <button id="musBtn" onclick="toggleMus()" style="display:none" aria-label="Putar musik">&#9834;</button>
 
 
-<div class="lb" id="lb"><span class="lb-x" onclick="closeLb()">&times;</span><img id="lbImg" src="" alt="Foto"></div>
+<div class="lb" id="lb"><span class="lb-x" onclick="closeLb()">&times;</span><span class="lb-prev" onclick="stepLb(-1)">&#10094;</span><img id="lbImg" src="" alt="Foto"><span class="lb-next" onclick="stepLb(1)">&#10095;</span><span class="lb-count" id="lbCount"></span></div>
 <nav class="fmenu" id="fmenu" aria-label="Menu undangan"></nav>
 
 <script>
@@ -574,11 +578,30 @@ function toggleMus(){
   initMus();
 })();
 
+var lbList=[], lbIdx=0;
+function lbCollect(){
+  lbList = Array.prototype.slice.call(document.querySelectorAll('.g-grid img, .photo, .planet, .frame img, .arch img'))
+    .filter(function(im){ return im.tagName==='IMG' && im.getAttribute('src'); });
+}
 function openLb(src){
   if(!src) return;
-  document.getElementById('lbImg').src = src;
+  lbCollect();
+  var i = lbList.findIndex(function(im){ return im.src === src; });
+  lbIdx = i < 0 ? 0 : i;
+  showLb();
+}
+function showLb(){
+  var im = lbList[lbIdx];
+  if(!im) return;
+  document.getElementById('lbImg').src = im.src;
+  document.getElementById('lbCount').textContent = (lbIdx+1) + ' / ' + lbList.length;
   document.getElementById('lb').classList.add('show');
   document.body.style.overflow = 'hidden';
+}
+function stepLb(d){
+  if(!lbList.length) return;
+  lbIdx = (lbIdx + d + lbList.length) % lbList.length;
+  showLb();
 }
 function closeLb(){
   document.getElementById('lb').classList.remove('show');
@@ -590,6 +613,20 @@ document.querySelectorAll('.g-grid img, .photo, .planet, .frame img, .arch img')
   im.addEventListener('click', function(){ openLb(im.src); });
 });
 document.getElementById('lb').addEventListener('click', function(e){ if(e.target === this) closeLb(); });
+document.addEventListener('keydown', function(e){
+  if(!document.getElementById('lb').classList.contains('show')) return;
+  if(e.key === 'ArrowLeft') stepLb(-1);
+  else if(e.key === 'ArrowRight') stepLb(1);
+  else if(e.key === 'Escape') closeLb();
+});
+(function(){
+  var lb = document.getElementById('lb'), sx = 0;
+  lb.addEventListener('touchstart', function(e){ sx = e.changedTouches[0].clientX; }, {passive:true});
+  lb.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - sx;
+    if(Math.abs(dx) > 40) stepLb(dx < 0 ? 1 : -1);
+  }, {passive:true});
+})();
 
 var __att = '';
 function setAtt(v){
@@ -656,7 +693,7 @@ async function sendWish(e){
 (function(){
   var SECS = [['hero','⌂','Awal'],['mempelai','♥','Mempelai'],['galeri','▦','Galeri'],
               ['kisah','✎','Kisah'],['acara','◷','Acara'],['rsvp','✓','RSVP'],
-              ['gift','✦','Gift'],['ucapan','✉','Ucapan']];
+              ['ucapan','✉','Ucapan'],['gift','✦','Gift']];
   var nav = document.getElementById('fmenu');
   var items = [];
   SECS.forEach(function(s){

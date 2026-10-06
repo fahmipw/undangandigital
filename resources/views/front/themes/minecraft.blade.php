@@ -328,7 +328,7 @@ section.block{max-width:860px;margin:0 auto;padding:56px 20px 8px}
     @foreach($stories as $st)
     <div class="adv">
       <div class="icon"><canvas class="story-ico" data-icon="heart" width="16" height="16"></canvas></div>
-      <div><h3>{{ $st->title ?? 'Cerita' }}</h3><p>{{ $st->description ?? $st->content ?? '' }}</p></div>
+      <div><h3>@if(!empty($st->tahun))<span style="font-size:10px;opacity:.6;letter-spacing:.15em">{{ $st->tahun }} — </span>@endif{{ $st->judul ?? 'Cerita' }}</h3><p>{{ $st->isi ?? '' }}</p></div>
     </div>
     @endforeach
   </section>
