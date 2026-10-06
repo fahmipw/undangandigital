@@ -1326,6 +1326,22 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           </div>
         </div>
       </section>
+
+      <?php if (getSet('guest_qr_enabled') && !empty($guestQrCode)): ?>
+      <!-- QR CHECK-IN (opsional, tampil bila diaktifkan di admin) -->
+      <section class="px-margin-page mb-section-gap text-center reveal" id="qrcheckin">
+        <span class="font-label-caps text-label-caps text-secondary mb-2 block">KEHADIRAN</span>
+        <h2 class="font-display-lg text-headline-md text-primary mb-6">QR Check-in</h2>
+        <div id="qrBox" class="inline-block p-4 bg-white rounded-2xl shadow-lg"></div>
+        <p class="text-sm text-on-surface-variant mt-4 font-body-md">
+          Tunjukkan QR code ini kepada panitia saat kedatangan.<br>
+          Nama: <strong><?php echo htmlspecialchars($guestName); ?></strong>
+        </p>
+      </section>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+      <script>if(window.QRCode){new QRCode(document.getElementById('qrBox'), { text: "<?php echo htmlspecialchars($guestQrCode); ?>", width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });}</script>
+      <?php endif; ?>
+
       <section class="py-4 mb-6 text-center reveal" id="gift">
         <div class="bg-surface-container-highest/50 p-8 rounded-3xl border-dashed border-2 border-outline-variant/30">
           <span class="material-symbols-outlined text-secondary text-4xl mb-3">featured_seasonal_and_gifts</span>

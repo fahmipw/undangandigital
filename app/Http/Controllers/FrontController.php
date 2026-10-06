@@ -28,6 +28,7 @@ class FrontController extends Controller
         }
 
         $guestName = "Bapak/Ibu/Saudara/i";
+        $guestQrCode = null;
         if ($guestSlug) {
             $guest = Guest::where('invitation_id', $invitation->id)
                           ->where(function($q) use ($guestSlug) {
@@ -35,6 +36,12 @@ class FrontController extends Controller
                           })->first();
             if ($guest) {
                 $guestName = $guest->nama;
+                // Backfill kode QR untuk tamu lama yang belum punya
+                if (empty($guest->qr_code)) {
+                    $guest->qr_code = Guest::newQrCode($invitation->id);
+                    $guest->save();
+                }
+                $guestQrCode = $guest->qr_code;
             } else {
                 $guestName = htmlspecialchars(str_replace(['+', '-'], ' ', $guestSlug));
             }
@@ -46,7 +53,7 @@ class FrontController extends Controller
         $inv_id = $invitation->id;
         $invSlug = $invitation->slug;
         
-        $viewData = compact('invitation', 'settings', 'guestName', 'gallery', 'stories', 'musicRecord', 'guestSlug', 'inv_id', 'invSlug');
+        $viewData = compact('invitation', 'settings', 'guestName', 'guestQrCode', 'gallery', 'stories', 'musicRecord', 'guestSlug', 'inv_id', 'invSlug');
 
         // Pilihan tema via settings: 'theme' => key di bawah.
         // Tema default (front.index) tetap dipakai bila key 'theme' kosong / tidak dikenal.

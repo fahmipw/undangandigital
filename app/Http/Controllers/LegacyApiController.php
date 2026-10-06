@@ -110,7 +110,8 @@ class LegacyApiController extends Controller
                     'invitation_id' => $inv_id,
                     'nama' => $request->input('nama'),
                     'no_hp' => $request->input('no_hp'),
-                    'slug' => urlencode($request->input('nama'))
+                    'slug' => urlencode($request->input('nama')),
+                    'qr_code' => Guest::newQrCode($inv_id)
                 ]);
                 return response()->json(['success' => true]);
 
@@ -125,7 +126,8 @@ class LegacyApiController extends Controller
                         'invitation_id' => $inv_id,
                         'nama' => $nama,
                         'no_hp' => $no_hp,
-                        'slug' => urlencode($nama)
+                        'slug' => urlencode($nama),
+                        'qr_code' => Guest::newQrCode($inv_id)
                     ]);
                 }
                 return response()->json(['success' => true]);

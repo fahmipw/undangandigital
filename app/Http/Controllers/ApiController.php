@@ -59,6 +59,62 @@ class ApiController extends Controller
         return response()->json(['success' => false, 'message' => 'Method not allowed.'], 405);
     }
 
+    /**
+     * QR Check-in tamu (dipakai halaman scanner panitia).
+     * POST {invitation_id, code}
+     */
+    public function checkin(Request $request)
+    {
+        $json = json_decode($request->getContent(), true) ?? [];
+        if (!empty($json)) {
+            $request->merge($json);
+        }
+
+        $invitation_id = $request->input('invitation_id');
+        $code = strtoupper(trim($request->input('code', '')));
+
+        $guest = \App\Models\Guest::where('invitation_id', $invitation_id)
+            ->where('qr_code', $code)->first();
+
+        if (!$guest) {
+            return response()->json(['success' => false, 'message' => 'Kode QR tidak ditemukan.'], 404);
+        }
+
+        $already = !empty($guest->checked_in_at);
+        if (!$already) {
+            $guest->checked_in_at = now();
+            $guest->save();
+            $guest->refresh();
+        }
+
+        return response()->json([
+            'success' => true,
+            'nama' => $guest->nama,
+            'already' => $already,
+            'checked_in_at' => $guest->checked_in_at ? (string) $guest->checked_in_at : null,
+        ]);
+    }
+
+    /**
+     * Statistik check-in untuk dashboard admin.
+     * GET ?inv_id=
+     */
+    public function checkinStats(Request $request)
+    {
+        $inv_id = $request->query('inv_id', $request->input('invitation_id'));
+        $total = \App\Models\Guest::where('invitation_id', $inv_id)->count();
+        $checked = \App\Models\Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')->count();
+        $recent = \App\Models\Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')
+            ->orderBy('checked_in_at', 'DESC')->limit(20)->get(['nama', 'checked_in_at']);
+
+        return response()->json([
+            'success' => true,
+            'total' => $total,
+            'checked_in' => $checked,
+            'recent' => $recent,
+        ]);
+    }
+
     public function ucapan(Request $request)
     {
         $json = json_decode($request->getContent(), true) ?? [];
@@ -168,7 +224,8 @@ class ApiController extends Controller
             'invitation_id' => $invitation_id,
             'nama' => $nama,
             'slug' => $slug,
-            'no_hp' => $no_hp
+            'no_hp' => $no_hp,
+            'qr_code' => \App\Models\Guest::newQrCode($invitation_id)
         ]);
 
         return response()->json([

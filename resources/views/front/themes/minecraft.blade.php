@@ -376,6 +376,15 @@ section.block{max-width:860px;margin:0 auto;padding:56px 20px 8px}
         <h4>&#9733; UCAPAN MASUK</h4>
         <div id="ucapanList"><div class="score-empty">Memuat ucapan...</div></div>
       </div>
+      @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
+      <div class="scoreboard" style="margin-top:16px">
+        <h4>&#9673; QR CHECK-IN</h4>
+        <div id="qrBoxMc" style="display:inline-block;padding:12px;background:#fff;border:3px solid #5b5b5b"></div>
+        <p class="score-empty">Tunjukkan pada panitia saat datang.<br>{{ $guestName }}</p>
+      </div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+      <script>if(window.QRCode){new QRCode(document.getElementById('qrBoxMc'),{text:"{{ $guestQrCode }}",width:160,height:160,correctLevel:QRCode.CorrectLevel.M});}</script>
+      @endif
     </div>
   </section>
 

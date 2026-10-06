@@ -301,6 +301,11 @@
                 id="btn-guests">
                 <span class="material-symbols-outlined">group</span> Daftar Tamu
             </button>
+            <button onclick="showTab('checkin')"
+                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
+                id="btn-checkin">
+                <span class="material-symbols-outlined">qr_code_scanner</span> Check-in Tamu
+            </button>
             <button onclick="showTab('rsvp')"
                 class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
                 id="btn-rsvp">
@@ -630,6 +635,59 @@
                         </thead>
                         <tbody id="guest-list"></tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- Check-in Tab -->
+            <div id="tab-checkin" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="font-display-lg text-3xl text-primary">Check-in Tamu</h2>
+                    <label class="flex items-center gap-3 bg-white border border-secondary/20 rounded-2xl px-5 py-3 cursor-pointer">
+                        <input type="checkbox" id="set-guest_qr_enabled" onchange="toggleQrEnabled(this.checked)" class="w-5 h-5 accent-[#775a19]">
+                        <span class="text-sm font-semibold text-primary">Aktifkan QR Check-in<br><span class="text-[10px] font-normal text-gray-500">QR muncul di undangan tamu bila aktif</span></span>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 mb-8">
+                    <div class="data-card p-6 rounded-3xl text-center">
+                        <div class="text-3xl font-bold text-primary" id="ci-total">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Total Tamu</div>
+                    </div>
+                    <div class="data-card p-6 rounded-3xl text-center">
+                        <div class="text-3xl font-bold text-green-700" id="ci-checked">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Sudah Hadir</div>
+                    </div>
+                    <div class="data-card p-6 rounded-3xl text-center">
+                        <div class="text-3xl font-bold text-amber-700" id="ci-pending">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Belum Hadir</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="data-card p-8 rounded-3xl space-y-4">
+                        <h3 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
+                            <span class="material-symbols-outlined">qr_code_scanner</span> Scan QR Tamu
+                        </h3>
+                        <div id="ci-reader" class="rounded-2xl overflow-hidden bg-black/5 min-h-[240px]"></div>
+                        <div class="flex gap-2">
+                            <button onclick="startCiScanner()" id="btn-ci-start" class="btn-theme px-6 py-2 rounded-xl font-bold text-xs uppercase">Mulai Kamera</button>
+                            <button onclick="stopCiScanner()" class="bg-gray-200 px-6 py-2 rounded-xl font-bold text-xs uppercase">Stop</button>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" id="ci-manual-code" placeholder="atau ketik kode manual"
+                                class="flex-1 bg-white border border-secondary/20 rounded-xl px-4 py-2 text-sm outline-none uppercase">
+                            <button onclick="manualCheckin()" class="btn-theme px-6 py-2 rounded-xl font-bold text-xs uppercase">Check-in</button>
+                        </div>
+                        <div id="ci-result" class="hidden rounded-2xl p-5 text-center"></div>
+                    </div>
+                    <div class="data-card p-8 rounded-3xl">
+                        <h3 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold mb-4">
+                            <span class="material-symbols-outlined">history</span> Baru Saja Hadir
+                        </h3>
+                        <div id="ci-recent" class="space-y-2 max-h-[380px] overflow-y-auto">
+                            <p class="text-sm text-gray-400 italic">Belum ada check-in.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1603,6 +1661,7 @@
             if (tabId === 'messages') loadUcapan();
             if (tabId === 'music') loadMusic();
             if (tabId === 'stories') loadStories();
+            if (tabId === 'checkin') loadCheckin();
 
             document.querySelector('.mobile-sidebar')?.classList.remove('is-open');
             document.querySelector('.admin-sidebar-backdrop')?.classList.remove('is-visible');
@@ -1891,6 +1950,119 @@
             const message = template.replace('[nama]', nama).replace('[link]', link);
             const waUrl = hp ? `https://wa.me/${hp}?text=${encodeURIComponent(message)}` : `https://wa.me/?text=${encodeURIComponent(message)}`;
             window.open(waUrl, '_blank');
+        }
+
+        /* ============ QR CHECK-IN ============ */
+        let ciScanner = null, ciLibLoading = false;
+
+        function escapeHtml(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        async function toggleQrEnabled(on) {
+            const res = await fetch(`api/admin_api?action=update_settings&inv_id=${currentInvId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ guest_qr_enabled: on ? '1' : '0' })
+            });
+            const data = await res.json();
+            if (!data.success) {
+                alert('Gagal menyimpan pengaturan.');
+                document.getElementById('set-guest_qr_enabled').checked = !on;
+            }
+        }
+
+        async function loadCheckin() {
+            try {
+                const sres = await fetch(`api/admin_api?action=get_settings&inv_id=${currentInvId}`);
+                const sdata = await sres.json();
+                document.getElementById('set-guest_qr_enabled').checked = (sdata.data && sdata.data.guest_qr_enabled === '1');
+            } catch (e) {}
+            refreshCiStats();
+        }
+
+        async function refreshCiStats() {
+            try {
+                const res = await fetch(`api/checkin_stats?inv_id=${currentInvId}`);
+                const d = await res.json();
+                if (!d.success) return;
+                document.getElementById('ci-total').textContent = d.total;
+                document.getElementById('ci-checked').textContent = d.checked_in;
+                document.getElementById('ci-pending').textContent = d.total - d.checked_in;
+                const box = document.getElementById('ci-recent');
+                box.innerHTML = d.recent.length ? d.recent.map(r =>
+                    `<div class="flex justify-between items-center bg-white border border-outline-variant/30 rounded-xl px-4 py-2 text-sm">
+                        <span class="font-semibold text-primary">${escapeHtml(r.nama)}</span>
+                        <span class="text-xs text-gray-500">${escapeHtml(r.checked_in_at || '')}</span>
+                    </div>`
+                ).join('') : '<p class="text-sm text-gray-400 italic">Belum ada check-in.</p>';
+            } catch (e) {}
+        }
+
+        function ciShowResult(ok, title, sub) {
+            const el = document.getElementById('ci-result');
+            el.classList.remove('hidden');
+            el.style.background = ok ? '#dcfce7' : '#fee2e2';
+            el.style.color = ok ? '#166534' : '#991b1b';
+            el.innerHTML = `<div class="font-bold text-lg">${escapeHtml(title)}</div><div class="text-sm">${escapeHtml(sub)}</div>`;
+            setTimeout(() => el.classList.add('hidden'), 4000);
+        }
+
+        async function doCheckin(code) {
+            code = (code || '').trim().toUpperCase();
+            if (!code) return;
+            try {
+                const res = await fetch('api/checkin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ invitation_id: currentInvId, code: code })
+                });
+                const d = await res.json();
+                if (d.success) {
+                    ciShowResult(true, d.already ? 'SUDAH HADIR' : 'CHECK-IN BERHASIL',
+                        d.nama + (d.already ? ' (sudah tercatat sebelumnya)' : ' • ' + (d.checked_in_at || '')));
+                    document.getElementById('ci-manual-code').value = '';
+                    refreshCiStats();
+                } else {
+                    ciShowResult(false, 'GAGAL', d.message || 'Kode tidak valid');
+                }
+            } catch (e) {
+                ciShowResult(false, 'GAGAL', 'Tidak dapat menghubungi server');
+            }
+        }
+
+        function manualCheckin() {
+            doCheckin(document.getElementById('ci-manual-code').value);
+        }
+
+        function loadCiLib(cb) {
+            if (window.Html5Qrcode) return cb();
+            if (ciLibLoading) return;
+            ciLibLoading = true;
+            const s = document.createElement('script');
+            s.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
+            s.onload = () => { ciLibLoading = false; cb(); };
+            s.onerror = () => { ciLibLoading = false; alert('Gagal memuat library scanner.'); };
+            document.head.appendChild(s);
+        }
+
+        function startCiScanner() {
+            loadCiLib(() => {
+                if (ciScanner) return;
+                ciScanner = new Html5Qrcode('ci-reader');
+                ciScanner.start(
+                    { facingMode: 'environment' },
+                    { fps: 10, qrbox: { width: 220, height: 220 } },
+                    (text) => { doCheckin(text); },
+                    () => {}
+                ).catch(() => alert('Tidak dapat mengakses kamera.'));
+            });
+        }
+
+        function stopCiScanner() {
+            if (ciScanner) {
+                ciScanner.stop().then(() => { ciScanner.clear(); ciScanner = null; }).catch(() => {});
+            }
         }
 
         async function addGuest() {
