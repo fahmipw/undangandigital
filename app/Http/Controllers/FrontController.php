@@ -87,6 +87,35 @@ class FrontController extends Controller
 
         return view('front.index', $viewData);
     }
+
+    /**
+     * Halaman check-in khusus panitia (tanpa login admin).
+     * URL: /checkin/{slug}/{token} — token disimpan di setting checkin_token.
+     */
+    public function checkinPage($slug, $token)
+    {
+        $invitation = Invitation::with('settings')->where('slug', $slug)->first();
+        if (!$invitation) abort(404);
+
+        $settings = [];
+        foreach ($invitation->settings as $s) {
+            $settings[$s->key_name] = $s->key_value;
+        }
+
+        $savedToken = $settings['checkin_token'] ?? '';
+        if (!$savedToken || !hash_equals((string) $savedToken, (string) $token)) {
+            abort(403, 'Link tidak valid.');
+        }
+
+        $bride = !empty($settings['bride_nickname']) ? $settings['bride_nickname'] : (!empty($settings['bride_name']) ? $settings['bride_name'] : 'Mempelai Wanita');
+        $groom = !empty($settings['groom_nickname']) ? $settings['groom_nickname'] : (!empty($settings['groom_name']) ? $settings['groom_name'] : 'Mempelai Pria');
+
+        return view('front.checkin', [
+            'inv_id' => $invitation->id,
+            'title' => $groom . ' & ' . $bride,
+        ]);
+    }
+
     public function generator(Request $request, $slug)
     {
         $invitation = Invitation::with('settings')->where('slug', $slug)->first();
