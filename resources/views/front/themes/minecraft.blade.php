@@ -700,9 +700,9 @@ $("#rsvpForm").addEventListener("submit",async e=>{
 });
 /* ---------- ucapan via API ---------- */
 function timeAgo(s){const d=new Date(String(s).replace(" ","T")+"+07:00");if(isNaN(d))return "";
-  const n=(Date.now()-d.getTime())/1000;if(n<60)return "baru saja";
-  if(n<3600)return Math.floor(n/60)+" mnt lalu";if(n<86400)return Math.floor(n/3600)+" jam lalu";
-  return Math.floor(n/86400)+" hari lalu";}
+  const n=(Date.now()-d.getTime())/1000;if(n<60)return "Baru saja";
+  if(n<3600)return Math.floor(n/60)+" menit yang lalu";if(n<86400)return Math.floor(n/3600)+" jam yang lalu";
+  return Math.floor(n/86400)+" hari yang lalu";}
 async function loadUcapan(){
   const box=$("#ucapanList");if(!box)return;
   try{

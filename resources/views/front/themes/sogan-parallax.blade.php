@@ -143,6 +143,8 @@ filter:drop-shadow(0 2px 14px rgba(212,175,55,.35))}
 .field input,.field select,.field textarea{width:100%;background:rgba(27,15,7,.9);border:1px solid rgba(212,175,55,.5);border-radius:4px;color:var(--tinta);padding:13px 16px;font-family:'Jost';font-size:15px;outline:none}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--emas-lt);box-shadow:0 0 0 3px rgba(212,175,55,.15)}
 .wish{background:rgba(36,20,8,.9);border:1px solid rgba(212,175,55,.35);border-radius:6px;padding:16px 18px;margin:0 auto 12px;max-width:400px;text-align:left}
+.wish-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+.wtime{font-size:11px;opacity:.55;white-space:nowrap}
 .wish b{font-family:'Cormorant Garamond',serif;color:var(--emas-lt);font-size:17px}
 .wish .st{font-size:10px;letter-spacing:.2em;color:var(--emas);text-transform:uppercase;margin-left:8px;font-weight:500}
 .wish p{font-size:14px;color:var(--tinta-dim);margin-top:6px;line-height:1.6}
@@ -620,13 +622,23 @@ async function sendRSVP(e){
   return false;
 }
 
+function timeAgo(ts){
+  if(!ts) return 'Baru saja';
+  var s = String(ts).replace(' ', 'T');
+  if(s.indexOf('Z') < 0 && s.indexOf('+') < 0) s += '+07:00';
+  var d = new Date(s), diff = Math.floor((Date.now() - d.getTime()) / 1000);
+  if(isNaN(diff) || diff < 0 || diff < 60) return 'Baru saja';
+  if(diff < 3600) return Math.floor(diff / 60) + ' menit yang lalu';
+  if(diff < 86400) return Math.floor(diff / 3600) + ' jam yang lalu';
+  return Math.floor(diff / 86400) + ' hari yang lalu';
+}
 async function loadWishes(){
   try{
     var r = await fetch('/api/ucapan?inv_id=' + INV_ID + '&limit=20');
     var d = await r.json();
     var rows = d.data || [];
     document.getElementById('wishList').innerHTML = rows.map(function(w){
-      return '<div class="wish"><b>' + esc(w.nama) + '</b><p>' + esc(w.pesan) + '</p></div>';
+      return '<div class="wish"><div class="wish-head"><b>' + esc(w.nama) + '</b><span class="wtime">' + esc(timeAgo(w.created_at)) + '</span></div><p>' + esc(w.pesan) + '</p></div>';
     }).join('') || '<p class="wish-empty">Belum ada ucapan.</p>';
   }catch(e){}
 }
