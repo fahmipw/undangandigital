@@ -304,7 +304,7 @@ section.block{max-width:860px;margin:0 auto;padding:56px 20px 8px}
         <p>{{ mcDate($rDate) }}</p>
         <p class="time">{{ $rTimeS }} &ndash; {{ $rTimeE }} {{ mcGet('wedding_timezone','WIB') }}</p>
         <p>{{ mcGet('reception_location', mcGet('wedding_location', 'Kediaman Mempelai')) }}</p>
-        @if(mcGet('reception_map_link'))<a class="mc-btn map-btn" href="{{ mcGet('reception_map_link') }}" target="_blank" rel="noopener" style="font-size:10px">&#9673; BUKA PETA</a>@endif@if(mcGet('live_stream_link'))<a class="mc-btn map-btn" target="_blank" href="{{ mcGet('live_stream_link') }}" style="margin-left:8px">Live Streaming</a>@endif
+        @if(mcGet('reception_map_link'))<a class="mc-btn map-btn" href="{{ mcGet('reception_map_link') }}" target="_blank" rel="noopener" style="font-size:10px">&#9673; BUKA PETA</a>@endif @if(mcGet('live_stream_link'))<a class="mc-btn map-btn" target="_blank" href="{{ mcGet('live_stream_link') }}" style="margin-left:8px">Live Streaming</a>@endif
       </div>
     </div>
   </section>
