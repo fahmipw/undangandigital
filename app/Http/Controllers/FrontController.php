@@ -80,6 +80,7 @@ class FrontController extends Controller
             'galaksi-cinta'       => 'front.themes.galaksi-cinta',
             'winter-aurora'       => 'front.themes.winter-aurora',
             'stardew-valley'      => 'front.themes.stardew-valley',
+            'stardew-adventure'   => 'front.themes.stardew-adventure',
         ];
         $theme = $settings['theme'] ?? 'default';
         if (isset($themeViews[$theme])) {
