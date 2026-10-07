@@ -213,6 +213,9 @@ select.mc-input{appearance:none}
   <div class="mc-panel start-card">
     <h1>MISI:<br>UNDANGAN PERNIKAHAN</h1>
     <p class="sub">{{ $brideNick }} &amp; {{ $groomNick }} &mdash; {{ mcaDate($wDate) }}</p>
+    @if(!empty($guestName) && $guestName !== 'Bapak/Ibu/Saudara/i')
+    <p class="px" style="font-family:'Press Start 2P',monospace;font-size:10px;color:#2b6b1c;margin-bottom:12px">PEMAIN: {{ $guestName }}</p>
+    @endif
     <p class="px" style="font-family:'Press Start 2P',monospace;font-size:10px;color:#2b2b2b;margin-bottom:12px">PILIH KARAKTERMU</p>
     <div class="char-row" id="charRow"></div>
     <p class="controls-help" id="controlsHelp">
@@ -259,6 +262,7 @@ const MC = {
   musicUrl: @json($musicUrl),
   brideNick: @json($brideNick), groomNick: @json($groomNick),
   brideFull: @json($brideFull), groomFull: @json($groomFull),
+  guestName: @json($guestName),
   dateText: @json(mcaDate($wDate)),
   akad: { date: @json(mcaDate($wDate)), time: @json($wTime.' – '.$wTimeE.' '.mcaGet('wedding_timezone','WIB')),
     venue: @json(mcaGet('wedding_location','Kediaman Mempelai')), maps: @json($sameLoc ? $mainMapLink : mcaGet('wedding_map_link','')) },
@@ -738,8 +742,11 @@ function render(dt){
   const px=player.x-camX,py=player.y-camY;
   drawPlayer(ctx,px,py,player.pal,player.dir,player.frame,player.moving,1.3);
   ctx.font="8px 'Press Start 2P',monospace";ctx.textAlign="center";
-  ctx.fillStyle="rgba(0,0,0,.55)";ctx.fillRect(px-34,py-38,68,13);
-  ctx.fillStyle="#fff";ctx.fillText("PETUALANG",px,py-28);
+  const pname=(MC.guestName&&MC.guestName!=="Bapak/Ibu/Saudara/i")?MC.guestName:"PETUALANG";
+  const pshort=pname.length>14?pname.slice(0,14)+"...":pname;
+  const pw=ctx.measureText(pshort).width+14;
+  ctx.fillStyle="rgba(0,0,0,.55)";ctx.fillRect(px-pw/2,py-38,pw,13);
+  ctx.fillStyle="#fff";ctx.fillText(pshort,px,py-28);
   for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.age+=dt;
     if(p.age>=p.life){parts.splice(i,1);continue;}
     p.x+=p.vx*dt;p.y+=p.vy*dt;

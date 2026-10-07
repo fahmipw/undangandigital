@@ -265,6 +265,7 @@ const MC = {
   musicUrl: @json($musicUrl),
   brideNick: @json($brideNick), groomNick: @json($groomNick),
   brideFull: @json($brideFull), groomFull: @json($groomFull),
+  guestName: @json($guestName),
   dateText: @json(sdaDate($wDate)),
   quotes: @json(sdaGet('quotes', '')),
   guestQr: @json(!empty($guestQrCode) ? $guestQrCode : ''),
@@ -861,8 +862,11 @@ function render(dt){
   const px=player.x-camX,py=player.y-camY;
   drawFarmer(ctx,px,py,player.pal,player.dir,player.frame,player.moving,1.3);
   ctx.font="8px 'Press Start 2P',monospace";ctx.textAlign="center";
-  ctx.fillStyle="rgba(0,0,0,.55)";ctx.fillRect(px-36,py-40,72,13);
-  ctx.fillStyle="#fff";ctx.fillText("PETANI",px,py-30);
+  const pname=(MC.guestName&&MC.guestName!=="Bapak/Ibu/Saudara/i")?MC.guestName:"PETANI";
+  const pshort=pname.length>14?pname.slice(0,14)+"...":pname;
+  const pw=ctx.measureText(pshort).width+14;
+  ctx.fillStyle="rgba(0,0,0,.55)";ctx.fillRect(px-pw/2,py-40,pw,13);
+  ctx.fillStyle="#fff";ctx.fillText(pshort,px,py-30);
   for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.age+=dt;
     if(p.age>=p.life){parts.splice(i,1);continue;}
     p.x+=p.vx*dt;p.y+=p.vy*dt;
