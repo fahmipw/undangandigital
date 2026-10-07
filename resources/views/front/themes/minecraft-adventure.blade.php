@@ -187,6 +187,7 @@ select.mc-input{appearance:none}
 .chest .glow{position:absolute;left:8%;right:8%;top:30px;height:40px;z-index:1;opacity:0;transition:opacity .5s;
   background:radial-gradient(ellipse at center,#ffe9a3 0%,rgba(255,220,120,.55) 45%,transparent 75%)}
 .chest.open .glow{opacity:1}
+.gift-grid[hidden]{display:none}
 .gift-grid{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-top:14px}
 @media(max-width:520px){.gift-grid{grid-template-columns:1fr}}
 .acct{background:#a8a8a8;border:3px solid #141414;padding:14px}
