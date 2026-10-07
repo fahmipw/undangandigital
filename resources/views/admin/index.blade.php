@@ -891,6 +891,7 @@
                             <option value="winter-aurora">Premium — Winter Aurora (3D)</option>
                             <option value="stardew-valley">Premium — Stardew Valley (Game)</option>
                             <option value="stardew-adventure">Premium — Stardew Adventure (Main)</option>
+                            <option value="jawa-cinematic">Premium — Jawa Cinematic (Mewah)</option>
                         </select>
                     </div>
                     <!-- Preset Themes Selection -->
