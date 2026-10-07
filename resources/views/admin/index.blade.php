@@ -410,6 +410,8 @@
                                         id="set-groom_child_of" placeholder="Contoh: Putra Kedua dari"></div>
                                 <div class="rsvp-field"><label>NAMA ORANG TUA (PRIA)</label><input type="text"
                                         id="set-groom_parents" placeholder="Contoh: Bapak ... & Ibu ..."></div>
+                                <div class="rsvp-field"><label>INSTAGRAM (PRIA) — OPSIONAL</label><input type="text"
+                                        id="set-groom_instagram" placeholder="Contoh: nama.username"></div>
                             </div>
                         </div>
 
@@ -453,6 +455,8 @@
                                         id="set-bride_child_of" placeholder="Contoh: Putri Pertama dari"></div>
                                 <div class="rsvp-field"><label>NAMA ORANG TUA (WANITA)</label><input type="text"
                                         id="set-bride_parents" placeholder="Contoh: Bapak ... & Ibu ..."></div>
+                                <div class="rsvp-field"><label>INSTAGRAM (WANITA) — OPSIONAL</label><input type="text"
+                                        id="set-bride_instagram" placeholder="Contoh: nama.username"></div>
                             </div>
                         </div>
                     </div>
@@ -1679,7 +1683,7 @@
         async function loadSettings() {
             const res = await fetch(`api/admin_api?action=get_settings&inv_id=${currentInvId}`);
             const data = await res.json();
-            const keys = ['theme', 'groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'gift_address', 'gift_maps_link', 'gift_recipient_name', 'rsvp_whatsapp', 'quotes', 'wa_template', 'music_volume', 'music_autoplay', 'theme_preset', 'theme_primary', 'theme_secondary', 'theme_background', 'theme_primary_container', 'theme_secondary_container', 'theme_surface_container_low'];
+            const keys = ['theme', 'groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'groom_instagram', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'bride_instagram', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'gift_address', 'gift_maps_link', 'gift_recipient_name', 'rsvp_whatsapp', 'quotes', 'wa_template', 'music_volume', 'music_autoplay', 'theme_preset', 'theme_primary', 'theme_secondary', 'theme_background', 'theme_primary_container', 'theme_secondary_container', 'theme_surface_container_low'];
             keys.forEach(k => {
                 const el = document.getElementById('set-' + k);
                 if (el) el.value = data.data[k] || (k === 'music_volume' ? '50' : (k === 'music_autoplay' ? '1' : ''));

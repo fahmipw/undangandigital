@@ -114,7 +114,7 @@ tailwind.config = {
   .btn-ghost{border:1px solid rgba(212,175,55,.7);color:#D4AF37;transition:.25s}
   .btn-ghost:hover{background:rgba(212,175,55,.12)}
   /* vinyl */
-  #vinyl{position:fixed;left:14px;bottom:14px;z-index:60;width:62px;height:62px;border-radius:50%;
+  #vinyl{position:fixed;right:14px;bottom:14px;z-index:60;width:62px;height:62px;border-radius:50%;
     background:radial-gradient(circle at 50% 50%,#D4AF37 0 9px,#111 10px,#1c1c1c 11px 30px);
     border:2px solid rgba(212,175,55,.8);box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer;
     display:flex;align-items:center;justify-content:center}
