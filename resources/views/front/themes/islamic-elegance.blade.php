@@ -38,6 +38,9 @@ $wTimeE = mcTime(mcGet('wedding_time_end', '10:00'));
 $rDate  = mcGet('reception_date', $wDate);
 $rTimeS = mcTime(mcGet('reception_time_start', '11:00'));
 $rTimeE = mcTime(mcGet('reception_time_end', '13:00'));
+$sameLoc = (mcGet('event_location_mode', 'same') === 'same');
+$mainMapLink = trim((string)mcGet('wedding_map_link')) ?: trim((string)mcGet('reception_map_link'));
+$giftRecipient = mcGet('gift_recipient_name', mcGet('gift_owner', ''));
 $countdownISO = $wDate.'T'.$wTime.':00+07:00';
 $accounts = [];
 $__gbanks = json_decode(mcGet('gift_banks', ''), true) ?: [];
@@ -240,13 +243,14 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
     <h3>Akad Nikah</h3>
     <div class="date">{{ mcDate($wDate) }}</div><div class="time">{{ $wTime }} — {{ $wTimeE }} {{ mcGet('wedding_timezone','WIB') }}</div>
     <div class="loc">{{ mcGet('wedding_location', 'Kediaman Mempelai') }}</div>
-    @if(mcGet('wedding_map_link'))<a class="btn-line" target="_blank" href="{{ mcGet('wedding_map_link') }}">Lihat Peta</a>@endif
+    @if(!$sameLoc && mcGet('wedding_map_link'))<a class="btn-line" target="_blank" href="{{ mcGet('wedding_map_link') }}">Lihat Peta</a>@endif
   </div>
   <div class="event rv">
     <h3>Resepsi</h3>
     <div class="date">{{ mcDate($rDate) }}</div><div class="time">{{ $rTimeS }} — {{ $rTimeE }} {{ mcGet('wedding_timezone','WIB') }}</div>
     <div class="loc">{{ mcGet('reception_location', mcGet('wedding_location', 'Kediaman Mempelai')) }}</div>
-    @if(mcGet('reception_map_link'))<a class="btn-line" target="_blank" href="{{ mcGet('reception_map_link') }}">Lihat Peta</a>@endif @if(mcGet('live_stream_link'))<a class="btn-line" target="_blank" href="{{ mcGet('live_stream_link') }}" style="margin-left:8px">Live Streaming</a>@endif
+    @if(!$sameLoc && mcGet('reception_map_link'))<a class="btn-line" target="_blank" href="{{ mcGet('reception_map_link') }}">Lihat Peta</a>@endif @if(mcGet('live_stream_link'))<a class="btn-line" target="_blank" href="{{ mcGet('live_stream_link') }}" style="margin-left:8px">Live Streaming</a>@endif
+@if($sameLoc && $mainMapLink)<div style="text-align:center;margin-top:12px"><a class="btn-line" target="_blank" rel="noopener" href="{{ $mainMapLink }}">Lihat Peta Lokasi</a></div>@endif
   </div>
 </section>
 
@@ -317,7 +321,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
     @if(!empty($a['logo']))<img src="{{ $a['logo'] }}" alt="Logo bank" style="height:36px;max-width:150px;object-fit:contain;margin:10px auto 0;display:block">@endif<div class="no">{{ $a['no'] }}</div><div class="an">a.n. {{ $a['an'] }}</div>
   <button class="btn-line copy" onclick="copyNo('{{ $a['no'] }}')">Salin Nomor</button></div>
   @endforeach
-  @if(mcGet('gift_address'))<div class="bank rv"><div class="bk">Hadiah Fisik</div><p style="font-size:14px;color:var(--dim);margin-top:10px;line-height:1.7">{{ mcGet('gift_address') }}</p>
+  @if(mcGet('gift_address'))<div class="bank rv"><div class="bk">Hadiah Fisik</div><p style="font-size:14px;color:var(--dim);margin-top:10px;line-height:1.7">{{ mcGet('gift_address') }}</p>@if($giftRecipient)<p style="font-size:13px;opacity:.75;margin-top:8px">Penerima: {{ $giftRecipient }}</p>@endif
     @if(mcGet('gift_maps_link'))<div style="margin-top:12px"><a href="{{ mcGet('gift_maps_link') }}" target="_blank" style="display:inline-block;padding:10px 26px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;opacity:.85">Lihat Peta</a></div>@endif</div>@endif
 </section>
 @endif

@@ -38,6 +38,9 @@ $wTimeE = mcaTime(mcaGet('wedding_time_end', '10:00'));
 $rDate  = mcaGet('reception_date', $wDate);
 $rTimeS = mcaTime(mcaGet('reception_time_start', '11:00'));
 $rTimeE = mcaTime(mcaGet('reception_time_end', '13:00'));
+$sameLoc = (mcaGet('event_location_mode', 'same') === 'same');
+$mainMapLink = trim((string)mcaGet('wedding_map_link')) ?: trim((string)mcaGet('reception_map_link'));
+$giftRecipient = mcaGet('gift_recipient_name', mcaGet('gift_owner', ''));
 $countdownISO = $wDate.'T'.$wTime.':00+07:00';
 $accounts = [];
 $__gbanks = json_decode(mcaGet('gift_banks', ''), true) ?: [];
@@ -257,9 +260,9 @@ const MC = {
   brideFull: @json($brideFull), groomFull: @json($groomFull),
   dateText: @json(mcaDate($wDate)),
   akad: { date: @json(mcaDate($wDate)), time: @json($wTime.' – '.$wTimeE.' '.mcaGet('wedding_timezone','WIB')),
-    venue: @json(mcaGet('wedding_location','Kediaman Mempelai')), maps: @json(mcaGet('wedding_map_link','')) },
+    venue: @json(mcaGet('wedding_location','Kediaman Mempelai')), maps: @json($sameLoc ? $mainMapLink : mcaGet('wedding_map_link','')) },
   resepsi: { date: @json(mcaDate($rDate)), time: @json($rTimeS.' – '.$rTimeE.' '.mcaGet('wedding_timezone','WIB')),
-    venue: @json(mcaGet('reception_location', mcaGet('wedding_location','Kediaman Mempelai'))), maps: @json(mcaGet('reception_map_link','')) }
+    venue: @json(mcaGet('reception_location', mcaGet('wedding_location','Kediaman Mempelai'))), maps: @json($sameLoc ? $mainMapLink : mcaGet('reception_map_link','')) }
 };
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
 const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
