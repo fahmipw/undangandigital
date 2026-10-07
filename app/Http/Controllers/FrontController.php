@@ -79,6 +79,7 @@ class FrontController extends Controller
             'origami-dreams'      => 'front.themes.origami-dreams',
             'galaksi-cinta'       => 'front.themes.galaksi-cinta',
             'winter-aurora'       => 'front.themes.winter-aurora',
+            'stardew-valley'      => 'front.themes.stardew-valley',
         ];
         $theme = $settings['theme'] ?? 'default';
         if (isset($themeViews[$theme])) {

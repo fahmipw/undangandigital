@@ -889,6 +889,7 @@
                             <option value="origami-dreams">Premium — Origami Dreams (3D)</option>
                             <option value="galaksi-cinta">Premium — Galaksi Cinta (3D)</option>
                             <option value="winter-aurora">Premium — Winter Aurora (3D)</option>
+                            <option value="stardew-valley">Premium — Stardew Valley (Game)</option>
                         </select>
                     </div>
                     <!-- Preset Themes Selection -->
