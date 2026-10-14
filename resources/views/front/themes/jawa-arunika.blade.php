@@ -31,8 +31,8 @@ if (!function_exists('jwaTime')) {
 }
 $GLOBALS['jwa_asset_base'] = '';
 if (!function_exists('jwaCorners')) {
-  /* Ornamen di sekeliling frame: 4 sudut (pohon atas, bunga bawah), mekar saat discroll */
-  function jwaCorners($variant = 0, $extra = '') {
+  /* Ornamen di sekeliling frame: $items = all|trees|flowers */
+  function jwaCorners($variant = 0, $extra = '', $items = 'all') {
     $A = $GLOBALS['jwa_asset_base'];
     if ($variant % 2 == 0) {
       $treeL='ASSET-JAWA-TREE.png';  $treeR='ASSET-JAWA-TREE3.png';
@@ -41,11 +41,23 @@ if (!function_exists('jwaCorners')) {
       $treeL='ASSET-JAWA-TREE3.png'; $treeR='ASSET-JAWA-TREE.png';
       $flL='ASSET-JAWA-BUNGA19.png'; $flR='ASSET-JAWA-BUNGA5-768x330.png';
     }
+    $bloom = function($pos, $img, $op) use ($A) {
+      return '<div class="bloom absolute" style="'.$pos.'"><img src="'.$A.$img.'" class="w-full h-auto" style="opacity:'.$op.'" alt=""></div>';
+    };
     $h = '<div class="corners orn pointer-events-none absolute inset-0 '.($extra ?: 'z-0').'" data-speed="1.15" data-rot="0">';
-    $h .= '<div class="bloom absolute" style="top:-3%;left:-9%;width:42%"><img src="'.$A.$treeL.'" class="w-full h-auto" style="opacity:.8" alt=""></div>';
-    $h .= '<div class="bloom absolute" style="top:-3%;right:-9%;width:42%"><img src="'.$A.$treeR.'" class="w-full h-auto" style="opacity:.8" alt=""></div>';
-    $h .= '<div class="bloom absolute" style="bottom:-3%;left:-9%;width:38%"><img src="'.$A.$flL.'" class="w-full h-auto" style="opacity:.85" alt=""></div>';
-    $h .= '<div class="bloom absolute" style="bottom:-3%;right:-9%;width:38%"><img src="'.$A.$flR.'" class="w-full h-auto" style="opacity:.85" alt=""></div>';
+    if ($items === 'all' || $items === 'trees') {
+      $h .= $bloom('top:-3%;left:-9%;width:42%', $treeL, '.8');
+      $h .= $bloom('top:-3%;right:-9%;width:42%', $treeR, '.8');
+    }
+    if ($items === 'all' || $items === 'flowers') {
+      if ($items === 'flowers') { /* sudut saja, kecil, tidak menutupi teks */
+        $h .= $bloom('bottom:-2%;left:-13%;width:30%', $flL, '.8');
+        $h .= $bloom('bottom:-2%;right:-13%;width:30%', $flR, '.8');
+      } else {
+        $h .= $bloom('bottom:-3%;left:-9%;width:38%', $flL, '.85');
+        $h .= $bloom('bottom:-3%;right:-9%;width:38%', $flR, '.85');
+      }
+    }
     return $h.'</div>';
   }
 }
@@ -415,12 +427,12 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     <div class="orn anim-right pointer-events-none absolute top-[14%] -right-[24%] w-[36%] opacity-10 z-0" data-speed="0.9" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full scale-x-[-1]" alt="" />
     </div>
-    {!! jwaCorners(1) !!}
+    {!! jwaCorners(1, '', 'flowers') !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">Kisah Cinta</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-10 relative z-10">Perjalanan kami berdua</p>
     @if(!empty($stories) && count($stories))
-    <div class="relative z-10 w-full max-w-[320px] pl-8 text-left">
+    <div class="relative z-10 w-full max-w-[320px] pl-8 pb-24 text-left">
       <div class="absolute left-[9px] top-2 bottom-2 w-px bg-jawa-gold/40"></div>
       @foreach($stories as $st)
       <div class="anim-fade relative mb-9">
