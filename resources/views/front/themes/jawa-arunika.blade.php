@@ -251,9 +251,9 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
   </section>
 
   <!-- ================= 2. COVER / GATE ================= -->
-  <section id="cover-gate" class="fixed inset-0 z-40 mx-auto max-w-[430px] h-[100dvh] flex flex-col justify-between py-8 px-6 text-center bg-[#140e0a] overflow-hidden">
-    <img src="{{ $ASSET }}BG-ID-4.png" class="pointer-events-none absolute inset-0 w-full h-full object-cover opacity-20" alt="" />
-    <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/85 via-black/25 to-black/90"></div>
+  <section id="cover-gate" class="fixed inset-0 z-40 mx-auto max-w-[430px] h-[100dvh] flex flex-col justify-between py-8 px-6 text-center overflow-hidden"
+    style="background:radial-gradient(120% 55% at 50% 0%, rgba(146,94,26,.22), transparent 62%), radial-gradient(110% 90% at 50% 45%, #221910 0%, #140e0a 60%, #0b0806 100%)">
+    <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/85"></div>
 
     <div id="gate-left-tree" class="pointer-events-none absolute left-[3%] top-[2%] w-[36%] opacity-80">
       {!! jwaFiligree(0) !!}
@@ -293,7 +293,8 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
   <section id="hero-section" class="relative h-[100dvh] min-h-[600px] w-full flex flex-col items-center justify-center text-center px-6 overflow-hidden">
     <div class="janur-grow pointer-events-none absolute top-[1%] left-[-5%] w-[60%] z-[1]" data-origin="top left">{!! jwaJanur() !!}</div>
     <div class="janur-grow pointer-events-none absolute top-[1%] right-[-5%] w-[60%] z-[1]" data-origin="top right">{!! jwaJanur(true) !!}</div>
-    <img id="hero-bg" src="{{ $ASSET }}BG-ID-4.png" class="orn pointer-events-none absolute inset-0 w-full h-full object-cover opacity-25 scale-110" alt=""  data-speed="0.4" data-rot="0" />
+    <div id="hero-bg" class="orn pointer-events-none absolute inset-0 scale-110" data-speed="0.4" data-rot="0"
+      style="background:radial-gradient(120% 55% at 50% 0%, rgba(146,94,26,.28), transparent 62%), radial-gradient(110% 90% at 50% 45%, #251b13 0%, #16100c 58%, #0c0906 100%)"></div>
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-jawa-bg/90 via-transparent to-[#16100c]"></div>
     <canvas id="gold-particles" class="pointer-events-none absolute inset-0 w-full h-full z-10"></canvas>
 
@@ -715,22 +716,41 @@ document.getElementById("btn-open").addEventListener("click",()=>{
     .to(".hero-stagger:not(.hero-joglo)",{y:0,opacity:1,duration:.9,stagger:.1,ease:"power3.out"},.65);
 });
 
-/* ---------- 5. PARTIKEL EMAS HERO ---------- */
+/* ---------- 5. PARTIKEL EMAS + MELATI BERJATUHAN (HERO) ---------- */
 (function(){
   const cv=document.getElementById("gold-particles"); if(!cv) return;
-  const cx=cv.getContext("2d"); let ps=[];
+  const cx=cv.getContext("2d"); let ps=[], ms=[];
   function init(){ cv.width=cv.offsetWidth; cv.height=cv.offsetHeight;
     const n = cv.width<380?22:30;
     ps=Array.from({length:n},()=>({ x:Math.random()*cv.width, y:Math.random()*cv.height,
       r:Math.random()*1.8+.6, vy:-(Math.random()*.35+.12), vx:(Math.random()-.5)*.2,
       a:Math.random()*.55+.2 }));
+    /* melati: kuntum kecil putih berjatuhan pelan */
+    const m = cv.width<380?14:20;
+    ms=Array.from({length:m},()=>({ x:Math.random()*cv.width, y:Math.random()*cv.height,
+      s:Math.random()*4+6, vy:Math.random()*.5+.35, ph:Math.random()*6.28,
+      sw:Math.random()*.9+.4, rot:Math.random()*6.28, vr:(Math.random()-.5)*.02,
+      a:Math.random()*.35+.45 }));
   }
-  function draw(){ cx.clearRect(0,0,cv.width,cv.height);
+  function melati(m){
+    cx.save(); cx.translate(m.x,m.y); cx.rotate(m.rot); cx.globalAlpha=m.a;
+    for(let k=0;k<5;k++){ cx.save(); cx.rotate(k*1.2566);
+      cx.beginPath(); cx.ellipse(0,-m.s*.52,m.s*.30,m.s*.52,0,0,6.29);
+      cx.fillStyle="#fdfbf4"; cx.fill(); cx.restore(); }
+    cx.beginPath(); cx.arc(0,0,m.s*.20,0,6.29); cx.fillStyle="#e8c96a"; cx.fill();
+    cx.restore(); cx.globalAlpha=1;
+  }
+  let t=0;
+  function draw(){ t+=.016; cx.clearRect(0,0,cv.width,cv.height);
     for(const p of ps){ cx.beginPath(); cx.arc(p.x,p.y,p.r,0,6.29);
       cx.fillStyle=`rgba(245,223,152,${p.a})`; cx.fill();
       p.y+=p.vy; p.x+=p.vx;
       if(p.y<-5){p.y=cv.height+5;p.x=Math.random()*cv.width;}
       if(p.x<-5)p.x=cv.width+5; if(p.x>cv.width+5)p.x=-5;
+    }
+    for(const m of ms){ melati(m);
+      m.y+=m.vy; m.x+=Math.sin(t*1.4+m.ph)*m.sw*.6; m.rot+=m.vr;
+      if(m.y>cv.height+18){ m.y=-18; m.x=Math.random()*cv.width; }
     }
     if(!reduced) requestAnimationFrame(draw);
   }
