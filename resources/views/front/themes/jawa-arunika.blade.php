@@ -64,6 +64,30 @@ if (!function_exists('jwaFiligree')) {
     return '<svg'.$mir.' viewBox="0 0 200 200" fill="none" class="w-full h-auto" style="filter:drop-shadow(0 0 6px rgba(212,175,55,.35))">'.$inner.'</svg>';
   }
 }
+if (!function_exists('jwaJanur')) {
+  /* Janur kuning: pelepah melengkung ala gerbang pernikahan Jawa, digambar prosedural */
+  function jwaJanur($mirror = false) {
+    $p0=[12,8]; $c=[95,-8]; $p1=[196,118];
+    $g='<defs><linearGradient id="jjanur" x1="0" y1="0" x2="1" y2="1">'
+      .'<stop offset="0" stop-color="#fdf6cf"/><stop offset="1" stop-color="#ecd27f"/></linearGradient></defs>';
+    $g.='<path d="M12 8 Q95 -8 196 118" stroke="#d9b94a" stroke-width="3.5" fill="none" stroke-linecap="round"/>';
+    for ($i=1; $i<=11; $i++) {
+      $t=$i/12;
+      $x=(1-$t)*(1-$t)*$p0[0]+2*(1-$t)*$t*$c[0]+$t*$t*$p1[0];
+      $y=(1-$t)*(1-$t)*$p0[1]+2*(1-$t)*$t*$c[1]+$t*$t*$p1[1];
+      $dx=2*(1-$t)*($c[0]-$p0[0])+2*$t*($p1[0]-$c[0]);
+      $dy=2*(1-$t)*($c[1]-$p0[1])+2*$t*($p1[1]-$c[1]);
+      $ang=atan2($dy,$dx)*180/M_PI;
+      $len=round(30-12*$t,1);
+      foreach ([-1,1] as $sd) {
+        $a=round($ang+$sd*62,1);
+        $g.='<ellipse cx="'.round($x,1).'" cy="'.round($y,1).'" rx="'.$len.'" ry="4.6" transform="rotate('.$a.' '.round($x,1).' '.round($y,1).')" fill="url(#jjanur)" opacity="0.95"/>';
+      }
+    }
+    $mir=$mirror?' style="transform:scaleX(-1)"':'';
+    return '<svg'.$mir.' viewBox="0 0 210 140" fill="none" class="w-full h-auto" style="filter:drop-shadow(0 0 8px rgba(240,216,138,.35))">'.$g.'</svg>';
+  }
+}
 if (!function_exists('jwaCorners')) {
   /* Ornamen di sekeliling frame: $items = all|trees|flowers */
   function jwaCorners($variant = 0, $extra = '', $items = 'all') {
@@ -82,12 +106,15 @@ if (!function_exists('jwaCorners')) {
       $h .= '<div class="bloom absolute" style="top:-4%;right:-6%;width:44%">'.jwaFiligree($variant, true).'</div>';
     }
     if ($items === 'all' || $items === 'flowers') {
+      /* kiri & kanan SELALU simetris: aset sama, kanan di-mirror */
+      $flLimg = '<img src="'.$A.$flL.'" class="w-full h-auto" style="opacity:.85" alt="">';
+      $flRimg = '<img src="'.$A.$flL.'" class="w-full h-auto scale-x-[-1]" style="opacity:.85" alt="">';
       if ($items === 'flowers') { /* sudut saja, kecil, tidak menutupi teks */
-        $h .= $bloom('bottom:-2%;left:-13%;width:30%', $flL, '.8');
-        $h .= $bloom('bottom:-2%;right:-13%;width:30%', $flR, '.8');
+        $h .= '<div class="bloom absolute" style="bottom:-2%;left:-13%;width:30%">'.$flLimg.'</div>';
+        $h .= '<div class="bloom absolute" style="bottom:-2%;right:-13%;width:30%">'.$flRimg.'</div>';
       } else {
-        $h .= $bloom('bottom:-3%;left:-9%;width:38%', $flL, '.85');
-        $h .= $bloom('bottom:-3%;right:-9%;width:38%', $flR, '.85');
+        $h .= '<div class="bloom absolute" style="bottom:-3%;left:-9%;width:38%">'.$flLimg.'</div>';
+        $h .= '<div class="bloom absolute" style="bottom:-3%;right:-9%;width:38%">'.$flRimg.'</div>';
       }
     }
     return $h.'</div>';
@@ -264,6 +291,8 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
 
   <!-- ================= 3. HERO ================= -->
   <section id="hero-section" class="relative h-[100dvh] min-h-[600px] w-full flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+    <div class="janur-grow pointer-events-none absolute top-[1%] left-[-5%] w-[60%] z-[1]" data-origin="top left">{!! jwaJanur() !!}</div>
+    <div class="janur-grow pointer-events-none absolute top-[1%] right-[-5%] w-[60%] z-[1]" data-origin="top right">{!! jwaJanur(true) !!}</div>
     <img id="hero-bg" src="{{ $ASSET }}BG-ID-4.png" class="orn pointer-events-none absolute inset-0 w-full h-full object-cover opacity-25 scale-110" alt=""  data-speed="0.4" data-rot="0" />
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-jawa-bg/90 via-transparent to-[#16100c]"></div>
     <canvas id="gold-particles" class="pointer-events-none absolute inset-0 w-full h-full z-10"></canvas>
@@ -612,6 +641,16 @@ gsap.registerPlugin(ScrollTrigger);
     onUpdate:()=>{ const n=Math.round(prog.v); pct.textContent=n+"%"; bar.style.width=n+"%"; },
     onComplete:()=> gsap.to("#preloader",{ opacity:0, duration:.55, ease:"power2.out",
       onComplete:()=>{ const p=document.getElementById("preloader"); if(p) p.remove(); } })
+  });
+})();
+
+/* ---------- 1b. JANUR TUMBUH (scroll-scrub, reversibel, tanpa looping) ---------- */
+(function(){
+  if(reduced) return;
+  gsap.utils.toArray(".janur-grow").forEach(function(el){
+    var trig = el.closest("section") || el;
+    gsap.fromTo(el, {scale:0, transformOrigin: el.getAttribute("data-origin") || "top left"},
+      {scale:1, ease:"none", scrollTrigger:{trigger: trig, start:"top bottom", end:"top 30%", scrub:0.6}});
   });
 })();
 
