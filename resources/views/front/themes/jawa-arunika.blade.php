@@ -235,6 +235,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
 </head>
 <body class="is-locked bg-[#080605] text-jawa-cream font-sans antialiased">
 <main class="invitation-frame min-h-screen border-x border-jawa-gold/15">
+  <canvas id="melati-canvas" class="pointer-events-none" style="position:fixed;top:0;bottom:0;left:0;right:0;margin:0 auto;width:100%;max-width:430px;height:100dvh;z-index:44"></canvas>
 
   <!-- ================= 1. PRELOADER ================= -->
   <section id="preloader" class="fixed inset-0 z-50 mx-auto max-w-[430px] flex flex-col items-center justify-center bg-jawa-bg px-6 text-center">
@@ -296,7 +297,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     <div id="hero-bg" class="orn pointer-events-none absolute inset-0 scale-110" data-speed="0.4" data-rot="0"
       style="background:radial-gradient(120% 55% at 50% 0%, rgba(146,94,26,.28), transparent 62%), radial-gradient(110% 90% at 50% 45%, #251b13 0%, #16100c 58%, #0c0906 100%)"></div>
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-jawa-bg/90 via-transparent to-[#16100c]"></div>
-    <canvas id="gold-particles" class="pointer-events-none absolute inset-0 w-full h-full z-10"></canvas>
+    
 
     {!! jwaCorners(0, 'hero-ornament z-10 opacity-0') !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-7-REV.png" class="orn hero-stagger hero-joglo pointer-events-none absolute w-[68%] max-w-[290px] opacity-0 z-10" alt=""  data-speed="0.6" data-rot="0" />
@@ -318,7 +319,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
   </section>
 
   <!-- ================= 4. QUOTES ================= -->
-  <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden">
+  <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden" style="background-color:#1d140d;background-image:radial-gradient(100% 55% at 50% 0%,rgba(212,175,55,.10),transparent 65%)">
     {!! jwaCorners(1) !!}
 
     <div class="anim-scale relative z-10 w-full max-w-[340px] mx-auto card-dark px-6 pb-9 pt-7 mt-10">
@@ -342,7 +343,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
   </section>
 
   <!-- ================= 5. MEMPELAI ================= -->
-  <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden bg-jawa-bg/60">
+  <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden bg-jawa-bg/60" style="background-color:#121a12;background-image:radial-gradient(100% 55% at 50% 100%,rgba(64,110,72,.14),transparent 65%)">
     <div class="orn anim-left pointer-events-none absolute top-[20%] -left-[20%] w-[46%] opacity-15 z-0" data-speed="0.9" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full" alt="" />
     </div>
@@ -398,7 +399,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
   </section>
 
   <!-- ================= 6. ACARA & COUNTDOWN ================= -->
-  <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden">
+  <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden" style="background-color:#1e120a;background-image:radial-gradient(90% 50% at 50% 50%,rgba(178,90,32,.13),transparent 70%)">
     {!! jwaCorners(1) !!}
 
     <div class="relative z-10 w-full max-w-[340px] mx-auto">
@@ -462,7 +463,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
   </section>
 
   <!-- ================= 7. GALERI ================= -->
-  <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden bg-jawa-bg/60">
+  <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden bg-jawa-bg/60" style="background-color:#190f14;background-image:radial-gradient(100% 55% at 50% 0%,rgba(150,60,90,.11),transparent 65%)">
     {!! jwaCorners(0) !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">Galeri Kenangan</h2>
@@ -482,7 +483,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
   </section>
 
   <!-- ================= 8. KISAH CINTA ================= -->
-  <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden">
+  <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:#141210;background-image:radial-gradient(90% 60% at 50% 100%,rgba(212,175,55,.09),transparent 65%)">
     <div class="orn anim-left pointer-events-none absolute top-[14%] -left-[24%] w-[36%] opacity-10 z-0" data-speed="0.9" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full" alt="" />
     </div>
@@ -513,7 +514,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
   </section>
 
   <!-- ================= 9. RSVP & BUKU TAMU ================= -->
-  <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden bg-jawa-bg/60">
+  <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden bg-jawa-bg/60" style="background-color:#101410;background-image:radial-gradient(100% 55% at 50% 0%,rgba(90,140,90,.09),transparent 65%)">
     {!! jwaCorners(0) !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">RSVP &amp; Buku Tamu</h2>
@@ -548,7 +549,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
   </section>
 
   <!-- ================= 10. AMPLOP DIGITAL ================= -->
-  <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden">
+  <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:#1d150b;background-image:radial-gradient(90% 50% at 50% 50%,rgba(220,170,60,.13),transparent 70%)">
     {!! jwaCorners(1) !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-3 relative z-10">Amplop Digital</h2>
@@ -718,9 +719,9 @@ document.getElementById("btn-open").addEventListener("click",()=>{
 
 /* ---------- 5. PARTIKEL EMAS + MELATI BERJATUHAN (HERO) ---------- */
 (function(){
-  const cv=document.getElementById("gold-particles"); if(!cv) return;
+  const cv=document.getElementById("melati-canvas"); if(!cv) return;
   const cx=cv.getContext("2d"); let ps=[], ms=[];
-  function init(){ cv.width=cv.offsetWidth; cv.height=cv.offsetHeight;
+  function init(){ cv.width=cv.offsetWidth; cv.height=window.innerHeight;
     const n = cv.width<380?22:30;
     ps=Array.from({length:n},()=>({ x:Math.random()*cv.width, y:Math.random()*cv.height,
       r:Math.random()*1.8+.6, vy:-(Math.random()*.35+.12), vx:(Math.random()-.5)*.2,
