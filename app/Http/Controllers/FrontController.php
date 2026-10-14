@@ -82,6 +82,7 @@ class FrontController extends Controller
             'stardew-valley'      => 'front.themes.stardew-valley',
             'stardew-adventure'   => 'front.themes.stardew-adventure',
             'jawa-cinematic'        => 'front.themes.jawa-cinematic',
+            'jawa-arunika'          => 'front.themes.jawa-arunika',
         ];
         $theme = $settings['theme'] ?? 'default';
         if (isset($themeViews[$theme])) {
