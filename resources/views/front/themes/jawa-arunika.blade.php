@@ -30,36 +30,22 @@ if (!function_exists('jwaTime')) {
   }
 }
 $GLOBALS['jwa_asset_base'] = '';
-if (!function_exists('jwaGarland')) {
-  /* Rangkaian pohon+bunga rapat di tepi section (seperti referensi), mekar saat discroll */
-  function jwaGarland($side, $variant = 0, $extra = '') {
+if (!function_exists('jwaCorners')) {
+  /* Ornamen di sekeliling frame: 4 sudut (pohon atas, bunga bawah), mekar saat discroll */
+  function jwaCorners($variant = 0, $extra = '') {
     $A = $GLOBALS['jwa_asset_base'];
-    $L = ($side === 'left');
-    $pos = $L ? 'left:0;' : 'right:0;';
-    $e1 = ($L ? 'left' : 'right').':-14%;';
-    $e2 = ($L ? 'left' : 'right').':-5%;';
-    $e3 = ($L ? 'left' : 'right').':-18%;';
-    $e4 = ($L ? 'left' : 'right').':-9%;';
     if ($variant % 2 == 0) {
-      $c = [
-        ['top:1%',  $e1, '96%',  'ASSET-JAWA-TREE.png',         '.8'],
-        ['top:31%', $e2, '72%',  'ASSET-JAWA-BUNGA1.png',       '.85'],
-        ['top:59%', $e3, '102%', 'ASSET-JAWA-TREE3.png',        '.8'],
-        ['bottom:1%', $e4, '80%','ASSET-JAWA-BUNGA4.png',       '.85'],
-      ];
+      $treeL='ASSET-JAWA-TREE.png';  $treeR='ASSET-JAWA-TREE3.png';
+      $flL='ASSET-JAWA-BUNGA1.png';  $flR='ASSET-JAWA-BUNGA4.png';
     } else {
-      $c = [
-        ['top:2%',  $e3, '100%', 'ASSET-JAWA-TREE3.png',        '.8'],
-        ['top:33%', $e4, '78%',  'ASSET-JAWA-BUNGA19.png',      '.85'],
-        ['top:61%', $e1, '94%',  'ASSET-JAWA-TREE.png',         '.8'],
-        ['bottom:2%', $e2, '74%','ASSET-JAWA-BUNGA5-768x330.png','.85'],
-      ];
+      $treeL='ASSET-JAWA-TREE3.png'; $treeR='ASSET-JAWA-TREE.png';
+      $flL='ASSET-JAWA-BUNGA19.png'; $flR='ASSET-JAWA-BUNGA5-768x330.png';
     }
-    $h = '<div class="garland orn pointer-events-none absolute top-0 bottom-0 w-[38%] '.($extra ?: 'z-0').'" data-speed="1.1" data-rot="0" style="'.$pos.'">';
-    foreach ($c as $cc) {
-      $h .= '<div class="bloom absolute" style="'.$cc[0].$cc[1].'width:'.$cc[2].'">'
-          . '<img src="'.$A.$cc[3].'" class="w-full h-auto" style="opacity:'.$cc[4].'" alt=""></div>';
-    }
+    $h = '<div class="corners orn pointer-events-none absolute inset-0 '.($extra ?: 'z-0').'" data-speed="1.15" data-rot="0">';
+    $h .= '<div class="bloom absolute" style="top:-3%;left:-9%;width:42%"><img src="'.$A.$treeL.'" class="w-full h-auto" style="opacity:.8" alt=""></div>';
+    $h .= '<div class="bloom absolute" style="top:-3%;right:-9%;width:42%"><img src="'.$A.$treeR.'" class="w-full h-auto" style="opacity:.8" alt=""></div>';
+    $h .= '<div class="bloom absolute" style="bottom:-3%;left:-9%;width:38%"><img src="'.$A.$flL.'" class="w-full h-auto" style="opacity:.85" alt=""></div>';
+    $h .= '<div class="bloom absolute" style="bottom:-3%;right:-9%;width:38%"><img src="'.$A.$flR.'" class="w-full h-auto" style="opacity:.85" alt=""></div>';
     return $h.'</div>';
   }
 }
@@ -238,8 +224,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-jawa-bg/90 via-transparent to-[#16100c]"></div>
     <canvas id="gold-particles" class="pointer-events-none absolute inset-0 w-full h-full z-10"></canvas>
 
-    {!! jwaGarland('left', 0, 'hero-ornament-left z-10 opacity-0') !!}
-    {!! jwaGarland('right', 0, 'hero-ornament-right z-10 opacity-0') !!}
+    {!! jwaCorners(0, 'hero-ornament z-10 opacity-0') !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-7-REV.png" class="orn hero-stagger hero-joglo pointer-events-none absolute w-[68%] max-w-[290px] opacity-0 z-10" alt=""  data-speed="0.6" data-rot="0" />
 
     <div class="hero-content relative z-20 flex flex-col items-center px-4">
@@ -252,11 +237,6 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
       </div>
     </div>
 
-    <div class="orn hero-ornament-bottom pointer-events-none absolute -bottom-[2%] inset-x-0 z-20 flex justify-between items-end opacity-0" data-speed="2" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA1.png" class="sway-node sway-fast w-[32%] -ml-[5%]" alt="" />
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA5-768x330.png" class="sway-node sway-subtle w-[54%] -mx-[9%]" alt="" />
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA1.png" class="sway-node sway-fast w-[32%] -mr-[5%] scale-x-[-1]" alt="" />
-    </div>
 
     <div class="hero-stagger absolute bottom-[13%] z-20 opacity-0">
       <p class="text-[9px] tracking-[0.4em] text-jawa-gold/70 uppercase">Geser ke bawah</p>
@@ -265,8 +245,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
 
   <!-- ================= 4. QUOTES ================= -->
   <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden">
-    {!! jwaGarland('left', 1) !!}
-    {!! jwaGarland('right', 1) !!}
+    {!! jwaCorners(1) !!}
 
     <div class="anim-scale relative z-10 w-full max-w-[340px] mx-auto card-dark px-6 pb-9 pt-7 mt-10">
       <div class="orn -mt-[4.7rem] mb-4" data-speed="0.8" data-rot="0">
@@ -286,11 +265,6 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     <div class="orn anim-right pointer-events-none absolute bottom-[9%] right-[2%] w-[26%] z-20" data-speed="1.8" data-rot="0">
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="sway-node sway-subtle w-full drop-shadow-xl" alt="" />
     </div>
-    <div class="orn anim-up pointer-events-none absolute -bottom-[2%] inset-x-0 z-30 flex justify-between items-end" data-speed="2.2" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA4.png" class="sway-node sway-fast w-[32%] -ml-[4%]" alt="" />
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA5-768x330.png" class="sway-node sway-subtle w-[52%] -mx-[7%]" alt="" />
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA4.png" class="sway-node sway-fast w-[32%] -mr-[4%] scale-x-[-1]" alt="" />
-    </div>
   </section>
 
   <!-- ================= 5. MEMPELAI ================= -->
@@ -301,8 +275,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     <div class="orn anim-right pointer-events-none absolute top-[20%] -right-[20%] w-[46%] opacity-15 z-0" data-speed="0.9" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full scale-x-[-1]" alt="" />
     </div>
-    {!! jwaGarland('left', 0) !!}
-    {!! jwaGarland('right', 0) !!}
+    {!! jwaCorners(0) !!}
 
     <div class="relative z-10 w-full max-w-[330px] mx-auto mb-10">
       <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn" alt=""  data-speed="0.7" data-rot="0" />
@@ -348,16 +321,11 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
       @endif
     </div>
 
-    <div class="orn anim-up pointer-events-none absolute -bottom-[3%] inset-x-0 z-20 flex justify-between items-end" data-speed="2" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA19.png" class="sway-node sway-fast w-[34%] -ml-[5%]" alt="" />
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA19.png" class="sway-node sway-fast w-[34%] -mr-[5%] scale-x-[-1]" alt="" />
-    </div>
   </section>
 
   <!-- ================= 6. ACARA & COUNTDOWN ================= -->
   <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden">
-    {!! jwaGarland('left', 1) !!}
-    {!! jwaGarland('right', 1) !!}
+    {!! jwaCorners(1) !!}
 
     <div class="relative z-10 w-full max-w-[340px] mx-auto">
       <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn" alt=""  data-speed="0.7" data-rot="0" />
@@ -407,17 +375,11 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
       <a href="{{ $gcalUrl }}" target="_blank" rel="noopener" class="anim-fade btn-outline-gold inline-block text-[10px] tracking-[0.25em] px-7 py-3 rounded-full mb-20">+ SIMPAN KE GOOGLE CALENDAR</a>
     </div>
 
-    <div class="orn anim-up pointer-events-none absolute -bottom-[2%] inset-x-0 z-20 flex justify-between items-end" data-speed="2" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA4.png" class="sway-node sway-fast w-[32%] -ml-[4%]" alt="" />
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA5-768x330.png" class="sway-node sway-subtle w-[52%] -mx-[7%]" alt="" />
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA4.png" class="sway-node sway-fast w-[32%] -mr-[4%] scale-x-[-1]" alt="" />
-    </div>
   </section>
 
   <!-- ================= 7. GALERI ================= -->
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden bg-jawa-bg/60">
-    {!! jwaGarland('left', 0) !!}
-    {!! jwaGarland('right', 0) !!}
+    {!! jwaCorners(0) !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">Galeri Kenangan</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Momen berharga kami</p>
@@ -443,8 +405,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     <div class="orn anim-right pointer-events-none absolute top-[14%] -right-[24%] w-[36%] opacity-10 z-0" data-speed="0.9" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full scale-x-[-1]" alt="" />
     </div>
-    {!! jwaGarland('left', 1) !!}
-    {!! jwaGarland('right', 1) !!}
+    {!! jwaCorners(1) !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">Kisah Cinta</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-10 relative z-10">Perjalanan kami berdua</p>
@@ -469,8 +430,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
 
   <!-- ================= 9. RSVP & BUKU TAMU ================= -->
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden bg-jawa-bg/60">
-    {!! jwaGarland('left', 0) !!}
-    {!! jwaGarland('right', 0) !!}
+    {!! jwaCorners(0) !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">RSVP &amp; Buku Tamu</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Konfirmasi kehadiran Anda</p>
@@ -505,8 +465,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
 
   <!-- ================= 10. AMPLOP DIGITAL ================= -->
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden">
-    {!! jwaGarland('left', 1) !!}
-    {!! jwaGarland('right', 1) !!}
+    {!! jwaCorners(1) !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-3 relative z-10">Amplop Digital</h2>
     <p class="anim-fade font-serif italic text-stone-300 text-[15px] leading-relaxed mb-8 max-w-[300px] relative z-10">Doa restu Anda adalah hadiah terindah. Namun jika berkenan memberi tanda kasih, kami sediakan dengan penuh syukur.</p>
@@ -542,10 +501,6 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     </div>
     @endif
 
-    <div class="orn anim-up pointer-events-none absolute -bottom-[2%] inset-x-0 z-20 flex justify-between items-end opacity-80" data-speed="2" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA19.png" class="sway-node sway-fast w-[34%] -ml-[5%]" alt="" />
-      <img src="{{ $ASSET }}ASSET-JAWA-BUNGA19.png" class="sway-node sway-fast w-[34%] -mr-[5%] scale-x-[-1]" alt="" />
-    </div>
   </section>
 
   <!-- ================= 11. FOOTER ================= -->
@@ -648,9 +603,7 @@ function initSectionScrollAnimations(){
 
 /* ---------- 4. BUKA UNDANGAN ---------- */
 document.getElementById("btn-open").addEventListener("click",()=>{
-  gsap.set(".hero-ornament-left",{x:-40,opacity:0});
-  gsap.set(".hero-ornament-right",{x:40,opacity:0});
-  gsap.set(".hero-ornament-bottom",{y:36,opacity:0});
+  gsap.set(".hero-ornament",{opacity:0});
   gsap.set(".hero-stagger",{y:22,opacity:0});
   const tl=gsap.timeline({ onComplete:()=>{
     document.body.classList.remove("is-locked");
@@ -664,8 +617,7 @@ document.getElementById("btn-open").addEventListener("click",()=>{
     .to(["#gate-right-tree","#gate-right-gunungan"],{xPercent:38,opacity:0,duration:1,ease:"expo.inOut"},.12)
     .to("#cover-gate",{opacity:0,duration:.6,ease:"power2.inOut"},.45)
     .to("#hero-bg",{scale:1,duration:1.8,ease:"expo.out"},.5)
-    .to([".hero-ornament-left",".hero-ornament-right"],{x:0,opacity:1,duration:1.2,ease:"expo.out"},.55)
-    .to(".hero-ornament-bottom",{y:0,opacity:1,duration:1.1,ease:"expo.out"},.6)
+    .to(".hero-ornament",{opacity:1,duration:1.2,ease:"expo.out"},.55)
     .to(".hero-joglo",{opacity:.32,duration:1,ease:"power2.out"},.62)
     .to(".hero-stagger:not(.hero-joglo)",{y:0,opacity:1,duration:.9,stagger:.1,ease:"power3.out"},.65);
 });
