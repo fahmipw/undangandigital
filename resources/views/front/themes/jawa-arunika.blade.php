@@ -30,15 +30,47 @@ if (!function_exists('jwaTime')) {
   }
 }
 $GLOBALS['jwa_asset_base'] = '';
+if (!function_exists('jwaFiligree')) {
+  /* Ornamen filigree emas sudut — SVG digambar khusus, tanpa library luar */
+  function jwaFiligree($variant = 0, $mirror = false) {
+    $mir = $mirror ? ' style="transform:scaleX(-1)"' : '';
+    if ($variant % 2 == 0) {
+      $inner = '<defs><linearGradient id="jgoldA" x1="0" y1="200" x2="200" y2="0" gradientUnits="userSpaceOnUse">'
+        .'<stop offset="0" stop-color="#9c7618"/><stop offset=".55" stop-color="#d4af37"/><stop offset="1" stop-color="#f9e6a7"/></linearGradient></defs>'
+        .'<g stroke="url(#jgoldA)" stroke-width="2.5" stroke-linecap="round" fill="none">'
+        .'<path d="M16 184 C16 118 44 68 100 42 C134 26 160 22 186 20"/>'
+        .'<path d="M16 184 C54 174 92 156 120 128 C138 110 148 92 152 72"/>'
+        .'<path d="M44 184 C62 150 92 130 122 122" stroke-width="2"/></g>'
+        .'<g fill="url(#jgoldA)">'
+        .'<ellipse cx="54" cy="116" rx="10" ry="4.5" transform="rotate(-38 54 116)"/>'
+        .'<ellipse cx="88" cy="80" rx="10" ry="4.5" transform="rotate(-28 88 80)"/>'
+        .'<ellipse cx="128" cy="56" rx="9" ry="4" transform="rotate(-18 128 56)"/>'
+        .'<ellipse cx="72" cy="156" rx="9" ry="4" transform="rotate(-52 72 156)"/>'
+        .'<ellipse cx="106" cy="136" rx="8" ry="3.6" transform="rotate(-45 106 136)"/>'
+        .'<circle cx="186" cy="20" r="4"/><circle cx="152" cy="72" r="3"/>'
+        .'<circle cx="16" cy="184" r="4"/><circle cx="122" cy="122" r="2.5"/></g>';
+    } else {
+      $inner = '<defs><linearGradient id="jgoldB" x1="0" y1="200" x2="200" y2="0" gradientUnits="userSpaceOnUse">'
+        .'<stop offset="0" stop-color="#9c7618"/><stop offset=".55" stop-color="#d4af37"/><stop offset="1" stop-color="#f9e6a7"/></linearGradient></defs>'
+        .'<g stroke="url(#jgoldB)" stroke-width="2" fill="none" stroke-linecap="round">'
+        .'<path d="M18 182 A150 150 0 0 1 168 32"/><path d="M18 182 A105 105 0 0 1 123 77"/>'
+        .'<path d="M18 182 A60 60 0 0 1 78 122"/><path d="M18 182 L168 32" stroke-width="1" opacity=".55"/></g>'
+        .'<g fill="url(#jgoldB)">'
+        .'<circle cx="18" cy="182" r="4"/><circle cx="168" cy="32" r="4"/>'
+        .'<path d="M93 100 l7 7 -7 7 -7 -7 z"/>'
+        .'<circle cx="60" cy="140" r="2.5"/><circle cx="140" cy="60" r="2.5"/>'
+        .'<circle cx="100" cy="50" r="2.5"/><circle cx="50" cy="100" r="2.5"/></g>';
+    }
+    return '<svg'.$mir.' viewBox="0 0 200 200" fill="none" class="w-full h-auto" style="filter:drop-shadow(0 0 6px rgba(212,175,55,.35))">'.$inner.'</svg>';
+  }
+}
 if (!function_exists('jwaCorners')) {
   /* Ornamen di sekeliling frame: $items = all|trees|flowers */
   function jwaCorners($variant = 0, $extra = '', $items = 'all') {
     $A = $GLOBALS['jwa_asset_base'];
     if ($variant % 2 == 0) {
-      $treeL='ASSET-JAWA-TREE.png';  $treeR='ASSET-JAWA-TREE3.png';
       $flL='ASSET-JAWA-BUNGA1.png';  $flR='ASSET-JAWA-BUNGA4.png';
     } else {
-      $treeL='ASSET-JAWA-TREE3.png'; $treeR='ASSET-JAWA-TREE.png';
       $flL='ASSET-JAWA-BUNGA19.png'; $flR='ASSET-JAWA-BUNGA5-768x330.png';
     }
     $bloom = function($pos, $img, $op) use ($A) {
@@ -46,8 +78,8 @@ if (!function_exists('jwaCorners')) {
     };
     $h = '<div class="corners orn pointer-events-none absolute inset-0 '.($extra ?: 'z-0').'" data-speed="1.15" data-rot="0">';
     if ($items === 'all' || $items === 'trees') {
-      $h .= $bloom('top:-3%;left:-9%;width:42%', $treeL, '.8');
-      $h .= $bloom('top:-3%;right:-9%;width:42%', $treeR, '.8');
+      $h .= '<div class="bloom absolute" style="top:-4%;left:-6%;width:44%">'.jwaFiligree($variant).'</div>';
+      $h .= '<div class="bloom absolute" style="top:-4%;right:-6%;width:44%">'.jwaFiligree($variant, true).'</div>';
     }
     if ($items === 'all' || $items === 'flowers') {
       if ($items === 'flowers') { /* sudut saja, kecil, tidak menutupi teks */
@@ -196,11 +228,11 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     <img src="{{ $ASSET }}BG-ID-4.png" class="pointer-events-none absolute inset-0 w-full h-full object-cover opacity-20" alt="" />
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/85 via-black/25 to-black/90"></div>
 
-    <div id="gate-left-tree" class="pointer-events-none absolute -left-[16%] top-[3%] w-[50%] opacity-40">
-      <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full h-auto" alt="" />
+    <div id="gate-left-tree" class="pointer-events-none absolute left-[3%] top-[2%] w-[36%] opacity-80">
+      {!! jwaFiligree(0) !!}
     </div>
-    <div id="gate-right-tree" class="pointer-events-none absolute -right-[16%] top-[3%] w-[50%] opacity-40">
-      <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full h-auto scale-x-[-1]" alt="" />
+    <div id="gate-right-tree" class="pointer-events-none absolute right-[3%] top-[2%] w-[36%] opacity-80">
+      {!! jwaFiligree(0, true) !!}
     </div>
     <div id="gate-left-gunungan" class="pointer-events-none absolute -left-[14%] bottom-[2%] w-[44%] opacity-50">
       <img src="{{ $ASSET }}1225-GUNUNGAN-JAWA-576x1024.png" class="w-full h-auto" alt="" />
