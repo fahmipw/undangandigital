@@ -339,35 +339,45 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
         <div class="card-dark py-4"><div class="font-cinzel text-[1.5rem] text-gold-gradient" id="cd-s">00</div><div class="text-[9px] tracking-[0.25em] text-stone-400 mt-1">DETIK</div></div>
       </div>
 
-      <div class="anim-scale card-dark p-6 mb-5 text-center relative overflow-hidden">
-        <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="orn absolute -right-6 -top-4 w-20 opacity-15 pointer-events-none" alt=""  data-speed="0.5" data-rot="0" />
-        <h3 class="font-cinzel text-lg text-jawa-lightgold mb-1">Akad Nikah</h3>
-        <p class="text-[11px] text-jawa-gold tracking-[0.25em] uppercase mb-3">{{ jwaDate($wDate) }}</p>
-        <p class="text-xs text-stone-300 mb-1">{{ $wTime }} &ndash; {{ $wTimeE }} {{ $tzLabel }}</p>
-        <p class="text-xs text-stone-400 leading-relaxed">{{ jwaGet('wedding_location','Kediaman Mempelai') }}</p>
+<div class="anim-scale card-dark px-6 py-8 mb-5 text-center">
+        <h3 class="font-serif text-[1.3rem] tracking-[0.3em] text-jawa-lightgold" style="padding-left:0.3em">AKAD NIKAH</h3>
+        <div class="hairline-gold w-28 mx-auto my-5"></div>
+        <p class="font-serif text-[1.1rem] text-stone-100">{{ jwaDate($wDate) }}</p>
+        <p class="text-[13px] text-stone-400 mt-1.5">{{ $wTime }} &ndash; {{ $wTimeE }} {{ $tzLabel }}</p>
+        <div class="flex items-center justify-center gap-3 my-6">
+          <div class="hairline-gold w-14"></div>
+          <svg class="w-5 h-5 text-jawa-gold" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M4 21V10l8-6 8 6v11M9 21v-6h6v6M9 13h.01M15 13h.01"/></svg>
+          <div class="hairline-gold w-14"></div>
+        </div>
+        <p class="font-semibold text-[15px] text-jawa-lightgold leading-snug px-2">{{ jwaGet('wedding_location','Kediaman Mempelai') }}</p>
         @if(!$sameLoc && jwaGet('wedding_map_link'))
-        <a href="{{ jwaGet('wedding_map_link') }}" target="_blank" rel="noopener" class="btn-outline-gold inline-block mt-4 text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full">LIHAT PETA</a>
+        <a href="{{ jwaGet('wedding_map_link') }}" target="_blank" rel="noopener" class="btn-gold-gradient inline-flex items-center gap-2 mt-6 text-stone-950 text-[11px] font-semibold tracking-[0.2em] pl-[0.2em] px-8 py-3 rounded-full"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>LIHAT LOKASI</a>
         @endif
       </div>
 
-      <div class="anim-scale card-dark p-6 mb-5 text-center relative overflow-hidden">
-        <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="orn absolute -right-6 -top-4 w-20 opacity-15 pointer-events-none" alt=""  data-speed="0.5" data-rot="0" />
-        <h3 class="font-cinzel text-lg text-jawa-lightgold mb-1">Resepsi Pernikahan</h3>
-        <p class="text-[11px] text-jawa-gold tracking-[0.25em] uppercase mb-3">{{ jwaDate($rDate) }}</p>
-        <p class="text-xs text-stone-300 mb-1">{{ $rTimeS }} &ndash; {{ $rTimeE }} {{ $tzLabel }}</p>
-        <p class="text-xs text-stone-400 leading-relaxed">{{ jwaGet('reception_location', jwaGet('wedding_location','Kediaman Mempelai')) }}</p>
-        <div class="mt-4 flex flex-wrap justify-center gap-2">
+<div class="anim-scale card-dark px-6 py-8 mb-5 text-center">
+        <h3 class="font-serif text-[1.3rem] tracking-[0.3em] text-jawa-lightgold" style="padding-left:0.3em">RESEPSI</h3>
+        <div class="hairline-gold w-28 mx-auto my-5"></div>
+        <p class="font-serif text-[1.1rem] text-stone-100">{{ jwaDate($rDate) }}</p>
+        <p class="text-[13px] text-stone-400 mt-1.5">{{ $rTimeS }} &ndash; {{ $rTimeE }} {{ $tzLabel }}</p>
+        <div class="flex items-center justify-center gap-3 my-6">
+          <div class="hairline-gold w-14"></div>
+          <svg class="w-5 h-5 text-jawa-gold" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M4 21V10l8-6 8 6v11M9 21v-6h6v6M9 13h.01M15 13h.01"/></svg>
+          <div class="hairline-gold w-14"></div>
+        </div>
+        <p class="font-semibold text-[15px] text-jawa-lightgold leading-snug px-2">{{ jwaGet('reception_location', jwaGet('wedding_location','Kediaman Mempelai')) }}</p>
+        <div class="mt-6 flex flex-wrap justify-center gap-2">
           @if($sameLoc)
             @if($mainMapLink)
-            <a href="{{ $mainMapLink }}" target="_blank" rel="noopener" class="btn-gold-gradient text-stone-950 text-[10px] font-semibold tracking-[0.25em] px-6 py-2.5 rounded-full">LIHAT PETA LOKASI</a>
+            <a href="{{ $mainMapLink }}" target="_blank" rel="noopener" class="btn-gold-gradient inline-flex items-center gap-2 text-stone-950 text-[11px] font-semibold tracking-[0.2em] px-8 py-3 rounded-full"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>LIHAT PETA LOKASI</a>
             @endif
           @else
             @if(jwaGet('reception_map_link'))
-            <a href="{{ jwaGet('reception_map_link') }}" target="_blank" rel="noopener" class="btn-gold-gradient text-stone-950 text-[10px] font-semibold tracking-[0.25em] px-6 py-2.5 rounded-full">LIHAT PETA</a>
+            <a href="{{ jwaGet('reception_map_link') }}" target="_blank" rel="noopener" class="btn-gold-gradient inline-flex items-center gap-2 text-stone-950 text-[11px] font-semibold tracking-[0.2em] px-8 py-3 rounded-full"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>LIHAT LOKASI</a>
             @endif
           @endif
           @if(jwaGet('live_stream_link'))
-          <a href="{{ jwaGet('live_stream_link') }}" target="_blank" rel="noopener" class="btn-outline-gold text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full">LIVE STREAMING</a>
+          <a href="{{ jwaGet('live_stream_link') }}" target="_blank" rel="noopener" class="btn-outline-gold text-[11px] tracking-[0.2em] px-7 py-3 rounded-full">LIVE STREAMING</a>
           @endif
         </div>
       </div>
