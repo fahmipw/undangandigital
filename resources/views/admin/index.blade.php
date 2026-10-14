@@ -897,6 +897,7 @@
                             <option value="stardew-adventure">Premium — Stardew Adventure (Main)</option>
                             <option value="jawa-cinematic">Premium — Jawa Cinematic (Mewah)</option>
                             <option value="jawa-arunika">Premium — Jawa Arunika</option>
+                            <option value="jawa-klasik">Premium — Jawa Klasik</option>
                         </select>
                     </div>
                     <!-- Preset Themes Selection -->
