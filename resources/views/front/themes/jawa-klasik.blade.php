@@ -232,10 +232,10 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 4. KARTU JUDUL GUNUNGAN ================= -->
   <section id="sec-home" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden batik-bg" style="background-color:#31220f">
-    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-10">
+    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-20">
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-65 scale-x-[-1]" data-speed="1.3" alt="" />
     </div>
-    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-10">
+    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-20">
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-65" data-speed="1.3" alt="" />
     </div>
 
@@ -249,10 +249,10 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 5. QUOTES ================= -->
   <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:#241811">
-    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-10">
+    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-20">
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-65 scale-x-[-1]" data-speed="1.3" alt="" />
     </div>
-    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-10">
+    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-20">
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-65" data-speed="1.3" alt="" />
     </div>
 
@@ -388,10 +388,10 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 8. GALERI ================= -->
   <section id="sec-galeri" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden batik-bg" style="background-color:#2a1c11">
-    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-10">
+    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-20">
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-65 scale-x-[-1]" data-speed="1.3" alt="" />
     </div>
-    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-10">
+    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-20">
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-65" data-speed="1.3" alt="" />
     </div>
 
@@ -438,10 +438,10 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 10. WEDDING GIFT ================= -->
   <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden batik-bg" style="background-color:#31220f">
-    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-10">
+    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-20">
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-65 scale-x-[-1]" data-speed="1.3" alt="" />
     </div>
-    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-10">
+    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-20">
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-65" data-speed="1.3" alt="" />
     </div>
 
