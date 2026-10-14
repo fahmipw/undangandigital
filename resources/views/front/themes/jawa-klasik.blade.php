@@ -158,7 +158,6 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
     ::-webkit-scrollbar{ width:0; background:transparent; }
     .orn{ will-change:transform; }
     .gold-tint{ filter:sepia(1) saturate(2.8) hue-rotate(-12deg) brightness(.92) drop-shadow(0 10px 25px rgba(212,175,55,.4)) !important; }
-    .gold-tint-deep{ filter:sepia(1) saturate(3.5) hue-rotate(-14deg) brightness(.78) contrast(1.12) drop-shadow(0 10px 25px rgba(212,175,55,.45)) !important; }
     @keyframes swaySlow{ 0%,100%{ transform:rotate(-2deg); } 50%{ transform:rotate(2deg); } }
     .sway-slow{ animation:swaySlow 9s ease-in-out infinite; transform-origin:50% 100%; }
     @media (prefers-reduced-motion:reduce){ .sway-slow{ animation:none !important; } }
@@ -169,7 +168,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 1. PRELOADER ================= -->
   <section id="preloader" class="fixed inset-0 z-50 mx-auto max-w-[430px] flex flex-col items-center justify-center bg-klasik-deep px-6 text-center">
-    <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" alt="Gunungan" class="gold-tint-deep w-[26%] max-w-[110px] h-auto mb-5 drop-shadow-[0_8px_20px_rgba(212,175,55,0.35)]" />
+    <img src="{{ asset('images/gunungan-gold.png') }}" alt="Gunungan" class="w-[26%] max-w-[110px] h-auto mb-5 drop-shadow-[0_8px_20px_rgba(212,175,55,0.35)]" />
     <p class="text-[10px] uppercase tracking-[0.4em] text-klasik-gold mb-2">Wedding Invitation</p>
     <h1 class="font-script text-3xl text-gold-grad mb-6">{{ $groomNick }} &amp; {{ $brideNick }}</h1>
     <div class="w-40 h-[2px] bg-stone-800 rounded-full overflow-hidden mb-2">
@@ -191,7 +190,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
     </div>
 
     <div id="gate-center" class="relative z-10">
-      <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" alt="Gunungan" class="gold-tint-deep sway-slow w-[34%] max-w-[140px] h-auto mx-auto mb-5 drop-shadow-[0_10px_25px_rgba(212,175,55,0.4)]" />
+      <img src="{{ asset('images/gunungan-gold.png') }}" alt="Gunungan" class="sway-slow w-[34%] max-w-[140px] h-auto mx-auto mb-5 drop-shadow-[0_10px_25px_rgba(212,175,55,0.4)]" />
       <div class="card-klasik mx-auto max-w-[300px] px-6 py-5">
         <p class="text-[10px] tracking-[0.3em] uppercase text-klasik-gold/80 mb-2">Kepada Yth<br>Bapak/Ibu/Saudara/i</p>
         <p class="font-serif text-xl font-semibold text-klasik-lightgold">{{ $toName }}</p>
@@ -241,7 +240,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
     </div>
 
     <div class="anim-zoom relative z-10 card-klasik w-full max-w-[330px] px-6 pt-10 pb-8">
-      <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" alt="Gunungan" class="gold-tint-deep anim-zoom w-[52%] max-w-[170px] h-auto mx-auto mb-4 drop-shadow-[0_10px_25px_rgba(212,175,55,0.4)]" />
+      <img src="{{ asset('images/gunungan-gold.png') }}" alt="Gunungan" class="anim-zoom w-[52%] max-w-[170px] h-auto mx-auto mb-4 drop-shadow-[0_10px_25px_rgba(212,175,55,0.4)]" />
       <h2 class="anim-zoom font-script text-[2.4rem] leading-tight text-gold-grad">{{ $groomNick }} &amp; {{ $brideNick }}</h2>
       <div class="hairline w-28 mx-auto my-4"></div>
       <p class="anim-fade font-serif text-lg text-klasik-cream">{{ jklDate($rDate) }}</p>
@@ -320,7 +319,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
   <!-- ================= 7. COUNTDOWN ================= -->
   <section id="sec-acara" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:#241811">
 
-    <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="gold-tint-deep orn anim-zoom relative z-10 w-[30%] max-w-[120px] h-auto mb-4" data-speed="0.8" alt="Gunungan" />
+    <img src="{{ asset('images/gunungan-gold.png') }}" class="orn anim-zoom relative z-10 w-[30%] max-w-[120px] h-auto mb-4" data-speed="0.8" alt="Gunungan" />
     <h2 class="anim-zoom font-script text-[2.2rem] text-gold-grad mb-8 relative z-10">Counting The Days</h2>
     <div class="anim-zoom relative z-10 grid grid-cols-4 gap-2 w-full max-w-[340px] mb-8">
       <div class="card-klasik py-4"><div class="font-serif text-[1.6rem] font-semibold text-gold-grad" id="cd-d">00</div><div class="text-[9px] tracking-[0.25em] text-klasik-cream/60 mt-1">HARI</div></div>
@@ -396,7 +395,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-65" data-speed="1.3" alt="" />
     </div>
 
-    <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="gold-tint-deep orn anim-zoom relative z-10 w-[26%] max-w-[104px] h-auto mb-4" data-speed="0.8" alt="Gunungan" />
+    <img src="{{ asset('images/gunungan-gold.png') }}" class="orn anim-zoom relative z-10 w-[26%] max-w-[104px] h-auto mb-4" data-speed="0.8" alt="Gunungan" />
     <h2 class="anim-zoom font-script text-[2.2rem] text-gold-grad mb-2 relative z-10">Memorable Moment</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-klasik-gold/80 mb-8 relative z-10">Galeri kenangan kami</p>
     @if(!empty($gallery) && count($gallery))
@@ -446,7 +445,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-65" data-speed="1.3" alt="" />
     </div>
 
-    <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="gold-tint-deep orn anim-zoom relative z-10 w-[26%] max-w-[104px] h-auto mb-4" data-speed="0.8" alt="Gunungan" />
+    <img src="{{ asset('images/gunungan-gold.png') }}" class="orn anim-zoom relative z-10 w-[26%] max-w-[104px] h-auto mb-4" data-speed="0.8" alt="Gunungan" />
     <h2 class="anim-zoom font-script text-[2.2rem] text-gold-grad mb-3 relative z-10">Wedding Gift</h2>
     <p class="anim-fade font-serif italic text-klasik-cream/70 text-[15px] leading-relaxed mb-8 max-w-[300px] relative z-10">Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Dan jika memberi adalah ungkapan tanda kasih Anda, Anda dapat memberi kado secara cashless.</p>
     @if(!empty($giftRecipient))
@@ -511,7 +510,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 12. FOOTER ================= -->
   <footer class="relative py-16 px-6 flex flex-col items-center text-center overflow-hidden batik-bg" style="background-color:#1e130b">
-    <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="gold-tint-deep w-[24%] max-w-[96px] h-auto mb-4 opacity-90" alt="Gunungan" />
+    <img src="{{ asset('images/gunungan-gold.png') }}" class="w-[24%] max-w-[96px] h-auto mb-4 opacity-90" alt="Gunungan" />
     <p class="font-serif italic text-klasik-cream/70 text-[15px] leading-relaxed max-w-[300px] mb-4">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan do&rsquo;a restu kepada kedua mempelai.</p>
     <h2 class="font-script text-[2rem] text-gold-grad mb-2">{{ $groomNick }} &amp; {{ $brideNick }}</h2>
     <p class="text-[10px] tracking-[0.3em] uppercase text-klasik-gold/60">Terima kasih atas do&rsquo;a &amp; kehadirannya</p>
