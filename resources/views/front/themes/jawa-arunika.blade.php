@@ -241,7 +241,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
     </div>
 
     <div class="anim-scale relative z-10 w-full max-w-[340px] mx-auto card-dark px-6 pb-9 pt-7 mt-10">
-      <div class="orn -mt-[4.7rem] mb-4" data-speed="0.8" data-rot="8">
+      <div class="orn -mt-[4.7rem] mb-4" data-speed="0.8" data-rot="0">
         <img src="{{ $ASSET }}1225-GUNUNGAN-JAWA-576x1024.png" class="sway-node sway-subtle w-[30%] max-w-[100px] mx-auto drop-shadow-[0_8px_18px_rgba(212,175,55,0.35)]" alt="Gunungan" />
       </div>
       <h3 class="anim-fade font-cinzel text-xl text-gold-gradient mb-4">With Love</h3>
@@ -267,10 +267,10 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 5. MEMPELAI ================= -->
   <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden bg-jawa-bg/60">
-    <div class="orn anim-left pointer-events-none absolute top-[20%] -left-[20%] w-[46%] opacity-15 z-0" data-speed="0.9" data-rot="6">
+    <div class="orn anim-left pointer-events-none absolute top-[20%] -left-[20%] w-[46%] opacity-15 z-0" data-speed="0.9" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full" alt="" />
     </div>
-    <div class="orn anim-right pointer-events-none absolute top-[20%] -right-[20%] w-[46%] opacity-15 z-0" data-speed="0.9" data-rot="-6">
+    <div class="orn anim-right pointer-events-none absolute top-[20%] -right-[20%] w-[46%] opacity-15 z-0" data-speed="0.9" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full scale-x-[-1]" alt="" />
     </div>
 
@@ -346,7 +346,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
       </div>
 
       <div class="anim-scale card-dark p-6 mb-5 text-center relative overflow-hidden">
-        <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="orn absolute -right-6 -top-4 w-20 opacity-15 pointer-events-none" alt=""  data-speed="0.5" data-rot="10" />
+        <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="orn absolute -right-6 -top-4 w-20 opacity-15 pointer-events-none" alt=""  data-speed="0.5" data-rot="0" />
         <h3 class="font-cinzel text-lg text-jawa-lightgold mb-1">Akad Nikah</h3>
         <p class="text-[11px] text-jawa-gold tracking-[0.25em] uppercase mb-3">{{ jwaDate($wDate) }}</p>
         <p class="text-xs text-stone-300 mb-1">{{ $wTime }} &ndash; {{ $wTimeE }} {{ $tzLabel }}</p>
@@ -357,7 +357,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
       </div>
 
       <div class="anim-scale card-dark p-6 mb-5 text-center relative overflow-hidden">
-        <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="orn absolute -right-6 -top-4 w-20 opacity-15 pointer-events-none" alt=""  data-speed="0.5" data-rot="10" />
+        <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="orn absolute -right-6 -top-4 w-20 opacity-15 pointer-events-none" alt=""  data-speed="0.5" data-rot="0" />
         <h3 class="font-cinzel text-lg text-jawa-lightgold mb-1">Resepsi Pernikahan</h3>
         <p class="text-[11px] text-jawa-gold tracking-[0.25em] uppercase mb-3">{{ jwaDate($rDate) }}</p>
         <p class="text-xs text-stone-300 mb-1">{{ $rTimeS }} &ndash; {{ $rTimeE }} {{ $tzLabel }}</p>
@@ -409,10 +409,10 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 8. KISAH CINTA ================= -->
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden">
-    <div class="orn anim-left pointer-events-none absolute top-[14%] -left-[24%] w-[36%] opacity-10 z-0" data-speed="0.9" data-rot="6">
+    <div class="orn anim-left pointer-events-none absolute top-[14%] -left-[24%] w-[36%] opacity-10 z-0" data-speed="0.9" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full" alt="" />
     </div>
-    <div class="orn anim-right pointer-events-none absolute top-[14%] -right-[24%] w-[36%] opacity-10 z-0" data-speed="0.9" data-rot="-6">
+    <div class="orn anim-right pointer-events-none absolute top-[14%] -right-[24%] w-[36%] opacity-10 z-0" data-speed="0.9" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full scale-x-[-1]" alt="" />
     </div>
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
@@ -522,7 +522,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 11. FOOTER ================= -->
   <footer class="relative px-6 pt-20 pb-28 text-center overflow-hidden bg-jawa-bg/80">
-    <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="orn sway-node sway-subtle w-[26%] max-w-[110px] mx-auto mb-5 opacity-90" alt=""  data-speed="0.8" data-rot="10" />
+    <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="orn sway-node sway-subtle w-[26%] max-w-[110px] mx-auto mb-5 opacity-90" alt=""  data-speed="0.8" data-rot="0" />
     <p class="anim-fade font-serif italic text-stone-300 text-[16px] max-w-[300px] mx-auto leading-relaxed mb-6">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kami.</p>
     <p class="anim-fade text-stone-500 text-xs mb-2 tracking-[0.2em] uppercase">Kami yang berbahagia,</p>
     <h4 class="anim-fade font-cinzel text-[1.7rem] text-gold-gradient mb-6">{{ $groomNick }} &amp; {{ $brideNick }}</h4>
