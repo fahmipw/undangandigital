@@ -198,19 +198,19 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 3. HERO ================= -->
   <section id="hero-section" class="relative h-[100dvh] min-h-[600px] w-full flex flex-col items-center justify-center text-center px-6 overflow-hidden">
-    <img id="hero-bg" src="{{ $ASSET }}BG-ID-4.png" class="pointer-events-none absolute inset-0 w-full h-full object-cover opacity-25 scale-110" alt="" />
+    <img id="hero-bg" src="{{ $ASSET }}BG-ID-4.png" class="orn pointer-events-none absolute inset-0 w-full h-full object-cover opacity-25 scale-110" alt=""  data-speed="0.4" data-rot="0" />
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-jawa-bg/90 via-transparent to-[#16100c]"></div>
     <canvas id="gold-particles" class="pointer-events-none absolute inset-0 w-full h-full z-10"></canvas>
 
-    <div class="hero-ornament-left pointer-events-none absolute -left-[16%] top-[1%] w-[50%] z-10 opacity-0">
+    <div class="orn hero-ornament-left pointer-events-none absolute -left-[16%] top-[1%] w-[50%] z-10 opacity-0" data-speed="1.3" data-rot="-4">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full h-auto opacity-70" alt="" />
     </div>
-    <div class="hero-ornament-right pointer-events-none absolute -right-[16%] top-[1%] w-[50%] z-10 opacity-0">
+    <div class="orn hero-ornament-right pointer-events-none absolute -right-[16%] top-[1%] w-[50%] z-10 opacity-0" data-speed="1.5" data-rot="4">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full h-auto opacity-70" alt="" />
     </div>
-    <img src="{{ $ASSET }}ASSET-JAWA-REV-7-REV.png" class="hero-stagger hero-joglo pointer-events-none absolute w-[68%] max-w-[290px] opacity-0 z-10" alt="" />
+    <img src="{{ $ASSET }}ASSET-JAWA-REV-7-REV.png" class="orn hero-stagger hero-joglo pointer-events-none absolute w-[68%] max-w-[290px] opacity-0 z-10" alt=""  data-speed="0.6" data-rot="0" />
 
-    <div class="relative z-20 flex flex-col items-center px-4">
+    <div class="hero-content relative z-20 flex flex-col items-center px-4">
       <p class="hero-stagger text-[10px] uppercase tracking-[0.42em] text-jawa-gold mb-4 opacity-0">The Wedding Of</p>
       <h2 class="hero-stagger font-cinzel text-[clamp(2rem,8.5vw,2.9rem)] leading-tight text-gold-gradient opacity-0">{{ $groomNick }}</h2>
       <span class="hero-stagger font-serif italic text-2xl text-jawa-lightgold my-2 opacity-0">&amp;</span>
@@ -220,28 +220,28 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
       </div>
     </div>
 
-    <div class="hero-ornament-bottom pointer-events-none absolute -bottom-[2%] inset-x-0 z-20 flex justify-between items-end opacity-0">
+    <div class="orn hero-ornament-bottom pointer-events-none absolute -bottom-[2%] inset-x-0 z-20 flex justify-between items-end opacity-0" data-speed="2" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA1.png" class="sway-node sway-fast w-[32%] -ml-[5%]" alt="" />
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA5-768x330.png" class="sway-node sway-subtle w-[54%] -mx-[9%]" alt="" />
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA1.png" class="sway-node sway-fast w-[32%] -mr-[5%] scale-x-[-1]" alt="" />
     </div>
 
     <div class="hero-stagger absolute bottom-[13%] z-20 opacity-0">
-      <p class="text-[9px] tracking-[0.4em] text-jawa-gold/70 uppercase animate-bounce">Geser ke bawah</p>
+      <p class="text-[9px] tracking-[0.4em] text-jawa-gold/70 uppercase">Geser ke bawah</p>
     </div>
   </section>
 
   <!-- ================= 4. QUOTES ================= -->
   <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden">
-    <div class="anim-left pointer-events-none absolute -left-[16%] top-[5%] w-[48%] z-0">
+    <div class="orn anim-left pointer-events-none absolute -left-[16%] top-[5%] w-[48%] z-0" data-speed="1.2" data-rot="-5">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full opacity-60" alt="" />
     </div>
-    <div class="anim-right pointer-events-none absolute -right-[16%] top-[5%] w-[48%] z-0">
+    <div class="orn anim-right pointer-events-none absolute -right-[16%] top-[5%] w-[48%] z-0" data-speed="1.4" data-rot="5">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full opacity-60 scale-x-[-1]" alt="" />
     </div>
 
     <div class="anim-scale relative z-10 w-full max-w-[340px] mx-auto card-dark px-6 pb-9 pt-7 mt-10">
-      <div class="-mt-[4.7rem] mb-4">
+      <div class="orn -mt-[4.7rem] mb-4" data-speed="0.8" data-rot="8">
         <img src="{{ $ASSET }}1225-GUNUNGAN-JAWA-576x1024.png" class="sway-node sway-subtle w-[30%] max-w-[100px] mx-auto drop-shadow-[0_8px_18px_rgba(212,175,55,0.35)]" alt="Gunungan" />
       </div>
       <h3 class="anim-fade font-cinzel text-xl text-gold-gradient mb-4">With Love</h3>
@@ -252,13 +252,13 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
       <p class="anim-fade text-[11px] font-semibold tracking-[0.25em] uppercase text-jawa-gold">QS. Ar-R&umacr;m : 21</p>
     </div>
 
-    <div class="anim-left pointer-events-none absolute bottom-[9%] left-[2%] w-[26%] z-20">
+    <div class="orn anim-left pointer-events-none absolute bottom-[9%] left-[2%] w-[26%] z-20" data-speed="1.6" data-rot="0">
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG-1.png" class="sway-node sway-subtle w-full drop-shadow-xl" alt="" />
     </div>
-    <div class="anim-right pointer-events-none absolute bottom-[9%] right-[2%] w-[26%] z-20">
+    <div class="orn anim-right pointer-events-none absolute bottom-[9%] right-[2%] w-[26%] z-20" data-speed="1.8" data-rot="0">
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="sway-node sway-subtle w-full drop-shadow-xl" alt="" />
     </div>
-    <div class="anim-up pointer-events-none absolute -bottom-[2%] inset-x-0 z-30 flex justify-between items-end">
+    <div class="orn anim-up pointer-events-none absolute -bottom-[2%] inset-x-0 z-30 flex justify-between items-end" data-speed="2.2" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA4.png" class="sway-node sway-fast w-[32%] -ml-[4%]" alt="" />
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA5-768x330.png" class="sway-node sway-subtle w-[52%] -mx-[7%]" alt="" />
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA4.png" class="sway-node sway-fast w-[32%] -mr-[4%] scale-x-[-1]" alt="" />
@@ -267,15 +267,15 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 5. MEMPELAI ================= -->
   <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden bg-jawa-bg/60">
-    <div class="anim-left pointer-events-none absolute top-[20%] -left-[20%] w-[46%] opacity-15 z-0">
+    <div class="orn anim-left pointer-events-none absolute top-[20%] -left-[20%] w-[46%] opacity-15 z-0" data-speed="0.9" data-rot="6">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full" alt="" />
     </div>
-    <div class="anim-right pointer-events-none absolute top-[20%] -right-[20%] w-[46%] opacity-15 z-0">
+    <div class="orn anim-right pointer-events-none absolute top-[20%] -right-[20%] w-[46%] opacity-15 z-0" data-speed="0.9" data-rot="-6">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full scale-x-[-1]" alt="" />
     </div>
 
     <div class="relative z-10 w-full max-w-[330px] mx-auto mb-10">
-      <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="anim-scale sec-head-orn" alt="" />
+      <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn" alt=""  data-speed="0.7" data-rot="0" />
       <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-3">Kedua Mempelai</h2>
       <p class="anim-fade text-[13px] leading-relaxed text-stone-300 px-2">
         Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud mengundang Bapak/Ibu/Saudara/i pada acara pernikahan kami:
@@ -318,7 +318,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
       @endif
     </div>
 
-    <div class="anim-up pointer-events-none absolute -bottom-[3%] inset-x-0 z-20 flex justify-between items-end">
+    <div class="orn anim-up pointer-events-none absolute -bottom-[3%] inset-x-0 z-20 flex justify-between items-end" data-speed="2" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA19.png" class="sway-node sway-fast w-[34%] -ml-[5%]" alt="" />
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA19.png" class="sway-node sway-fast w-[34%] -mr-[5%] scale-x-[-1]" alt="" />
     </div>
@@ -326,15 +326,15 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 6. ACARA & COUNTDOWN ================= -->
   <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden">
-    <div class="anim-left pointer-events-none absolute -left-[16%] top-[6%] w-[46%] z-0">
+    <div class="orn anim-left pointer-events-none absolute -left-[16%] top-[6%] w-[46%] z-0" data-speed="1.2" data-rot="-5">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full opacity-50" alt="" />
     </div>
-    <div class="anim-right pointer-events-none absolute -right-[16%] top-[6%] w-[46%] z-0">
+    <div class="orn anim-right pointer-events-none absolute -right-[16%] top-[6%] w-[46%] z-0" data-speed="1.4" data-rot="5">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full opacity-50 scale-x-[-1]" alt="" />
     </div>
 
     <div class="relative z-10 w-full max-w-[340px] mx-auto">
-      <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="anim-scale sec-head-orn" alt="" />
+      <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn" alt=""  data-speed="0.7" data-rot="0" />
       <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2">Rangkaian Acara</h2>
       <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Menuju hari bahagia</p>
 
@@ -346,7 +346,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
       </div>
 
       <div class="anim-scale card-dark p-6 mb-5 text-center relative overflow-hidden">
-        <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="absolute -right-6 -top-4 w-20 opacity-15 pointer-events-none" alt="" />
+        <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="orn absolute -right-6 -top-4 w-20 opacity-15 pointer-events-none" alt=""  data-speed="0.5" data-rot="10" />
         <h3 class="font-cinzel text-lg text-jawa-lightgold mb-1">Akad Nikah</h3>
         <p class="text-[11px] text-jawa-gold tracking-[0.25em] uppercase mb-3">{{ jwaDate($wDate) }}</p>
         <p class="text-xs text-stone-300 mb-1">{{ $wTime }} &ndash; {{ $wTimeE }} {{ $tzLabel }}</p>
@@ -357,7 +357,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
       </div>
 
       <div class="anim-scale card-dark p-6 mb-5 text-center relative overflow-hidden">
-        <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="absolute -right-6 -top-4 w-20 opacity-15 pointer-events-none" alt="" />
+        <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="orn absolute -right-6 -top-4 w-20 opacity-15 pointer-events-none" alt=""  data-speed="0.5" data-rot="10" />
         <h3 class="font-cinzel text-lg text-jawa-lightgold mb-1">Resepsi Pernikahan</h3>
         <p class="text-[11px] text-jawa-gold tracking-[0.25em] uppercase mb-3">{{ jwaDate($rDate) }}</p>
         <p class="text-xs text-stone-300 mb-1">{{ $rTimeS }} &ndash; {{ $rTimeE }} {{ $tzLabel }}</p>
@@ -381,7 +381,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
       <a href="{{ $gcalUrl }}" target="_blank" rel="noopener" class="anim-fade btn-outline-gold inline-block text-[10px] tracking-[0.25em] px-7 py-3 rounded-full mb-20">+ SIMPAN KE GOOGLE CALENDAR</a>
     </div>
 
-    <div class="anim-up pointer-events-none absolute -bottom-[2%] inset-x-0 z-20 flex justify-between items-end">
+    <div class="orn anim-up pointer-events-none absolute -bottom-[2%] inset-x-0 z-20 flex justify-between items-end" data-speed="2" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA4.png" class="sway-node sway-fast w-[32%] -ml-[4%]" alt="" />
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA5-768x330.png" class="sway-node sway-subtle w-[52%] -mx-[7%]" alt="" />
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA4.png" class="sway-node sway-fast w-[32%] -mr-[4%] scale-x-[-1]" alt="" />
@@ -390,7 +390,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 7. GALERI ================= -->
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden bg-jawa-bg/60">
-    <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="anim-scale sec-head-orn" alt="" />
+    <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2">Galeri Kenangan</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Momen berharga kami</p>
     @if(!empty($gallery) && count($gallery))
@@ -409,13 +409,13 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 8. KISAH CINTA ================= -->
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden">
-    <div class="anim-left pointer-events-none absolute top-[14%] -left-[24%] w-[36%] opacity-10 z-0">
+    <div class="orn anim-left pointer-events-none absolute top-[14%] -left-[24%] w-[36%] opacity-10 z-0" data-speed="0.9" data-rot="6">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full" alt="" />
     </div>
-    <div class="anim-right pointer-events-none absolute top-[14%] -right-[24%] w-[36%] opacity-10 z-0">
+    <div class="orn anim-right pointer-events-none absolute top-[14%] -right-[24%] w-[36%] opacity-10 z-0" data-speed="0.9" data-rot="-6">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full scale-x-[-1]" alt="" />
     </div>
-    <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="anim-scale sec-head-orn relative z-10" alt="" />
+    <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">Kisah Cinta</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-10 relative z-10">Perjalanan kami berdua</p>
     @if(!empty($stories) && count($stories))
@@ -439,7 +439,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 9. RSVP & BUKU TAMU ================= -->
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden bg-jawa-bg/60">
-    <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="anim-scale sec-head-orn" alt="" />
+    <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2">RSVP &amp; Buku Tamu</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Konfirmasi kehadiran Anda</p>
 
@@ -473,13 +473,13 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 10. AMPLOP DIGITAL ================= -->
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden">
-    <div class="anim-left pointer-events-none absolute -left-[16%] bottom-[4%] w-[44%] z-0">
+    <div class="orn anim-left pointer-events-none absolute -left-[16%] bottom-[4%] w-[44%] z-0" data-speed="1.2" data-rot="-5">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full opacity-40" alt="" />
     </div>
-    <div class="anim-right pointer-events-none absolute -right-[16%] bottom-[4%] w-[44%] z-0">
+    <div class="orn anim-right pointer-events-none absolute -right-[16%] bottom-[4%] w-[44%] z-0" data-speed="1.4" data-rot="5">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full opacity-40 scale-x-[-1]" alt="" />
     </div>
-    <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="anim-scale sec-head-orn relative z-10" alt="" />
+    <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-3 relative z-10">Amplop Digital</h2>
     <p class="anim-fade font-serif italic text-stone-300 text-[15px] leading-relaxed mb-8 max-w-[300px] relative z-10">Doa restu Anda adalah hadiah terindah. Namun jika berkenan memberi tanda kasih, kami sediakan dengan penuh syukur.</p>
     @if(!empty($giftRecipient))
@@ -514,7 +514,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
     </div>
     @endif
 
-    <div class="anim-up pointer-events-none absolute -bottom-[2%] inset-x-0 z-20 flex justify-between items-end opacity-80">
+    <div class="orn anim-up pointer-events-none absolute -bottom-[2%] inset-x-0 z-20 flex justify-between items-end opacity-80" data-speed="2" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA19.png" class="sway-node sway-fast w-[34%] -ml-[5%]" alt="" />
       <img src="{{ $ASSET }}ASSET-JAWA-BUNGA19.png" class="sway-node sway-fast w-[34%] -mr-[5%] scale-x-[-1]" alt="" />
     </div>
@@ -522,7 +522,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 11. FOOTER ================= -->
   <footer class="relative px-6 pt-20 pb-28 text-center overflow-hidden bg-jawa-bg/80">
-    <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="sway-node sway-subtle w-[26%] max-w-[110px] mx-auto mb-5 opacity-90" alt="" />
+    <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="orn sway-node sway-subtle w-[26%] max-w-[110px] mx-auto mb-5 opacity-90" alt=""  data-speed="0.8" data-rot="10" />
     <p class="anim-fade font-serif italic text-stone-300 text-[16px] max-w-[300px] mx-auto leading-relaxed mb-6">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kami.</p>
     <p class="anim-fade text-stone-500 text-xs mb-2 tracking-[0.2em] uppercase">Kami yang berbahagia,</p>
     <h4 class="anim-fade font-cinzel text-[1.7rem] text-gold-gradient mb-6">{{ $groomNick }} &amp; {{ $brideNick }}</h4>
@@ -578,14 +578,20 @@ gsap.registerPlugin(ScrollTrigger);
   });
 })();
 
-/* ---------- 2. GOYANGAN AMBIENT ---------- */
-function startAmbientSway(){
+/* ---------- 2. PARALLAX SCROLL (semua ornamen bergerak ikut scroll, tanpa looping) ---------- */
+function initParallax(){
   if(reduced) return;
-  gsap.to(".sway-slow",{ rotation:1.8, duration:4.5, ease:"sine.inOut", yoyo:true, repeat:-1 });
-  gsap.to(".sway-subtle",{ rotation:1.2, y:-4, duration:3.6, ease:"sine.inOut", yoyo:true, repeat:-1 });
-  gsap.to(".sway-fast",{ rotation:-1.6, duration:3.0, ease:"sine.inOut", yoyo:true, repeat:-1 });
+  gsap.utils.toArray(".orn").forEach(el=>{
+    const sp=parseFloat(el.dataset.speed||"1"), rot=parseFloat(el.dataset.rot||"0");
+    const dist=()=>Math.round(window.innerHeight*0.13*sp);
+    gsap.fromTo(el,{y:()=>-dist()},{y:()=>dist(),rotation:rot,ease:"none",
+      scrollTrigger:{trigger:el.closest("section, footer")||el,
+        start:"top bottom",end:"bottom top",scrub:1.1,invalidateOnRefresh:true}});
+  });
+  // konten hero melayang & memudar saat discroll
+  gsap.to(".hero-content",{yPercent:-16,opacity:0,ease:"none",
+    scrollTrigger:{trigger:"#hero-section",start:"top top",end:"bottom 35%",scrub:true}});
 }
-startAmbientSway();
 
 /* ---------- 3. ANIMASI SCROLL PER SECTION ---------- */
 function initSectionScrollAnimations(){
@@ -615,6 +621,7 @@ document.getElementById("btn-open").addEventListener("click",()=>{
     const g=document.getElementById("cover-gate"); if(g) g.remove();
     document.getElementById("musicFloat").hidden=false;
     initSectionScrollAnimations();
+    initParallax();
   }});
   tl.to(["#gate-header","#gate-center","#gate-footer"],{y:-14,opacity:0,duration:.5,stagger:.06,ease:"power2.in"},0)
     .to(["#gate-left-tree","#gate-left-gunungan"],{xPercent:-38,opacity:0,duration:1,ease:"expo.inOut"},.12)
