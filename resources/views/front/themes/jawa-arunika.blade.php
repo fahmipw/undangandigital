@@ -202,10 +202,10 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-jawa-bg/90 via-transparent to-[#16100c]"></div>
     <canvas id="gold-particles" class="pointer-events-none absolute inset-0 w-full h-full z-10"></canvas>
 
-    <div class="orn hero-ornament-left pointer-events-none absolute -left-[16%] top-[1%] w-[50%] z-10 opacity-0" data-speed="1.3" data-rot="-4">
+    <div class="orn hero-ornament-left pointer-events-none absolute -left-[16%] top-[1%] w-[50%] z-10 opacity-0" data-speed="1.3" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full h-auto opacity-70" alt="" />
     </div>
-    <div class="orn hero-ornament-right pointer-events-none absolute -right-[16%] top-[1%] w-[50%] z-10 opacity-0" data-speed="1.5" data-rot="4">
+    <div class="orn hero-ornament-right pointer-events-none absolute -right-[16%] top-[1%] w-[50%] z-10 opacity-0" data-speed="1.5" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full h-auto opacity-70" alt="" />
     </div>
     <img src="{{ $ASSET }}ASSET-JAWA-REV-7-REV.png" class="orn hero-stagger hero-joglo pointer-events-none absolute w-[68%] max-w-[290px] opacity-0 z-10" alt=""  data-speed="0.6" data-rot="0" />
@@ -233,10 +233,10 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 4. QUOTES ================= -->
   <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden">
-    <div class="orn anim-left pointer-events-none absolute -left-[16%] top-[5%] w-[48%] z-0" data-speed="1.2" data-rot="-5">
+    <div class="orn anim-left pointer-events-none absolute -left-[16%] top-[5%] w-[48%] z-0" data-speed="1.2" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full opacity-60" alt="" />
     </div>
-    <div class="orn anim-right pointer-events-none absolute -right-[16%] top-[5%] w-[48%] z-0" data-speed="1.4" data-rot="5">
+    <div class="orn anim-right pointer-events-none absolute -right-[16%] top-[5%] w-[48%] z-0" data-speed="1.4" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full opacity-60 scale-x-[-1]" alt="" />
     </div>
 
@@ -326,10 +326,10 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 6. ACARA & COUNTDOWN ================= -->
   <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden">
-    <div class="orn anim-left pointer-events-none absolute -left-[16%] top-[6%] w-[46%] z-0" data-speed="1.2" data-rot="-5">
+    <div class="orn anim-left pointer-events-none absolute -left-[16%] top-[6%] w-[46%] z-0" data-speed="1.2" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full opacity-50" alt="" />
     </div>
-    <div class="orn anim-right pointer-events-none absolute -right-[16%] top-[6%] w-[46%] z-0" data-speed="1.4" data-rot="5">
+    <div class="orn anim-right pointer-events-none absolute -right-[16%] top-[6%] w-[46%] z-0" data-speed="1.4" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full opacity-50 scale-x-[-1]" alt="" />
     </div>
 
@@ -473,10 +473,10 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 10. AMPLOP DIGITAL ================= -->
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden">
-    <div class="orn anim-left pointer-events-none absolute -left-[16%] bottom-[4%] w-[44%] z-0" data-speed="1.2" data-rot="-5">
+    <div class="orn anim-left pointer-events-none absolute -left-[16%] bottom-[4%] w-[44%] z-0" data-speed="1.2" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full opacity-40" alt="" />
     </div>
-    <div class="orn anim-right pointer-events-none absolute -right-[16%] bottom-[4%] w-[44%] z-0" data-speed="1.4" data-rot="5">
+    <div class="orn anim-right pointer-events-none absolute -right-[16%] bottom-[4%] w-[44%] z-0" data-speed="1.4" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full opacity-40 scale-x-[-1]" alt="" />
     </div>
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
