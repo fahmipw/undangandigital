@@ -29,6 +29,40 @@ if (!function_exists('jwaTime')) {
     return preg_match('/^\d{1,2}(:\d{2})?$/', $t) ? (strpos($t, ':') === false ? $t.':00' : $t) : '08:00';
   }
 }
+$GLOBALS['jwa_asset_base'] = '';
+if (!function_exists('jwaGarland')) {
+  /* Rangkaian pohon+bunga rapat di tepi section (seperti referensi), mekar saat discroll */
+  function jwaGarland($side, $variant = 0, $extra = '') {
+    $A = $GLOBALS['jwa_asset_base'];
+    $L = ($side === 'left');
+    $pos = $L ? 'left:0;' : 'right:0;';
+    $e1 = ($L ? 'left' : 'right').':-14%;';
+    $e2 = ($L ? 'left' : 'right').':-5%;';
+    $e3 = ($L ? 'left' : 'right').':-18%;';
+    $e4 = ($L ? 'left' : 'right').':-9%;';
+    if ($variant % 2 == 0) {
+      $c = [
+        ['top:1%',  $e1, '96%',  'ASSET-JAWA-TREE.png',         '.8'],
+        ['top:31%', $e2, '72%',  'ASSET-JAWA-BUNGA1.png',       '.85'],
+        ['top:59%', $e3, '102%', 'ASSET-JAWA-TREE3.png',        '.8'],
+        ['bottom:1%', $e4, '80%','ASSET-JAWA-BUNGA4.png',       '.85'],
+      ];
+    } else {
+      $c = [
+        ['top:2%',  $e3, '100%', 'ASSET-JAWA-TREE3.png',        '.8'],
+        ['top:33%', $e4, '78%',  'ASSET-JAWA-BUNGA19.png',      '.85'],
+        ['top:61%', $e1, '94%',  'ASSET-JAWA-TREE.png',         '.8'],
+        ['bottom:2%', $e2, '74%','ASSET-JAWA-BUNGA5-768x330.png','.85'],
+      ];
+    }
+    $h = '<div class="garland orn pointer-events-none absolute top-0 bottom-0 w-[38%] '.($extra ?: 'z-0').'" data-speed="1.1" data-rot="0" style="'.$pos.'">';
+    foreach ($c as $cc) {
+      $h .= '<div class="bloom absolute" style="'.$cc[0].$cc[1].'width:'.$cc[2].'">'
+          . '<img src="'.$A.$cc[3].'" class="w-full h-auto" style="opacity:'.$cc[4].'" alt=""></div>';
+    }
+    return $h.'</div>';
+  }
+}
 $groomNick = jwaGet('groom_nickname') ?: jwaGet('groom_name', 'Mempelai Pria');
 $brideNick = jwaGet('bride_nickname') ?: jwaGet('bride_name', 'Mempelai Wanita');
 $groomFull = jwaGet('groom_name', 'Mempelai Pria');
@@ -65,6 +99,7 @@ $invId = $inv_id ?? 0;
 $gcalDates = str_replace('-','',$rDate).'T'.str_replace(':','',$rTimeS).'00/'.str_replace('-','',$rDate).'T'.str_replace(':','',$rTimeE).'00';
 $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.urlencode('Pernikahan '.$brideNick.' & '.$groomNick).'&dates='.$gcalDates.'&details='.urlencode(jwaGet('reception_location', jwaGet('wedding_location','')));
 $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
+$GLOBALS['jwa_asset_base'] = $ASSET;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -100,6 +135,7 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
     .invitation-frame{ width:100%; max-width:430px; margin:0 auto; position:relative;
       overflow-x:hidden; background-color:#16100c; box-shadow:0 0 80px rgba(0,0,0,.95); }
     .sway-node{ transform-origin:bottom center; will-change:transform; backface-visibility:hidden; }
+    .bloom{ will-change:transform,opacity; }
     .text-gold-gradient{ background:linear-gradient(135deg,#f9e6a7 0%,#d4af37 50%,#9c7618 100%);
       -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
     .btn-gold-gradient{ background:linear-gradient(135deg,#e0bb43 0%,#f7e3a1 50%,#b38618 100%);
@@ -202,12 +238,8 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-jawa-bg/90 via-transparent to-[#16100c]"></div>
     <canvas id="gold-particles" class="pointer-events-none absolute inset-0 w-full h-full z-10"></canvas>
 
-    <div class="orn hero-ornament-left pointer-events-none absolute -left-[16%] top-[1%] w-[50%] z-10 opacity-0" data-speed="1.3" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full h-auto opacity-70" alt="" />
-    </div>
-    <div class="orn hero-ornament-right pointer-events-none absolute -right-[16%] top-[1%] w-[50%] z-10 opacity-0" data-speed="1.5" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full h-auto opacity-70" alt="" />
-    </div>
+    {!! jwaGarland('left', 0, 'hero-ornament-left z-10 opacity-0') !!}
+    {!! jwaGarland('right', 0, 'hero-ornament-right z-10 opacity-0') !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-7-REV.png" class="orn hero-stagger hero-joglo pointer-events-none absolute w-[68%] max-w-[290px] opacity-0 z-10" alt=""  data-speed="0.6" data-rot="0" />
 
     <div class="hero-content relative z-20 flex flex-col items-center px-4">
@@ -233,12 +265,8 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 4. QUOTES ================= -->
   <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden">
-    <div class="orn anim-left pointer-events-none absolute -left-[16%] top-[5%] w-[48%] z-0" data-speed="1.2" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full opacity-60" alt="" />
-    </div>
-    <div class="orn anim-right pointer-events-none absolute -right-[16%] top-[5%] w-[48%] z-0" data-speed="1.4" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full opacity-60 scale-x-[-1]" alt="" />
-    </div>
+    {!! jwaGarland('left', 1) !!}
+    {!! jwaGarland('right', 1) !!}
 
     <div class="anim-scale relative z-10 w-full max-w-[340px] mx-auto card-dark px-6 pb-9 pt-7 mt-10">
       <div class="orn -mt-[4.7rem] mb-4" data-speed="0.8" data-rot="0">
@@ -273,6 +301,8 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
     <div class="orn anim-right pointer-events-none absolute top-[20%] -right-[20%] w-[46%] opacity-15 z-0" data-speed="0.9" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full scale-x-[-1]" alt="" />
     </div>
+    {!! jwaGarland('left', 0) !!}
+    {!! jwaGarland('right', 0) !!}
 
     <div class="relative z-10 w-full max-w-[330px] mx-auto mb-10">
       <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn" alt=""  data-speed="0.7" data-rot="0" />
@@ -326,12 +356,8 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 6. ACARA & COUNTDOWN ================= -->
   <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden">
-    <div class="orn anim-left pointer-events-none absolute -left-[16%] top-[6%] w-[46%] z-0" data-speed="1.2" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full opacity-50" alt="" />
-    </div>
-    <div class="orn anim-right pointer-events-none absolute -right-[16%] top-[6%] w-[46%] z-0" data-speed="1.4" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full opacity-50 scale-x-[-1]" alt="" />
-    </div>
+    {!! jwaGarland('left', 1) !!}
+    {!! jwaGarland('right', 1) !!}
 
     <div class="relative z-10 w-full max-w-[340px] mx-auto">
       <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn" alt=""  data-speed="0.7" data-rot="0" />
@@ -390,8 +416,10 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 7. GALERI ================= -->
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden bg-jawa-bg/60">
-    <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn" alt=""  data-speed="0.7" data-rot="0" />
-    <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2">Galeri Kenangan</h2>
+    {!! jwaGarland('left', 0) !!}
+    {!! jwaGarland('right', 0) !!}
+    <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
+    <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">Galeri Kenangan</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Momen berharga kami</p>
     @if(!empty($gallery) && count($gallery))
     <div class="relative z-10 w-full max-w-[340px] grid grid-cols-2 gap-3">
@@ -415,6 +443,8 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
     <div class="orn anim-right pointer-events-none absolute top-[14%] -right-[24%] w-[36%] opacity-10 z-0" data-speed="0.9" data-rot="0">
       <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="sway-node sway-slow w-full scale-x-[-1]" alt="" />
     </div>
+    {!! jwaGarland('left', 1) !!}
+    {!! jwaGarland('right', 1) !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">Kisah Cinta</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-10 relative z-10">Perjalanan kami berdua</p>
@@ -439,8 +469,10 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 9. RSVP & BUKU TAMU ================= -->
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden bg-jawa-bg/60">
-    <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn" alt=""  data-speed="0.7" data-rot="0" />
-    <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2">RSVP &amp; Buku Tamu</h2>
+    {!! jwaGarland('left', 0) !!}
+    {!! jwaGarland('right', 0) !!}
+    <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
+    <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">RSVP &amp; Buku Tamu</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Konfirmasi kehadiran Anda</p>
 
     <form id="rsvpForm" class="anim-scale relative z-10 w-full max-w-[340px] card-dark p-6 mb-6 text-left">
@@ -473,12 +505,8 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 10. AMPLOP DIGITAL ================= -->
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden">
-    <div class="orn anim-left pointer-events-none absolute -left-[16%] bottom-[4%] w-[44%] z-0" data-speed="1.2" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-TREE.png" class="sway-node sway-slow w-full opacity-40" alt="" />
-    </div>
-    <div class="orn anim-right pointer-events-none absolute -right-[16%] bottom-[4%] w-[44%] z-0" data-speed="1.4" data-rot="0">
-      <img src="{{ $ASSET }}ASSET-JAWA-TREE3.png" class="sway-node sway-slow w-full opacity-40 scale-x-[-1]" alt="" />
-    </div>
+    {!! jwaGarland('left', 1) !!}
+    {!! jwaGarland('right', 1) !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-3 relative z-10">Amplop Digital</h2>
     <p class="anim-fade font-serif italic text-stone-300 text-[15px] leading-relaxed mb-8 max-w-[300px] relative z-10">Doa restu Anda adalah hadiah terindah. Namun jika berkenan memberi tanda kasih, kami sediakan dengan penuh syukur.</p>
@@ -591,6 +619,14 @@ function initParallax(){
   // konten hero melayang & memudar saat discroll
   gsap.to(".hero-content",{yPercent:-16,opacity:0,ease:"none",
     scrollTrigger:{trigger:"#hero-section",start:"top top",end:"bottom 35%",scrub:true}});
+  /* mekar tumbuh: rangkaian bunga/pohon tiap section mekar saat masuk layar */
+  gsap.utils.toArray(".scroll-section, #hero-section").forEach(sec=>{
+    const blooms=sec.querySelectorAll(":scope .bloom");
+    if(!blooms.length) return;
+    gsap.fromTo(blooms,{scale:0,opacity:0,transformOrigin:"50% 50%"},
+      {scale:1,opacity:1,duration:.9,ease:"back.out(1.5)",stagger:.12,
+       scrollTrigger:{trigger:sec,start:"top 72%",toggleActions:"play none none reverse"}});
+  });
 }
 
 /* ---------- 3. ANIMASI SCROLL PER SECTION ---------- */
