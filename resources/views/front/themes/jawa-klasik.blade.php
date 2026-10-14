@@ -232,8 +232,13 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 4. KARTU JUDUL GUNUNGAN ================= -->
   <section id="sec-home" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden batik-bg" style="background-color:#31220f">
-    <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG-1.png" class="gold-tint orn pointer-events-none absolute left-[-4%] bottom-[8%] w-[30%] opacity-60" data-speed="1.2" alt="" />
-    <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn pointer-events-none absolute right-[-4%] bottom-[8%] w-[30%] opacity-60 scale-x-[-1]" data-speed="1.2" alt="" />
+    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45 scale-x-[-1]" data-speed="1.3" alt="" />
+    </div>
+    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45" data-speed="1.3" alt="" />
+    </div>
+
     <div class="anim-zoom relative z-10 card-klasik w-full max-w-[330px] px-6 pt-10 pb-8">
       <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" alt="Gunungan" class="gold-tint anim-zoom w-[52%] max-w-[170px] h-auto mx-auto mb-4 drop-shadow-[0_10px_25px_rgba(212,175,55,0.4)]" />
       <p class="anim-fade text-[10px] uppercase tracking-[0.42em] text-klasik-gold mb-2">The Wedding Of</p>
@@ -245,6 +250,13 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 5. QUOTES ================= -->
   <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:#241811">
+    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45 scale-x-[-1]" data-speed="1.3" alt="" />
+    </div>
+    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45" data-speed="1.3" alt="" />
+    </div>
+
     <div class="anim-zoom relative z-10 w-full max-w-[340px] card-klasik px-7 py-9">
       <img src="{{ $ASSET }}1225-GUNUNGAN-JAWA-576x1024.png" class="gold-tint anim-zoom w-[22%] max-w-[76px] h-auto mx-auto mb-4 opacity-90" alt="Gunungan" />
       <p class="anim-fade font-serif text-[16px] leading-[1.9] text-klasik-cream/90 italic">
@@ -257,6 +269,13 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 6. MEMPELAI ================= -->
   <section id="sec-profil" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden batik-bg" style="background-color:#2a1c11">
+    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45 scale-x-[-1]" data-speed="1.3" alt="" />
+    </div>
+    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45" data-speed="1.3" alt="" />
+    </div>
+
     <p class="anim-fade text-[10px] uppercase tracking-[0.42em] text-klasik-gold mb-2 relative z-10">Assalamu&rsquo;alaikum Warahmatullaahi Wabarakaatuh</p>
     <h2 class="anim-zoom font-script text-[2.2rem] text-gold-grad mb-2 relative z-10">Mempelai</h2>
     <p class="anim-fade font-serif italic text-klasik-cream/70 text-[15px] leading-relaxed mb-10 max-w-[300px] relative z-10">Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Ya Allah semoga ridho-Mu tercurah mengiringi pernikahan kami.</p>
@@ -306,6 +325,13 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 7. COUNTDOWN ================= -->
   <section id="sec-acara" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:#241811">
+    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45 scale-x-[-1]" data-speed="1.3" alt="" />
+    </div>
+    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45" data-speed="1.3" alt="" />
+    </div>
+
     <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="gold-tint orn anim-zoom relative z-10 w-[30%] max-w-[120px] h-auto mb-4" data-speed="0.8" alt="Gunungan" />
     <h2 class="anim-zoom font-script text-[2.2rem] text-gold-grad mb-8 relative z-10">Counting The Days</h2>
     <div class="anim-zoom relative z-10 grid grid-cols-4 gap-2 w-full max-w-[340px] mb-8">
@@ -375,6 +401,13 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 8. GALERI ================= -->
   <section id="sec-galeri" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden batik-bg" style="background-color:#2a1c11">
+    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45 scale-x-[-1]" data-speed="1.3" alt="" />
+    </div>
+    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45" data-speed="1.3" alt="" />
+    </div>
+
     <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="gold-tint orn anim-zoom relative z-10 w-[26%] max-w-[104px] h-auto mb-4" data-speed="0.8" alt="Gunungan" />
     <h2 class="anim-zoom font-script text-[2.2rem] text-gold-grad mb-2 relative z-10">Memorable Moment</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-klasik-gold/80 mb-8 relative z-10">Galeri kenangan kami</p>
@@ -393,6 +426,13 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 9. KISAH CINTA ================= -->
   <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:#241811">
+    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45 scale-x-[-1]" data-speed="1.3" alt="" />
+    </div>
+    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45" data-speed="1.3" alt="" />
+    </div>
+
     <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="gold-tint orn anim-zoom relative z-10 w-[24%] max-w-[96px] h-auto mb-4" data-speed="0.8" alt="Gunungan" />
     <h2 class="anim-zoom font-script text-[2.2rem] text-gold-grad mb-2 relative z-10">Our Story</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-klasik-gold/80 mb-10 relative z-10">Perjalanan cinta kami</p>
@@ -417,6 +457,13 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 10. WEDDING GIFT ================= -->
   <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden batik-bg" style="background-color:#31220f">
+    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45 scale-x-[-1]" data-speed="1.3" alt="" />
+    </div>
+    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45" data-speed="1.3" alt="" />
+    </div>
+
     <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="gold-tint orn anim-zoom relative z-10 w-[26%] max-w-[104px] h-auto mb-4" data-speed="0.8" alt="Gunungan" />
     <h2 class="anim-zoom font-script text-[2.2rem] text-gold-grad mb-3 relative z-10">Wedding Gift</h2>
     <p class="anim-fade font-serif italic text-klasik-cream/70 text-[15px] leading-relaxed mb-8 max-w-[300px] relative z-10">Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Dan jika memberi adalah ungkapan tanda kasih Anda, Anda dapat memberi kado secara cashless.</p>
@@ -455,6 +502,13 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 
   <!-- ================= 11. RSVP & UCAPAN ================= -->
   <section id="sec-ucapan" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:#241811">
+    <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45 scale-x-[-1]" data-speed="1.3" alt="" />
+    </div>
+    <div class="pointer-events-none absolute right-[-7%] top-0 bottom-0 flex items-center z-0">
+      <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-45" data-speed="1.3" alt="" />
+    </div>
+
     <img src="{{ $ASSET }}ASSET-JAWA-GUNUNGAN.png" class="gold-tint orn anim-zoom relative z-10 w-[24%] max-w-[96px] h-auto mb-4" data-speed="0.8" alt="Gunungan" />
     <h2 class="anim-zoom font-script text-[2.2rem] text-gold-grad mb-3 relative z-10">RSVP</h2>
     <p class="anim-fade font-serif italic text-klasik-cream/70 text-[14px] leading-relaxed mb-8 max-w-[300px] relative z-10">Tanpa mengurangi rasa hormat kami, mohon konfirmasi kehadiran Anda terlebih dahulu.</p>
