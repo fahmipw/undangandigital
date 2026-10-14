@@ -89,16 +89,14 @@ if (!function_exists('jwaJanur')) {
   }
 }
 if (!function_exists('jwaCorners')) {
-  /* Ornamen di sekeliling frame: $items = all|trees|flowers */
+  /* Bingkai bunga PENUH mengelilingi frame: 4 sudut + 4 tengah sisi, bergoyang pelan */
   function jwaCorners($variant = 0, $extra = '', $items = 'all') {
     $A = $GLOBALS['jwa_asset_base'];
-    if ($variant % 2 == 0) {
-      $flL='ASSET-JAWA-BUNGA1.png';  $flR='ASSET-JAWA-BUNGA4.png';
-    } else {
-      $flL='ASSET-JAWA-BUNGA19.png'; $flR='ASSET-JAWA-BUNGA5-768x330.png';
-    }
-    $bloom = function($pos, $img, $op) use ($A) {
-      return '<div class="bloom absolute" style="'.$pos.'"><img src="'.$A.$img.'" class="w-full h-auto" style="opacity:'.$op.'" alt=""></div>';
+    $fl = ($variant % 2 == 0) ? 'ASSET-JAWA-BUNGA1.png' : 'ASSET-JAWA-BUNGA19.png';
+    $F = function($mirror = false, $wd = '7s', $dl = '0s') use ($A, $fl) {
+      $img = '<img src="'.$A.$fl.'" class="wind-sway w-full h-auto" style="opacity:.85;animation-duration:'.$wd.';animation-delay:'.$dl.'" alt="">';
+      if ($mirror) $img = '<div style="transform:scaleX(-1)">'.$img.'</div>';
+      return $img;
     };
     $h = '<div class="corners orn pointer-events-none absolute inset-0 '.($extra ?: 'z-0').'" data-speed="1.15" data-rot="0">';
     if ($items === 'all' || $items === 'trees') {
@@ -106,15 +104,21 @@ if (!function_exists('jwaCorners')) {
       $h .= '<div class="bloom absolute" style="top:-4%;right:-6%;width:44%">'.jwaFiligree($variant, true).'</div>';
     }
     if ($items === 'all' || $items === 'flowers') {
-      /* kiri & kanan SELALU simetris: aset sama, kanan di-mirror */
-      $flLimg = '<img src="'.$A.$flL.'" class="w-full h-auto" style="opacity:.85" alt="">';
-      $flRimg = '<img src="'.$A.$flL.'" class="w-full h-auto scale-x-[-1]" style="opacity:.85" alt="">';
-      if ($items === 'flowers') { /* sudut saja, kecil, tidak menutupi teks */
-        $h .= '<div class="bloom absolute" style="bottom:-2%;left:-13%;width:30%">'.$flLimg.'</div>';
-        $h .= '<div class="bloom absolute" style="bottom:-2%;right:-13%;width:30%">'.$flRimg.'</div>';
+      if ($items === 'flowers') {
+        /* kisah: tetap ramping agar teks terbaca */
+        $h .= '<div class="bloom absolute" style="bottom:-2%;left:-13%;width:30%">'.$F(false,'8s','-2s').'</div>';
+        $h .= '<div class="bloom absolute" style="bottom:-2%;right:-13%;width:30%">'.$F(true,'9s','-4s').'</div>';
+        $h .= '<div class="bloom absolute" style="top:40%;left:-10%;width:22%">'.$F(false,'7s','-1s').'</div>';
+        $h .= '<div class="bloom absolute" style="top:40%;right:-10%;width:22%">'.$F(true,'8.5s','-3s').'</div>';
       } else {
-        $h .= '<div class="bloom absolute" style="bottom:-3%;left:-9%;width:38%">'.$flLimg.'</div>';
-        $h .= '<div class="bloom absolute" style="bottom:-3%;right:-9%;width:38%">'.$flRimg.'</div>';
+        /* sudut bawah */
+        $h .= '<div class="bloom absolute" style="bottom:-3%;left:-9%;width:38%">'.$F(false,'7s','0s').'</div>';
+        $h .= '<div class="bloom absolute" style="bottom:-3%;right:-9%;width:38%">'.$F(true,'8.5s','-3s').'</div>';
+        /* tengah sisi: atas, bawah, kiri, kanan */
+        $h .= '<div class="bloom absolute" style="top:-2%;left:0;right:0;margin:0 auto;width:26%">'.$F(false,'9s','-1.5s').'</div>';
+        $h .= '<div class="bloom absolute" style="bottom:-2%;left:0;right:0;margin:0 auto;width:26%">'.$F(true,'7.5s','-4s').'</div>';
+        $h .= '<div class="bloom absolute" style="top:42%;left:-8%;width:22%">'.$F(false,'8s','-2s').'</div>';
+        $h .= '<div class="bloom absolute" style="top:42%;right:-8%;width:22%">'.$F(true,'9.5s','-5s').'</div>';
       }
     }
     return $h.'</div>';
@@ -230,7 +234,9 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
       overflow:hidden; text-overflow:ellipsis; }
     #toast.show{ opacity:1; transform:translate(-50%,0); }
     ::-webkit-scrollbar{ width:0; background:transparent; }
-    @media (prefers-reduced-motion:reduce){ .sway-node{ animation:none !important; } }
+    @keyframes jwaWind{ 0%,100%{ transform:rotate(-3deg) translate(0,0); } 50%{ transform:rotate(3deg) translate(6px,-5px); } }
+    .wind-sway{ animation:jwaWind 7s ease-in-out infinite; transform-origin:50% 90%; will-change:transform; }
+    @media (prefers-reduced-motion:reduce){ .sway-node{ animation:none !important; } .wind-sway{ animation:none !important; } }
   </style>
 </head>
 <body class="is-locked bg-[#080605] text-jawa-cream font-sans antialiased">
@@ -689,7 +695,7 @@ function initSectionScrollAnimations(){
       toggleActions:"play none none reverse" }});
     if(L.length) tl.fromTo(L,{x:-36,opacity:0},{x:0,opacity:1,duration:1.1,ease:"expo.out",stagger:.1},0);
     if(R.length) tl.fromTo(R,{x:36,opacity:0},{x:0,opacity:1,duration:1.1,ease:"expo.out",stagger:.1},0);
-    if(S.length) tl.fromTo(S,{scale:.94,y:26,opacity:0},{scale:1,y:0,opacity:1,duration:1,ease:"power3.out",stagger:.12},.08);
+    if(S.length) tl.fromTo(S,{scale:.82,y:30,opacity:0},{scale:1,y:0,opacity:1,duration:1.1,ease:"power3.out",stagger:.12},.08);
     if(F.length) tl.fromTo(F,{y:20,opacity:0},{y:0,opacity:1,duration:.9,ease:"power2.out",stagger:.08},.18);
     if(U.length) tl.fromTo(U,{y:36,opacity:0},{y:0,opacity:1,duration:1,ease:"expo.out",stagger:.08},.12);
   });
