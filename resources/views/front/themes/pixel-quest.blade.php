@@ -283,7 +283,7 @@ select.pq-input{appearance:none}
     <div id="dlgFace"><canvas id="dlgFaceCv" width="66" height="66"></canvas></div>
     <div id="dlgName"></div>
     <div id="dlgText"></div>
-    <div id="dlgNext">&#9660;</div>
+    <div id="dlgNext">KETUK &#9660;</div>
   </div>
 </div>
 
@@ -344,39 +344,51 @@ function drawHero(c,x,y,dir,frame,moving,o,s){
   c.save();c.translate(Math.round(x),Math.round(y));
   px(c,-9*s,13*s,18*s,3.5*s,"rgba(0,0,0,.25)");
   const legSwing=moving&&!reduced?(frame?1:-1)*3*s:0;
+  /* sepatu bot */
+  px(c,-6*s,11*s+Math.max(0,legSwing),5*s,2.5*s,"#2b1a0c");
+  px(c,1*s,11*s+Math.max(0,-legSwing),5*s,2.5*s,"#2b1a0c");
   px(c,-6*s,6*s+Math.max(0,legSwing),5*s,7*s-Math.max(0,legSwing),o.pants);
   px(c,1*s,6*s+Math.max(0,-legSwing),5*s,7*s-Math.max(0,-legSwing),o.pants);
-  /* jubah merah */
+  /* jubah merah + lipatan */
   px(c,-9*s,-3*s,18*s,11*s,o.cape);
   px(c,-9*s,6*s,18*s,3*s,o.capeDark);
-  if(dir==="up"){px(c,-9*s,-3*s,18*s,11*s,o.cape);}
-  /* badan */
+  px(c,-6*s,-3*s,2*s,11*s,o.capeDark);
+  px(c,4*s,-3*s,2*s,11*s,"rgba(255,255,255,.14)");
+  /* badan + sabuk */
   px(c,-8*s,-2*s,16*s,9*s,o.shirt);
   px(c,-8*s,-2*s,3*s,9*s,"rgba(255,255,255,.18)");
-  /* tangan + pedang (kanan) */
+  px(c,-8*s,4*s,16*s,2.5*s,"#5d3a1f");
+  px(c,-1.5*s,4*s,3*s,2.5*s,"#ffd93b");
+  /* tangan + pedang */
   const armSwing=moving&&!reduced?(frame?-1:1)*2*s:0;
   px(c,-11*s,-1*s,3.5*s,7*s+armSwing*.4,o.shirt);
   px(c,-11*s,6*s+armSwing*.4,3.5*s,3*s,o.skin);
   px(c,7.5*s,-1*s,3.5*s,7*s-armSwing*.4,o.shirt);
   px(c,7.5*s,6*s-armSwing*.4,3.5*s,3*s,o.skin);
   if(dir!=="up"){
-    px(c,11*s,-6*s,2.5*s,14*s,"#c0c0c0");         /* bilah pedang */
-    px(c,10*s,-7*s,4.5*s,2.5*s,"#8a5f3c");        /* gagang */
-    px(c,9*s,-2*s,7*s,2*s,"#ffd93b");             /* pelindung */
+    px(c,11*s,-6*s,2.5*s,14*s,"#d9d9d9");
+    px(c,11*s,-6*s,1*s,14*s,"#ffffff");          /* kilau bilah */
+    px(c,10*s,-7*s,4.5*s,2.5*s,"#8a5f3c");
+    px(c,9*s,-2*s,7*s,2*s,"#ffd93b");
     px(c,12*s,7*s,2*s,2*s,"#8a5f3c");
   }
-  /* kepala + rambut biru */
+  /* kepala + rambut biru + highlight */
   px(c,-7*s,-13*s,14*s,11*s,o.skin);
   px(c,-7*s,-13*s,14*s,4*s,o.hair);
+  px(c,-5*s,-13*s,6*s,1.5*s,"rgba(255,255,255,.35)");   /* highlight rambut */
   if(dir==="down"){px(c,-7*s,-13*s,3*s,9*s,o.hair);px(c,4*s,-13*s,3*s,9*s,o.hair);}
   else if(dir==="left"){px(c,-7*s,-13*s,9*s,4*s,o.hair);}
   else if(dir==="right"){px(c,-1*s,-13*s,8*s,4*s,o.hair);}
-  else{px(c,-7*s,-13*s,14*s,11*s,o.hair);}
-  /* mata */
+  else{px(c,-7*s,-13*s,14*s,11*s,o.hair);px(c,-5*s,-13*s,6*s,1.5*s,"rgba(255,255,255,.35)");}
+  /* pipi merona */
+  px(c,-6*s,-3.5*s,2*s,1.5*s,"rgba(255,120,120,.5)");
+  px(c,4*s,-3.5*s,2*s,1.5*s,"rgba(255,120,120,.5)");
+  /* mata + kilau */
   px(c,-4*s,-6.5*s,2.4*s,2.8*s,"#141414");
-  if(dir==="down")px(c,1.6*s,-6.5*s,2.4*s,2.8*s,"#141414");
-  else if(dir==="left")px(c,-5.5*s,-6.5*s,2.4*s,2.8*s,"#141414");
-  else if(dir==="right")px(c,3.1*s,-6.5*s,2.4*s,2.8*s,"#141414");
+  px(c,-3.6*s,-6.5*s,1*s,1*s,"#ffffff");
+  if(dir==="down"){px(c,1.6*s,-6.5*s,2.4*s,2.8*s,"#141414");px(c,2*s,-6.5*s,1*s,1*s,"#ffffff");}
+  else if(dir==="left"){px(c,-5.5*s,-6.5*s,2.4*s,2.8*s,"#141414");px(c,-5.1*s,-6.5*s,1*s,1*s,"#ffffff");}
+  else if(dir==="right"){px(c,3.1*s,-6.5*s,2.4*s,2.8*s,"#141414");px(c,3.5*s,-6.5*s,1*s,1*s,"#ffffff");}
   c.restore();
 }
 /* Wajah pixel untuk dialog */
@@ -405,15 +417,23 @@ function drawFace(cv,o,cape){
 function drawShopkeeper(c,x,y,o,s,blink){
   c.save();c.translate(Math.round(x),Math.round(y));
   px(c,-8*s,12*s,16*s,3*s,"rgba(0,0,0,.25)");
-  px(c,-6*s,6*s,12*s,7*s,"#7a6a4a");                 /* kaki */
-  px(c,-7*s,-2*s,14*s,9*s,"#4e9a26");                /* apron */
+  px(c,-6*s,11*s,12*s,2.5*s,"#2b1a0c");
+  px(c,-6*s,6*s,12*s,7*s,"#7a6a4a");
+  px(c,-7*s,-2*s,14*s,9*s,"#4e9a26");
   px(c,-7*s,-2*s,14*s,3*s,"#2b6e1e");
-  px(c,-6*s,-13*s,12*s,11*s,"#f0c49c");              /* kepala */
-  px(c,-7*s,-13*s,14*s,4*s,"#e03131");               /* rambut merah */
+  px(c,1*s,3*s,5*s,4*s,"#2b6e1e");               /* kantong apron */
+  px(c,2*s,4*s,3*s,1.5*s,"#ffd93b");
+  px(c,-6*s,-13*s,12*s,11*s,"#f0c49c");
+  px(c,-7*s,-13*s,14*s,4*s,"#e03131");
+  px(c,-4*s,-13*s,5*s,1.5*s,"rgba(255,255,255,.35)"); /* highlight rambut */
   px(c,-7*s,-13*s,2*s,9*s,"#e03131");px(c,5*s,-13*s,2*s,9*s,"#e03131");
-  px(c,-8*s,-15*s,3*s,5*s,"#e03131");px(c,5*s,-15*s,3*s,5*s,"#e03131"); /* telinga elf */
+  px(c,-8*s,-15*s,3*s,5*s,"#e03131");px(c,5*s,-15*s,3*s,5*s,"#e03131");
+  px(c,-7.5*s,-14*s,2*s,2*s,"#f0c49c");px(c,5.5*s,-14*s,2*s,2*s,"#f0c49c"); /* telinga dalam */
   px(c,-3*s,-7*s,2*s,2.5*s,"#141414");px(c,1*s,-7*s,2*s,2.5*s,"#141414");
+  px(c,-2.6*s,-7*s,1*s,1*s,"#ffffff");px(c,1.4*s,-7*s,1*s,1*s,"#ffffff");
   px(c,-2*s,-4*s,4*s,1.5*s,"#7d2d2d");
+  px(c,-6*s,-3.5*s,2*s,1.5*s,"rgba(255,120,120,.5)");
+  px(c,4*s,-3.5*s,2*s,1.5*s,"rgba(255,120,120,.5)");
   c.restore();
 }
 /* Penyihir pendamping: topi ungu berbintang, sayap biru */
@@ -427,9 +447,11 @@ function drawWizard(c,x,y,t,s){
   px(c,8*s,-8*s,12*s,10*s-flap*.3,"#7cc4ff");
   px(c,10*s,-5*s,8*s,6*s,"#bfe6ff");
   px(c,-7*s,12*s,14*s,3*s,"rgba(0,0,0,.25)");
-  /* jubah */
+  /* jubah + lipatan */
   px(c,-7*s,0,14*s,13*s,"#3b2d7a");
   px(c,-7*s,0,14*s,4*s,"#6a3fb5");
+  px(c,-4*s,2,2*s,11*s,"#2b1f5e");
+  px(c,2*s,2,2*s,11*s,"rgba(255,255,255,.12)");
   /* kepala */
   px(c,-6*s,-10*s,12*s,10*s,"#f0c49c");
   px(c,-6*s,-10*s,12*s,3*s,"#f5f5f5");
@@ -438,6 +460,7 @@ function drawWizard(c,x,y,t,s){
   px(c,-8*s,-14*s,16*s,2*s,"#6a3fb5");
   px(c,-5*s,-26*s,10*s,13*s,"#6a3fb5");
   px(c,-3*s,-22*s,2*s,2*s,"#ffd93b");px(c,2*s,-18*s,2*s,2*s,"#ffd93b");
+  px(c,0,-24*s,2*s,2*s,"#ffd93b");px(c,-1*s,-16*s,1.5*s,1.5*s,"#ffd93b");
   /* tongkat */
   px(c,9*s,-14*s,2*s,24*s,"#8a5f3c");
   px(c,8*s,-17*s,4*s,4*s,"#ffd93b");
@@ -525,7 +548,9 @@ renderChars();
 const TILE=32,WT=52,HT=39,WW=WT*TILE,WH=HT*TILE;
 const cv=$("#cv"),ctx=cv.getContext("2d");
 let VW=0,VH=0,camX=0,camY=0,frame=0,lastT=0;
-function sizeCanvas(){VW=cv.width=innerWidth;VH=cv.height=innerHeight;}
+let DPR=1;
+function sizeCanvas(){DPR=Math.min(2,window.devicePixelRatio||1);VW=innerWidth;VH=innerHeight;
+  cv.width=Math.round(VW*DPR);cv.height=Math.round(VH*DPR);}
 const LOCS=[
   {id:"couple",  name:"RUMAH MEMPELAI", short:"MEMPELAI", tx:5,  ty:4,  w:9,h:6, wall:"#f5e6c8", roof:"#c0392b", kind:"house",  door:{x:9,y:9}},
   {id:"count",   name:"MENARA JAM",     short:"JAM",     tx:39, ty:4,  w:5,h:7, wall:"#d8c9a0", roof:"#5d3a1f", kind:"tower",  door:{x:41,y:10}},
@@ -558,8 +583,14 @@ function shade(hex,amt){const n=parseInt(hex.slice(1),16);
         b=Math.max(0,Math.min(255,(n&255)+amt));return `rgb(${r},${g},${b})`;}
 function drawTree(g,x,y){
   px(g,x-2,y+18,8,12,"#5d3a1f");px(g,x+2,y+18,4,12,"#7a4a2a");
-  px(g,x-22,y-22,44,34,"#2b6e1e");px(g,x-16,y-32,32,24,"#3f9a2a");
-  px(g,x-12,y-38,14,10,"#5eb83d");px(g,x+6,y-30,10,8,"#5eb83d");
+  px(g,x-24,y-14,48,26,"#1e5a18");               /* bayangan kanopi */
+  px(g,x-22,y-22,44,34,"#2b6e1e");
+  px(g,x-16,y-32,32,24,"#3f9a2a");
+  px(g,x-12,y-38,14,10,"#5eb83d");
+  px(g,x+6,y-30,10,8,"#5eb83d");
+  px(g,x-8,y-36,10,6,"rgba(255,255,255,.22)");    /* highlight daun */
+  px(g,x-14,y-18,4,4,"#ff5b5b");px(g,x+8,y-22,4,4,"#ff5b5b");   /* buah */
+  px(g,x+2,y-12,4,4,"#ffd93b");
 }
 function drawBuilding(g,L){
   const X=L.tx*TILE,Y=L.ty*TILE,Wd=L.w*TILE,Ht=L.h*TILE;
@@ -600,7 +631,9 @@ function drawBuilding(g,L){
   } else {
     px(g,X-8,Y-6,Wd+16,16,L.roof);
     px(g,X-4,Y+8,Wd+8,3,shade(L.roof,22));
+    for(let r=0;r<2;r++)px(g,X-8,Y+2+r*6,Wd+16,1.5,shade(L.roof,-18)); /* garis genteng */
   }
+  px(g,X,Y+Ht-2,Wd,2,"#8a8a8a"); /* fondasi batu */
   /* pintu */
   const dx=L.door.x*TILE,dy=L.door.y*TILE;
   px(g,dx-14,dy-8,28,10+((L.ty+L.h)*TILE-dy),"#5d3a1f");
@@ -633,9 +666,10 @@ function drawBuilding(g,L){
     px(g,X+Wd/2-12,Y+26,24,18,"#8a5f3c");
   }
 }
+const SS=2; /* supersample ground agar tajam di layar HD */
 function buildGround(){
-  groundCv=document.createElement("canvas");groundCv.width=WW;groundCv.height=WH;
-  const g=groundCv.getContext("2d");
+  groundCv=document.createElement("canvas");groundCv.width=WW*SS;groundCv.height=WH*SS;
+  const g=groundCv.getContext("2d");g.scale(SS,SS);
   for(let ty=0;ty<HT;ty++)for(let tx=0;tx<WT;tx++){
     g.fillStyle=(tx+ty)%2?"#79c25f":"#6db854";
     g.fillRect(tx*TILE,ty*TILE,TILE,TILE);
@@ -684,15 +718,16 @@ function nearestInteract(){
 /* ---------- kamera + render ---------- */
 function drawWorld(t){
   const g=ctx;
-  g.drawImage(groundCv,camX,camY,VW,VH,0,0,VW,VH);
+  g.setTransform(DPR,0,0,DPR,0,0);
+  g.drawImage(groundCv,camX*SS,camY*SS,VW*SS,VH*SS,0,0,VW,VH);
   g.save();g.translate(-camX,-camY);
   /* slime */
   for(const s of slimes)drawSlime(g,s.tx*TILE+16,s.ty*TILE+16,t/1000,1,s.col);
   /* penjaga toko di depan toko */
-  drawShopkeeper(g,10*TILE+16,22*TILE+16,CHARS[charIdx],1.05,false);
+  drawShopkeeper(g,10*TILE+16,22*TILE+16,CHARS[charIdx],1.5,false);
   /* penyihir pendamping mengikuti pemain */
   const wx=player.x+26+Math.sin(t/500)*6,wy=player.y-34+Math.cos(t/600)*4;
-  drawWizard(g,wx,wy,t/1000,0.9);
+  drawWizard(g,wx,wy,t/1000,1.35);
   /* bubble bicara penjaga toko */
   if(!dialogOpen){
     const bx=10*TILE+16,by=22*TILE-34+Math.sin(t/400)*3;
@@ -701,7 +736,7 @@ function drawWorld(t){
     g.fillStyle="#2a1a0c";g.font="bold 13px monospace";g.textAlign="center";
     g.fillText("Senjata baru!",bx,by-4);
   }
-  drawHero(g,player.x,player.y,player.dir,player.anim,player.moving,CHARS[charIdx],1.15);
+  drawHero(g,player.x,player.y,player.dir,player.anim,player.moving,CHARS[charIdx],1.7);
   g.restore();
   /* nama lokasi melayang */
   g.save();g.translate(-camX,-camY);
@@ -1063,14 +1098,15 @@ addEventListener("keyup",e=>{ keys[e.key.toLowerCase()]=false; });
 function bindDpad(){
   $$(".dbtn").forEach(b=>{
     const sx=parseInt(b.dataset.dx), sy=parseInt(b.dataset.dy);
-    const on=e=>{e.preventDefault(); joyX=sx; joyY=sy;};
+    const on=e=>{e.preventDefault(); try{b.setPointerCapture(e.pointerId);}catch(err){} joyX=sx; joyY=sy;};
     const off=e=>{e.preventDefault(); if(joyX===sx)joyX=0; if(joyY===sy)joyY=0;};
-    b.addEventListener("touchstart",on,{passive:false});
-    b.addEventListener("touchend",off,{passive:false});
-    b.addEventListener("touchcancel",off,{passive:false});
-    b.addEventListener("mousedown",on); b.addEventListener("mouseup",off); b.addEventListener("mouseleave",off);
+    b.addEventListener("pointerdown",on);
+    b.addEventListener("pointerup",off);
+    b.addEventListener("pointercancel",off);
+    b.addEventListener("pointerleave",off);
   });
 }
+bindDpad();
 $("#actBtn").addEventListener("click",e=>{e.preventDefault(); interact();});
 function gameLoop(t){
   requestAnimationFrame(gameLoop);
@@ -1104,9 +1140,7 @@ $("#startBtn").addEventListener("click",()=>{
   blip(880,0.12,0.06);
   $("#start").style.display="none";
   $("#game").hidden=false;
-  if(matchMedia("(pointer:coarse)").matches||'ontouchstart' in window){
-    $("#dpad").classList.add("show"); $("#actBtn").classList.add("show");
-  }
+  $("#dpad").classList.add("show"); $("#actBtn").classList.add("show");
   sizeCanvas(); buildGround(); updateQuestUI();
   /* dialog pembuka */
   setTimeout(()=>{
