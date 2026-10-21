@@ -46,6 +46,35 @@ class LegacyApiController extends Controller
                     'data' => Invitation::orderBy('created_at', 'DESC')->get()
                 ]);
 
+            case 'get_stats':
+                // Undangan "aktif" = tanggal acaranya (resepsi, fallback akad)
+                // belum lewat; undangan tanpa tanggal dianggap masih aktif.
+                $today = now()->toDateString();
+                $dateRows = Setting::whereIn('key_name', ['wedding_date', 'reception_date'])
+                    ->whereNotNull('key_value')->where('key_value', '!=', '')
+                    ->get(['invitation_id', 'key_name', 'key_value']);
+                $eventDates = [];
+                foreach ($dateRows as $row) {
+                    if ($row->key_name === 'reception_date') {
+                        $eventDates[$row->invitation_id] = $row->key_value;
+                    } elseif (!isset($eventDates[$row->invitation_id])) {
+                        $eventDates[$row->invitation_id] = $row->key_value;
+                    }
+                }
+                $total = Invitation::count();
+                $past = 0;
+                foreach ($eventDates as $date) {
+                    if ($date < $today) $past++;
+                }
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'total' => $total,
+                        'active' => $total - $past,
+                        'past' => $past,
+                    ]
+                ]);
+
             case 'add_invitation':
                 $inv = Invitation::create([
                     'slug' => $request->input('slug'),

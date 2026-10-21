@@ -349,6 +349,41 @@
     <main class="flex-1 md:ml-64 p-8">
         <div class="max-w-4xl mx-auto">
 
+            <!-- Statistik Dashboard -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <div class="data-card rounded-3xl p-5 flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-2xl bg-green-100 text-green-700 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">celebration</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-2xl font-bold text-primary leading-none" id="stat-active">&ndash;</div>
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Undangan Aktif</div>
+                    </div>
+                    <span class="ml-auto relative flex h-2.5 w-2.5 shrink-0">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-60"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                    </span>
+                </div>
+                <div class="data-card rounded-3xl p-5 flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-2xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">mail</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-2xl font-bold text-primary leading-none" id="stat-total">&ndash;</div>
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Total Undangan</div>
+                    </div>
+                </div>
+                <div class="data-card rounded-3xl p-5 flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-2xl bg-gray-100 text-gray-500 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">history</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-2xl font-bold text-primary leading-none" id="stat-past">&ndash;</div>
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Sudah Berlangsung</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Settings Tab -->
             <div id="tab-settings" class="tab-content">
                 <div class="flex justify-between items-center mb-8">
@@ -1550,7 +1585,20 @@
             showTab(activeTab);
         }
 
+        async function loadStats() {
+            try {
+                const res = await fetch('api/admin_api?action=get_stats');
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('stat-active').textContent = data.data.active;
+                    document.getElementById('stat-total').textContent = data.data.total;
+                    document.getElementById('stat-past').textContent = data.data.past;
+                }
+            } catch (e) { /* statistik gagal dimuat, abaikan */ }
+        }
+
         async function loadInvitations() {
+            loadStats();
             const res = await fetch('api/admin_api?action=get_invitations');
             const data = await res.json();
             const selector = document.getElementById('inv-selector');
