@@ -306,6 +306,11 @@
                 id="btn-checkin">
                 <span class="material-symbols-outlined">qr_code_scanner</span> Check-in Tamu
             </button>
+            <button onclick="showTab('analytics')"
+                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
+                id="btn-analytics">
+                <span class="material-symbols-outlined">analytics</span> Analitik
+            </button>
             <button onclick="showTab('rsvp')"
                 class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
                 id="btn-rsvp">
@@ -590,6 +595,40 @@
                             <!-- Bank rows will be injected here -->
                         </div>
 
+                        <div class="border-t border-dashed border-secondary/30 pt-5 space-y-4">
+                            <h4 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-[11px] tracking-widest">
+                                <span class="material-symbols-outlined">qr_code_2</span> QRIS (Opsional)
+                            </h4>
+                            <div class="rsvp-field">
+                                <label>STATUS QRIS</label>
+                                <select id="set-gift_qris_enabled" class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm mt-2">
+                                    <option value="0">Nonaktif — hanya transfer bank</option>
+                                    <option value="1">Aktif — tamu bisa memilih QRIS atau transfer</option>
+                                </select>
+                                <p class="text-[10px] opacity-50 mt-2 italic">*Jika aktif, kartu QRIS tampil di bagian amplop digital undangan, di atas daftar rekening.</p>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <div class="w-24 text-center relative">
+                                    <label class="block aspect-square bg-secondary/5 rounded-xl border border-dashed border-secondary/30 flex flex-col items-center justify-center cursor-pointer overflow-hidden group">
+                                        <img id="preview-gift_qris_image" class="w-full h-full object-contain hidden">
+                                        <div id="placeholder-gift_qris_image" class="text-secondary opacity-40">
+                                            <span class="material-symbols-outlined">qr_code_2</span>
+                                            <p class="text-[8px] font-bold">QRIS</p>
+                                        </div>
+                                        <input type="file" class="hidden" accept="image/*" onchange="uploadQrisImage()">
+                                        <input type="hidden" id="set-gift_qris_image">
+                                    </label>
+                                </div>
+                                <div class="flex-1 space-y-4">
+                                    <div class="rsvp-field">
+                                        <label>NAMA MERCHANT QRIS</label>
+                                        <input type="text" id="set-gift_qris_name" placeholder="Contoh: Nama toko / penerima di QRIS">
+                                    </div>
+                                    <p class="text-[10px] opacity-50 italic">*Unggah gambar kode QRIS dari aplikasi pembayaran (GoPay, OVO, DANA, m-banking, dll). Tamu tinggal scan untuk mengirim hadiah.</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="rsvp-field">
                             <label>NAMA PENERIMA HADIAH</label>
                             <input type="text" id="set-gift_recipient_name" placeholder="Nama penerima hadiah"
@@ -629,6 +668,67 @@
                                 untuk link undangan.</p>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="tab-analytics" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="font-display-lg text-3xl text-primary">Analitik Undangan</h2>
+                    <button onclick="exportGuestsExcel()"
+                        class="btn-theme px-6 py-3 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">download</span> Export Tamu (Excel)
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="data-card rounded-3xl p-5">
+                        <div class="text-3xl font-bold text-green-600" id="an-rsvp-hadir">0</div>
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">RSVP Hadir</div>
+                        <div class="text-[11px] opacity-60 mt-1" id="an-rsvp-hadir-tamu">0 tamu</div>
+                    </div>
+                    <div class="data-card rounded-3xl p-5">
+                        <div class="text-3xl font-bold text-red-500" id="an-rsvp-tidak">0</div>
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Berhalangan</div>
+                        <div class="text-[11px] opacity-60 mt-1" id="an-rsvp-total">dari 0 RSVP</div>
+                    </div>
+                    <div class="data-card rounded-3xl p-5">
+                        <div class="text-3xl font-bold text-primary" id="an-ucapan">0</div>
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Total Ucapan</div>
+                        <div class="text-[11px] opacity-60 mt-1">di buku tamu digital</div>
+                    </div>
+                    <div class="data-card rounded-3xl p-5">
+                        <div class="text-3xl font-bold text-primary" id="an-checkin">0</div>
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Sudah Check-in</div>
+                        <div class="text-[11px] opacity-60 mt-1" id="an-tamu">dari 0 tamu terdaftar</div>
+                    </div>
+                </div>
+
+                <div class="data-card p-8 rounded-3xl">
+                    <h3 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest mb-6">
+                        <span class="material-symbols-outlined">bar_chart</span> Grafik RSVP — Hadir vs Berhalangan
+                    </h3>
+                    <div class="space-y-5">
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-2">
+                                <span class="text-green-700">HADIR</span>
+                                <span id="an-bar-hadir-label">0 (0%)</span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-5 overflow-hidden">
+                                <div id="an-bar-hadir" class="h-full rounded-full transition-all duration-700" style="width:0%;background:linear-gradient(90deg,#4ade80,#16a34a)"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-2">
+                                <span class="text-red-500">BERHALANGAN</span>
+                                <span id="an-bar-tidak-label">0 (0%)</span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-5 overflow-hidden">
+                                <div id="an-bar-tidak" class="h-full rounded-full transition-all duration-700" style="width:0%;background:linear-gradient(90deg,#fca5a5,#ef4444)"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-[11px] opacity-50 italic mt-6">*Data untuk undangan yang sedang dipilih di sidebar. Ganti undangan untuk melihat analitik lainnya.</p>
                 </div>
             </div>
 
@@ -1585,6 +1685,50 @@
             showTab(activeTab);
         }
 
+        async function loadAnalytics() {
+            try {
+                const res = await fetch(`api/admin_api?action=get_analytics&inv_id=${currentInvId}`);
+                const data = await res.json();
+                if (!data.success) return;
+                const d = data.data;
+                document.getElementById('an-rsvp-hadir').textContent = d.rsvp_hadir;
+                document.getElementById('an-rsvp-hadir-tamu').textContent = d.rsvp_hadir_tamu + ' tamu';
+                document.getElementById('an-rsvp-tidak').textContent = d.rsvp_tidak;
+                document.getElementById('an-rsvp-total').textContent = 'dari ' + d.rsvp_total + ' RSVP';
+                document.getElementById('an-ucapan').textContent = d.ucapan_total;
+                document.getElementById('an-checkin').textContent = d.checkin_total;
+                document.getElementById('an-tamu').textContent = 'dari ' + d.tamu_total + ' tamu terdaftar';
+                const total = d.rsvp_total || 0;
+                const pHadir = total ? Math.round(d.rsvp_hadir / total * 100) : 0;
+                const pTidak = total ? Math.round(d.rsvp_tidak / total * 100) : 0;
+                document.getElementById('an-bar-hadir').style.width = pHadir + '%';
+                document.getElementById('an-bar-tidak').style.width = pTidak + '%';
+                document.getElementById('an-bar-hadir-label').textContent = d.rsvp_hadir + ' (' + pHadir + '%)';
+                document.getElementById('an-bar-tidak-label').textContent = d.rsvp_tidak + ' (' + pTidak + '%)';
+            } catch (e) { /* abaikan */ }
+        }
+
+        async function exportGuestsExcel() {
+            const res = await fetch(`api/admin_api?action=get_guests&inv_id=${currentInvId}`);
+            const data = await res.json();
+            if (!data.success || !data.data.length) {
+                alert('Belum ada tamu untuk diexport.');
+                return;
+            }
+            const escCsv = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+            const rows = [['No', 'Nama', 'No HP', 'Kode QR', 'Status Check-in', 'Waktu Check-in']];
+            data.data.forEach((g, i) => {
+                rows.push([i + 1, g.nama, g.no_hp || '', g.qr_code || '', g.checked_in_at ? 'Sudah check-in' : 'Belum check-in', g.checked_in_at || '']);
+            });
+            const csv = '\uFEFF' + rows.map(r => r.map(escCsv).join(';')).join('\r\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'daftar-tamu-' + (currentSlug || currentInvId) + '.csv';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
         async function loadStats() {
             try {
                 const res = await fetch('api/admin_api?action=get_stats');
@@ -1727,6 +1871,7 @@
             if (tabId === 'music') loadMusic();
             if (tabId === 'stories') loadStories();
             if (tabId === 'checkin') loadCheckin();
+            if (tabId === 'analytics') loadAnalytics();
 
             document.querySelector('.mobile-sidebar')?.classList.remove('is-open');
             document.querySelector('.admin-sidebar-backdrop')?.classList.remove('is-visible');
@@ -1735,12 +1880,24 @@
         async function loadSettings() {
             const res = await fetch(`api/admin_api?action=get_settings&inv_id=${currentInvId}`);
             const data = await res.json();
-            const keys = ['theme', 'groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'groom_instagram', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'bride_instagram', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'gift_address', 'gift_maps_link', 'gift_recipient_name', 'rsvp_whatsapp', 'quotes', 'wa_template', 'music_volume', 'music_autoplay', 'theme_preset', 'theme_primary', 'theme_secondary', 'theme_background', 'theme_primary_container', 'theme_secondary_container', 'theme_surface_container_low'];
+            const keys = ['theme', 'groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'groom_instagram', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'bride_instagram', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'gift_address', 'gift_maps_link', 'gift_recipient_name', 'gift_qris_enabled', 'gift_qris_image', 'gift_qris_name', 'rsvp_whatsapp', 'quotes', 'wa_template', 'music_volume', 'music_autoplay', 'theme_preset', 'theme_primary', 'theme_secondary', 'theme_background', 'theme_primary_container', 'theme_secondary_container', 'theme_surface_container_low'];
             keys.forEach(k => {
                 const el = document.getElementById('set-' + k);
                 if (el) el.value = data.data[k] || (k === 'music_volume' ? '50' : (k === 'music_autoplay' ? '1' : ''));
 
                 // Update photo previews
+                if (k === 'gift_qris_image') {
+                    const preview = document.getElementById('preview-gift_qris_image');
+                    const placeholder = document.getElementById('placeholder-gift_qris_image');
+                    if (data.data[k]) {
+                        preview.src = data.data[k];
+                        preview.classList.remove('hidden');
+                        placeholder.classList.add('hidden');
+                    } else {
+                        preview.classList.add('hidden');
+                        placeholder.classList.remove('hidden');
+                    }
+                }
                 if (k === 'groom_photo' || k === 'bride_photo') {
                     const preview = document.getElementById('preview-' + k);
                     const placeholder = document.getElementById('placeholder-' + k);
@@ -1947,6 +2104,27 @@
                 alert(data.message || 'Gagal unggah foto');
             }
             input.value = '';
+        }
+
+        async function uploadQrisImage() {
+            const input = event.target;
+            if (!input.files.length) return;
+            const formData = new FormData();
+            formData.append('image', input.files[0]);
+            const res = await fetch(`api/admin_api?action=upload_qris_image&inv_id=${currentInvId}`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('set-gift_qris_image').value = data.path;
+                const preview = document.getElementById('preview-gift_qris_image');
+                const placeholder = document.getElementById('placeholder-gift_qris_image');
+                preview.src = data.path;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                alert('Gambar QRIS berhasil diunggah! Jangan lupa simpan perubahan.');
+            }
         }
 
         async function uploadProfilePhoto(type) {

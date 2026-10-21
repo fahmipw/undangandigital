@@ -60,6 +60,9 @@ if (!$accounts) {
   if (jklGet('gift_account')) $accounts[] = ['bank'=>jklGet('gift_bank','Bank'),'no'=>jklGet('gift_account'),'an'=>jklGet('gift_owner',''),'logo'=>jklGet('gift_bank_logo','')];
   if (jklGet('gift_account2')) $accounts[] = ['bank'=>jklGet('gift_bank2','Bank'),'no'=>jklGet('gift_account2'),'an'=>jklGet('gift_owner2',''),'logo'=>jklGet('gift_bank_logo','')];
 }
+$qrisEnabled = jklGet('gift_qris_enabled', '') === '1' && trim((string)jklGet('gift_qris_image', '')) !== '';
+$qrisImage = jklGet('gift_qris_image', '');
+$qrisName = jklGet('gift_qris_name', '');
 $musicUrl = null;
 if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
   $mp = $musicRecord->file_path;
@@ -524,6 +527,15 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     @endif
     @if(!empty($accounts))
     <div class="relative z-10 w-full max-w-[340px] space-y-4">
+@if($qrisEnabled)
+<div style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
+<div style="font-weight:800;letter-spacing:.18em;font-size:13px;color:#c0392b">QRIS</div>
+<p style="font-size:12px;opacity:.65;margin:4px 0 12px">Scan untuk kirim hadiah &mdash; semua e-wallet &amp; m-banking</p>
+<img src="{{ $qrisImage }}" alt="QRIS" style="width:210px;height:210px;object-fit:contain;margin:0 auto;display:block">
+@if($qrisName)<p style="font-size:13px;font-weight:600;margin-top:10px">{{ $qrisName }}</p>@endif
+<p style="font-size:11px;opacity:.55;margin-top:4px">atau pilih transfer bank di bawah ini</p>
+</div>
+@endif
       @foreach($accounts as $i => $a)
       <div class="anim-zoom card-surga p-5 text-left" style="border-width:2px">
         <div class="flex items-center justify-between mb-3">

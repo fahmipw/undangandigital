@@ -315,6 +315,9 @@ const MC = {
   resepsiMaps: @json($sameLoc ? $mainMapLink : jklGet('reception_map_link','')),
   liveStream: @json(jklGet('live_stream_link', '')),
   giftRecipient: @json($giftRecipient),
+  qrisEnabled: @json(jklGet('gift_qris_enabled', '') === '1' && jklGet('gift_qris_image', '') !== ''),
+  qrisImage: @json(jklGet('gift_qris_image', '')),
+  qrisName: @json(jklGet('gift_qris_name', '')),
   giftAddress: @json(jklGet('gift_address', '')),
   giftMaps: @json(jklGet('gift_maps_link', '')),
   brideParents: @json(jklGet('bride_parents', '')),
@@ -954,7 +957,13 @@ function renderShop(tab){
   const box=$("#shopBody"); if(!box) return;
   if(tab==="weapons"){
     const accs=MC.accounts||[];
-    box.innerHTML = accs.length ? `<div class="shop-grid">${accs.map((a,i)=>{
+    const qrisHtml = MC.qrisEnabled ? `<div class="shop-card" style="grid-column:1/-1;background:#fff">
+      <div style="font-family:'Press Start 2P',monospace;font-size:11px;color:#c0392b;letter-spacing:2px">QRIS</div>
+      <p style="font-size:18px;color:#7a6a4a;margin:4px 0 8px">Scan untuk kirim hadiah</p>
+      <img src="${esc(MC.qrisImage)}" alt="QRIS" style="width:170px;height:170px;object-fit:contain;margin:0 auto;display:block">
+      ${MC.qrisName?`<p style="font-size:19px;font-weight:bold;color:#3a2a18;margin-top:6px">${esc(MC.qrisName)}</p>`:""}
+      <p style="font-size:17px;color:#7a6a4a">atau pilih senjata (rekening) di bawah</p></div>` : "";
+    box.innerHTML = qrisHtml + (accs.length ? `<div class="shop-grid">${accs.map((a,i)=>{
       const kind=WEAPON_KINDS[i%4];
       return `<div class="shop-card ${i===accs.length-1?'hot':''}">${i===accs.length-1?'<span class="badge">TERBAIK!</span>':''}
       <canvas class="wicon" data-kind="${kind}" width="56" height="56"></canvas>
@@ -963,7 +972,7 @@ function renderShop(tab){
       <div class="stat">a.n. ${esc(a.an)}</div>
       <button class="pq-btn gold copybtn" data-no="${esc(a.no)}" style="font-size:9px;padding:10px 6px">SALIN NOMOR</button>
       </div>`;}).join("")}</div>`
-    : `<p style="font-size:20px;color:#7a6a4a">Informasi hadiah akan segera hadir.</p>`;
+    : `<p style="font-size:20px;color:#7a6a4a">Informasi hadiah akan segera hadir.</p>`);
     $$("#shopBody .wicon").forEach(c=>drawWeaponIcon(c,c.dataset.kind));
     $$("#shopBody .copybtn").forEach(b=>b.addEventListener("click",()=>{
       copyText(b.dataset.no); toast("NOMOR REKENING TERSALIN!");

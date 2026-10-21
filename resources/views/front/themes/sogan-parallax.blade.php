@@ -53,6 +53,9 @@ if (!$accounts) {
   if (mcGet('gift_account')) $accounts[] = ['bank'=>mcGet('gift_bank','Bank'),'no'=>mcGet('gift_account'),'an'=>mcGet('gift_owner',''),'logo'=>mcGet('gift_bank_logo','')];
   if (mcGet('gift_account2')) $accounts[] = ['bank'=>mcGet('gift_bank2','Bank'),'no'=>mcGet('gift_account2'),'an'=>mcGet('gift_owner2',''),'logo'=>mcGet('gift_bank_logo','')];
 }
+$qrisEnabled = mcGet('gift_qris_enabled', '') === '1' && trim((string)mcGet('gift_qris_image', '')) !== '';
+$qrisImage = mcGet('gift_qris_image', '');
+$qrisName = mcGet('gift_qris_name', '');
 $musicUrl = null;
 if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
   $mp = $musicRecord->file_path;
@@ -415,6 +418,15 @@ fill="#160c05" stroke="url(#emasG)" stroke-width="3"/>
 <section id="gift">
 <div class="rv"><div class="sec-kicker">Tanda Kasih</div><div class="sec-title dekor">Hadiah</div></div>
 <svg class="ukiran rv" viewBox="0 0 320 30"><path d="M10 15 H138 M182 15 H310" stroke="#a87e1f" stroke-width="1.5"/><path d="M160 4 l11 11 -11 11 -11 -11 Z" fill="url(#emasG)"/><circle cx="146" cy="15" r="3" fill="#d4af37"/><circle cx="174" cy="15" r="3" fill="#d4af37"/></svg>
+@if($qrisEnabled)
+<div style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
+<div style="font-weight:800;letter-spacing:.18em;font-size:13px;color:#c0392b">QRIS</div>
+<p style="font-size:12px;opacity:.65;margin:4px 0 12px">Scan untuk kirim hadiah &mdash; semua e-wallet &amp; m-banking</p>
+<img src="{{ $qrisImage }}" alt="QRIS" style="width:210px;height:210px;object-fit:contain;margin:0 auto;display:block">
+@if($qrisName)<p style="font-size:13px;font-weight:600;margin-top:10px">{{ $qrisName }}</p>@endif
+<p style="font-size:11px;opacity:.55;margin-top:4px">atau pilih transfer bank di bawah ini</p>
+</div>
+@endif
 @foreach($accounts as $a)
 <div class="card bank rv">
 <div class="bk">{{ $a['bank'] }}</div>

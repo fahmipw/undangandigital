@@ -151,6 +151,9 @@ if (!$accounts) {
   if (jwaGet('gift_account')) $accounts[] = ['bank'=>jwaGet('gift_bank','Bank'),'no'=>jwaGet('gift_account'),'an'=>jwaGet('gift_owner',''),'logo'=>jwaGet('gift_bank_logo','')];
   if (jwaGet('gift_account2')) $accounts[] = ['bank'=>jwaGet('gift_bank2','Bank'),'no'=>jwaGet('gift_account2'),'an'=>jwaGet('gift_owner2',''),'logo'=>jwaGet('gift_bank_logo','')];
 }
+$qrisEnabled = jwaGet('gift_qris_enabled', '') === '1' && trim((string)jwaGet('gift_qris_image', '')) !== '';
+$qrisImage = jwaGet('gift_qris_image', '');
+$qrisName = jwaGet('gift_qris_name', '');
 $musicUrl = null;
 if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
   $mp = $musicRecord->file_path;
@@ -565,6 +568,15 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     @endif
     @if(!empty($accounts))
     <div class="relative z-10 w-full max-w-[340px] space-y-4">
+@if($qrisEnabled)
+<div style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
+<div style="font-weight:800;letter-spacing:.18em;font-size:13px;color:#c0392b">QRIS</div>
+<p style="font-size:12px;opacity:.65;margin:4px 0 12px">Scan untuk kirim hadiah &mdash; semua e-wallet &amp; m-banking</p>
+<img src="{{ $qrisImage }}" alt="QRIS" style="width:210px;height:210px;object-fit:contain;margin:0 auto;display:block">
+@if($qrisName)<p style="font-size:13px;font-weight:600;margin-top:10px">{{ $qrisName }}</p>@endif
+<p style="font-size:11px;opacity:.55;margin-top:4px">atau pilih transfer bank di bawah ini</p>
+</div>
+@endif
       @foreach($accounts as $i => $a)
       <div class="anim-scale rounded-2xl p-[1.5px]" style="background:linear-gradient(135deg,#8a6a1f,#d4af37,#f6e27a,#d4af37,#8a6a1f)">
         <div class="bg-[#100b08] rounded-2xl p-5 text-left">

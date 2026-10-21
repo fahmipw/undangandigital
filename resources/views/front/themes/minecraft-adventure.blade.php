@@ -52,6 +52,9 @@ if (!$accounts) {
   if (mcaGet('gift_account')) $accounts[] = ['bank'=>mcaGet('gift_bank','Bank'),'no'=>mcaGet('gift_account'),'an'=>mcaGet('gift_owner',''),'logo'=>mcaGet('gift_bank_logo','')];
   if (mcaGet('gift_account2')) $accounts[] = ['bank'=>mcaGet('gift_bank2','Bank'),'no'=>mcaGet('gift_account2'),'an'=>mcaGet('gift_owner2',''),'logo'=>mcaGet('gift_bank_logo','')];
 }
+$qrisEnabled = mcaGet('gift_qris_enabled', '') === '1' && trim((string)mcaGet('gift_qris_image', '')) !== '';
+$qrisImage = mcaGet('gift_qris_image', '');
+$qrisName = mcaGet('gift_qris_name', '');
 $musicUrl = null;
 if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
   $mp = $musicRecord->file_path;
@@ -592,6 +595,15 @@ gift:()=>`<h2 class="ptitle">PETI HARTA</h2><p class="psub">Klik petinya untuk m
 <div class="chest-zone"><div class="chest" id="ch2"><div class="glow"></div><div class="lid"></div><div class="base"></div></div>
 <div class="px" style="font-family:'Press Start 2P',monospace;font-size:9px;color:#5a5a5a" id="chL2">PETI TERKUNCI</div></div>
 <div class="gift-grid" id="ga2" hidden>
+@if($qrisEnabled)
+<div style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
+<div style="font-weight:800;letter-spacing:.18em;font-size:13px;color:#c0392b">QRIS</div>
+<p style="font-size:12px;opacity:.65;margin:4px 0 12px">Scan untuk kirim hadiah &mdash; semua e-wallet &amp; m-banking</p>
+<img src="{{ $qrisImage }}" alt="QRIS" style="width:210px;height:210px;object-fit:contain;margin:0 auto;display:block">
+@if($qrisName)<p style="font-size:13px;font-weight:600;margin-top:10px">{{ $qrisName }}</p>@endif
+<p style="font-size:11px;opacity:.55;margin-top:4px">atau pilih transfer bank di bawah ini</p>
+</div>
+@endif
 @foreach($accounts as $i => $a)
 <div class="acct"><div class="bank">{{ $a['bank'] }}</div>
     @if(!empty($a['logo']))<img src="{{ $a['logo'] }}" alt="Logo bank" style="height:36px;max-width:150px;object-fit:contain;margin:10px auto 0;display:block">@endif<div class="no" id="gno{{ $i }}">{{ $a['no'] }}</div>
