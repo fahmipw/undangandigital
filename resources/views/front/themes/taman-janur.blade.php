@@ -469,9 +469,10 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 @endif
 
 <footer>
-  <div class="rv"><div class="hand">Terima Kasih</div>
+  <div class="rv"><img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="Gunungan" style="width:96px;margin:0 auto 12px;display:block" /><div class="hand">Terima Kasih</div>
   <p style="color:var(--tinta-dim);font-size:14px;line-height:1.8;max-width:380px;margin:14px auto">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.</p>
   <div class="serif" style="font-size:22px;color:var(--daun-dk)">{{ $brideNick }} &amp; {{ $groomNick }}</div></div>
+  <img src="{{ asset('images/jawa-puspa/ornamen-bawah.webp') }}" alt="" style="width:100%;display:block;margin-top:24px" />
 </footer>
 </div>
 

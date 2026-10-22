@@ -262,7 +262,7 @@ tailwind.config = {
     </div>
 
     <div id="gate-center" class="relative z-10 flex flex-col items-center">
-      <svg class="orn w-36 h-44 mb-3" data-speed="0.5"><use href="#jb-gunungan"/></svg>
+      <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="Gunungan" class="orn w-40 mb-3" data-speed="0.5" />
       <h2 class="font-serif text-[2rem] leading-snug tracking-[0.12em] text-gading">{{ strtoupper($groomNick) }} <span class="text-gold-grad">&amp;</span> {{ strtoupper($brideNick) }}</h2>
       <svg class="w-52 h-5 mt-3" viewBox="0 0 300 24"><use href="#jb-divider"/></svg>
       <div class="card-gading mx-auto w-full max-w-[300px] px-6 py-5 mt-5">
@@ -291,7 +291,7 @@ tailwind.config = {
 
     <div class="hero-content relative z-10 flex flex-col items-center px-4 w-full">
       <p class="hero-stagger font-script text-4xl text-gold-grad opacity-0 mb-1">The Wedding Of</p>
-      <svg class="hero-stagger orn w-32 h-40 opacity-0 my-2" data-speed="0.6"><use href="#jb-gunungan"/></svg>
+      <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="Gunungan" class="hero-stagger orn w-36 opacity-0 my-2" data-speed="0.6" />
       <h2 class="hero-stagger font-serif text-[1.9rem] leading-snug tracking-[0.12em] text-gading opacity-0">{{ strtoupper($groomNick) }} <span class="text-gold-grad">&amp;</span> {{ strtoupper($brideNick) }}</h2>
       <svg class="hero-stagger w-56 h-5 opacity-0 mt-3" viewBox="0 0 300 24"><use href="#jb-divider"/></svg>
       <div class="hero-stagger mt-5 opacity-0 flex items-stretch justify-center gap-4 text-gading">
@@ -310,7 +310,7 @@ tailwind.config = {
         style="border:1.5px solid rgba(201,164,92,.75);background:rgba(201,164,92,.07)">
         <span class="font-serif text-2xl tracking-[0.15em] text-gold-grad font-semibold">{{ $monoBride }}{{ $monoGroom }}</span>
       </div>
-      <svg class="anim-zoom w-14 h-[4.4rem] mx-auto mb-4"><use href="#jb-gunungan"/></svg>
+      <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="" class="anim-zoom w-14 mx-auto mb-4" />
       <p class="anim-fade font-serif text-[17px] leading-[1.9] text-jbiru-100/90 italic">
         &ldquo;Dan segala sesuatu Kami ciptakan berpasang-pasangan agar kamu mengingat (kebesaran Allah).&rdquo;
       </p>
@@ -580,11 +580,12 @@ tailwind.config = {
   <!-- ================= 11. FOOTER ================= -->
   <footer class="scroll-section relative py-20 px-6 pb-32 flex flex-col items-center text-center overflow-hidden">
     <div class="damask"></div>
-    <svg class="anim-zoom w-16 h-20 relative z-10 mb-5"><use href="#jb-gunungan"/></svg>
+    <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="" class="anim-zoom w-16 relative z-10 mb-5" />
     <p class="anim-fade font-serif italic text-jbiru-100/75 text-[15px] leading-[1.9] max-w-[320px] relative z-10 mb-8">Merupakan suatu kehormatan dan kebahagiaan bagi kami beserta keluarga besar apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai.</p>
     <h3 class="anim-zoom font-script text-5xl text-gold-grad relative z-10 mb-3">{{ $groomNick }} &amp; {{ $brideNick }}</h3>
     <p class="anim-fade text-[10px] tracking-[0.3em] uppercase text-jbiru-100/50 relative z-10">Beserta Keluarga Besar</p>
     <div class="hairline w-40 mt-8 relative z-10"></div>
+    <img src="{{ asset('images/jawa-puspa/ornamen-bawah.webp') }}" alt="" class="absolute bottom-0 left-0 w-full opacity-80 pointer-events-none" />
   </footer>
 
   <!-- Floating: musik + menu -->

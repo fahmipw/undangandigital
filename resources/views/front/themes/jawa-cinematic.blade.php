@@ -433,12 +433,14 @@ tailwind.config = {
 
   <!-- ============ FOOTER ============ -->
   <footer data-bg="#0A192F" class="relative px-6 pt-20 pb-28 text-center overflow-hidden">
+    <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="Gunungan" class="reveal w-24 mx-auto mb-6" />
     <p class="reveal truntum mb-6" aria-hidden="true">✦ ✦ ✦</p>
     <p class="reveal text-ivory/70 font-serif italic text-lg max-w-xs mx-auto leading-relaxed mb-6">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.</p>
     <p class="reveal text-ivory/50 text-sm mb-2">Kami yang berbahagia,</p>
     <h4 class="reveal font-display text-4xl mb-8"><span class="gold-text">{{ $brideNick }} &amp; {{ $groomNick }}</span></h4>
     <div class="reveal hairline w-40 mx-auto mb-6"></div>
     <p class="reveal text-ivory/40 text-xs tracking-[.3em]">MATUR NUWUN • {{ jwcDate($rDate) }}</p>
+    <img src="{{ asset('images/jawa-puspa/ornamen-bawah.webp') }}" alt="" class="absolute bottom-0 left-0 w-full opacity-70 pointer-events-none" />
   </footer>
 </div>
 

@@ -190,7 +190,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 
 <div id="cover">
   <div class="cover-card">
-    <svg class="gunungan" viewBox="0 0 100 130"><path d="M50 4 C78 30 92 62 92 96 L92 126 L8 126 L8 96 C8 62 22 30 50 4 Z" fill="none" stroke="#d4af37" stroke-width="2.5"/><path d="M50 22 C68 42 78 64 78 92 L78 118 L22 118 L22 92 C22 64 32 42 50 22 Z" fill="none" stroke="#d4af37" stroke-width="1.2" opacity=".7"/><circle cx="50" cy="70" r="7" fill="none" stroke="#d4af37" stroke-width="1.5"/><path d="M50 40 L50 100 M32 60 L68 60 M28 82 L72 82" stroke="#d4af37" stroke-width="1" opacity=".6"/></svg>
+    <img class="gunungan" src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="Gunungan" />
     <div class="kicker">Sugeng Rawuh</div>
     <div class="cover-names">{{ $brideNick }} &amp; {{ $groomNick }}</div>
     <div class="guest">Dhumateng Panjenengan<br>Bapak/Ibu/Sedherek<b>{{ $guestName }}</b></div>
@@ -338,6 +338,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
   <p style="color:var(--gading-dim);font-size:14px;line-height:1.8;max-width:380px;margin:14px auto">Matur nuwun sanget awit rawuh saha donga pangestu panjenengan. Mugi dados berkah tumrap kita sedaya.</p>
   <div class="ukel">❋</div>
   <div class="serif" style="font-size:22px;color:var(--prada-lt)">{{ $brideNick }} &amp; {{ $groomNick }}</div></div>
+  <img src="{{ asset('images/jawa-puspa/ornamen-bawah.webp') }}" alt="" style="width:100%;display:block;margin-top:24px" />
 </footer>
 </div>
 

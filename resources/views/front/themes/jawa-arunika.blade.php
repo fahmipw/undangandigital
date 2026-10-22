@@ -250,7 +250,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
   <section id="preloader" class="fixed inset-0 z-50 mx-auto max-w-[430px] flex flex-col items-center justify-center bg-jawa-bg px-6 text-center">
     <div class="relative mb-6 w-[30%] max-w-[120px]">
       <div class="absolute inset-0 rounded-full bg-jawa-gold/20 blur-2xl"></div>
-      <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" alt="Gunungan" class="relative w-full h-auto drop-shadow-[0_8px_20px_rgba(212,175,55,0.3)]" />
+      <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="Gunungan" class="relative w-full h-auto drop-shadow-[0_8px_20px_rgba(212,175,55,0.3)]" />
     </div>
     <p class="text-[10px] uppercase tracking-[0.4em] text-jawa-gold mb-2">Wedding Invitation</p>
     <h1 class="font-cinzel text-xl text-gold-gradient mb-6">{{ $groomNick }} &amp; {{ $brideNick }}</h1>
@@ -272,10 +272,10 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
       {!! jwaFiligree(0, true) !!}
     </div>
     <div id="gate-left-gunungan" class="pointer-events-none absolute -left-[14%] bottom-[2%] w-[44%] opacity-50">
-      <img src="{{ $ASSET }}1225-GUNUNGAN-JAWA-576x1024.png" class="w-full h-auto" alt="" />
+      <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" class="w-full h-auto" alt="" />
     </div>
     <div id="gate-right-gunungan" class="pointer-events-none absolute -right-[14%] bottom-[2%] w-[44%] opacity-50">
-      <img src="{{ $ASSET }}1225-GUNUNGAN-JAWA-576x1024.png" class="w-full h-auto scale-x-[-1]" alt="" />
+      <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" class="w-full h-auto scale-x-[-1]" alt="" />
     </div>
 
     <div id="gate-header" class="relative z-10 pt-1">
@@ -285,7 +285,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     </div>
 
     <div id="gate-center" class="relative z-10 py-1">
-      <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="sway-node sway-subtle w-[30%] max-w-[122px] mx-auto drop-shadow-[0_12px_28px_rgba(212,175,55,0.35)]" alt="Gunungan" />
+      <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" class="sway-node sway-subtle w-[30%] max-w-[122px] mx-auto drop-shadow-[0_12px_28px_rgba(212,175,55,0.35)]" alt="Gunungan" />
     </div>
 
     <div id="gate-footer" class="relative z-10 w-full max-w-[320px] mx-auto bg-black/55 backdrop-blur-md border border-jawa-gold/30 rounded-2xl p-5 shadow-2xl">
@@ -333,7 +333,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
 
     <div class="anim-scale relative z-10 w-full max-w-[340px] mx-auto card-dark px-6 pb-9 pt-7 mt-10">
       <div class="orn -mt-[4.7rem] mb-4" data-speed="0.8" data-rot="0">
-        <img src="{{ $ASSET }}1225-GUNUNGAN-JAWA-576x1024.png" class="sway-node sway-subtle w-[30%] max-w-[100px] mx-auto drop-shadow-[0_8px_18px_rgba(212,175,55,0.35)]" alt="Gunungan" />
+        <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" class="sway-node sway-subtle w-[30%] max-w-[100px] mx-auto drop-shadow-[0_8px_18px_rgba(212,175,55,0.35)]" alt="Gunungan" />
       </div>
       <h3 class="anim-fade font-cinzel text-xl text-gold-gradient mb-4">With Love</h3>
       <p class="anim-fade font-serif text-[16px] leading-[1.9] text-stone-200 italic">
@@ -608,12 +608,13 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
 
   <!-- ================= 11. FOOTER ================= -->
   <footer class="relative px-6 pt-20 pb-28 text-center overflow-hidden bg-jawa-bg/80">
-    <img src="{{ $ASSET }}ASSET-GUNUNGAN.png" class="orn sway-node sway-subtle w-[26%] max-w-[110px] mx-auto mb-5 opacity-90" alt=""  data-speed="0.8" data-rot="0" />
+    <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" class="orn sway-node sway-subtle w-[26%] max-w-[110px] mx-auto mb-5 opacity-90" alt=""  data-speed="0.8" data-rot="0" />
     <p class="anim-fade font-serif italic text-stone-300 text-[16px] max-w-[300px] mx-auto leading-relaxed mb-6">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kami.</p>
     <p class="anim-fade text-stone-500 text-xs mb-2 tracking-[0.2em] uppercase">Kami yang berbahagia,</p>
     <h4 class="anim-fade font-cinzel text-[1.7rem] text-gold-gradient mb-6">{{ $groomNick }} &amp; {{ $brideNick }}</h4>
     <div class="hairline-gold w-40 mx-auto mb-5"></div>
     <p class="anim-fade text-stone-500 text-[10px] tracking-[0.35em] uppercase">Matur Nuwun &bull; {{ jwaDate($rDate) }}</p>
+    <img src="{{ asset('images/jawa-puspa/ornamen-bawah.webp') }}" alt="" class="absolute bottom-0 left-0 w-full opacity-70 pointer-events-none" />
   </footer>
 </main>
 

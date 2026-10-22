@@ -273,7 +273,7 @@ fill="#160c05" stroke="url(#emasG)" stroke-width="3"/>
 <div id="cover">
 <svg class="cover-batik"><rect width="100%" height="100%" fill="url(#kawung)"/></svg>
 <div class="cover-inner">
-<svg class="gunungan gun-cover" viewBox="0 0 400 620"><use href="#gunungan"/></svg>
+<img class="gunungan gun-cover" src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="Gunungan" />
 <div class="kicker">The Wedding Of</div>
 <div class="cover-names">{{ $brideNick }} &amp; {{ $groomNick }}</div>
 <div class="cover-date">{{ mcDate($wDate) }}</div>
@@ -285,7 +285,7 @@ fill="#160c05" stroke="url(#emasG)" stroke-width="3"/>
 
 <!-- ================= HERO ================= -->
 <section id="hero">
-<div class="gun-wrap" data-speed="0.1"><svg class="gunungan gun-float" viewBox="0 0 400 620" style="width:100%"><use href="#gunungan"/></svg></div>
+<div class="gun-wrap" data-speed="0.1"><img class="gunungan gun-float" src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="Gunungan" style="width:100%" /></div>
 <div class="rv"><div class="hero-hand">The Wedding Of</div></div>
 <div class="rv"><h1 class="hero-names">{{ $brideNick }} <em>&amp;</em> {{ $groomNick }}</h1></div>
 <div class="rv"><div class="hero-date">{{ mcDate($wDate) }}</div>
@@ -443,11 +443,12 @@ fill="#160c05" stroke="url(#emasG)" stroke-width="3"/>
 
 <footer>
 <div class="rv">
-<svg class="gunungan" viewBox="0 0 400 620" style="width:120px;margin:0 auto 10px"><use href="#gunungan"/></svg>
+<img class="gunungan" src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="Gunungan" style="width:120px;margin:0 auto 10px" />
 <div class="dekor">Terima Kasih</div>
 <p style="color:var(--tinta-dim);font-size:14px;line-height:1.8;max-width:380px;margin:14px auto">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.</p>
 <div class="dekor" style="font-size:20px;color:var(--emas-lt)">{{ $brideNick }} &amp; {{ $groomNick }}</div>
 </div>
+<img src="{{ asset('images/jawa-puspa/ornamen-bawah.webp') }}" alt="" style="width:100%;display:block;margin-top:10px" />
 </footer>
 </div>
 
