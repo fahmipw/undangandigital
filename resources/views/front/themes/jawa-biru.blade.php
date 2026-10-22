@@ -579,8 +579,7 @@ tailwind.config = {
     <p class="anim-fade font-serif italic text-jbiru-100/75 text-[15px] leading-[1.9] max-w-[320px] relative z-10 mb-8">Merupakan suatu kehormatan dan kebahagiaan bagi kami beserta keluarga besar apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai.</p>
     <h3 class="anim-zoom font-script text-5xl text-gold-grad relative z-10 mb-3">{{ $groomNick }} &amp; {{ $brideNick }}</h3>
     <p class="anim-fade text-[10px] tracking-[0.3em] uppercase text-jbiru-100/50 relative z-10">Beserta Keluarga Besar</p>
-    <div class="hairline w-40 my-8 relative z-10"></div>
-    <p class="anim-fade text-[11px] tracking-widest text-jbiru-100/40 relative z-10">Crafted with love &mdash; Undangan Digital</p>
+    <div class="hairline w-40 mt-8 relative z-10"></div>
   </footer>
 
   <!-- Floating: musik + menu -->
