@@ -1034,6 +1034,7 @@
                             <option value="jawa-arunika">Premium — Jawa Arunika</option>
                             <option value="jawa-klasik">Premium — Jawa Klasik</option>
                             <option value="taman-surga">Premium — Taman Surga (Garden Heaven)</option>
+                            <option value="jawa-biru">Premium — Jawa Biru (Blue Java)</option>
                             <option value="pixel-quest">Premium — Pixel Quest (Game)</option>
                         </select>
                     </div>
