@@ -176,6 +176,10 @@ tailwind.config = {
     box-shadow:0 14px 30px rgba(0,0,0,.5);max-width:88vw;text-align:center}
   #toast.show{opacity:1;transform:translate(-50%,0)}
   .orn{will-change:transform}
+  #petalCanvas{position:fixed;top:0;left:50%;transform:translateX(-50%);width:min(430px,100vw);
+    height:100dvh;z-index:44;pointer-events:none}
+  #wish-list > div{animation:jbFadeUp .6s ease both}
+  @keyframes jbFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
   @media (prefers-reduced-motion: reduce){
     #musicFloat .bars span{animation:none}
   }
@@ -230,6 +234,7 @@ tailwind.config = {
   </defs>
 </svg>
 <main class="invitation-frame min-h-screen">
+  <canvas id="petalCanvas" aria-hidden="true"></canvas>
 
   <!-- ================= 1. PRELOADER ================= -->
   <section id="preloader" class="fixed inset-0 z-50 mx-auto max-w-[430px] flex flex-col items-center justify-center px-6 text-center bg-jbiru-900">
@@ -708,19 +713,59 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- Animasi scroll ---
-  document.querySelectorAll('.scroll-section').forEach(sec => {
-    const zooms = sec.querySelectorAll('.anim-zoom');
-    if (zooms.length) gsap.fromTo(zooms, { scale: 0.86, opacity: 0 }, {
-      scale: 1, opacity: 1, duration: 1.05, ease: 'power3.out', stagger: 0.1,
-      scrollTrigger: { trigger: sec, start: 'top 78%' }
-    });
-    const fades = sec.querySelectorAll('.anim-fade');
-    if (fades.length) gsap.fromTo(fades, { opacity: 0, y: 22 }, {
-      opacity: 1, y: 0, duration: 0.95, ease: 'power3.out', stagger: 0.09,
-      scrollTrigger: { trigger: sec, start: 'top 78%' }
-    });
+  // --- Animasi scroll: SEMUA teks & kartu muncul smooth, per elemen ---
+  function jbReveal(el, fromVars, toVars, dur) {
+    gsap.fromTo(el, fromVars, Object.assign({}, toVars, {
+      duration: dur, ease: 'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 92%', once: true }
+    }));
+  }
+  document.querySelectorAll('.anim-zoom').forEach(el =>
+    jbReveal(el, { scale: 0.88, opacity: 0 }, { scale: 1, opacity: 1 }, 1.05));
+  document.querySelectorAll('.anim-fade').forEach(el =>
+    jbReveal(el, { opacity: 0, y: 24 }, { opacity: 1, y: 0 }, 0.95));
+  // Teks lain yang belum punya kelas animasi ikut fade-in halus
+  document.querySelectorAll('.scroll-section h2, .scroll-section h3, .scroll-section h4, .scroll-section p, .scroll-section label, .scroll-section button, footer h2, footer h3, footer p').forEach(el => {
+    if (el.classList.contains('anim-zoom') || el.classList.contains('anim-fade') || el.classList.contains('hidden')) return;
+    if (el.closest('.anim-zoom') || el.closest('.anim-fade')) return; // ikut animasi kartu induknya
+    jbReveal(el, { opacity: 0, y: 18 }, { opacity: 1, y: 0 }, 0.9);
   });
+
+  // --- Kelopak bunga berjatuhan ---
+  (function () {
+    const cv = document.getElementById('petalCanvas');
+    if (!cv || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const ctx = cv.getContext('2d');
+    let W = 0, H = 0, petals = [];
+    const COLORS = ['rgba(253,251,247,', 'rgba(230,200,135,', 'rgba(201,164,92,'];
+    function size() { const r = cv.getBoundingClientRect(); W = cv.width = Math.round(r.width); H = cv.height = Math.round(r.height); }
+    function mk(init) {
+      return { x: Math.random() * W, y: init ? Math.random() * H : -24, s: 5 + Math.random() * 7,
+        vy: 0.35 + Math.random() * 0.7, ph: Math.random() * Math.PI * 2, sw: 0.4 + Math.random() * 0.9,
+        rot: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 0.012,
+        c: COLORS[Math.floor(Math.random() * COLORS.length)], a: 0.35 + Math.random() * 0.4 };
+    }
+    function draw(p) {
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.c + p.a + ')';
+      ctx.beginPath();
+      ctx.moveTo(0, -p.s);
+      ctx.bezierCurveTo(p.s * 0.8, -p.s * 0.3, p.s * 0.6, p.s * 0.7, 0, p.s);
+      ctx.bezierCurveTo(-p.s * 0.6, p.s * 0.7, -p.s * 0.8, -p.s * 0.3, 0, -p.s);
+      ctx.fill(); ctx.restore();
+    }
+    size(); addEventListener('resize', size);
+    for (let i = 0; i < 16; i++) petals.push(mk(true));
+    (function loop() {
+      ctx.clearRect(0, 0, W, H);
+      petals.forEach((p, i) => {
+        p.y += p.vy; p.ph += 0.016 * p.sw; p.x += Math.sin(p.ph) * p.sw * 0.5; p.rot += p.vr;
+        if (p.y > H + 24) petals[i] = mk(false);
+        draw(p);
+      });
+      requestAnimationFrame(loop);
+    })();
+  })();
 
   // --- Countdown ---
   const cdIds = { d: document.getElementById('cd-d'), h: document.getElementById('cd-h'), m: document.getElementById('cd-m'), s: document.getElementById('cd-s') };
