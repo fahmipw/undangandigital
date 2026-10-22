@@ -86,6 +86,7 @@ class FrontController extends Controller
             'jawa-klasik'           => 'front.themes.jawa-klasik',
             'taman-surga'           => 'front.themes.taman-surga',
             'jawa-biru'             => 'front.themes.jawa-biru',
+            'jawa-puspa'            => 'front.themes.jawa-puspa',
             'pixel-quest'           => 'front.themes.pixel-quest',
         ];
         $theme = $settings['theme'] ?? 'default';

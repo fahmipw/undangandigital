@@ -1,0 +1,855 @@
+<?php
+/* ============================================================
+   TEMA: JAWA PUSPA — adat Jawa klasik terang (gading + emas perunggu)
+   Dipilih via settings: theme = jawa-puspa
+   Ornamen memakai aset gambar di public/images/jawa-puspa/
+   (sayap gunungan, gunungan divider, border batik, kawung, ornamen bawah).
+   ============================================================ */
+$GLOBALS['jkl_settings'] = $settings ?? [];
+if (!function_exists('jklGet')) {
+  function jklGet($key, $default = '') {
+    $s = $GLOBALS['jkl_settings'];
+    if (!isset($s[$key]) || trim((string)$s[$key]) === '') return $default;
+    return $s[$key];
+  }
+}
+if (!function_exists('jklDate')) {
+  function jklDate($dateStr) {
+    if (!$dateStr) return '';
+    $days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    $months = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    $ts = strtotime($dateStr);
+    if (!$ts) return $dateStr;
+    return $days[date('w',$ts)].', '.date('j',$ts).' '.$months[date('n',$ts)].' '.date('Y',$ts);
+  }
+}
+if (!function_exists('jklDayNum')) {
+  function jklDayNum($dateStr) { $ts = strtotime((string)$dateStr); return $ts ? date('j', $ts) : ''; }
+}
+if (!function_exists('jklDayName')) {
+  function jklDayName($dateStr) {
+    $days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    $ts = strtotime((string)$dateStr); return $ts ? $days[date('w', $ts)] : '';
+  }
+}
+if (!function_exists('jklMonthName')) {
+  function jklMonthName($dateStr) {
+    $months = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    $ts = strtotime((string)$dateStr); return $ts ? $months[date('n', $ts)] : '';
+  }
+}
+if (!function_exists('jklYear')) {
+  function jklYear($dateStr) { $ts = strtotime((string)$dateStr); return $ts ? date('Y', $ts) : ''; }
+}
+if (!function_exists('jklTime')) {
+  function jklTime($t) {
+    $t = trim((string)$t); if ($t === '') return '08:00';
+    $t = str_replace('.', ':', $t);
+    return preg_match('/^\d{1,2}(:\d{2})?$/', $t) ? (strpos($t, ':') === false ? $t.':00' : $t) : '08:00';
+  }
+}
+$groomNick = jklGet('groom_nickname') ?: jklGet('groom_name', 'Mempelai Pria');
+$brideNick = jklGet('bride_nickname') ?: jklGet('bride_name', 'Mempelai Wanita');
+$groomFull = jklGet('groom_name', 'Mempelai Pria');
+$brideFull = jklGet('bride_name', 'Mempelai Wanita');
+$toName = (!empty($guestName) && $guestName !== 'Bapak/Ibu/Saudara/i') ? $guestName : request('to', 'Tamu Undangan');
+$wDate  = jklGet('wedding_date', date('Y-m-d'));
+$wTime  = jklTime(jklGet('wedding_time_start', '08:00'));
+$wTimeE = jklTime(jklGet('wedding_time_end', '10:00'));
+$rDate  = jklGet('reception_date', $wDate);
+$rTimeS = jklTime(jklGet('reception_time_start', '11:00'));
+$rTimeE = jklTime(jklGet('reception_time_end', '13:00'));
+$tzLabel = jklGet('wedding_timezone', 'WIB');
+$sameLoc = (jklGet('event_location_mode', 'same') === 'same');
+$mainMapLink = trim((string)jklGet('wedding_map_link')) ?: trim((string)jklGet('reception_map_link'));
+$giftRecipient = jklGet('gift_recipient_name', jklGet('gift_owner', ''));
+$countdownISO = $rDate.'T'.$rTimeS.':00';
+$accounts = [];
+$__gbanks = json_decode(jklGet('gift_banks', ''), true) ?: [];
+foreach ($__gbanks as $__b) {
+  if (empty($__b['account'])) continue;
+  $accounts[] = ['bank'=>($__b['name'] ?? 'Bank'),'no'=>$__b['account'],'an'=>($__b['owner'] ?? ''),'logo'=>($__b['logo'] ?? '')];
+}
+if (!$accounts) {
+  if (jklGet('gift_account')) $accounts[] = ['bank'=>jklGet('gift_bank','Bank'),'no'=>jklGet('gift_account'),'an'=>jklGet('gift_owner',''),'logo'=>jklGet('gift_bank_logo','')];
+  if (jklGet('gift_account2')) $accounts[] = ['bank'=>jklGet('gift_bank2','Bank'),'no'=>jklGet('gift_account2'),'an'=>jklGet('gift_owner2',''),'logo'=>jklGet('gift_bank_logo','')];
+}
+$qrisEnabled = jklGet('gift_qris_enabled', '') === '1' && trim((string)jklGet('gift_qris_image', '')) !== '';
+$qrisImage = jklGet('gift_qris_image', '');
+$qrisName = jklGet('gift_qris_name', '');
+$musicUrl = null;
+if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
+  $mp = $musicRecord->file_path;
+  $musicUrl = (str_starts_with($mp,'http') || str_starts_with($mp,'/')) ? $mp : asset('storage/'.ltrim($mp,'/'));
+}
+$invId = $inv_id ?? 0;
+$gcalDates = str_replace('-','',$rDate).'T'.str_replace(':','',$rTimeS).'00/'.str_replace('-','',$rDate).'T'.str_replace(':','',$rTimeE).'00';
+$gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.urlencode('Pernikahan '.$brideNick.' & '.$groomNick).'&dates='.$gcalDates.'&details='.urlencode(jklGet('reception_location', jklGet('wedding_location','')));
+$monoBride = strtoupper(substr(trim($brideNick), 0, 1));
+$monoGroom = strtoupper(substr(trim($groomNick), 0, 1));
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Wedding of {{ $brideNick }} &amp; {{ $groomNick }}</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Undangan Pernikahan {{ $brideNick }} & {{ $groomNick }}">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        puspa: { ink:'#2a2519', soft:'#57503e', gold:'#978045', deep:'#77603a', light:'#c2ab72', cream:'#fffdf7', paper:'#faf6ec' }
+      },
+      fontFamily: {
+        script: ['"Pinyon Script"','cursive'],
+        serif:  ['"Playfair Display"','serif'],
+        sans:   ['"Poppins"','sans-serif']
+      }
+    }
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  html{scroll-behavior:smooth}
+  body{background:#e9e2d0;font-family:'Poppins',sans-serif}
+  .invitation-frame{max-width:430px;margin:0 auto;position:relative;background:#fffdf7;
+    box-shadow:0 0 60px rgba(90,75,40,.35);overflow:hidden;min-height:100vh}
+  body.is-locked{overflow:hidden}
+  .text-gold-grad{background:linear-gradient(105deg,#77603a 0%,#c2ab72 35%,#978045 55%,#d9c491 75%,#77603a 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .kawung-bg{position:absolute;inset:0;pointer-events:none;background-size:340px;opacity:.08}
+  .card-putih{background:#ffffff;border:1px solid rgba(151,128,69,.45);border-radius:1.1rem;position:relative;
+    box-shadow:0 22px 44px -20px rgba(119,96,58,.35)}
+  .btn-gold{background:linear-gradient(105deg,#8a6f3c,#c2ab72 55%,#978045);color:#fffdf7;
+    box-shadow:0 10px 24px -8px rgba(151,128,69,.55);transition:transform .25s,box-shadow .25s}
+  .btn-gold:hover{transform:translateY(-2px)}
+  .btn-outline{border:1px solid rgba(151,128,69,.75);color:#77603a;transition:all .25s;background:rgba(151,128,69,.05)}
+  .btn-outline:hover{background:rgba(151,128,69,.14)}
+  .hairline{height:1px;background:linear-gradient(90deg,transparent,rgba(151,128,69,.7),transparent)}
+  .field-puspa{width:100%;background:#fffdf7;border:1px solid rgba(151,128,69,.45);
+    border-radius:.8rem;color:#2a2519;padding:.8rem 1rem;font-size:.9rem;outline:none;transition:border-color .25s}
+  .field-puspa::placeholder{color:rgba(87,80,62,.4)}
+  .field-puspa:focus{border-color:#978045}
+  #musicFloat{position:fixed;bottom:96px;right:max(14px,calc(50% - 215px + 14px));z-index:45;
+    width:52px;height:52px;border-radius:50%;border:1px solid rgba(151,128,69,.7);
+    background:radial-gradient(circle at 32% 30%,#ffffff,#f3ecd9 70%);color:#77603a;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(90,75,40,.35);cursor:pointer}
+  #musicFloat .bars{display:none;gap:2.5px;align-items:flex-end;height:16px}
+  #musicFloat .bars span{width:3px;background:#77603a;animation:eqB 0.9s ease-in-out infinite}
+  #musicFloat .bars span:nth-child(2){animation-delay:.25s}
+  #musicFloat .bars span:nth-child(3){animation-delay:.5s}
+  #musicFloat.playing .bars{display:flex}
+  #musicFloat.playing .note{display:none}
+  @keyframes eqB{0%,100%{height:5px}50%{height:16px}}
+  #floatMenu{position:fixed;right:max(14px,calc(50% - 215px + 14px));bottom:168px;z-index:45;
+    display:flex;flex-direction:column;gap:9px}
+  #floatMenu a{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:rgba(255,253,247,.92);border:1px solid rgba(151,128,69,.6);color:#77603a;
+    box-shadow:0 10px 22px rgba(90,75,40,.3);backdrop-filter:blur(4px)}
+  #floatMenu.hidden, #musicFloat.hidden{display:none !important}
+  #toast{position:fixed;left:50%;bottom:110px;transform:translate(-50%,20px);z-index:90;
+    background:#2a2519;color:#fffdf7;border:1px solid #978045;border-radius:999px;
+    padding:.65rem 1.2rem;font-size:.8rem;font-weight:600;opacity:0;pointer-events:none;transition:all .35s;
+    box-shadow:0 14px 30px rgba(90,75,40,.4);max-width:88vw;text-align:center}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  #petalCanvas{position:fixed;top:0;left:50%;transform:translateX(-50%);width:min(430px,100vw);
+    height:100dvh;z-index:44;pointer-events:none}
+  #wish-list > div{animation:jpFadeUp .6s ease both}
+  @keyframes jpFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  .orn{will-change:transform}
+  @media (prefers-reduced-motion: reduce){
+    #musicFloat .bars span{animation:none}
+  }
+</style>
+</head>
+<body class="is-locked antialiased">
+<main class="invitation-frame min-h-screen">
+  <canvas id="petalCanvas" aria-hidden="true"></canvas>
+
+  <!-- ================= 1. PRELOADER ================= -->
+  <section id="preloader" class="fixed inset-0 z-50 mx-auto max-w-[430px] flex flex-col items-center justify-center px-6 text-center bg-puspa-cream">
+    <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="" class="w-24 mb-4 relative" />
+    <p class="relative text-[10px] uppercase tracking-[0.4em] text-puspa-deep mb-2">Wedding Invitation</p>
+    <h1 class="relative font-serif text-[1.7rem] tracking-[0.1em] text-puspa-ink">{{ strtoupper($groomNick) }} <span class="text-gold-grad">&amp;</span> {{ strtoupper($brideNick) }}</h1>
+    <div class="relative w-40 h-[3px] bg-puspa-gold/15 rounded-full overflow-hidden mb-2 mt-6">
+      <div id="loader-bar" class="h-full w-0" style="background:linear-gradient(90deg,#77603a,#c2ab72)"></div>
+    </div>
+    <span id="loader-percent" class="relative text-[11px] font-mono tracking-[0.25em] text-puspa-deep">0%</span>
+  </section>
+
+  <!-- ================= 2. COVER ================= -->
+  <section id="cover-gate" class="fixed inset-0 z-40 mx-auto max-w-[430px] h-[100dvh] flex flex-col justify-between text-center overflow-hidden bg-puspa-cream">
+    <div class="kawung-bg" style="background-image:url('{{ asset('images/jawa-puspa/kawung.webp') }}')"></div>
+    <img src="{{ asset('images/jawa-puspa/border-batik.webp') }}" alt="" class="relative w-full block" />
+    <div id="gate-header" class="relative z-10 px-6 -mt-2">
+      <p class="font-script text-[2.6rem] leading-tight text-gold-grad">Wedding Invitation</p>
+      <p class="text-[11px] tracking-[0.3em] text-puspa-soft">{{ jklDate($rDate) }}</p>
+    </div>
+    <div id="gate-center" class="relative z-10 flex flex-col items-center px-6">
+      <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="Gunungan" class="orn w-40 mb-2" data-speed="0.5" />
+      <h2 class="font-serif text-[1.8rem] leading-snug tracking-[0.08em] text-puspa-ink">{{ strtoupper($groomNick) }} <span class="text-gold-grad">&amp;</span> {{ strtoupper($brideNick) }}</h2>
+      <div class="hairline w-44 my-4"></div>
+      <div class="card-putih mx-auto w-full max-w-[300px] px-6 py-5">
+        <p class="text-[10px] tracking-[0.3em] uppercase text-puspa-deep mb-2">Kepada Yth<br>Bapak/Ibu/Saudara/i</p>
+        <p class="font-serif text-[1.35rem] font-semibold text-puspa-ink">{{ $toName }}</p>
+      </div>
+    </div>
+    <div id="gate-footer" class="relative z-10 px-6 pb-8">
+      <button id="btn-open" class="btn-gold font-semibold text-[12px] tracking-[0.25em] px-10 py-3.5 rounded-full">
+        BUKA UNDANGAN
+      </button>
+      <p class="text-[10px] text-puspa-soft/70 mt-4 tracking-widest">* Mohon maaf apabila ada kesalahan penulisan nama &amp; gelar</p>
+    </div>
+  </section>
+
+  <!-- ================= 3. HERO ================= -->
+  <section id="hero-section" class="relative min-h-[100dvh] w-full flex flex-col items-center justify-center text-center px-6 py-14 overflow-hidden bg-puspa-cream">
+    <div class="kawung-bg" style="background-image:url('{{ asset('images/jawa-puspa/kawung.webp') }}')"></div>
+    <img src="{{ asset('images/jawa-puspa/border-batik.webp') }}" alt="" class="absolute top-0 left-0 w-full block" />
+    <div class="hero-content relative z-10 flex flex-col items-center w-full pt-6">
+      <svg class="hero-stagger opacity-0 w-72 h-16 mb-1" viewBox="0 0 300 60" aria-hidden="true">
+        <defs><path id="arcPath" d="M 15 58 A 260 260 0 0 1 285 58" /></defs>
+        <text style="font-family:'Playfair Display',serif;letter-spacing:0.42em" font-size="16.5" fill="#77603a">
+          <textPath href="#arcPath" startOffset="50%" text-anchor="middle">THE WEDDING OF</textPath>
+        </text>
+      </svg>
+      <div class="hero-stagger opacity-0 relative w-full max-w-[340px] flex justify-center my-1">
+        <img src="{{ asset('images/jawa-puspa/sayap-gunungan.webp') }}" alt="" class="orn absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] max-w-none pointer-events-none" data-speed="0.5" />
+        <div class="relative w-44 h-60 mt-8" style="border-radius:999px 999px 14px 14px; overflow:hidden; border:2.5px solid #978045; box-shadow:0 18px 36px rgba(119,96,58,.35)">
+          @if(!empty($gallery) && count($gallery))
+          <img src="{{ $gallery[0] }}" class="w-full h-full object-cover" alt="Mempelai" />
+          @elseif(jklGet('cover_image'))
+          <img src="{{ jklGet('cover_image') }}" class="w-full h-full object-cover" alt="Mempelai" />
+          @else
+          <img src="https://picsum.photos/seed/jpcouple/500/700" class="w-full h-full object-cover" alt="Mempelai" />
+          @endif
+        </div>
+      </div>
+      <h2 class="hero-stagger opacity-0 font-script text-[3.2rem] leading-tight text-puspa-ink mt-4">{{ $groomNick }} <span class="text-gold-grad">&amp;</span> {{ $brideNick }}</h2>
+      <div class="hero-stagger opacity-0 mt-3 flex items-stretch justify-center gap-4 text-puspa-ink">
+        <div class="flex flex-col justify-center"><span class="font-serif text-lg">{{ jklDayName($rDate) }}</span></div>
+        <div class="flex flex-col justify-center border-x border-puspa-gold/70 px-4"><span class="font-serif text-4xl font-semibold text-gold-grad leading-none">{{ jklDayNum($rDate) }}</span><span class="text-[11px] tracking-[0.2em] text-puspa-soft mt-1">{{ jklYear($rDate) }}</span></div>
+        <div class="flex flex-col justify-center"><span class="font-serif text-lg">{{ jklMonthName($rDate) }}</span></div>
+      </div>
+    </div>
+    <p class="hero-stagger absolute bottom-7 z-10 opacity-0 text-[9px] tracking-[0.4em] text-puspa-soft/70 uppercase">Geser ke bawah</p>
+  </section>
+
+  <!-- ================= 4. QUOTES ================= -->
+  <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden bg-puspa-cream">
+    <div class="anim-zoom relative z-10 w-full max-w-[340px]">
+      <div class="mx-auto w-20 h-20 rounded-full flex items-center justify-center mb-5 bg-white"
+        style="border:1.5px solid rgba(151,128,69,.75); box-shadow:0 10px 24px -10px rgba(119,96,58,.4)">
+        <span class="font-serif text-2xl tracking-[0.12em] text-gold-grad font-semibold">{{ $monoBride }}{{ $monoGroom }}</span>
+      </div>
+      <p class="anim-fade font-serif text-[16.5px] leading-[1.9] text-puspa-soft italic">
+        &ldquo;Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.&rdquo;
+      </p>
+      <div class="hairline w-40 mx-auto my-5"></div>
+      <p class="anim-fade text-[11px] font-semibold tracking-[0.25em] uppercase text-puspa-deep">QS. Ar-Rum : 21</p>
+      @if(jklGet('quotes'))
+      <p class="anim-fade font-serif italic text-puspa-soft/85 text-[15px] leading-relaxed mt-6">&ldquo;{{ jklGet('quotes') }}&rdquo;</p>
+      @endif
+      <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="" class="anim-zoom w-24 mx-auto mt-8 opacity-90" />
+    </div>
+  </section>
+
+  <!-- ================= 5. COUNTDOWN ================= -->
+  <section class="scroll-section relative py-16 px-6 flex flex-col items-center text-center overflow-hidden">
+    <p class="anim-fade text-[10px] uppercase tracking-[0.4em] text-puspa-deep mb-2 relative z-10">Menghitung Hari Bahagia</p>
+    <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-8 relative z-10">Count The Date</h2>
+    <div class="anim-zoom relative z-10 grid grid-cols-4 gap-2 w-full max-w-[340px]">
+      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(151,128,69,.5);box-shadow:0 12px 24px -12px rgba(119,96,58,.35)"><div class="font-serif text-[1.6rem] font-bold text-puspa-ink" id="cd-d">00</div><div class="text-[8px] tracking-[0.22em] text-puspa-soft mt-1 font-medium">HARI</div></div>
+      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(151,128,69,.5);box-shadow:0 12px 24px -12px rgba(119,96,58,.35)"><div class="font-serif text-[1.6rem] font-bold text-puspa-ink" id="cd-h">00</div><div class="text-[8px] tracking-[0.22em] text-puspa-soft mt-1 font-medium">JAM</div></div>
+      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(151,128,69,.5);box-shadow:0 12px 24px -12px rgba(119,96,58,.35)"><div class="font-serif text-[1.6rem] font-bold text-puspa-ink" id="cd-m">00</div><div class="text-[8px] tracking-[0.22em] text-puspa-soft mt-1 font-medium">MENIT</div></div>
+      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(151,128,69,.5);box-shadow:0 12px 24px -12px rgba(119,96,58,.35)"><div class="font-serif text-[1.6rem] font-bold text-puspa-ink" id="cd-s">00</div><div class="text-[8px] tracking-[0.22em] text-puspa-soft mt-1 font-medium">DETIK</div></div>
+    </div>
+    <a href="{{ $gcalUrl }}" target="_blank" rel="noopener" class="anim-fade btn-outline relative z-10 text-[10px] tracking-[0.25em] px-7 py-3 rounded-full mt-7 font-medium">+ SIMPAN KE GOOGLE CALENDAR</a>
+  </section>
+
+  <!-- ================= 6. MEMPELAI ================= -->
+  <section id="sec-profil" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden bg-puspa-cream">
+    <div class="kawung-bg" style="background-image:url('{{ asset('images/jawa-puspa/kawung.webp') }}')"></div>
+    <p class="anim-fade text-[10px] uppercase tracking-[0.35em] text-puspa-deep mb-2 relative z-10">Assalamu&rsquo;alaikum Warahmatullaahi Wabarakaatuh</p>
+    <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-3 relative z-10">Bride &amp; Groom</h2>
+    <p class="anim-fade font-serif italic text-puspa-soft text-[15px] leading-relaxed mb-10 max-w-[300px] relative z-10">Dengan memohon rahmat dan ridha Allah SWT, kami bermaksud menyelenggarakan pernikahan kami.</p>
+
+    <!-- Mempelai wanita -->
+    <div class="anim-zoom relative z-10 w-full max-w-[320px] card-putih px-6 pt-8 pb-10 mb-2">
+      <div class="relative w-40 h-52 mx-auto mb-4" style="border-radius:999px 999px 14px 14px; overflow:hidden; border:2.5px solid #978045; box-shadow:0 14px 30px rgba(119,96,58,.3)">
+        @if(jklGet('bride_photo'))
+        <img src="{{ jklGet('bride_photo') }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
+        @else
+        <img src="https://picsum.photos/seed/jpbride/400/520" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
+        @endif
+      </div>
+      <h3 class="font-serif text-[1.5rem] font-semibold tracking-[0.04em] text-puspa-ink leading-tight">{{ $brideFull }}</h3>
+      <p class="text-[11px] text-puspa-soft mt-2">{{ jklGet('bride_child_of','Putri') }} dari</p>
+      <p class="text-[13px] font-medium text-puspa-deep mt-0.5 px-6">{{ jklGet('bride_parents','') }}</p>
+      @if(jklGet('bride_instagram'))
+      <a href="https://instagram.com/{{ ltrim(jklGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" class="btn-outline inline-block mt-4 text-[10px] tracking-[0.2em] px-5 py-2 rounded-full">&#64;{{ ltrim(jklGet('bride_instagram'),'@') }}</a>
+      @endif
+    </div>
+
+    <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="" class="anim-zoom relative z-10 w-28 my-5" />
+
+    <!-- Mempelai pria -->
+    <div class="anim-zoom relative z-10 w-full max-w-[320px] card-putih px-6 pt-8 pb-10 mt-2">
+      <div class="relative w-40 h-52 mx-auto mb-4" style="border-radius:999px 999px 14px 14px; overflow:hidden; border:2.5px solid #978045; box-shadow:0 14px 30px rgba(119,96,58,.3)">
+        @if(jklGet('groom_photo'))
+        <img src="{{ jklGet('groom_photo') }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
+        @else
+        <img src="https://picsum.photos/seed/jpgroom/400/520" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
+        @endif
+      </div>
+      <h3 class="font-serif text-[1.5rem] font-semibold tracking-[0.04em] text-puspa-ink leading-tight">{{ $groomFull }}</h3>
+      <p class="text-[11px] text-puspa-soft mt-2">{{ jklGet('groom_child_of','Putra') }} dari</p>
+      <p class="text-[13px] font-medium text-puspa-deep mt-0.5 px-6">{{ jklGet('groom_parents','') }}</p>
+      @if(jklGet('groom_instagram'))
+      <a href="https://instagram.com/{{ ltrim(jklGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="btn-outline inline-block mt-4 text-[10px] tracking-[0.2em] px-5 py-2 rounded-full">&#64;{{ ltrim(jklGet('groom_instagram'),'@') }}</a>
+      @endif
+    </div>
+  </section>
+
+  <!-- ================= 7. ACARA ================= -->
+  <section id="sec-acara" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
+    <p class="anim-fade text-[10px] uppercase tracking-[0.4em] text-puspa-deep mb-2 relative z-10">Wedding Event</p>
+    <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-10 relative z-10">Rangkaian Acara</h2>
+
+    <!-- Akad -->
+    <div class="anim-zoom relative z-10 w-full max-w-[340px] card-putih px-6 pb-8 pt-12 mt-6">
+      <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="" class="absolute left-1/2 -translate-x-1/2 -top-7 w-24" />
+      <h3 class="font-serif text-[1.6rem] font-semibold tracking-[0.12em] text-puspa-ink">AKAD NIKAH</h3>
+      <div class="hairline w-28 mx-auto my-3"></div>
+      <p class="font-serif text-lg text-puspa-soft mb-1">{{ jklDate($wDate) }}</p>
+      <p class="font-serif text-lg text-puspa-deep font-semibold mb-4">{{ $wTime }} &ndash; {{ $wTimeE }} {{ $tzLabel }}</p>
+      <p class="text-[10px] tracking-[0.25em] uppercase text-puspa-soft/80 mb-1">Lokasi Acara</p>
+      <p class="font-medium text-puspa-ink px-2">{{ jklGet('wedding_location','Kediaman Mempelai') }}</p>
+      @if(!$sameLoc && jklGet('wedding_map_link'))
+      <a href="{{ jklGet('wedding_map_link') }}" target="_blank" rel="noopener" class="btn-gold inline-flex items-center gap-2 mt-5 text-[11px] font-semibold tracking-[0.2em] px-8 py-3 rounded-full">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+        LIHAT LOKASI
+      </a>
+      @endif
+    </div>
+
+    <!-- Resepsi -->
+    <div class="anim-zoom relative z-10 w-full max-w-[340px] card-putih px-6 pb-8 pt-12 mt-12">
+      <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="" class="absolute left-1/2 -translate-x-1/2 -top-7 w-24" />
+      <h3 class="font-serif text-[1.6rem] font-semibold tracking-[0.12em] text-puspa-ink">RESEPSI</h3>
+      <div class="hairline w-28 mx-auto my-3"></div>
+      <p class="font-serif text-lg text-puspa-soft mb-1">{{ jklDate($rDate) }}</p>
+      <p class="font-serif text-lg text-puspa-deep font-semibold mb-4">{{ $rTimeS }} &ndash; {{ $rTimeE }} {{ $tzLabel }}</p>
+      <p class="text-[10px] tracking-[0.25em] uppercase text-puspa-soft/80 mb-1">Lokasi Acara</p>
+      <p class="font-medium text-puspa-ink px-2">{{ jklGet('reception_location', jklGet('wedding_location','Kediaman Mempelai')) }}</p>
+      <div class="mt-5 flex flex-wrap justify-center gap-2">
+        @if($sameLoc)
+          @if($mainMapLink)
+          <a href="{{ $mainMapLink }}" target="_blank" rel="noopener" class="btn-gold inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.2em] px-8 py-3 rounded-full">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+            LIHAT LOKASI
+          </a>
+          @endif
+        @else
+          @if(jklGet('reception_map_link'))
+          <a href="{{ jklGet('reception_map_link') }}" target="_blank" rel="noopener" class="btn-gold inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.2em] px-8 py-3 rounded-full">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+            LIHAT LOKASI
+          </a>
+          @endif
+        @endif
+        @if(jklGet('live_stream_link'))
+        <a href="{{ jklGet('live_stream_link') }}" target="_blank" rel="noopener" class="btn-outline text-[10px] tracking-[0.2em] px-7 py-3 rounded-full font-medium">LIVE STREAMING</a>
+        @endif
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 8. LOVE STORY ================= -->
+  @if(!empty($stories) && count($stories))
+  <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden bg-puspa-cream">
+    <div class="kawung-bg" style="background-image:url('{{ asset('images/jawa-puspa/kawung.webp') }}')"></div>
+    <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-2 relative z-10">Love Story</h2>
+    <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-puspa-deep mb-10 relative z-10">Kisah Perjalanan Kami</p>
+    <div class="relative z-10 w-full max-w-[320px] pl-8 text-left">
+      <div class="absolute left-[9px] top-2 bottom-2 w-0.5 rounded" style="background:linear-gradient(180deg,#c2ab72,#978045)"></div>
+      @foreach($stories as $story)
+      <div class="anim-fade relative mb-9">
+        <div class="absolute -left-8 top-1.5 w-[19px] h-[19px] rounded-full bg-puspa-cream flex items-center justify-center" style="border:2.5px solid #978045">
+          <div class="w-1.5 h-1.5 rounded-full" style="background:#978045"></div>
+        </div>
+        @if(!empty($story->tahun))<p class="font-script text-[1.7rem] leading-none text-gold-grad mb-1">{{ $story->tahun }}</p>@endif
+        <h4 class="font-serif font-semibold text-puspa-ink tracking-wide mb-1">{{ $story->judul }}</h4>
+        <p class="text-[13px] text-puspa-soft leading-relaxed">{{ $story->isi }}</p>
+      </div>
+      @endforeach
+    </div>
+  </section>
+  @endif
+
+  <!-- ================= 9. GALERI ================= -->
+  <section id="sec-galeri" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
+    <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-2 relative z-10">Wedding Gallery</h2>
+    <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-puspa-deep mb-10 relative z-10">Momen Bahagia Kami</p>
+    <div class="relative z-10 grid grid-cols-2 gap-2.5 w-full max-w-[340px]">
+      @if(!empty($gallery) && count($gallery))
+        @foreach(array_slice($gallery, 0, 8) as $i => $src)
+        <div class="gal-item anim-fade relative overflow-hidden rounded-xl cursor-pointer {{ $i === 0 ? 'col-span-2 aspect-[16/10]' : 'aspect-[4/5]' }}" data-full="{{ $src }}" style="border:1.5px solid rgba(151,128,69,.55); box-shadow:0 12px 26px -12px rgba(119,96,58,.4)">
+          <img src="{{ $src }}" class="w-full h-full object-cover" alt="Galeri {{ $i+1 }}" loading="lazy" />
+        </div>
+        @endforeach
+      @else
+        @foreach(range(1,5) as $i)
+        <div class="gal-item anim-fade relative overflow-hidden rounded-xl cursor-pointer {{ $i === 1 ? 'col-span-2 aspect-[16/10]' : 'aspect-[4/5]' }}" data-full="https://picsum.photos/seed/jpgal{{ $i }}/600/450" style="border:1.5px solid rgba(151,128,69,.55)">
+          <img src="https://picsum.photos/seed/jpgal{{ $i }}/600/450" class="w-full h-full object-cover" alt="Galeri {{ $i }}" loading="lazy" />
+        </div>
+        @endforeach
+      @endif
+    </div>
+  </section>
+
+  <!-- ================= 10. GIFT ================= -->
+  <section id="sec-gift" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden bg-puspa-cream">
+    <div class="kawung-bg" style="background-image:url('{{ asset('images/jawa-puspa/kawung.webp') }}')"></div>
+    <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-3 relative z-10">Wedding Gift</h2>
+    <p class="anim-fade font-serif italic text-puspa-soft text-[15px] leading-relaxed mb-10 max-w-[320px] relative z-10">Doa restu Bapak/Ibu/Saudara/i merupakan karunia terindah bagi kami. Namun apabila berkenan memberikan tanda kasih, kami sediakan dengan penuh terima kasih.</p>
+
+    <div class="relative z-10 w-full max-w-[340px] flex flex-col gap-5">
+      @if($qrisEnabled)
+      <div class="anim-zoom card-putih px-6 py-7">
+        <p class="font-serif text-xl tracking-[0.2em] text-gold-grad font-semibold mb-1">QRIS</p>
+        <p class="text-[11px] text-puspa-soft mb-4">Scan untuk memberi tanda kasih{{ $qrisName ? ' — '.$qrisName : '' }}</p>
+        <img src="{{ $qrisImage }}" alt="QRIS" class="w-48 h-48 object-contain mx-auto rounded-xl border border-puspa-gold/30 p-2 bg-white">
+      </div>
+      @endif
+      @foreach($accounts as $acc)
+      <div class="anim-zoom card-putih px-6 py-6">
+        <div class="flex items-center justify-center gap-2.5 mb-1">
+          @if(!empty($acc['logo']))
+          <img src="{{ $acc['logo'] }}" alt="Logo {{ $acc['bank'] }}" class="h-7 w-7 object-contain rounded-md border border-puspa-gold/25 p-0.5" loading="lazy" onerror="this.style.display='none'">
+          @endif
+          <p class="font-serif text-[1.3rem] tracking-[0.18em] text-puspa-ink font-semibold">{{ strtoupper($acc['bank']) }}</p>
+        </div>
+        <p class="text-[11px] text-puspa-soft mb-3">a.n {{ !empty($acc['an']) ? $acc['an'] : $giftRecipient }}</p>
+        <p class="font-mono text-xl tracking-[0.12em] text-puspa-ink mb-4">{{ $acc['no'] }}</p>
+        <button onclick="copyText('{{ $acc['no'] }}')" class="btn-outline text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full font-medium">SALIN NO REKENING</button>
+      </div>
+      @endforeach
+
+      @if(jklGet('gift_address'))
+      <div class="anim-zoom card-putih px-6 py-6">
+        <p class="font-serif text-[1.15rem] tracking-[0.14em] text-puspa-ink font-semibold mb-2">KIRIM KADO FISIK</p>
+        @if($giftRecipient)<p class="text-[12px] font-semibold text-puspa-deep mb-1">{{ $giftRecipient }}</p>@endif
+        <p class="text-[12.5px] leading-relaxed text-puspa-soft">{{ jklGet('gift_address') }}</p>
+        <button onclick="copyText('{{ $giftRecipient }} — {{ jklGet('gift_address') }}')" class="btn-outline text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full mt-4 font-medium">SALIN ALAMAT</button>
+      </div>
+      @endif
+    </div>
+  </section>
+
+  <!-- ================= 11. RSVP & UCAPAN ================= -->
+  <section id="sec-ucapan" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
+    <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-3 relative z-10">RSVP &amp; Ucapan</h2>
+    <p class="anim-fade font-serif italic text-puspa-soft text-[15px] leading-relaxed mb-8 max-w-[320px] relative z-10">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.</p>
+
+    <form id="rsvp-form" class="anim-zoom relative z-10 w-full max-w-[340px] card-putih px-6 py-7 text-left mb-12" onsubmit="submitRSVP(event)">
+      <label class="block text-[10px] tracking-[0.25em] uppercase text-puspa-deep mb-1.5 font-medium">Nama Lengkap</label>
+      <input type="text" id="rsvp-name" required class="field-puspa mb-4" placeholder="Nama Anda" value="{{ $toName !== 'Tamu Undangan' ? $toName : '' }}">
+      <label class="block text-[10px] tracking-[0.25em] uppercase text-puspa-deep mb-1.5 font-medium">Konfirmasi Kehadiran</label>
+      <div class="grid grid-cols-2 gap-2 mb-4" id="rsvp-status-group">
+        <button type="button" data-status="hadir" class="rsvp-status-btn py-3 rounded-lg text-[12px] font-semibold tracking-wider transition-all" style="border:1px solid rgba(151,128,69,.55);color:#77603a">Hadir</button>
+        <button type="button" data-status="tidak" class="rsvp-status-btn py-3 rounded-lg text-[12px] font-semibold tracking-wider transition-all" style="border:1px solid rgba(151,128,69,.55);color:#77603a">Berhalangan</button>
+      </div>
+      <div id="rsvp-count-wrap" class="hidden">
+        <label class="block text-[10px] tracking-[0.25em] uppercase text-puspa-deep mb-1.5 font-medium">Jumlah Tamu</label>
+        <select id="rsvp-count" class="field-puspa mb-4">
+          <option value="1">1 Orang</option>
+          <option value="2">2 Orang</option>
+          <option value="3">3 Orang</option>
+          <option value="4">4 Orang</option>
+          <option value="5">5 Orang</option>
+        </select>
+      </div>
+      <button type="submit" id="rsvp-submit" class="btn-gold w-full py-3.5 rounded-full text-[12px] font-semibold tracking-[0.25em]">KONFIRMASI KEHADIRAN</button>
+      <p id="rsvp-msg" class="hidden text-center text-[13px] text-puspa-deep mt-4">Terima kasih, konfirmasi Anda telah kami terima.</p>
+    </form>
+
+    <form id="wish-form" class="anim-zoom relative z-10 w-full max-w-[340px] card-putih px-6 py-7 text-left" onsubmit="submitWish(event)">
+      <label class="block text-[10px] tracking-[0.25em] uppercase text-puspa-deep mb-1.5 font-medium">Nama</label>
+      <input type="text" id="wish-name" required maxlength="60" class="field-puspa mb-4" placeholder="Nama Anda" value="{{ $toName !== 'Tamu Undangan' ? $toName : '' }}">
+      <label class="block text-[10px] tracking-[0.25em] uppercase text-puspa-deep mb-1.5 font-medium">Ucapan &amp; Doa</label>
+      <textarea id="wish-text" rows="3" required maxlength="500" class="field-puspa mb-1.5 resize-none" placeholder="Tulis ucapan terbaik Anda..."></textarea>
+      <p class="text-right text-[10px] text-puspa-soft/60 mb-4"><span id="wish-count">0</span>/500</p>
+      <button type="submit" id="wish-submit" class="btn-gold w-full py-3.5 rounded-full text-[12px] font-semibold tracking-[0.25em]">KIRIM UCAPAN</button>
+    </form>
+
+    <div id="wish-list" class="relative z-10 w-full max-w-[340px] mt-8 flex flex-col gap-3 text-left"></div>
+  </section>
+
+  <!-- ================= 12. FOOTER ================= -->
+  <footer class="scroll-section relative pt-20 flex flex-col items-center text-center overflow-hidden bg-puspa-cream">
+    <div class="px-6 flex flex-col items-center">
+      <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="" class="anim-zoom w-20 mb-5" />
+      <p class="anim-fade font-serif italic text-puspa-soft text-[15px] leading-[1.9] max-w-[320px] mb-8">Merupakan suatu kehormatan dan kebahagiaan bagi kami beserta keluarga besar apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai.</p>
+      <p class="anim-fade text-[10px] tracking-[0.3em] uppercase text-puspa-deep mb-2">Kami yang berbahagia,</p>
+      <h3 class="anim-zoom font-script text-[2.9rem] leading-tight text-puspa-ink mb-3">{{ $groomNick }} &amp; {{ $brideNick }}</h3>
+      <p class="anim-fade text-[10px] tracking-[0.3em] uppercase text-puspa-soft/70">Beserta Keluarga Besar</p>
+    </div>
+    <img src="{{ asset('images/jawa-puspa/ornamen-bawah.webp') }}" alt="" class="anim-fade w-full block mt-12" />
+  </footer>
+
+  <!-- Floating: musik + menu -->
+  <button id="musicFloat" class="hidden" aria-label="Musik" onclick="toggleMusic()">
+    <svg class="note w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 18V6l10-2v11.5M9 18a3 3 0 1 1-2-2.83A3 3 0 0 1 9 18zm10-2.5a3 3 0 1 1-2-2.83A3 3 0 0 1 19 15.5z"/></svg>
+    <span class="bars"><span></span><span></span><span></span></span>
+  </button>
+  <nav id="floatMenu" class="hidden" aria-label="Menu cepat">
+    <a href="#sec-ucapan" aria-label="RSVP" title="RSVP">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+    </a>
+    <a href="#sec-ucapan" aria-label="Ucapan" title="Ucapan">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    </a>
+    <a href="#sec-gift" aria-label="Gift" title="Gift">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8v13H3V8M1 3h22v5H1zM10 12h4M12 8v13M12 8H7.5a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8zm0 0h4.5a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8z"/></svg>
+    </a>
+  </nav>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="fixed inset-0 z-[80] hidden items-center justify-center p-4" style="background:rgba(30,25,12,.96)">
+    <button id="lbClose" class="absolute top-4 right-4 z-10 text-white/80 hover:text-white text-4xl leading-none px-2" aria-label="Tutup">&times;</button>
+    <button id="lbPrev" class="absolute left-2 z-10 w-11 h-11 rounded-full text-[#e8d9ae] text-3xl flex items-center justify-center" style="background:rgba(151,128,69,.18);border:1px solid rgba(194,171,114,.6)" aria-label="Sebelumnya">&#8249;</button>
+    <img id="lbImg" class="max-w-full max-h-[82vh] rounded-xl object-contain select-none" style="border:1px solid rgba(194,171,114,.55)" alt="Galeri" draggable="false" />
+    <button id="lbNext" class="absolute right-2 z-10 w-11 h-11 rounded-full text-[#e8d9ae] text-3xl flex items-center justify-center" style="background:rgba(151,128,69,.18);border:1px solid rgba(194,171,114,.6)" aria-label="Berikutnya">&#8250;</button>
+    <div id="lbCount" class="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/70 text-sm tracking-[0.25em]"></div>
+  </div>
+
+  <div id="toast" role="status"></div>
+  <audio id="bgMusic" loop preload="auto"></audio>
+</main>
+
+<script>
+"use strict";
+const INV_ID = {{ $invId }};
+const MUSIC_URL = @json($musicUrl);
+const COUNTDOWN_TARGET = '{{ $countdownISO }}';
+
+document.addEventListener('DOMContentLoaded', () => {
+  // --- Preloader ---
+  const loaderBar = document.getElementById('loader-bar');
+  const loaderPercent = document.getElementById('loader-percent');
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress = Math.min(100, progress + Math.random() * 22 + 6);
+    if (loaderBar) loaderBar.style.width = progress + '%';
+    if (loaderPercent) loaderPercent.innerText = Math.floor(progress) + '%';
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        const pl = document.getElementById('preloader');
+        if (pl) { pl.style.opacity = '0'; pl.style.transition = 'opacity .6s'; setTimeout(() => pl.remove(), 650); }
+        animateGate();
+      }, 350);
+    }
+  }, 180);
+
+  // --- Gate animation ---
+  gsap.registerPlugin(ScrollTrigger);
+  function animateGate() {
+    gsap.fromTo('#gate-header', { y: -26, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power3.out' });
+    gsap.fromTo('#gate-center', { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.1, ease: 'power3.out', delay: 0.15 });
+    gsap.fromTo('#gate-footer', { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.3 });
+  }
+
+  // --- Musik ---
+  const audioEl = document.getElementById('bgMusic');
+  const musicFloat = document.getElementById('musicFloat');
+  let audioStarted = false;
+  async function initAudio() {
+    try {
+      const res = await fetch('/api/music');
+      const data = await res.json();
+      if (data && data.file_path) {
+        const fp = data.file_path;
+        audioEl.src = (fp.startsWith('http') || fp.startsWith('/')) ? fp : '/storage/' + fp.replace(/^\//, '');
+        audioEl.load();
+      }
+    } catch (e) { /* abaikan */ }
+    if (!audioEl.src && MUSIC_URL) { audioEl.src = MUSIC_URL; audioEl.load(); }
+    if (audioEl.src && musicFloat) musicFloat.classList.remove('hidden');
+  }
+  initAudio();
+
+  function playMusic() {
+    if (!audioEl || !audioEl.src) return;
+    audioEl.volume = 0.55;
+    audioEl.play().then(() => { audioStarted = true; if (musicFloat) musicFloat.classList.add('playing'); }).catch(() => {});
+  }
+  window.toggleMusic = function () {
+    if (!audioEl) return;
+    if (audioEl.paused) { playMusic(); }
+    else { audioEl.pause(); if (musicFloat) musicFloat.classList.remove('playing'); }
+  };
+
+  // --- Buka undangan ---
+  const btnOpen = document.getElementById('btn-open');
+  if (btnOpen) {
+    btnOpen.addEventListener('click', () => {
+      const gate = document.getElementById('cover-gate');
+      gsap.to(gate, {
+        yPercent: -100, duration: 1.15, ease: 'power4.inOut',
+        onStart: () => { playMusic(); },
+        onComplete: () => {
+          gate.style.display = 'none';
+          document.body.classList.remove('is-locked');
+          const fm = document.getElementById('floatMenu');
+          if (fm) fm.classList.remove('hidden');
+          animateHero();
+          ScrollTrigger.refresh();
+        }
+      });
+    });
+  }
+
+  function animateHero() {
+    gsap.timeline({ defaults: { ease: 'power3.out' } })
+      .to('.hero-stagger', { opacity: 1, y: 0, duration: 1, stagger: 0.12, startAt: { y: 26 } });
+    // parallax gunungan hero
+    document.querySelectorAll('#hero-section .orn').forEach(orn => {
+      const speed = parseFloat(orn.dataset.speed || 0.5);
+      gsap.to(orn, {
+        y: () => 90 * speed, ease: 'none',
+        scrollTrigger: { trigger: '#hero-section', start: 'top top', end: 'bottom top', scrub: 1.2 }
+      });
+    });
+  }
+
+  // --- Animasi scroll: SEMUA teks & kartu muncul smooth, per elemen ---
+  function jbReveal(el, fromVars, toVars, dur) {
+    gsap.fromTo(el, fromVars, Object.assign({}, toVars, {
+      duration: dur, ease: 'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 92%', once: true }
+    }));
+  }
+  document.querySelectorAll('.anim-zoom').forEach(el =>
+    jbReveal(el, { scale: 0.88, opacity: 0 }, { scale: 1, opacity: 1 }, 1.05));
+  document.querySelectorAll('.anim-fade').forEach(el =>
+    jbReveal(el, { opacity: 0, y: 24 }, { opacity: 1, y: 0 }, 0.95));
+  // Teks lain yang belum punya kelas animasi ikut fade-in halus
+  document.querySelectorAll('.scroll-section h2, .scroll-section h3, .scroll-section h4, .scroll-section p, .scroll-section label, .scroll-section button, footer h2, footer h3, footer p').forEach(el => {
+    if (el.classList.contains('anim-zoom') || el.classList.contains('anim-fade') || el.classList.contains('hidden')) return;
+    if (el.closest('.anim-zoom') || el.closest('.anim-fade')) return; // ikut animasi kartu induknya
+    jbReveal(el, { opacity: 0, y: 18 }, { opacity: 1, y: 0 }, 0.9);
+  });
+
+  // --- Kelopak bunga berjatuhan ---
+  (function () {
+    const cv = document.getElementById('petalCanvas');
+    if (!cv || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const ctx = cv.getContext('2d');
+    let W = 0, H = 0, petals = [];
+    const COLORS = ['rgba(194,171,114,', 'rgba(151,128,69,', 'rgba(217,196,145,'];
+    function size() { const r = cv.getBoundingClientRect(); W = cv.width = Math.round(r.width); H = cv.height = Math.round(r.height); }
+    function mk(init) {
+      return { x: Math.random() * W, y: init ? Math.random() * H : -24, s: 5 + Math.random() * 7,
+        vy: 0.35 + Math.random() * 0.7, ph: Math.random() * Math.PI * 2, sw: 0.4 + Math.random() * 0.9,
+        rot: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 0.012,
+        c: COLORS[Math.floor(Math.random() * COLORS.length)], a: 0.3 + Math.random() * 0.35 };
+    }
+    function draw(p) {
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.c + p.a + ')';
+      ctx.beginPath();
+      ctx.moveTo(0, -p.s);
+      ctx.bezierCurveTo(p.s * 0.8, -p.s * 0.3, p.s * 0.6, p.s * 0.7, 0, p.s);
+      ctx.bezierCurveTo(-p.s * 0.6, p.s * 0.7, -p.s * 0.8, -p.s * 0.3, 0, -p.s);
+      ctx.fill(); ctx.restore();
+    }
+    size(); addEventListener('resize', size);
+    for (let i = 0; i < 16; i++) petals.push(mk(true));
+    (function loop() {
+      ctx.clearRect(0, 0, W, H);
+      petals.forEach((p, i) => {
+        p.y += p.vy; p.ph += 0.016 * p.sw; p.x += Math.sin(p.ph) * p.sw * 0.5; p.rot += p.vr;
+        if (p.y > H + 24) petals[i] = mk(false);
+        draw(p);
+      });
+      requestAnimationFrame(loop);
+    })();
+  })();
+
+  // --- Countdown ---
+  const cdIds = { d: document.getElementById('cd-d'), h: document.getElementById('cd-h'), m: document.getElementById('cd-m'), s: document.getElementById('cd-s') };
+  const pad = n => String(Math.max(0, n)).padStart(2, '0');
+  function targetDate() {
+    const parts = COUNTDOWN_TARGET.split(/[-T:]/).map(Number);
+    return new Date(parts[0], (parts[1] || 1) - 1, parts[2] || 1, parts[3] || 0, parts[4] || 0, parts[5] || 0);
+  }
+  function tick() {
+    const diff = Math.max(0, targetDate() - new Date());
+    const d = Math.floor(diff / 86400000), h = Math.floor(diff / 3600000) % 24, m = Math.floor(diff / 60000) % 60, s = Math.floor(diff / 1000) % 60;
+    if (cdIds.d) cdIds.d.textContent = pad(d);
+    if (cdIds.h) cdIds.h.textContent = pad(h);
+    if (cdIds.m) cdIds.m.textContent = pad(m);
+    if (cdIds.s) cdIds.s.textContent = pad(s);
+  }
+  tick(); setInterval(tick, 1000);
+
+  // --- RSVP ---
+  let rsvpStatus = 'hadir';
+  const statusBtns = document.querySelectorAll('.rsvp-status-btn');
+  const countWrap = document.getElementById('rsvp-count-wrap');
+  function paintStatus() {
+    statusBtns.forEach(b => {
+      const on = b.dataset.status === rsvpStatus;
+      b.style.background = on ? 'linear-gradient(105deg,#8a6f3c,#c2ab72 55%,#978045)' : 'transparent';
+      b.style.color = on ? '#fffdf7' : '#77603a';
+    });
+    if (countWrap) countWrap.classList.toggle('hidden', rsvpStatus !== 'hadir');
+  }
+  statusBtns.forEach(b => b.addEventListener('click', () => { rsvpStatus = b.dataset.status; paintStatus(); }));
+  paintStatus();
+
+  window.submitRSVP = async function (e) {
+    e.preventDefault();
+    const name = document.getElementById('rsvp-name').value.trim();
+    if (!name) return showToast('Mohon isi nama Anda');
+    const btn = document.getElementById('rsvp-submit');
+    btn.disabled = true; btn.textContent = 'MENGIRIM...';
+    const payload = { invitation_id: INV_ID, nama: name, status: rsvpStatus, konfirmasi: rsvpStatus, kehadiran: rsvpStatus, hadir: rsvpStatus === 'hadir', jumlah_tamu: rsvpStatus === 'hadir' ? parseInt(document.getElementById('rsvp-count').value || '1') : 0 };
+    try {
+      const res = await fetch('/api/rsvp', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error('rsvp failed');
+      document.getElementById('rsvp-msg').classList.remove('hidden');
+      btn.textContent = 'TERKIRIM ✓';
+      showToast('Konfirmasi kehadiran terkirim');
+    } catch (err) {
+      btn.disabled = false; btn.textContent = 'KONFIRMASI KEHADIRAN';
+      showToast('Gagal mengirim. Coba lagi ya.');
+    }
+  };
+
+  // --- Ucapan ---
+  const wishInput = document.getElementById('wish-text');
+  const wishCount = document.getElementById('wish-count');
+  wishInput?.addEventListener('input', () => { wishCount.textContent = wishInput.value.length; });
+
+  window.submitWish = async function (e) {
+    e.preventDefault();
+    const name = document.getElementById('wish-name').value.trim();
+    const text = wishInput.value.trim();
+    if (!name || !text) return showToast('Mohon isi nama dan ucapan');
+    const btn = document.getElementById('wish-submit');
+    btn.disabled = true; btn.textContent = 'MENGIRIM...';
+    try {
+      const res = await fetch('/api/ucapan', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ invitation_id: INV_ID, nama: name, pesan: text, ucapan: text }) });
+      if (!res.ok) throw new Error('wish failed');
+      wishInput.value = ''; wishCount.textContent = '0';
+      btn.disabled = false; btn.textContent = 'KIRIM UCAPAN';
+      showToast('Ucapan terkirim. Terima kasih!');
+      loadWishes();
+    } catch (err) {
+      btn.disabled = false; btn.textContent = 'KIRIM UCAPAN';
+      showToast('Gagal mengirim ucapan. Coba lagi ya.');
+    }
+  };
+
+  function relTime(iso) {
+    if (!iso) return '';
+    const t = new Date(String(iso).replace(' ', 'T'));
+    if (isNaN(t)) return '';
+    const s = Math.max(0, Math.floor((Date.now() - t.getTime()) / 1000));
+    if (s < 60) return 'Baru saja';
+    const m = Math.floor(s / 60); if (m < 60) return m + ' menit yang lalu';
+    const h = Math.floor(m / 60); if (h < 24) return h + ' jam yang lalu';
+    const d = Math.floor(h / 24); if (d < 30) return d + ' hari yang lalu';
+    return t.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+  function wishCard(w) {
+    const name = (w.nama || w.name || 'Tamu').toString();
+    const msg = (w.pesan || w.ucapan || w.message || '').toString();
+    const when = relTime(w.created_at || w.tanggal || w.time || '');
+    const el = document.createElement('div');
+    el.className = 'card-putih px-5 py-4';
+    el.innerHTML = '<div class="flex items-baseline justify-between gap-3 mb-1"><p class="font-serif font-semibold text-[15px] tracking-wide text-puspa-ink"></p>' +
+      (when ? '<span class="text-[10px] text-puspa-soft/60 whitespace-nowrap"></span>' : '') + '</div>' +
+      '<p class="text-[13px] leading-relaxed text-puspa-soft"></p>';
+    el.querySelector('p').textContent = name;
+    const spans = el.querySelectorAll('span'); if (spans.length && when) spans[0].textContent = when;
+    el.querySelectorAll('p')[1].textContent = msg;
+    return el;
+  }
+  async function loadWishes() {
+    const list = document.getElementById('wish-list');
+    if (!list) return;
+    list.innerHTML = '';
+    try {
+      const res = await fetch('/api/ucapan/' + INV_ID);
+      const data = await res.json();
+      const itemsW = Array.isArray(data) ? data : (data.data || data.ucapan || []);
+      if (!itemsW.length) { list.innerHTML = '<p class="text-center text-[13px] text-puspa-soft/60 py-2">Jadilah yang pertama memberikan ucapan</p>'; return; }
+      itemsW.forEach(w => list.appendChild(wishCard(w)));
+    } catch (e) {
+      list.innerHTML = '<p class="text-center text-[13px] text-puspa-soft/60 py-2">Ucapan belum dapat dimuat</p>';
+    }
+  }
+  loadWishes();
+});
+
+// --- Salin teks + toast ---
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => showToast('Berhasil disalin')).catch(() => fallbackCopy(text));
+  } else { fallbackCopy(text); }
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showToast('Berhasil disalin'); }
+  catch (e) { showToast('Gagal menyalin'); }
+  document.body.removeChild(ta);
+}
+
+/* ---------- LIGHTBOX ---------- */
+(function(){
+  const lb=document.getElementById("lightbox"), img=document.getElementById("lbImg"),
+    count=document.getElementById("lbCount");
+  const items=[...document.querySelectorAll(".gal-item")];
+  let idx=0, sx=0;
+  function show(i){ idx=(i+items.length)%items.length;
+    img.src=items[idx].dataset.full; count.textContent=(idx+1)+" / "+items.length; }
+  items.forEach((it,i)=>it.addEventListener("click",()=>{
+    lb.classList.remove("hidden"); lb.classList.add("flex"); show(i); }));
+  function close(){ lb.classList.add("hidden"); lb.classList.remove("flex"); }
+  document.getElementById("lbClose").addEventListener("click",close);
+  document.getElementById("lbPrev").addEventListener("click",e=>{e.stopPropagation();show(idx-1);});
+  document.getElementById("lbNext").addEventListener("click",e=>{e.stopPropagation();show(idx+1);});
+  lb.addEventListener("click",e=>{ if(e.target===lb) close(); });
+  addEventListener("keydown",e=>{ if(lb.classList.contains("hidden"))return;
+    if(e.key==="Escape")close(); if(e.key==="ArrowLeft")show(idx-1); if(e.key==="ArrowRight")show(idx+1); });
+  img.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;},{passive:true});
+  img.addEventListener("touchmove",e=>{ const dx=e.touches[0].clientX-sx;
+    if(Math.abs(dx)>60){ show(idx+(dx<0?1:-1)); sx=e.touches[0].clientX; } },{passive:true});
+})();
+</script>
+</body>
+</html>
