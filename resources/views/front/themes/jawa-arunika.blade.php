@@ -244,9 +244,9 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     @media (prefers-reduced-motion:reduce){ .sway-node{ animation:none !important; } .wind-sway{ animation:none !important; } }
   
 /* Standar menu klasik emas: bottom bar */
-#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:20px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(94vw,460px);max-width:94vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:4px}
+#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px 0;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
 #floatMenu::-webkit-scrollbar,#bottomNav::-webkit-scrollbar{display:none}
-#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:none;width:54px;height:auto;padding:7px 0;border-radius:13px;color:#978045!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;height:auto;padding:7px 0;border-radius:13px;color:#978045!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 #floatMenu a svg,#bottomNav a svg{width:21px;height:21px}
 #floatMenu a.active,#bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
