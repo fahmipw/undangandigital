@@ -179,7 +179,7 @@ section{padding:64px 26px;text-align:center;position:relative;perspective:1200px
 .copy{margin-top:12px}
 footer{padding:56px 26px 110px;text-align:center}
 footer .neon{font-size:34px;font-weight:700}
-#musBtn{position:fixed;bottom:22px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid var(--cyan);background:rgba(8,8,22,.9);color:var(--cyan);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;bottom:100px!important;box-shadow:0 0 22px rgba(0,229,255,.4);text-shadow:0 0 10px var(--cyan)}
+#musBtn{position:fixed;bottom:22px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid var(--cyan);background:rgba(8,8,22,.9);color:var(--cyan);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;bottom:136px!important;box-shadow:0 0 22px rgba(0,229,255,.4);text-shadow:0 0 10px var(--cyan)}
 
 /* === fitur bawaan default: lightbox, menu, progress, musik === */
 .pbar{position:fixed;top:0;left:0;right:0;height:3px;z-index:96;background:transparent}
@@ -192,13 +192,13 @@ footer .neon{font-size:34px;font-weight:700}
 .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);font-size:32px;color:#fff;cursor:pointer;padding:16px 12px;z-index:201;user-select:none;opacity:.85;line-height:1}
 .lb-prev{left:6px}.lb-next{right:6px}.lb-prev:hover,.lb-next:hover{opacity:1}
 .lb-count{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:#fff;font-size:13px;letter-spacing:.15em;z-index:201;font-family:inherit}
-.fmenu{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:90;display:flex;gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:20px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible}
+.fmenu{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:90;display:flex;gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:20px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:96vw;max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
 .fmenu::-webkit-scrollbar{display:none}
-.fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;flex:1 1 0;padding:6px 1px;border-radius:13px;color:#978045;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:.25s}
+.fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;flex:1 1 19%;max-width:20%;padding:7px 1px;border-radius:13px;color:#978045;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:.25s}
 .fmenu a i{font-style:normal;line-height:0}
 .fmenu a svg{width:21px;height:21px}
 .fmenu a.active{background:rgba(151,128,69,.14);box-shadow:inset 0 0 0 1.5px #b8934a;color:#7c652f}
-body::after{content:"";display:block;height:118px}
+body::after{content:"";display:block;height:150px}
 #musBtn.playing{outline:2px solid #ff2fb3;outline-offset:2px}
 .att-toggle{display:flex;gap:10px}
 .att-toggle button{flex:1;padding:13px 8px;border:1px solid #00e5ff;background:transparent;color:#eaf6ff;font-family:'Jost',sans-serif;font-size:14px;cursor:pointer;transition:.25s;border-radius:10px}
