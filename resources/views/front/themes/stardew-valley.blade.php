@@ -502,8 +502,8 @@ footer{padding:50px 20px 110px;text-align:center}
       <a class="btn-gold" target="_blank" href="{{ mcGet('reception_map_link') }}">BUKA PETA</a>
       @endif
       @if(mcGet('live_stream_link'))
-      @php $lvE = mcGet('live_stream_link'); if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$lvE, $lm2)) { $lvE = 'https://www.youtube.com/embed/'.$lm2[1]; } @endphp
-      <div style="margin:12px auto 6px;max-width:330px;border:3px solid #7a4a21;border-radius:10px;overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.25)"><div style="position:relative;padding-top:56.25%"><iframe src="{{ $lvE }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" title="Live Streaming"></iframe></div></div>
+      @php $lvE = mcGet('live_stream_link'); if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$lvE, $lm2)) { $lvE = 'https://www.youtube-nocookie.com/embed/'.$lm2[1]; } @endphp
+      <div style="margin:12px auto 6px;max-width:330px;border:3px solid #7a4a21;border-radius:10px;overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.25)"><div style="position:relative;padding-top:56.25%"><iframe src="{{ $lvE }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div>
       @endif
       @if(mcGet('live_stream_link'))
       <a class="btn-gold" target="_blank" href="{{ mcGet('live_stream_link') }}">LIVE STREAMING</a>

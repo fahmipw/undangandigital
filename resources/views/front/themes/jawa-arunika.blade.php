@@ -612,7 +612,9 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
 @php
   $liveUrl = jwaGet('live_stream_link');
   $liveEmbed = $liveUrl;
-  if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$liveUrl, $lm)) { $liveEmbed = 'https://www.youtube.com/embed/' . $lm[1]; }
+  if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$liveUrl, $lm)) { $liveEmbed = 'https://www.youtube-nocookie.com/embed/' . $lm[1]; }
+  $liveId = $lm[1] ?? null;
+  $liveThumb = $liveId ? 'https://i.ytimg.com/vi/' . $liveId . '/hqdefault.jpg' : '';
 @endphp
 <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
     <p class="anim-fade text-[10px] uppercase tracking-[0.4em] text-jawa-gold mb-2 relative z-10">Live Streaming</p>
@@ -620,12 +622,25 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     <p class="anim-fade font-serif italic text-stone-300 text-[15px] leading-relaxed mb-9 max-w-[320px] relative z-10">Bagi Bapak/Ibu/Saudara/i yang berhalangan hadir, silakan saksikan acara kami secara langsung melalui tayangan berikut.</p>
     <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
 <div style="position:relative;padding-top:56.25%">
-<iframe src="{{ $liveEmbed }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="Live Streaming"></iframe>
+@if($liveId)
+<button type="button" onclick="playLive(this, '{{ $liveId }}')" aria-label="Putar Live Streaming" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
+<img src="{{ $liveThumb }}" alt="Live Streaming" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85">
+<span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
+</button>
+@else
+<iframe src="{{ $liveEmbed }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe>
+@endif
 </div>
 </div>
 <a href="{{ $liveUrl }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA LIVE STREAMING</a>
   </section>
 @endif
+<script>
+function playLive(btn, id){
+  var wrap = btn.parentNode;
+  wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe>';
+}
+</script>
   <footer class="relative px-6 pt-20 pb-28 text-center overflow-hidden bg-jawa-bg/80">
     <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" class="orn sway-node sway-subtle w-[26%] max-w-[110px] mx-auto mb-5 opacity-90" alt=""  data-speed="0.8" data-rot="0" />
     <p class="anim-fade font-serif italic text-stone-300 text-[16px] max-w-[300px] mx-auto leading-relaxed mb-6">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kami.</p>
