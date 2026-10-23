@@ -201,6 +201,7 @@ section.block{max-width:860px;margin:0 auto;padding:56px 20px 8px}
 .thanks-card p{font-size:23px;color:#3d3d3d;max-width:560px;margin:0 auto 12px}
 .fam{font-family:'Press Start 2P',monospace;font-size:11px;color:#6b6b6b;line-height:2;margin-top:18px}
 .footer-note{text-align:center;color:#5b6b80;font-size:19px;padding:34px 20px 10px}
+body:not(.gate-open) .float-btns{display:none!important}
 .float-btns{position:fixed;right:14px;bottom:14px;z-index:90;display:flex;flex-direction:column;gap:10px}
 .float-btns button{width:52px;height:52px;font-size:20px;padding:0;display:flex;align-items:center;justify-content:center}
 #toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(20px);z-index:120;
@@ -798,7 +799,7 @@ $("#dayNightBtn").addEventListener("click",e=>{
 const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add("in");io.unobserve(en.target);}}),{threshold:0.12});
 let opened=false;
 $("#openBtn").addEventListener("click",()=>{
-  if(opened)return;opened=true;
+  if(opened)return;opened=true;document.body.classList.add("gate-open");
   blip(520,0.08,0.05);setTimeout(()=>blip(780,0.1,0.05),100);
   const cover=$("#cover");
   cover.style.transition="transform .9s cubic-bezier(.6,0,.3,1), opacity .9s";

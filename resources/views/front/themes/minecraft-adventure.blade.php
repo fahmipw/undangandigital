@@ -152,6 +152,8 @@ select.mc-input{appearance:none}
   text-align:center;line-height:1.7}
 .sheet .psub{text-align:center;color:#5a5a5a;font-size:21px;margin-bottom:18px}
 .player-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.qr-card{margin-top:14px;text-align:center}
+.qr-card #qrBox img,.qr-card #qrBox canvas{margin:0 auto}
 @media(max-width:520px){.player-grid{grid-template-columns:1fr}}
 .pcard{background:#a8a8a8;border:3px solid #141414;padding:18px 14px;text-align:center;
   box-shadow:inset 2px 2px 0 rgba(255,255,255,.4)}
@@ -213,6 +215,7 @@ select.mc-input{appearance:none}
   #hint,.sheet,#actBtn.ready{animation:none}
 }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -267,6 +270,8 @@ const MC = {
   invId: {{ (int)$invId }},
   countdownISO: @json($countdownISO),
   musicUrl: @json($musicUrl),
+  guestQr: @json(!empty($guestQrCode) ? $guestQrCode : ''),
+  guestQrOn: {{ mcaGet('guest_qr_enabled') ? 'true' : 'false' }},
   musVol: @json($musVol),
   musAuto: @json($musAuto),
   liveStream: @json(mcaGet('live_stream_link', '')),
@@ -563,7 +568,10 @@ couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2>
 <h3>{{ $brideFull }}</h3><span class="ptag">MEMPELAI WANITA</span><p>{{ mcaGet('bride_parents', mcaGet('bride_child_of','')) }}</p>@if(mcaGet('bride_instagram'))<a href="https://instagram.com/{{ ltrim(mcaGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" class="mc-btn" style="font-size:9px;margin-top:8px;display:inline-flex;align-items:center;gap:5px;text-decoration:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(mcaGet('bride_instagram'),'@') }}</span></a>@endif</div>
 <div class="pcard"><canvas id="pfG" width="8" height="8"></canvas>
 <h3>{{ $groomFull }}</h3><span class="ptag">MEMPELAI PRIA</span><p>{{ mcaGet('groom_parents', mcaGet('groom_child_of','')) }}</p>@if(mcaGet('groom_instagram'))<a href="https://instagram.com/{{ ltrim(mcaGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="mc-btn" style="font-size:9px;margin-top:8px;display:inline-flex;align-items:center;gap:5px;text-decoration:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(mcaGet('groom_instagram'),'@') }}</span></a>@endif</div>
-</div>`,
+</div>
+${MC.guestQrOn&&MC.guestQr?`<div class="qr-card"><h2 class="ptitle" style="font-size:12px">KARTU TAMU</h2>
+<p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p>
+<div id="qrBox" style="display:flex;justify-content:center"></div></div>`:""}`,
 count:()=>`<h2 class="ptitle">MENARA JAM</h2><p class="psub">${MC.dateText} &mdash; quest dimulai dalam:</p>
 <div class="hud2">
 <div class="slot"><span class="num" id="cD">00</span><span class="unit">HARI</span></div>
@@ -630,6 +638,10 @@ function openPanel(id){
   if(id==="couple"){
     drawFace($("#pfB"),{skin:"#f0c49c",hair:"#5a3a22",shirt:"#c2437f",style:"bride"});
     drawFace($("#pfG"),{skin:"#e8b98a",hair:"#2b2b2b",shirt:"#2f6db3",style:"groom"});
+ 
+    if(MC.guestQrOn&&MC.guestQr&&window.QRCode){
+      new QRCode($("#qrBox"),{text:MC.guestQr,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});
+    }
   }
   if(id==="count")startCd();
   if(id==="event")$$("#panelBody .ev-ic").forEach(c=>{

@@ -658,13 +658,13 @@ async function startMusic(){
   try{
     var r = await fetch('/api/music?inv_id=' + INV_ID);
     var d = await r.json();
-    var url = (d.data && (d.data.file_path || d.data.url)) || "{{ $musicUrl }}";
+    var url = (d.music && d.music.file_path) || (d.data && (d.data.file_path || d.data.url)) || "{{ $musicUrl }}";
     var autoplay = true;
     try{
       var s = await fetch('/api/get_settings?inv_id=' + INV_ID); var sd = await s.json();
       if(sd.data){ musVol = parseInt(sd.data.music_volume || '50', 10); if(sd.data.music_autoplay === '0') autoplay = false; }
     }catch(e){}
-    if(!url) { document.getElementById('musBtn').style.display='none'; return; }
+    if(!url) { var b0 = document.getElementById('musBtn'); b0.classList.add('off'); b0.onclick = function(){ alert('Musik belum tersedia untuk undangan ini.'); }; return; }
     musEl.src = url; musEl.volume = 0;
     var btn = document.getElementById('musBtn');
     btn.onclick = function(){
@@ -679,7 +679,7 @@ async function startMusic(){
         }, 120);
       }).catch(function(){});
     }
-  }catch(e){ document.getElementById('musBtn').style.display='none'; }
+  }catch(e){ var b1 = document.getElementById('musBtn'); if(b1){ b1.classList.add('off'); b1.onclick = function(){ alert('Musik belum tersedia untuk undangan ini.'); }; } }
 }
 
 /* ---------- countdown ---------- */
@@ -711,9 +711,17 @@ window.addEventListener('scroll', function(){
 
 /* ---------- floating menu ---------- */
 (function(){
-  var SECS = [['hero','⌂','Awal'],['mempelai','♥','Mempelai'],['galeri','▦','Galeri'],
-              ['kisah','✎','Kisah'],['acara','◷','Acara'],['rsvp','✓','RSVP'],
-              ['ucapan','✉','Ucapan'],['gift','✦','Gift']];
+  var SECS = [
+    ['hero','⌂','Awal'],
+    ['mempelai','♥','Mempelai'],
+    ['galeri','▦','Galeri'],
+    ['kisah','✎','Kisah'],
+    ['acara','◷','Acara'],
+    ['qrcheckin','▩','QR'],
+    ['rsvp','✓','RSVP'],
+    ['ucapan','✉','Ucapan'],
+    ['gift','✦','Gift']
+  ];
   var nav = document.getElementById('fmenu');
   var items = [];
   SECS.forEach(function(s){

@@ -189,6 +189,8 @@ select.pq-input{appearance:none}
 .ptitle{font-family:'Press Start 2P',monospace;font-size:16px;color:#3a5a22;margin-bottom:6px;letter-spacing:1px}
 .psub{font-size:21px;color:#7a6a4a;margin-bottom:16px}
 .player-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
+.qr-card{margin-top:12px;text-align:center}
+.qr-card #qrBox img,.qr-card #qrBox canvas{margin:0 auto}
 .pcard{background:#fffdf4;border:3px solid var(--wood);border-radius:8px;padding:14px;text-align:center}
 .pcard canvas{width:52px;height:52px;background:#dff3ff;border-radius:6px;margin-bottom:8px}
 .pcard h3{font-size:23px;color:#3a2a18}
@@ -240,6 +242,7 @@ select.pq-input{appearance:none}
 .complete p{font-size:22px;color:#5a4a30;margin-bottom:10px}
 @media (prefers-reduced-motion:reduce){#actBtn.ready,#dlgNext{animation:none}}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 <div id="start">
@@ -305,6 +308,8 @@ const MC = {
   invId: {{ (int)$invId }},
   countdownISO: @json($countdownISO),
   musicUrl: @json($musicUrl),
+  guestQr: @json(!empty($guestQrCode) ? $guestQrCode : ''),
+  guestQrOn: {{ jklGet('guest_qr_enabled') ? 'true' : 'false' }},
   musVol: @json($musVol),
   musAuto: @json($musAuto),
   brideNick: @json($brideNick), groomNick: @json($groomNick),
@@ -868,9 +873,15 @@ function openPanel(id){
         <h3>${esc(MC.groomNick)}</h3><span class="ptag">MEMPELAI PRIA</span>
         <p>${esc(MC.groomChild)} dari<br>${esc(MC.groomParents)}</p>${MC.groomIg?`<a href="https://instagram.com/${esc(MC.groomIg.replace(/^@/,''))}" target="_blank" rel="noopener" class="pq-btn" style="display:inline-block;margin-top:8px;font-size:8px;padding:8px 10px">&#64;${esc(MC.groomIg.replace(/^@/,''))}</a>`:""}</div>
     </div>
-    <p style="font-size:20px;color:#5a4a30;text-align:center;margin-top:6px">${esc(MC.quotes||"")}</p>`;
+    <p style="font-size:20px;color:#5a4a30;text-align:center;margin-top:6px">${esc(MC.quotes||"")}</p>
+    ${MC.guestQrOn&&MC.guestQr?`<div class="qr-card"><h2 class="ptitle" style="font-size:12px">KARTU TAMU</h2>
+<p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p>
+<div id="qrBox" style="display:flex;justify-content:center"></div></div>`:""}`;
     drawFace($("#faceBride"),{skin:"#f0c49c",hair:"#2b2b2b",shirt:"#e8a2b0",style:"bride"});
     drawFace($("#faceGroom"),{skin:"#c98d5f",hair:"#2b2b2b",shirt:"#3f8fd1"});
+    if(MC.guestQrOn&&MC.guestQr&&window.QRCode){
+      new QRCode($("#qrBox"),{text:MC.guestQr,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});
+    }
   }
   else if(id==="acara"){
     body.innerHTML=`<div class="ptitle">KAPEL PERNIKAHAN</div><div class="psub">Akad &amp; Resepsi</div>
