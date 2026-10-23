@@ -712,7 +712,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (e) { /* abaikan */ }
     if (!audioEl.src && MUSIC_URL) { audioEl.src = MUSIC_URL; audioEl.load(); }
-    if (audioEl.src && musicFloat) musicFloat.classList.remove('hidden');
   }
   initAudio();
 
@@ -740,6 +739,7 @@ document.addEventListener('DOMContentLoaded', () => {
           document.body.classList.remove('is-locked');
           const fm = document.getElementById('floatMenu');
           if (fm) fm.classList.remove('hidden');
+          if (musicFloat && audioEl.src) musicFloat.classList.remove('hidden');
           animateHero();
           ScrollTrigger.refresh();
         }
@@ -999,9 +999,7 @@ function fallbackCopy(text) {
       tries++;
       var gate = document.getElementById('cover-gate') || document.getElementById('cover');
       var gateGone = !gate || gate.classList.contains('hidden') || gate.style.display === 'none' || getComputedStyle(gate).display === 'none' || getComputedStyle(gate).visibility === 'hidden';
-      var mus = document.getElementById('musicFloat');
-      var musShown = mus && !mus.hidden && !mus.classList.contains('hidden');
-      if(gateGone || musShown){ bar.classList.remove('hidden'); clearInterval(watch); }
+      if(gateGone){ bar.classList.remove('hidden'); clearInterval(watch); }
       if(tries > 60) clearInterval(watch);
     }, 400);
   }

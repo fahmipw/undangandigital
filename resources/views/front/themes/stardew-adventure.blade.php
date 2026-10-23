@@ -62,6 +62,8 @@ if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
 }
 $musVol = (int) sdaGet('music_volume', 50);
 $musAuto = sdaGet('music_autoplay', '1') !== '0';
+$liveEmbed = sdaGet('live_stream_link','');
+if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$liveEmbed, $pqm)) { $liveEmbed = 'https://www.youtube-nocookie.com/embed/'.$pqm[1]; }
 $invId = $inv_id ?? 0;
 ?>
 <!DOCTYPE html>
@@ -282,7 +284,7 @@ const MC = {
   resepsi: { date: @json(sdaDate($rDate)), time: @json($rTimeS.' – '.$rTimeE.' '.sdaGet('wedding_timezone','WIB')),
     venue: @json(sdaGet('reception_location', sdaGet('wedding_location','Kediaman Mempelai'))), maps: @json($sameLoc ? $mainMapLink : sdaGet('reception_map_link','')) },
   liveStream: @json(sdaGet('live_stream_link', '')),
-  liveEmbed: @json(preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)sdaGet('live_stream_link',''), $pqm) ? 'https://www.youtube-nocookie.com/embed/'.$pqm[1] : sdaGet('live_stream_link','')),
+  liveEmbed: @json($liveEmbed),
   giftRecipient: @json($giftRecipient),
   giftAddress: @json(sdaGet('gift_address', '')),
   giftMaps: @json(sdaGet('gift_maps_link', ''))

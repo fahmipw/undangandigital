@@ -825,9 +825,7 @@ document.querySelectorAll(".copy-btn").forEach(btn=>{
       tries++;
       var gate = document.getElementById('cover-gate') || document.getElementById('cover');
       var gateGone = !gate || gate.classList.contains('hidden') || gate.style.display === 'none' || getComputedStyle(gate).display === 'none' || getComputedStyle(gate).visibility === 'hidden';
-      var mus = document.getElementById('musicFloat');
-      var musShown = mus && !mus.hidden && !mus.classList.contains('hidden');
-      if(gateGone || musShown){ bar.classList.remove('hidden'); clearInterval(watch); }
+      if(gateGone){ bar.classList.remove('hidden'); clearInterval(watch); }
       if(tries > 60) clearInterval(watch);
     }, 400);
   }

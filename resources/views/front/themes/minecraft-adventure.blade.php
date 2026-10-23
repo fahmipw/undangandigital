@@ -62,6 +62,8 @@ if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
 }
 $musVol = (int) mcaGet('music_volume', 50);
 $musAuto = mcaGet('music_autoplay', '1') !== '0';
+$liveEmbed = mcaGet('live_stream_link','');
+if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$liveEmbed, $pqm)) { $liveEmbed = 'https://www.youtube-nocookie.com/embed/'.$pqm[1]; }
 $invId = $inv_id ?? 0;
 ?>
 <!DOCTYPE html>
@@ -268,7 +270,7 @@ const MC = {
   musVol: @json($musVol),
   musAuto: @json($musAuto),
   liveStream: @json(mcaGet('live_stream_link', '')),
-  liveEmbed: @json(preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)mcaGet('live_stream_link',''), $pqm) ? 'https://www.youtube-nocookie.com/embed/'.$pqm[1] : mcaGet('live_stream_link','')),
+  liveEmbed: @json($liveEmbed),
   brideNick: @json($brideNick), groomNick: @json($groomNick),
   brideFull: @json($brideFull), groomFull: @json($groomFull),
   guestName: @json($guestName),

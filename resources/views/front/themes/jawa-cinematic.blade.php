@@ -154,6 +154,7 @@ tailwind.config = {
 #floatMenu a svg,#bottomNav a svg{width:21px;height:21px}
 #floatMenu a.active,#bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
+#vinyl[hidden]{display:none!important}
 #musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
 #musicFloat .bars span{background:#e6c887!important}
 #vinyl{bottom:96px!important}
@@ -816,9 +817,7 @@ document.querySelectorAll(".copy-btn").forEach(b=>b.addEventListener("click",asy
       tries++;
       var gate = document.getElementById('cover-gate') || document.getElementById('cover');
       var gateGone = !gate || gate.classList.contains('hidden') || gate.style.display === 'none' || getComputedStyle(gate).display === 'none' || getComputedStyle(gate).visibility === 'hidden';
-      var mus = document.getElementById('musicFloat');
-      var musShown = mus && !mus.hidden && !mus.classList.contains('hidden');
-      if(gateGone || musShown){ bar.classList.remove('hidden'); clearInterval(watch); }
+      if(gateGone){ bar.classList.remove('hidden'); clearInterval(watch); }
       if(tries > 60) clearInterval(watch);
     }, 400);
   }
