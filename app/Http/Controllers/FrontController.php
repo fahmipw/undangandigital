@@ -8,6 +8,7 @@ use App\Models\Guest;
 use App\Models\Gallery;
 use App\Models\Story;
 use App\Models\Music;
+use Illuminate\Support\Facades\Schema;
 
 class FrontController extends Controller
 {
@@ -47,7 +48,11 @@ class FrontController extends Controller
             }
         }
 
-        $gallery = $invitation->galleries()->orderBy('sort_order', 'ASC')->orderBy('created_at', 'ASC')->pluck('image_path')->toArray();
+        $galleryQuery = $invitation->galleries();
+        if (Schema::hasColumn('galleries', 'sort_order')) {
+            $galleryQuery->orderBy('sort_order', 'ASC');
+        }
+        $gallery = $galleryQuery->orderBy('created_at', 'ASC')->pluck('image_path')->toArray();
         $stories = $invitation->stories()->orderBy('id', 'ASC')->get();
         $musicRecord = $invitation->music()->where('is_active', 1)->first();
         $inv_id = $invitation->id;

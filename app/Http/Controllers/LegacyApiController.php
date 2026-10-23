@@ -12,6 +12,7 @@ use App\Models\Setting;
 use App\Models\Rsvp;
 use App\Models\Ucapan;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Schema;
 
 class LegacyApiController extends Controller
 {
@@ -240,7 +241,7 @@ class LegacyApiController extends Controller
             case 'get_gallery':
                 return response()->json([
                     'success' => true,
-                    'data' => Gallery::where('invitation_id', $inv_id)->orderBy('sort_order', 'ASC')->orderBy('created_at', 'ASC')->get()
+                    'data' => Gallery::where('invitation_id', $inv_id)->when(Schema::hasColumn('galleries', 'sort_order'), function ($q) { $q->orderBy('sort_order', 'ASC'); })->orderBy('created_at', 'ASC')->get()
                 ]);
 
             case 'upload_gallery':
@@ -254,12 +255,15 @@ class LegacyApiController extends Controller
                 }
                 
                 $filename = $this->convertToWebp($request->file('image'), public_path('uploads'), 'img_');
-                $maxSort = Gallery::where('invitation_id', $inv_id)->max('sort_order');
-                Gallery::create([
+                $galleryData = [
                     'invitation_id' => $inv_id,
-                    'image_path' => 'uploads/' . $filename,
-                    'sort_order' => $maxSort === null ? 0 : $maxSort + 1
-                ]);
+                    'image_path' => 'uploads/' . $filename
+                ];
+                if (Schema::hasColumn('galleries', 'sort_order')) {
+                    $maxSort = Gallery::where('invitation_id', $inv_id)->max('sort_order');
+                    $galleryData['sort_order'] = $maxSort === null ? 0 : $maxSort + 1;
+                }
+                Gallery::create($galleryData);
                 return response()->json(['success' => true, 'path' => 'uploads/' . $filename]);
 
             case 'delete_gallery':
@@ -275,6 +279,9 @@ class LegacyApiController extends Controller
                 return response()->json(['success' => true]);
 
             case 'reorder_gallery':
+                if (!Schema::hasColumn('galleries', 'sort_order')) {
+                    return response()->json(['success' => false, 'message' => 'Kolom urutan belum ada. Jalankan php artisan migrate terlebih dahulu.'], 400);
+                }
                 $ids = $request->input('ids', []);
                 if (!is_array($ids)) {
                     return response()->json(['success' => false, 'message' => 'Format urutan tidak valid'], 400);
