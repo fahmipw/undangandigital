@@ -165,9 +165,9 @@ footer{padding:60px 26px 90px;text-align:center}
 .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);font-size:32px;color:#fff;cursor:pointer;padding:16px 12px;z-index:201;user-select:none;opacity:.85;line-height:1}
 .lb-prev{left:6px}.lb-next{right:6px}.lb-prev:hover,.lb-next:hover{opacity:1}
 .lb-count{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:#fff;font-size:13px;letter-spacing:.15em;z-index:201;font-family:inherit}
-.fmenu{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:90;display:flex;gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:20px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:96vw;max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
+.fmenu{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:90;display:flex;gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:20px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(94vw,460px);max-width:94vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:4px}
 .fmenu::-webkit-scrollbar{display:none}
-.fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;flex:1 1 19%;max-width:20%;padding:7px 1px;border-radius:13px;color:#978045;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:.25s}
+.fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:none;width:54px;padding:7px 0;border-radius:13px;color:#978045;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:.25s}
 .fmenu a i{font-style:normal;line-height:0}
 .fmenu a svg{width:21px;height:21px}
 .fmenu a.active{background:rgba(151,128,69,.14);box-shadow:inset 0 0 0 1.5px #b8934a;color:#7c652f}
@@ -184,7 +184,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 @media(min-width:640px){.hero-names{font-size:64px}}
 
 /* Standar menu klasik emas */
-#musBtn{background:linear-gradient(160deg,#3a2c17,#171106)!important;border:1px solid rgba(201,164,92,.85)!important;color:#e6c887!important;bottom:136px!important;box-shadow:0 10px 26px rgba(90,70,20,.5)!important}
+#musBtn{background:linear-gradient(160deg,#3a2c17,#171106)!important;border:1px solid rgba(201,164,92,.85)!important;color:#e6c887!important;bottom:130px!important;box-shadow:0 10px 26px rgba(90,70,20,.5)!important}
 </style>
 </head>
 <body>
