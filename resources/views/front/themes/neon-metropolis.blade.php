@@ -179,7 +179,7 @@ section{padding:64px 26px;text-align:center;position:relative;perspective:1200px
 .copy{margin-top:12px}
 footer{padding:56px 26px 110px;text-align:center}
 footer .neon{font-size:34px;font-weight:700}
-#musBtn{position:fixed;bottom:22px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid var(--cyan);background:rgba(8,8,22,.9);color:var(--cyan);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 22px rgba(0,229,255,.4);text-shadow:0 0 10px var(--cyan)}
+#musBtn{position:fixed;bottom:22px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid var(--cyan);background:rgba(8,8,22,.9);color:var(--cyan);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;bottom:88px!important;box-shadow:0 0 22px rgba(0,229,255,.4);text-shadow:0 0 10px var(--cyan)}
 
 /* === fitur bawaan default: lightbox, menu, progress, musik === */
 .pbar{position:fixed;top:0;left:0;right:0;height:3px;z-index:96;background:transparent}
@@ -192,11 +192,13 @@ footer .neon{font-size:34px;font-weight:700}
 .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);font-size:32px;color:#fff;cursor:pointer;padding:16px 12px;z-index:201;user-select:none;opacity:.85;line-height:1}
 .lb-prev{left:6px}.lb-next{right:6px}.lb-prev:hover,.lb-next:hover{opacity:1}
 .lb-count{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:#fff;font-size:13px;letter-spacing:.15em;z-index:201;font-family:inherit}
-.fmenu{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:90;display:flex;gap:2px;background:#0a0a18f2;border:1px solid #00e5ff55;border-radius:999px;padding:7px 9px;backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:96vw;overflow-x:auto;scrollbar-width:none}
+.fmenu{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:90;display:flex;gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:20px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);max-width:96vw;overflow-x:auto;scrollbar-width:none}
 .fmenu::-webkit-scrollbar{display:none}
-.fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:50px;padding:6px 7px;border-radius:12px;color:#eaf6ff;opacity:.6;text-decoration:none;font-size:9px;letter-spacing:.06em;transition:.25s;font-family:'Jost',sans-serif}
-.fmenu a i{font-style:normal;font-size:17px;line-height:1}
-.fmenu a.active{opacity:1;background:#00e5ff2e;color:#ff2fb3}
+.fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:52px;padding:6px 4px;border-radius:13px;color:#978045;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;transition:.25s}
+.fmenu a i{font-style:normal;line-height:0}
+.fmenu a svg{width:21px;height:21px}
+.fmenu a.active{background:rgba(151,128,69,.14);box-shadow:inset 0 0 0 1.5px #b8934a;color:#7c652f}
+body::after{content:"";display:block;height:84px}
 #musBtn.playing{outline:2px solid #ff2fb3;outline-offset:2px}
 .att-toggle{display:flex;gap:10px}
 .att-toggle button{flex:1;padding:13px 8px;border:1px solid #00e5ff;background:transparent;color:#eaf6ff;font-family:'Jost',sans-serif;font-size:14px;cursor:pointer;transition:.25s;border-radius:10px}
@@ -209,9 +211,6 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 @media (prefers-reduced-motion:reduce){.flyer,.neon,.neon-p,.nheart{animation:none}}
 
 /* Standar menu klasik emas */
-.fmenu{background:linear-gradient(160deg,rgba(43,33,24,.97),rgba(23,18,8,.98))!important;border:1px solid rgba(201,164,92,.8)!important;box-shadow:0 12px 30px rgba(90,70,20,.45)!important}
-.fmenu a{color:#e9d9ae!important;opacity:.78}
-.fmenu a.active{background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c)!important;color:#241a08!important;opacity:1!important}
 #musBtn{background:linear-gradient(160deg,#3a2c17,#171106)!important;border:1px solid rgba(201,164,92,.85)!important;color:#e6c887!important;box-shadow:0 10px 26px rgba(90,70,20,.5)!important}
 </style>
 </head>
@@ -297,7 +296,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 <div class="rv"><div class="nline"></div></div>
 <div class="rv"><div class="hero-date">{{ mcDate($wDate) }}</div>
 @if(mcGet('quotes'))
-<div class="rv" style="max-width:420px;margin:20px auto 0;padding:0 8px">
+<div id=\"quotes\" class="rv" style="max-width:420px;margin:20px auto 0;padding:0 8px">
 <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;line-height:1.7;opacity:.85">“{{ mcGet('quotes') }}”</p>
 </div>
 @endif</div>
@@ -763,9 +762,17 @@ async function sendWish(e){
 }
 
 (function(){
-  var SECS = [['hero','⌂','Awal'],['mempelai','♥','Mempelai'],['galeri','▦','Galeri'],
-              ['kisah','✎','Kisah'],['acara','◷','Acara'],['rsvp','✓','RSVP'],
-              ['ucapan','✉','Ucapan'],['gift','✦','Gift']];
+  var SECS = [
+    ['mempelai','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7.5-4.7-9.5-9C1 8.5 3 5 6.5 5c2 0 3.5 1 4.5 2.5C12 6 13.5 5 15.5 5 19 5 21 8.5 20.5 12c-2 4.3-8.5 9-8.5 9z"/></svg>','Mempelai'],
+    ['galeri','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path stroke-linecap="round" stroke-linejoin="round" d="m5 19 5.5-5.5 3 3L19 11l2 2"/></svg>','Galeri'],
+    ['kisah','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.5C10 4.8 7 4.3 4.5 4.5v13c2.5-.2 5.5.3 7.5 2 2-1.7 5-2.2 7.5-2v-13C17 4.3 14 4.8 12 6.5z"/><path stroke-linecap="round" d="M12 6.5v13"/></svg>','Kisah'],
+    ['quotes','<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 5.5C4.9 6.7 4 8.6 4 10.9V18h6.4v-6.4H7.2c0-1.9.8-3.2 2.3-4.2l-3.1-1.8zm9 0c-1.7 1.2-2.6 3.1-2.6 5.4V18h6.4v-6.4h-3.2c0-1.9.8-3.2 2.3-4.2l-3.1-1.8z"/></svg>','Quotes'],
+    ['acara','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path stroke-linecap="round" d="M8 3v4M16 3v4M3 10h18"/></svg>','Acara'],
+    ['rsvp','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>','RSVP'],
+    ['live','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path fill="currentColor" stroke="none" d="M10 8.3v7.4c0 .6.7 1 1.2.7l6-3.7c.5-.3.5-1 0-1.3l-6-3.7c-.5-.3-1.2.1-1.2.6z"/></svg>','Live'],
+    ['gift','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8v13H3V8M1 3h22v5H1zM12 8v13M12 8H7.5a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8zm0 0h4.5a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8z"/></svg>','Gift'],
+    ['ucapan','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>','Ucapan']
+  ];
   var nav = document.getElementById('fmenu');
   var items = [];
   SECS.forEach(function(s){

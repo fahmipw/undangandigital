@@ -168,9 +168,16 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     ::-webkit-scrollbar{ width:0; background:transparent; }
     .orn{ will-change:transform; }
   
-/* Standar menu klasik emas */
-#floatMenu a,#musicFloat{background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+/* Standar menu klasik emas: bottom bar */
+#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:20px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);max-width:96vw;width:auto;overflow-x:auto;scrollbar-width:none}
+#floatMenu::-webkit-scrollbar,#bottomNav::-webkit-scrollbar{display:none}
+#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:52px;width:auto;height:auto;flex:none;padding:6px 4px;border-radius:13px;color:#978045!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+#floatMenu a svg,#bottomNav a svg{width:21px;height:21px}
+#floatMenu a.active,#bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
+#floatMenu.hidden,#bottomNav[hidden]{display:none!important}
+#musicFloat{bottom:92px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
 #musicFloat .bars span{background:#e6c887!important}
+#vinyl{bottom:96px!important}
 </style>
 </head>
 <body class="is-locked bg-[#cfe3f2] text-surga-ink font-sans antialiased">
@@ -411,6 +418,12 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
   </section>
 
   <!-- ================= 6. COUNTDOWN ================= -->
+@if(jklGet('quotes'))
+  <section id="sec-quotes" class="scroll-section relative py-16 px-6 flex flex-col items-center text-center overflow-hidden" style="background:linear-gradient(180deg,transparent,rgba(201,164,92,.10),transparent)">
+    <p class="anim-fade text-[10px] uppercase tracking-[0.4em] text-surga-deepsage mb-3 relative z-10">Quotes</p>
+    <p class="anim-zoom font-serif italic text-surga-ink/80 text-lg leading-relaxed max-w-[330px] relative z-10">&ldquo;{{ jklGet('quotes') }}&rdquo;</p>
+  </section>
+  @endif
   <section id="sec-acara" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
     <svg class="butterfly pointer-events-none absolute top-12 left-[10%] w-9 z-0" style="animation-delay:-5s"><use href="#ts-butterfly"/></svg>
     <svg class="anim-zoom relative z-10 w-14 h-14 mb-3 sway-slow"><use href="#ts-flower-white"/></svg>
@@ -493,7 +506,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
   </section>
 
   <!-- ================= 8. KISAH CINTA ================= -->
-  <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
+  <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" id="sec-kisah">
     <svg class="anim-zoom relative z-10 w-14 h-14 mb-3 sway-slow"><use href="#ts-flower-white"/></svg>
     <h2 class="anim-zoom font-script text-[2.6rem] text-surga-ink mb-2 relative z-10">Our Story</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-surga-deepsage/80 mb-10 relative z-10">Perjalanan cinta kami</p>
@@ -598,7 +611,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
   $liveId = $lm[1] ?? null;
   $liveThumb = $liveId ? 'https://i.ytimg.com/vi/' . $liveId . '/hqdefault.jpg' : '';
 @endphp
-<section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" style="background:linear-gradient(180deg,transparent,rgba(201,164,92,.10),transparent)">
+<section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" style="background:linear-gradient(180deg,transparent,rgba(201,164,92,.10),transparent)" id="sec-live">
     <p class="anim-fade text-[10px] uppercase tracking-[0.4em] text-surga-deepsage mb-2 relative z-10">Live Streaming</p>
     <h2 class="anim-zoom font-script text-[2.6rem] text-surga-ink mb-3 relative z-10">Saksikan Langsung</h2>
     <p class="anim-fade font-serif italic text-surga-ink/65 text-[15px] leading-relaxed mb-9 max-w-[320px] relative z-10">Bagi Bapak/Ibu/Saudara/i yang berhalangan hadir, silakan saksikan acara kami secara langsung melalui tayangan berikut.</p>
@@ -650,16 +663,16 @@ function playLive(btn, id){
 </button>
 
 <!-- menu melayang: RSVP -> Ucapan -> Gift -->
-<nav id="floatMenu" hidden>
-  <a href="#sec-ucapan" aria-label="RSVP" title="RSVP">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path stroke-linecap="round" stroke-linejoin="round" d="m3 7 9 6 9-6"/></svg>
-  </a>
-  <a href="#sec-ucapan" aria-label="Ucapan" title="Ucapan">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a8 8 0 0 1-8 8H4l2-3a8 8 0 1 1 15-5z"/></svg>
-  </a>
-  <a href="#sec-gift" aria-label="Gift" title="Gift" id="menuGift">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4"/><path stroke-linecap="round" stroke-linejoin="round" d="M5 12v8h14v-8M12 8v12M12 8s-4.5.3-6-2C4.7 4.6 6 3 7.5 3.5 9.5 4.2 12 8 12 8zm0 0s4.5.3 6-2c1.3-1.4 0-3-1.5-2.5C14.5 4.2 12 8 12 8z"/></svg>
-  </a>
+<nav id="floatMenu" class="hidden" aria-label="Menu undangan">
+  <a href="#sec-profil" data-sec="sec-profil"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7.5-4.7-9.5-9C1 8.5 3 5 6.5 5c2 0 3.5 1 4.5 2.5C12 6 13.5 5 15.5 5 19 5 21 8.5 20.5 12c-2 4.3-8.5 9-8.5 9z"/></svg><span>Mempelai</span></a>
+  @if(!empty($gallery))<a href="#sec-galeri" data-sec="sec-galeri"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path stroke-linecap="round" stroke-linejoin="round" d="m5 19 5.5-5.5 3 3L19 11l2 2"/></svg><span>Galeri</span></a>@endif
+  @if(!empty($stories))<a href="#sec-kisah" data-sec="sec-kisah"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.5C10 4.8 7 4.3 4.5 4.5v13c2.5-.2 5.5.3 7.5 2 2-1.7 5-2.2 7.5-2v-13C17 4.3 14 4.8 12 6.5z"/><path stroke-linecap="round" d="M12 6.5v13"/></svg><span>Kisah</span></a>@endif
+  @if(jklGet('quotes'))<a href="#sec-quotes" data-sec="sec-quotes"><svg class="w-[21px] h-[21px]" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 5.5C4.9 6.7 4 8.6 4 10.9V18h6.4v-6.4H7.2c0-1.9.8-3.2 2.3-4.2l-3.1-1.8zm9 0c-1.7 1.2-2.6 3.1-2.6 5.4V18h6.4v-6.4h-3.2c0-1.9.8-3.2 2.3-4.2l-3.1-1.8z"/></svg><span>Quotes</span></a>@endif
+  <a href="#sec-acara" data-sec="sec-acara"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path stroke-linecap="round" d="M8 3v4M16 3v4M3 10h18"/></svg><span>Acara</span></a>
+  <a href="#sec-ucapan" data-sec="sec-ucapan"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg><span>RSVP</span></a>
+  @if(jklGet('live_stream_link'))<a href="#sec-live" data-sec="sec-live"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path fill="currentColor" stroke="none" d="M10 8.3v7.4c0 .6.7 1 1.2.7l6-3.7c.5-.3.5-1 0-1.3l-6-3.7c-.5-.3-1.2.1-1.2.6z"/></svg><span>Live</span></a>@endif
+  <a href="#sec-gift" data-sec="sec-gift"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8v13H3V8M1 3h22v5H1zM12 8v13M12 8H7.5a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8zm0 0h4.5a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8z"/></svg><span>Gift</span></a>
+  <a href="#sec-ucapan" data-sec="sec-ucapan"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span>Ucapan</span></a>
 </nav>
 <div id="toast"></div>
 
@@ -883,6 +896,35 @@ document.querySelectorAll(".copy-btn").forEach(btn=>{
   img.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;},{passive:true});
   img.addEventListener("touchmove",e=>{ const dx=e.touches[0].clientX-sx;
     if(Math.abs(dx)>60){ show(idx+(dx<0?1:-1)); sx=e.touches[0].clientX; } },{passive:true});
+})();
+</script>
+
+<script>
+(function(){
+  var bar = document.getElementById('floatMenu') || document.getElementById('bottomNav');
+  if(!bar) return;
+  var links = [].slice.call(bar.querySelectorAll('a[data-sec]'));
+  links = links.filter(function(a){ var s = document.getElementById(a.getAttribute('data-sec')); if(!s){ a.remove(); return false; } a._sec = s; return true; });
+  function spy(){
+    var y = window.scrollY + window.innerHeight * 0.4, cur = null;
+    links.forEach(function(a){ if(a._sec.offsetTop <= y) cur = a; });
+    links.forEach(function(a){ a.classList.toggle('active', a === cur); });
+  }
+  window.addEventListener('scroll', spy, {passive:true});
+  links.forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); a._sec.scrollIntoView({behavior:'smooth'}); }); });
+  spy();
+  if(bar.classList.contains('hidden')){
+    var tries = 0;
+    var watch = setInterval(function(){
+      tries++;
+      var gate = document.getElementById('cover-gate') || document.getElementById('cover');
+      var gateGone = !gate || gate.classList.contains('hidden') || gate.style.display === 'none' || getComputedStyle(gate).display === 'none' || getComputedStyle(gate).visibility === 'hidden';
+      var mus = document.getElementById('musicFloat');
+      var musShown = mus && !mus.hidden && !mus.classList.contains('hidden');
+      if(gateGone || musShown){ bar.classList.remove('hidden'); clearInterval(watch); }
+      if(tries > 60) clearInterval(watch);
+    }, 400);
+  }
 })();
 </script>
 </body>
