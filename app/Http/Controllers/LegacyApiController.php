@@ -240,7 +240,7 @@ class LegacyApiController extends Controller
             case 'get_gallery':
                 return response()->json([
                     'success' => true,
-                    'data' => Gallery::where('invitation_id', $inv_id)->orderBy('created_at', 'ASC')->get()
+                    'data' => Gallery::where('invitation_id', $inv_id)->orderBy('sort_order', 'ASC')->orderBy('created_at', 'ASC')->get()
                 ]);
 
             case 'upload_gallery':
@@ -254,9 +254,11 @@ class LegacyApiController extends Controller
                 }
                 
                 $filename = $this->convertToWebp($request->file('image'), public_path('uploads'), 'img_');
+                $maxSort = Gallery::where('invitation_id', $inv_id)->max('sort_order');
                 Gallery::create([
                     'invitation_id' => $inv_id,
-                    'image_path' => 'uploads/' . $filename
+                    'image_path' => 'uploads/' . $filename,
+                    'sort_order' => $maxSort === null ? 0 : $maxSort + 1
                 ]);
                 return response()->json(['success' => true, 'path' => 'uploads/' . $filename]);
 
@@ -269,6 +271,18 @@ class LegacyApiController extends Controller
                         unlink($filePath);
                     }
                     $gallery->delete();
+                }
+                return response()->json(['success' => true]);
+
+            case 'reorder_gallery':
+                $ids = $request->input('ids', []);
+                if (!is_array($ids)) {
+                    return response()->json(['success' => false, 'message' => 'Format urutan tidak valid'], 400);
+                }
+                foreach (array_values($ids) as $i => $gid) {
+                    Gallery::where('id', (int) $gid)
+                        ->where('invitation_id', $inv_id)
+                        ->update(['sort_order' => $i]);
                 }
                 return response()->json(['success' => true]);
 

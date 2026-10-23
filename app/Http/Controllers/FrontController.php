@@ -47,7 +47,7 @@ class FrontController extends Controller
             }
         }
 
-        $gallery = $invitation->galleries()->orderBy('created_at', 'ASC')->pluck('image_path')->toArray();
+        $gallery = $invitation->galleries()->orderBy('sort_order', 'ASC')->orderBy('created_at', 'ASC')->pluck('image_path')->toArray();
         $stories = $invitation->stories()->orderBy('id', 'ASC')->get();
         $musicRecord = $invitation->music()->where('is_active', 1)->first();
         $inv_id = $invitation->id;

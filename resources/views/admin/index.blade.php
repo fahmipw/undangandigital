@@ -741,6 +741,7 @@
                         <input type="file" id="gallery-upload" class="hidden" accept="image/*" onchange="uploadPhoto()">
                     </label>
                 </div>
+                <p class="text-xs text-gray-500 -mt-4 mb-4">Seret foto untuk mengubah urutannya — urutan ini yang tampil di undangan.</p>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="gallery-list">
                     <!-- Photos will load here -->
                 </div>
@@ -2014,9 +2015,10 @@
             const res = await fetch(`api/admin_api?action=get_gallery&inv_id=${currentInvId}`);
             const data = await res.json();
             const list = document.getElementById('gallery-list');
-            list.innerHTML = data.data.map(img => `
-                <div class="relative gallery-item group aspect-square overflow-hidden rounded-2xl bg-gray-100">
-                    <img src="${img.image_path}" class="w-full h-full object-cover">
+            list.innerHTML = data.data.map((img, idx) => `
+                <div class="relative gallery-item group aspect-square overflow-hidden rounded-2xl bg-gray-100 cursor-grab active:cursor-grabbing" draggable="true" data-gid="${img.id}" title="Seret untuk mengubah urutan">
+                    <span class="gal-num absolute top-2 left-2 z-10 bg-black/55 text-white text-[10px] font-bold w-6 h-6 rounded-full flex items-center justify-center pointer-events-none">${idx + 1}</span>
+                    <img src="${img.image_path}" class="w-full h-full object-cover" draggable="false">
                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center delete-overlay">
                         <button onclick="deleteGalleryItem(${img.id})" class="bg-red-500 text-white p-2 rounded-full hover:scale-110 transition-all">
                             <span class="material-symbols-outlined">delete</span>
@@ -2024,6 +2026,54 @@
                     </div>
                 </div>
             `).join('');
+            initGalleryDrag();
+        }
+
+        function initGalleryDrag() {
+            const list = document.getElementById('gallery-list');
+            if (!list || list.dataset.dragInit) return;
+            list.dataset.dragInit = '1';
+            let dragEl = null;
+            list.addEventListener('dragstart', e => {
+                const item = e.target.closest('.gallery-item');
+                if (!item) return;
+                dragEl = item;
+                e.dataTransfer.effectAllowed = 'move';
+                try { e.dataTransfer.setData('text/plain', item.dataset.gid); } catch (_) {}
+                setTimeout(() => item.classList.add('opacity-40'), 0);
+            });
+            list.addEventListener('dragend', () => {
+                if (dragEl) dragEl.classList.remove('opacity-40');
+                dragEl = null;
+            });
+            list.addEventListener('dragover', e => {
+                if (!dragEl) return;
+                e.preventDefault();
+                const over = e.target.closest('.gallery-item');
+                if (!over || over === dragEl) return;
+                const rect = over.getBoundingClientRect();
+                const after = (e.clientX - rect.left) > rect.width / 2;
+                list.insertBefore(dragEl, after ? over.nextSibling : over);
+            });
+            list.addEventListener('drop', async e => {
+                e.preventDefault();
+                const items = [...list.querySelectorAll('.gallery-item')];
+                items.forEach((el, i) => {
+                    const num = el.querySelector('.gal-num');
+                    if (num) num.textContent = i + 1;
+                });
+                const ids = items.map(el => parseInt(el.dataset.gid));
+                const res = await fetch(`api/admin_api?action=reorder_gallery&inv_id=${currentInvId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ inv_id: currentInvId, ids })
+                });
+                const data = await res.json();
+                if (!data.success) {
+                    alert(data.message || 'Gagal menyimpan urutan foto.');
+                    loadGallery();
+                }
+            });
         }
 
         function deleteGalleryItem(id) {
