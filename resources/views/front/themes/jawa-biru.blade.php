@@ -183,6 +183,10 @@ tailwind.config = {
   @media (prefers-reduced-motion: reduce){
     #musicFloat .bars span{animation:none}
   }
+
+/* Standar menu klasik emas */
+#floatMenu a,#musicFloat{background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+#musicFloat .bars span{background:#e6c887!important}
 </style>
 </head>
 <body class="is-locked antialiased">
@@ -348,7 +352,7 @@ tailwind.config = {
       <p class="text-[11px] text-jbiru-900/55 mt-2">{{ jklGet('bride_child_of','Putri') }} dari</p>
       <p class="text-[13px] font-medium text-[#7c6228] mt-0.5 px-6">{{ jklGet('bride_parents','') }}</p>
       @if(jklGet('bride_instagram'))
-      <a href="https://instagram.com/{{ ltrim(jklGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" class="btn-outline-navy inline-block mt-4 text-[10px] tracking-[0.2em] px-5 py-2 rounded-full">&#64;{{ ltrim(jklGet('bride_instagram'),'@') }}</a>
+      <a href="https://instagram.com/{{ ltrim(jklGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" class="btn-outline-navy inline-block mt-4 text-[10px] tracking-[0.2em] px-5 py-2 rounded-full"><svg class="inline-block w-[13px] h-[13px] mr-1 -mt-[2px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>&#64;{{ ltrim(jklGet('bride_instagram'),'@') }}</a>
       @endif
     </div>
 
@@ -373,7 +377,7 @@ tailwind.config = {
       <p class="text-[11px] text-jbiru-900/55 mt-2">{{ jklGet('groom_child_of','Putra') }} dari</p>
       <p class="text-[13px] font-medium text-[#7c6228] mt-0.5 px-6">{{ jklGet('groom_parents','') }}</p>
       @if(jklGet('groom_instagram'))
-      <a href="https://instagram.com/{{ ltrim(jklGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="btn-outline-navy inline-block mt-4 text-[10px] tracking-[0.2em] px-5 py-2 rounded-full">&#64;{{ ltrim(jklGet('groom_instagram'),'@') }}</a>
+      <a href="https://instagram.com/{{ ltrim(jklGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="btn-outline-navy inline-block mt-4 text-[10px] tracking-[0.2em] px-5 py-2 rounded-full"><svg class="inline-block w-[13px] h-[13px] mr-1 -mt-[2px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>&#64;{{ ltrim(jklGet('groom_instagram'),'@') }}</a>
       @endif
     </div>
   </section>
@@ -440,9 +444,6 @@ tailwind.config = {
             OPEN MAPS
           </a>
           @endif
-        @endif
-        @if(jklGet('live_stream_link'))
-        <a href="{{ jklGet('live_stream_link') }}" target="_blank" rel="noopener" class="btn-outline-navy text-[10px] tracking-[0.2em] px-7 py-3 rounded-full font-semibold">LIVE STREAMING</a>
         @endif
       </div>
     </div>
@@ -578,6 +579,25 @@ tailwind.config = {
   </section>
 
   <!-- ================= 11. FOOTER ================= -->
+@if(jklGet('live_stream_link'))
+@php
+  $liveUrl = jklGet('live_stream_link');
+  $liveEmbed = $liveUrl;
+  if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$liveUrl, $lm)) { $liveEmbed = 'https://www.youtube.com/embed/' . $lm[1]; }
+@endphp
+<section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
+    <div class="damask"></div>
+    <p class="anim-fade text-[10px] uppercase tracking-[0.4em] text-emas mb-2 relative z-10">Live Streaming</p>
+    <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-3 relative z-10">Saksikan Langsung</h2>
+    <p class="anim-fade font-serif italic text-jbiru-100/70 text-[15px] leading-relaxed mb-9 max-w-[320px] relative z-10">Bagi Bapak/Ibu/Saudara/i yang berhalangan hadir, silakan saksikan acara kami secara langsung melalui tayangan berikut.</p>
+    <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+<div style="position:relative;padding-top:56.25%">
+<iframe src="{{ $liveEmbed }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="Live Streaming"></iframe>
+</div>
+</div>
+<a href="{{ $liveUrl }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA LIVE STREAMING</a>
+  </section>
+@endif
   <footer class="scroll-section relative py-20 px-6 pb-32 flex flex-col items-center text-center overflow-hidden">
     <div class="damask"></div>
     <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="" class="anim-zoom w-16 relative z-10 mb-5" />
@@ -888,7 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- Salin teks + toast ---
 let toastTimer = null;
-function showToast(msg) {
+function showToast(msg) { window.alert(msg); return;
   const t = document.getElementById('toast');
   if (!t) return;
   t.textContent = msg;

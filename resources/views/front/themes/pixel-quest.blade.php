@@ -314,6 +314,7 @@ const MC = {
   akadMaps: @json($sameLoc ? $mainMapLink : jklGet('wedding_map_link','')),
   resepsiMaps: @json($sameLoc ? $mainMapLink : jklGet('reception_map_link','')),
   liveStream: @json(jklGet('live_stream_link', '')),
+  liveEmbed: @json(preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)jklGet('live_stream_link',''), $pqm) ? 'https://www.youtube.com/embed/'.$pqm[1] : jklGet('live_stream_link','')),
   giftRecipient: @json($giftRecipient),
   qrisEnabled: @json(jklGet('gift_qris_enabled', '') === '1' && jklGet('gift_qris_image', '') !== ''),
   qrisImage: @json(jklGet('gift_qris_image', '')),
@@ -873,7 +874,7 @@ function openPanel(id){
       <h3>RESEPSI</h3><p>${esc(MC.resepsiDate)}</p><p class="tm">${esc(MC.resepsiTime)}</p>
       <p>${esc(MC.resepsiVenue)}</p>
       ${MC.resepsiMaps?`<a href="${esc(MC.resepsiMaps)}" target="_blank" rel="noopener" class="pq-btn gold" style="display:inline-block;margin-top:8px;font-size:9px;padding:10px 14px">LIHAT LOKASI</a>`:""}
-      ${MC.liveStream?`<a href="${esc(MC.liveStream)}" target="_blank" rel="noopener" class="pq-btn" style="display:inline-block;margin-top:8px;margin-left:6px;font-size:9px;padding:10px 14px">LIVE STREAMING</a>`:""}
+      ${MC.liveStream?`<div style="margin-top:10px;border:3px solid #0f380f;box-shadow:0 0 0 2px #9bbc0f;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%"><iframe src="${esc(MC.liveEmbed)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" title="Live Streaming"></iframe></div></div><a href="${esc(MC.liveStream)}" target="_blank" rel="noopener" class="pq-btn" style="display:inline-block;margin-top:8px;margin-left:6px;font-size:9px;padding:10px 14px">LIVE STREAMING</a>`:""}
     </div></div>
     <a href="${MC.gcalUrl}" target="_blank" rel="noopener" class="pq-btn" style="display:block;text-align:center;margin-top:4px;font-size:10px">+ SIMPAN KE GOOGLE CALENDAR</a>`;
   }

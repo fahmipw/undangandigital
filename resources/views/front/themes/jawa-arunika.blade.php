@@ -240,7 +240,11 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     @keyframes jwaWind{ 0%,100%{ transform:rotate(-3deg) translate(0,0); } 50%{ transform:rotate(3deg) translate(6px,-5px); } }
     .wind-sway{ animation:jwaWind 7s ease-in-out infinite; transform-origin:50% 90%; will-change:transform; }
     @media (prefers-reduced-motion:reduce){ .sway-node{ animation:none !important; } .wind-sway{ animation:none !important; } }
-  </style>
+  
+/* Standar menu klasik emas */
+#floatMenu a,#musicFloat{background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+#musicFloat .bars span{background:#e6c887!important}
+</style>
 </head>
 <body class="is-locked bg-[#080605] text-jawa-cream font-sans antialiased">
 <main class="invitation-frame min-h-screen border-x border-jawa-gold/15">
@@ -382,7 +386,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
       <p class="text-[11px] text-stone-400 mt-2">{{ jwaGet('bride_child_of','Putri') }} dari</p>
       <p class="text-[13px] font-medium text-jawa-lightgold mt-0.5">{{ jwaGet('bride_parents','') }}</p>
       @if(jwaGet('bride_instagram'))
-      <a href="https://instagram.com/{{ ltrim(jwaGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" class="btn-outline-gold inline-block mt-4 text-[10px] tracking-[0.2em] px-5 py-2 rounded-full">&#64;{{ ltrim(jwaGet('bride_instagram'),'@') }}</a>
+      <a href="https://instagram.com/{{ ltrim(jwaGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" class="btn-outline-gold inline-block mt-4 text-[10px] tracking-[0.2em] px-5 py-2 rounded-full"><svg class="inline-block w-[13px] h-[13px] mr-1 -mt-[2px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>&#64;{{ ltrim(jwaGet('bride_instagram'),'@') }}</a>
       @endif
     </div>
 
@@ -401,7 +405,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
       <p class="text-[11px] text-stone-400 mt-2">{{ jwaGet('groom_child_of','Putra') }} dari</p>
       <p class="text-[13px] font-medium text-jawa-lightgold mt-0.5">{{ jwaGet('groom_parents','') }}</p>
       @if(jwaGet('groom_instagram'))
-      <a href="https://instagram.com/{{ ltrim(jwaGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="btn-outline-gold inline-block mt-4 text-[10px] tracking-[0.2em] px-5 py-2 rounded-full">&#64;{{ ltrim(jwaGet('groom_instagram'),'@') }}</a>
+      <a href="https://instagram.com/{{ ltrim(jwaGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="btn-outline-gold inline-block mt-4 text-[10px] tracking-[0.2em] px-5 py-2 rounded-full"><svg class="inline-block w-[13px] h-[13px] mr-1 -mt-[2px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>&#64;{{ ltrim(jwaGet('groom_instagram'),'@') }}</a>
       @endif
     </div>
 
@@ -459,9 +463,6 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
             @if(jwaGet('reception_map_link'))
             <a href="{{ jwaGet('reception_map_link') }}" target="_blank" rel="noopener" class="btn-gold-gradient inline-flex items-center gap-2 text-stone-950 text-[11px] font-semibold tracking-[0.2em] px-8 py-3 rounded-full"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>LIHAT LOKASI</a>
             @endif
-          @endif
-          @if(jwaGet('live_stream_link'))
-          <a href="{{ jwaGet('live_stream_link') }}" target="_blank" rel="noopener" class="btn-outline-gold text-[11px] tracking-[0.2em] px-7 py-3 rounded-full">LIVE STREAMING</a>
           @endif
         </div>
       </div>
@@ -607,6 +608,24 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
   </section>
 
   <!-- ================= 11. FOOTER ================= -->
+@if(jwaGet('live_stream_link'))
+@php
+  $liveUrl = jwaGet('live_stream_link');
+  $liveEmbed = $liveUrl;
+  if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$liveUrl, $lm)) { $liveEmbed = 'https://www.youtube.com/embed/' . $lm[1]; }
+@endphp
+<section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
+    <p class="anim-fade text-[10px] uppercase tracking-[0.4em] text-jawa-gold mb-2 relative z-10">Live Streaming</p>
+    <h2 class="anim-zoom font-cinzel text-[1.7rem] tracking-[0.18em] text-gold-gradient mb-3 relative z-10">SAKSIKAN LANGSUNG</h2>
+    <p class="anim-fade font-serif italic text-stone-300 text-[15px] leading-relaxed mb-9 max-w-[320px] relative z-10">Bagi Bapak/Ibu/Saudara/i yang berhalangan hadir, silakan saksikan acara kami secara langsung melalui tayangan berikut.</p>
+    <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+<div style="position:relative;padding-top:56.25%">
+<iframe src="{{ $liveEmbed }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="Live Streaming"></iframe>
+</div>
+</div>
+<a href="{{ $liveUrl }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA LIVE STREAMING</a>
+  </section>
+@endif
   <footer class="relative px-6 pt-20 pb-28 text-center overflow-hidden bg-jawa-bg/80">
     <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" class="orn sway-node sway-subtle w-[26%] max-w-[110px] mx-auto mb-5 opacity-90" alt=""  data-speed="0.8" data-rot="0" />
     <p class="anim-fade font-serif italic text-stone-300 text-[16px] max-w-[300px] mx-auto leading-relaxed mb-6">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kami.</p>
@@ -643,7 +662,7 @@ const JWA = {
   guestName: @json($toName)
 };
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show");
+function toast(m){ window.alert(m); return; const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show");
   clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2600); }
 function esc(s){ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function timeAgo(s){ const d=new Date(String(s).replace(" ","T")+"+07:00"); if(isNaN(d)) return "";

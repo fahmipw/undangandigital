@@ -263,6 +263,8 @@ const MC = {
   invId: {{ (int)$invId }},
   countdownISO: @json($countdownISO),
   musicUrl: @json($musicUrl),
+  liveStream: @json(mcaGet('live_stream_link', '')),
+  liveEmbed: @json(preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)mcaGet('live_stream_link',''), $pqm) ? 'https://www.youtube.com/embed/'.$pqm[1] : mcaGet('live_stream_link','')),
   brideNick: @json($brideNick), groomNick: @json($groomNick),
   brideFull: @json($brideFull), groomFull: @json($groomFull),
   guestName: @json($guestName),
@@ -568,7 +570,7 @@ event:()=>`<h2 class="ptitle">BALAI QUEST</h2><p class="psub">Dua misi utama men
 ${MC.akad.maps?`<a class="mc-btn" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.akad.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}</div></div>
 <div class="adv"><div class="ic"><canvas class="ev-ic" data-ic="heart" width="16" height="16"></canvas></div>
 <div><h3>RESEPSI</h3><p>${MC.resepsi.date}</p><p class="tm">${MC.resepsi.time}</p><p>${esc(MC.resepsi.venue)}</p>
-${MC.resepsi.maps?`<a class="mc-btn" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.resepsi.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}</div></div>`,
+${MC.resepsi.maps?`<a class="mc-btn" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.resepsi.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}${MC.liveStream?`<div style="margin-top:10px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%"><iframe src="${esc(MC.liveEmbed)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" title="Live Streaming"></iframe></div></div><a class="mc-btn" style="font-size:10px;margin-top:8px;display:inline-block;text-decoration:none" href="${esc(MC.liveStream)}" target="_blank" rel="noopener">LIVE STREAMING</a>`:""}</div></div>`,
 gallery:()=>`<h2 class="ptitle">GALERI</h2><p class="psub">Balok-balok kenangan.</p>
 <div class="frames2">
 @foreach(array_slice($gallery, 0, 6) as $i => $img)

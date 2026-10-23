@@ -278,6 +278,7 @@ const MC = {
   resepsi: { date: @json(sdaDate($rDate)), time: @json($rTimeS.' – '.$rTimeE.' '.sdaGet('wedding_timezone','WIB')),
     venue: @json(sdaGet('reception_location', sdaGet('wedding_location','Kediaman Mempelai'))), maps: @json($sameLoc ? $mainMapLink : sdaGet('reception_map_link','')) },
   liveStream: @json(sdaGet('live_stream_link', '')),
+  liveEmbed: @json(preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)sdaGet('live_stream_link',''), $pqm) ? 'https://www.youtube.com/embed/'.$pqm[1] : sdaGet('live_stream_link','')),
   giftRecipient: @json($giftRecipient),
   giftAddress: @json(sdaGet('gift_address', '')),
   giftMaps: @json(sdaGet('gift_maps_link', ''))
@@ -640,7 +641,7 @@ event:()=>`<h2 class="ptitle">LUMBUNG ACARA</h2><p class="psub">Dua perayaan bes
 ${MC.akad.maps?`<a class="sd-btn gold" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.akad.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}</div></div>
 <div class="adv"><div class="ic"><canvas class="ev-ic" data-ic="heart" width="16" height="16"></canvas></div>
 <div><h3>RESEPSI</h3><p>${MC.resepsi.date}</p><p class="tm">${MC.resepsi.time}</p><p>${esc(MC.resepsi.venue)}</p>
-${MC.resepsi.maps?`<a class="sd-btn gold" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.resepsi.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}${MC.liveStream?`<a class="sd-btn" style="font-size:10px;margin-top:10px;margin-left:8px;display:inline-block;text-decoration:none" href="${esc(MC.liveStream)}" target="_blank" rel="noopener">LIVE STREAMING</a>`:""}</div></div>`,
+${MC.resepsi.maps?`<a class="sd-btn gold" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.resepsi.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}${MC.liveStream?`<div style="margin-top:10px;border:3px solid #7a4a21;border-radius:8px;overflow:hidden;max-width:320px;box-shadow:0 4px 10px rgba(0,0,0,.25)"><div style="position:relative;padding-top:56.25%"><iframe src="${esc(MC.liveEmbed)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" title="Live Streaming"></iframe></div></div><a class="sd-btn" style="font-size:10px;margin-top:10px;margin-left:8px;display:inline-block;text-decoration:none" href="${esc(MC.liveStream)}" target="_blank" rel="noopener">LIVE STREAMING</a>`:""}</div></div>`,
 gallery:()=>`<h2 class="ptitle">GALERI LUMBUNG</h2><p class="psub">Panen kenangan terbaik.</p>
 <div class="frames2">
 @foreach(array_slice($gallery, 0, 6) as $i => $img)

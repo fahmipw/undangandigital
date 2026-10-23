@@ -224,6 +224,12 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 
 .rv{opacity:0;transform:translateY(36px);transition:opacity .9s,transform .9s}
 .rv.on{opacity:1;transform:none}
+
+/* Standar menu klasik emas */
+.fmenu{background:linear-gradient(160deg,rgba(43,33,24,.97),rgba(23,18,8,.98))!important;border:1px solid rgba(201,164,92,.8)!important;box-shadow:0 12px 30px rgba(90,70,20,.45)!important}
+.fmenu a{color:#e9d9ae!important;opacity:.78}
+.fmenu a.active{background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c)!important;color:#241a08!important;opacity:1!important}
+#musBtn{background:linear-gradient(160deg,#3a2c17,#171106)!important;border:1px solid rgba(201,164,92,.85)!important;color:#e6c887!important;box-shadow:0 10px 26px rgba(90,70,20,.5)!important}
 </style>
 </head>
 <body>
@@ -350,12 +356,14 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
     @if($bridePhoto)<img class="photo" src="{{ $bridePhoto }}" alt="{{ $brideFull }}">@else<div class="photo-fallback">{{ $brideInitial }}</div>@endif
     <h3>{{ $brideNick }}</h3><div class="full">{{ $brideFull }}</div>
     <p>Putri dari<br>{{ mcGet('bride_parents', mcGet('bride_child_of', '')) }}</p>
+    @if(mcGet('bride_instagram'))<a href="https://instagram.com/{{ ltrim(mcGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.12em;text-decoration:none;opacity:.85"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>&#64;{{ ltrim(mcGet('bride_instagram'),'@') }}</a>@endif
   </div>
   <div class="amp rv">&amp;</div>
   <div class="card couple-card rv">
     @if($groomPhoto)<img class="photo" src="{{ $groomPhoto }}" alt="{{ $groomFull }}">@else<div class="photo-fallback">{{ $groomInitial }}</div>@endif
     <h3>{{ $groomNick }}</h3><div class="full">{{ $groomFull }}</div>
     <p>Putra dari<br>{{ mcGet('groom_parents', mcGet('groom_child_of', '')) }}</p>
+    @if(mcGet('groom_instagram'))<a href="https://instagram.com/{{ ltrim(mcGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.12em;text-decoration:none;opacity:.85"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>&#64;{{ ltrim(mcGet('groom_instagram'),'@') }}</a>@endif
   </div>
 </section>
 
@@ -374,7 +382,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
     <div class="date">{{ mcDate($rDate) }}</div>
     <div class="time">{{ $rTimeS }} — {{ $rTimeE }} {{ mcGet('wedding_timezone','WIB') }}</div>
     <div class="loc">{{ mcGet('reception_location', mcGet('wedding_location', 'Kediaman Mempelai')) }}</div>
-    @if(!$sameLoc && mcGet('reception_map_link'))<a class="btn-line" target="_blank" href="{{ mcGet('reception_map_link') }}">Lihat Peta</a>@endif @if(mcGet('live_stream_link'))<a class="btn-line" target="_blank" href="{{ mcGet('live_stream_link') }}" style="margin-left:8px">Live Streaming</a>@endif
+    @if(!$sameLoc && mcGet('reception_map_link'))<a class="btn-line" target="_blank" href="{{ mcGet('reception_map_link') }}">Lihat Peta</a>@endif
 @if($sameLoc && $mainMapLink)<div style="text-align:center;margin-top:12px"><a class="btn-line" target="_blank" rel="noopener" href="{{ $mainMapLink }}">Lihat Peta Lokasi</a></div>@endif
   </div>
 </section>
@@ -469,6 +477,22 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 </section>
 @endif
 
+@if(mcGet('live_stream_link'))
+@php
+  $liveUrl = mcGet('live_stream_link');
+  $liveEmbed = $liveUrl;
+  if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$liveUrl, $lm)) { $liveEmbed = 'https://www.youtube.com/embed/' . $lm[1]; }
+@endphp
+<section id="live">
+<div class="rv"><div class="sec-kicker">Live Streaming</div><div class="sec-title">Saksikan Langsung</div></div>
+<div class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.25)">
+<div style="position:relative;padding-top:56.25%">
+<iframe src="{{ $liveEmbed }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="Live Streaming"></iframe>
+</div>
+</div>
+<div class="rv" style="margin-top:16px"><a href="{{ $liveUrl }}" target="_blank" rel="noopener" style="display:inline-block;padding:11px 28px;border-radius:999px;background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;font-size:11px;font-weight:700;letter-spacing:.22em;text-decoration:none">BUKA LIVE STREAMING</a></div>
+</section>
+@endif
 <footer data-scene="10">
   <div class="rv"><div class="hand">Terima Kasih</div>
   <p style="color:var(--tinta-dim);font-size:14px;line-height:1.8;max-width:380px;margin:14px auto">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.</p>
@@ -524,7 +548,7 @@ async function sendRSVP(e){e.preventDefault();const f=e.target;
   alert(r.ok?'Terima kasih atas konfirmasinya!':'Gagal mengirim, coba lagi.');f.reset();return false;}
 // wishes
 async function loadWishes(){try{const r=await fetch('/api/ucapan?inv_id='+INV_ID);const d=await r.json();
-  wishList.innerHTML=(d.data||d||[]).map(w=>`<div class="wish"><b>${esc(w.name)}</b><span class="st">${esc(w.status||'')}</span><p>${esc(w.message||w.ucapan||'')}</p></div>`).join('')||'<p style="color:var(--tinta-dim)">Belum ada ucapan.</p>';}catch(e){}}
+  wishList.innerHTML=(d.data||d||[]).map(w=>`<div class="wish"><b>${esc(w.nama||w.name)}</b><span class="st">${esc(w.status||'')}</span><p>${esc(w.pesan||w.message||w.ucapan||'')}</p></div>`).join('')||'<p style="color:var(--tinta-dim)">Belum ada ucapan.</p>';}catch(e){}}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function sendWish(e){e.preventDefault();const f=e.target;
   const r=await fetch('/api/ucapan?inv_id='+INV_ID,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:f.name.value,message:f.message.value})});
