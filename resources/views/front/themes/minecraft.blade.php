@@ -62,6 +62,8 @@ if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
   $mp = $musicRecord->file_path;
   $musicUrl = (str_starts_with($mp,'http') || str_starts_with($mp,'/')) ? $mp : asset('storage/'.ltrim($mp,'/'));
 }
+$musVol = (int) mcGet('music_volume', 50);
+$musAuto = mcGet('music_autoplay', '1') !== '0';
 $invId = $inv_id ?? 0;
 ?>
 <!DOCTYPE html>
@@ -462,6 +464,8 @@ const MC = {
   invId: {{ (int)$invId }},
   countdownISO: @json($countdownISO),
   musicUrl: @json($musicUrl),
+  musVol: @json($musVol),
+  musAuto: @json($musAuto),
   bride: @json($brideNick),
   groom: @json($groomNick),
   dialog: [
@@ -640,7 +644,7 @@ $("#musicBtn").addEventListener("click",e=>{
   $("#musicBtn").innerHTML=musicOn?"&#9835;":"&#9834;";
   if(musicOn){
     if(MC.musicUrl&&!audioEl){
-      audioEl=new Audio(MC.musicUrl);audioEl.loop=true;audioEl.volume=0.7;
+      audioEl=new Audio(MC.musicUrl);audioEl.loop=true;audioEl.volume=(MC.musVol||50)/100;
       audioEl.addEventListener("error",()=>{useFile=false;audioEl=null;mstep=0;playStep();});
     }
     if(audioEl&&MC.musicUrl){useFile=true;audioEl.play().catch(()=>{useFile=false;mstep=0;playStep();});}

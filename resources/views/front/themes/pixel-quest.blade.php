@@ -60,6 +60,8 @@ if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
   $mp = $musicRecord->file_path;
   $musicUrl = (str_starts_with($mp,'http') || str_starts_with($mp,'/')) ? $mp : asset('storage/'.ltrim($mp,'/'));
 }
+$musVol = (int) jklGet('music_volume', 50);
+$musAuto = jklGet('music_autoplay', '1') !== '0';
 $invId = $inv_id ?? 0;
 $gcalDates = str_replace('-','',$rDate).'T'.str_replace(':','',$rTimeS).'00/'.str_replace('-','',$rDate).'T'.str_replace(':','',$rTimeE).'00';
 $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.urlencode('Pernikahan '.$brideNick.' & '.$groomNick).'&dates='.$gcalDates.'&details='.urlencode(jklGet('reception_location', jklGet('wedding_location','')));
@@ -301,6 +303,8 @@ const MC = {
   invId: {{ (int)$invId }},
   countdownISO: @json($countdownISO),
   musicUrl: @json($musicUrl),
+  musVol: @json($musVol),
+  musAuto: @json($musAuto),
   brideNick: @json($brideNick), groomNick: @json($groomNick),
   brideFull: @json($brideFull), groomFull: @json($groomFull),
   guestName: @json($toName),
@@ -523,7 +527,7 @@ function playStep(){if(!musicOn||useFile)return;
 function toggleMusic(){
   musicOn=!musicOn;$("#musicBtn").innerHTML=musicOn?"&#9835;":"&#9834;";
   if(musicOn){
-    if(MC.musicUrl&&!audioEl){audioEl=new Audio(MC.musicUrl);audioEl.loop=true;audioEl.volume=0.7;
+    if(MC.musicUrl&&!audioEl){audioEl=new Audio(MC.musicUrl);audioEl.loop=true;audioEl.volume=(MC.musVol||50)/100;
       audioEl.addEventListener("error",()=>{useFile=false;audioEl=null;mstep=0;playStep();});}
     if(audioEl&&MC.musicUrl){useFile=true;audioEl.play().catch(()=>{useFile=false;mstep=0;playStep();});}
     else{try{ac().resume();}catch(e){}mstep=0;playStep();}
@@ -1167,7 +1171,7 @@ $("#startBtn").addEventListener("click",()=>{
   }, 400);
   requestAnimationFrame(gameLoop);
   /* musik otomatis setelah klik */
-  if(!musicOn) toggleMusic();
+  if(!musicOn && MC.musAuto) toggleMusic();
 });
 addEventListener("resize",()=>{ if(!$("#game").hidden) sizeCanvas(); });
 </script>

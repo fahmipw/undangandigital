@@ -69,6 +69,8 @@ if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
   $mp = $musicRecord->file_path;
   $musicUrl = (str_starts_with($mp,'http') || str_starts_with($mp,'/')) ? $mp : asset('storage/'.ltrim($mp,'/'));
 }
+$musVol = (int) jklGet('music_volume', 50);
+$musAuto = jklGet('music_autoplay', '1') !== '0';
 $invId = $inv_id ?? 0;
 $gcalDates = str_replace('-','',$rDate).'T'.str_replace(':','',$rTimeS).'00/'.str_replace('-','',$rDate).'T'.str_replace(':','',$rTimeE).'00';
 $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.urlencode('Pernikahan '.$brideNick.' & '.$groomNick).'&dates='.$gcalDates.'&details='.urlencode(jklGet('reception_location', jklGet('wedding_location','')));
@@ -166,13 +168,13 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
     @media (prefers-reduced-motion:reduce){ .sway-slow{ animation:none !important; } }
   
 /* Standar menu klasik emas: bottom bar */
-#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:20px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);max-width:96vw;width:auto;overflow-x:auto;scrollbar-width:none}
+#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:20px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);max-width:96vw;width:auto;flex-wrap:wrap;justify-content:center;overflow:visible}
 #floatMenu::-webkit-scrollbar,#bottomNav::-webkit-scrollbar{display:none}
-#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:52px;width:auto;height:auto;flex:none;padding:6px 4px;border-radius:13px;color:#978045!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;width:auto;height:auto;flex:1 1 0;padding:6px 1px;border-radius:13px;color:#978045!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 #floatMenu a svg,#bottomNav a svg{width:21px;height:21px}
 #floatMenu a.active,#bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
-#musicFloat{bottom:92px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+#musicFloat{bottom:104px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
 #musicFloat .bars span{background:#e6c887!important}
 #vinyl{bottom:96px!important}
 </style>
@@ -614,6 +616,8 @@ const JWA = {
   invId: {{ (int)$invId }},
   countdownISO: @json($countdownISO),
   musicUrl: @json($musicUrl),
+  musicVol: {{ $musVol }},
+  musicAuto: @json($musAuto),
   guestName: @json($toName)
 };
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -713,7 +717,8 @@ async function resolveMusicUrl(){
 }
 async function startMusic(auto){
   const url=await resolveMusicUrl(); if(!url) return;
-  if(!audioEl){ audioEl=new Audio(url); audioEl.loop=true; }
+  if(auto && JWA.musicAuto === false) return;
+  if(!audioEl){ audioEl=new Audio(url); audioEl.loop=true; audioEl.volume=(JWA.musicVol||50)/100; }
   try{ await audioEl.play(); musicOn=true;
     document.getElementById("musicFloat").classList.add("playing"); }
   catch(e){ if(!auto) toast("Musik tidak dapat diputar"); }

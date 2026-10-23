@@ -60,6 +60,8 @@ if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
   $mp = $musicRecord->file_path;
   $musicUrl = (str_starts_with($mp,'http') || str_starts_with($mp,'/')) ? $mp : asset('storage/'.ltrim($mp,'/'));
 }
+$musVol = (int) mcaGet('music_volume', 50);
+$musAuto = mcaGet('music_autoplay', '1') !== '0';
 $invId = $inv_id ?? 0;
 ?>
 <!DOCTYPE html>
@@ -263,6 +265,8 @@ const MC = {
   invId: {{ (int)$invId }},
   countdownISO: @json($countdownISO),
   musicUrl: @json($musicUrl),
+  musVol: @json($musVol),
+  musAuto: @json($musAuto),
   liveStream: @json(mcaGet('live_stream_link', '')),
   liveEmbed: @json(preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)mcaGet('live_stream_link',''), $pqm) ? 'https://www.youtube-nocookie.com/embed/'.$pqm[1] : mcaGet('live_stream_link','')),
   brideNick: @json($brideNick), groomNick: @json($groomNick),
@@ -360,7 +364,7 @@ function playStep(){if(!musicOn||useFile)return;
 function toggleMusic(){
   musicOn=!musicOn;$("#musicBtn").innerHTML=musicOn?"&#9835;":"&#9834;";
   if(musicOn){
-    if(MC.musicUrl&&!audioEl){audioEl=new Audio(MC.musicUrl);audioEl.loop=true;audioEl.volume=0.7;
+    if(MC.musicUrl&&!audioEl){audioEl=new Audio(MC.musicUrl);audioEl.loop=true;audioEl.volume=(MC.musVol||50)/100;
       audioEl.addEventListener("error",()=>{useFile=false;audioEl=null;mstep=0;playStep();});}
     if(audioEl&&MC.musicUrl){useFile=true;audioEl.play().catch(()=>{useFile=false;mstep=0;playStep();});}
     else{try{ac().resume();}catch(e){}mstep=0;playStep();}
