@@ -259,6 +259,11 @@ section.block{max-width:860px;margin:0 auto;padding:56px 20px 8px}
     </div>
   </section>
 
+@if(mcGet('quotes'))
+<div style="max-width:640px;margin:0 auto 26px;padding:18px 22px;text-align:center" class="mc-panel">
+<p style="font-family:'VT323',monospace;font-size:22px;line-height:1.5;color:#3d3d3d">&ldquo;{{ mcGet('quotes') }}&rdquo;</p>
+</div>
+@endif
   <section class="block reveal" id="couple">
     <div class="sec-head"><canvas class="sec-ico" data-icon="heart" width="16" height="16"></canvas><h2 class="sec-title">MEMILIH PARTY</h2><canvas class="sec-ico" data-icon="heart" width="16" height="16"></canvas></div>
     <p class="sec-sub">Dua pemain. Satu tim. Selamanya.</p>
@@ -268,6 +273,7 @@ section.block{max-width:860px;margin:0 auto;padding:56px 20px 8px}
         <h3>{{ $brideFull }}</h3>
         <span class="player-tag">PLAYER 1 &mdash; MEMPELAI WANITA</span>
         <p>{{ mcGet('bride_parents', mcGet('bride_child_of', '')) }}</p>
+        @if(mcGet('bride_instagram'))<a href="https://instagram.com/{{ ltrim(mcGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" class="" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.12em;text-decoration:none;opacity:.85"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(mcGet('bride_instagram'),'@') }}</span></a>@endif
       </div>
       <div class="heart-sep"><canvas id="bigHeart" width="14" height="12"></canvas></div>
       <div class="mc-panel player-card">
@@ -275,6 +281,7 @@ section.block{max-width:860px;margin:0 auto;padding:56px 20px 8px}
         <h3>{{ $groomFull }}</h3>
         <span class="player-tag">PLAYER 2 &mdash; MEMPELAI PRIA</span>
         <p>{{ mcGet('groom_parents', mcGet('groom_child_of', '')) }}</p>
+        @if(mcGet('groom_instagram'))<a href="https://instagram.com/{{ ltrim(mcGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.12em;text-decoration:none;opacity:.85"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(mcGet('groom_instagram'),'@') }}</span></a>@endif
       </div>
     </div>
   </section>

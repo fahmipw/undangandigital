@@ -322,6 +322,9 @@ const MC = {
   giftAddress: @json(jklGet('gift_address', '')),
   giftMaps: @json(jklGet('gift_maps_link', '')),
   brideParents: @json(jklGet('bride_parents', '')),
+  brideIg: @json(jklGet('bride_instagram', '')),
+  groomIg: @json(jklGet('groom_instagram', '')),
+  quotes: @json(jklGet('quotes', '')),
   groomParents: @json(jklGet('groom_parents', '')),
   brideChild: @json(jklGet('bride_child_of', 'Putri')),
   groomChild: @json(jklGet('groom_child_of', 'Putra')),
@@ -854,10 +857,10 @@ function openPanel(id){
     <div class="player-grid">
       <div class="pcard"><canvas id="faceBride" width="52" height="52"></canvas>
         <h3>${esc(MC.brideNick)}</h3><span class="ptag">MEMPELAI WANITA</span>
-        <p>${esc(MC.brideChild)} dari<br>${esc(MC.brideParents)}</p></div>
+        <p>${esc(MC.brideChild)} dari<br>${esc(MC.brideParents)}</p>${MC.brideIg?`<a href="https://instagram.com/${esc(MC.brideIg.replace(/^@/,''))}" target="_blank" rel="noopener" class="pq-btn" style="display:inline-block;margin-top:8px;font-size:8px;padding:8px 10px">&#64;${esc(MC.brideIg.replace(/^@/,''))}</a>`:""}</div>
       <div class="pcard"><canvas id="faceGroom" width="52" height="52"></canvas>
         <h3>${esc(MC.groomNick)}</h3><span class="ptag">MEMPELAI PRIA</span>
-        <p>${esc(MC.groomChild)} dari<br>${esc(MC.groomParents)}</p></div>
+        <p>${esc(MC.groomChild)} dari<br>${esc(MC.groomParents)}</p>${MC.groomIg?`<a href="https://instagram.com/${esc(MC.groomIg.replace(/^@/,''))}" target="_blank" rel="noopener" class="pq-btn" style="display:inline-block;margin-top:8px;font-size:8px;padding:8px 10px">&#64;${esc(MC.groomIg.replace(/^@/,''))}</a>`:""}</div>
     </div>
     <p style="font-size:20px;color:#5a4a30;text-align:center;margin-top:6px">${esc(MC.quotes||"")}</p>`;
     drawFace($("#faceBride"),{skin:"#f0c49c",hair:"#2b2b2b",shirt:"#e8a2b0",style:"bride"});
@@ -865,6 +868,7 @@ function openPanel(id){
   }
   else if(id==="acara"){
     body.innerHTML=`<div class="ptitle">KAPEL PERNIKAHAN</div><div class="psub">Akad &amp; Resepsi</div>
+    ${MC.quotes?`<p style="font-style:italic;text-align:center;margin:0 0 12px;font-size:11px;line-height:1.7">&ldquo;${esc(MC.quotes)}&rdquo;</p>`:""}
     <div class="adv"><div class="ic"><canvas id="icA1" width="44" height="44"></canvas></div><div>
       <h3>AKAD NIKAH</h3><p>${esc(MC.akadDate)}</p><p class="tm">${esc(MC.akadTime)}</p>
       <p>${esc(MC.akadVenue)}</p>

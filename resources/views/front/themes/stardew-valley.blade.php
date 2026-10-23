@@ -42,6 +42,8 @@ $rDate  = mcGet('reception_date', $wDate);
 $rTimeS = mcTime(mcGet('reception_time_start', '11:00'));
 $rTimeE = mcTime(mcGet('reception_time_end', '13:00'));
 $countdownISO = $rDate.'T'.$rTimeS.':00';
+$sameLoc = (mcGet('event_location_mode', 'same') === 'same');
+$mainMapLink = trim((string)mcGet('wedding_map_link')) ?: trim((string)mcGet('reception_map_link'));
 $tz = mcGet('reception_timezone', mcGet('wedding_timezone', 'Asia/Jakarta'));
 $accounts = [];
 $__gbanks = json_decode(mcGet('gift_banks', ''), true) ?: [];
@@ -411,6 +413,7 @@ footer{padding:50px 20px 110px;text-align:center}
       <h3>{{ $groomFull }}</h3>
       <div class="role">{{ $groomNick }}</div>
       <p>{{ mcGet('groom_child_of', 'Putra') }} dari pasangan<br><b>{{ mcGet('groom_parents', 'Bapak & Ibu Mempelai Pria') }}</b></p>
+      @if(mcGet('groom_instagram'))<a href="https://instagram.com/{{ ltrim(mcGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.12em;text-decoration:none;opacity:.85"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(mcGet('groom_instagram'),'@') }}</span></a>@endif
     </div>
   </div>
   <div class="rv npc">
@@ -434,6 +437,7 @@ footer{padding:50px 20px 110px;text-align:center}
       <h3>{{ $brideFull }}</h3>
       <div class="role">{{ $brideNick }}</div>
       <p>{{ mcGet('bride_child_of', 'Putri') }} dari pasangan<br><b>{{ mcGet('bride_parents', 'Bapak & Ibu Mempelai Wanita') }}</b></p>
+      @if(mcGet('bride_instagram'))<a href="https://instagram.com/{{ ltrim(mcGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.12em;text-decoration:none;opacity:.85"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(mcGet('bride_instagram'),'@') }}</span></a>@endif
     </div>
   </div>
 </section>
@@ -487,7 +491,7 @@ footer{padding:50px 20px 110px;text-align:center}
       <div class="pdate">{{ mcDate($wDate) }}</div>
       <div class="ptime">{{ $wTime }} – {{ $wTimeE }} {{ mcGet('wedding_timezone', 'WIB') }}</div>
       <div class="pplace">{{ mcGet('wedding_location', 'Kediaman Mempelai') }}</div>
-      @if(mcGet('wedding_map_link'))
+      @if(!$sameLoc && mcGet('wedding_map_link'))
       <a class="btn-gold" target="_blank" href="{{ mcGet('wedding_map_link') }}">BUKA PETA</a>
       @endif
     </div>
@@ -498,8 +502,11 @@ footer{padding:50px 20px 110px;text-align:center}
       <div class="pdate">{{ mcDate($rDate) }}</div>
       <div class="ptime">{{ $rTimeS }} – {{ $rTimeE }} {{ mcGet('reception_timezone', mcGet('wedding_timezone', 'WIB')) }}</div>
       <div class="pplace">{{ mcGet('reception_location', mcGet('wedding_location', 'Kediaman Mempelai')) }}</div>
-      @if(mcGet('reception_map_link'))
+      @if(!$sameLoc && mcGet('reception_map_link'))
       <a class="btn-gold" target="_blank" href="{{ mcGet('reception_map_link') }}">BUKA PETA</a>
+      @endif
+      @if($sameLoc && $mainMapLink)
+      <a class="btn-gold" target="_blank" rel="noopener" href="{{ $mainMapLink }}">BUKA PETA LOKASI</a>
       @endif
       @if(mcGet('live_stream_link'))
       @php $lvE = mcGet('live_stream_link'); if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$lvE, $lm2)) { $lvE = 'https://www.youtube-nocookie.com/embed/'.$lm2[1]; } @endphp

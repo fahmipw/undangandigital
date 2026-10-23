@@ -609,12 +609,13 @@ function markVisited(id){
   toast(`LOKASI DITEMUKAN: ${L.name} (${visited.size}/${LOCS.length})`);
 }
 const TPL={
-couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2><p class="psub">Dua petani. Satu ladang. Selamanya.</p>
+couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2>
+@if(sdaGet('quotes'))<p class="psub" style="font-style:italic">&ldquo;{{ sdaGet('quotes') }}&rdquo;</p>@endif<p class="psub">Dua petani. Satu ladang. Selamanya.</p>
 <div class="player-grid">
 <div class="pcard"><canvas id="pfB" width="8" height="8"></canvas>
-<h3>{{ $brideFull }}</h3><span class="ptag">MEMPELAI WANITA</span><p>{{ sdaGet('bride_parents', sdaGet('bride_child_of','')) }}</p></div>
+<h3>{{ $brideFull }}</h3><span class="ptag">MEMPELAI WANITA</span><p>{{ sdaGet('bride_parents', sdaGet('bride_child_of','')) }}</p>@if(sdaGet('bride_instagram'))<a href="https://instagram.com/{{ ltrim(sdaGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" class="sd-btn" style="font-size:9px;margin-top:8px;display:inline-flex;align-items:center;gap:5px;text-decoration:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(sdaGet('bride_instagram'),'@') }}</span></a>@endif</div>
 <div class="pcard"><canvas id="pfG" width="8" height="8"></canvas>
-<h3>{{ $groomFull }}</h3><span class="ptag">MEMPELAI PRIA</span><p>{{ sdaGet('groom_parents', sdaGet('groom_child_of','')) }}</p></div>
+<h3>{{ $groomFull }}</h3><span class="ptag">MEMPELAI PRIA</span><p>{{ sdaGet('groom_parents', sdaGet('groom_child_of','')) }}</p>@if(sdaGet('groom_instagram'))<a href="https://instagram.com/{{ ltrim(sdaGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="sd-btn" style="font-size:9px;margin-top:8px;display:inline-flex;align-items:center;gap:5px;text-decoration:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(sdaGet('groom_instagram'),'@') }}</span></a>@endif</div>
 </div>
 ${MC.guestQrOn&&MC.guestQr?`<div class="qr-card"><h2 class="ptitle" style="font-size:12px">KARTU TAMU</h2>
 <p class="psub" style="font-size:19px">Tunjukkan QR ini saat check-in di lokasi acara.</p>

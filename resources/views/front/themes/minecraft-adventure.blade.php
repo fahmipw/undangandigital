@@ -550,12 +550,13 @@ function markVisited(id){
   toast(`LOKASI DITEMUKAN: ${L.name} (${visited.size}/6)`);
 }
 const TPL={
-couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2><p class="psub">Dua pemain. Satu tim. Selamanya.</p>
+couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2>
+@if(mcaGet('quotes'))<p class="psub" style="font-style:italic">&ldquo;{{ mcaGet('quotes') }}&rdquo;</p>@endif<p class="psub">Dua pemain. Satu tim. Selamanya.</p>
 <div class="player-grid">
 <div class="pcard"><canvas id="pfB" width="8" height="8"></canvas>
-<h3>{{ $brideFull }}</h3><span class="ptag">MEMPELAI WANITA</span><p>{{ mcaGet('bride_parents', mcaGet('bride_child_of','')) }}</p></div>
+<h3>{{ $brideFull }}</h3><span class="ptag">MEMPELAI WANITA</span><p>{{ mcaGet('bride_parents', mcaGet('bride_child_of','')) }}</p>@if(mcaGet('bride_instagram'))<a href="https://instagram.com/{{ ltrim(mcaGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" class="mc-btn" style="font-size:9px;margin-top:8px;display:inline-flex;align-items:center;gap:5px;text-decoration:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(mcaGet('bride_instagram'),'@') }}</span></a>@endif</div>
 <div class="pcard"><canvas id="pfG" width="8" height="8"></canvas>
-<h3>{{ $groomFull }}</h3><span class="ptag">MEMPELAI PRIA</span><p>{{ mcaGet('groom_parents', mcaGet('groom_child_of','')) }}</p></div>
+<h3>{{ $groomFull }}</h3><span class="ptag">MEMPELAI PRIA</span><p>{{ mcaGet('groom_parents', mcaGet('groom_child_of','')) }}</p>@if(mcaGet('groom_instagram'))<a href="https://instagram.com/{{ ltrim(mcaGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="mc-btn" style="font-size:9px;margin-top:8px;display:inline-flex;align-items:center;gap:5px;text-decoration:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(mcaGet('groom_instagram'),'@') }}</span></a>@endif</div>
 </div>`,
 count:()=>`<h2 class="ptitle">MENARA JAM</h2><p class="psub">${MC.dateText} &mdash; quest dimulai dalam:</p>
 <div class="hud2">
