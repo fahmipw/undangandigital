@@ -286,11 +286,6 @@
         </div>
 
         <nav class="space-y-1 flex-1 overflow-y-auto">
-            <button onclick="showTab('dashboard')"
-                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
-                id="btn-dashboard">
-                <span class="material-symbols-outlined">dashboard</span> Beranda
-            </button>
             <button onclick="showTab('settings')"
                 class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all active"
                 id="btn-settings">
@@ -390,79 +385,6 @@
                     <div class="min-w-0">
                         <div class="text-2xl font-bold text-primary leading-none" id="stat-past">&ndash;</div>
                         <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Sudah Berlangsung</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dashboard Tab (KESELURUHAN, bukan per undangan terpilih) -->
-            <div id="tab-dashboard" class="tab-content hidden">
-                <div class="flex justify-between items-center mb-8">
-                    <div>
-                        <h2 class="font-display-lg text-3xl text-primary">Beranda</h2>
-                        <p class="text-[12px] opacity-60 mt-1">Ringkasan seluruh undangan. Menu ini tidak terikat pada undangan yang dipilih di sidebar.</p>
-                    </div>
-                    <button onclick="loadDashboard()"
-                        class="btn-theme px-6 py-3 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg flex items-center gap-2">
-                        <span class="material-symbols-outlined text-sm">refresh</span> Muat Ulang
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div class="data-card rounded-3xl p-5">
-                        <div class="text-3xl font-bold text-green-600" id="db-rsvp-hadir">0</div>
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">RSVP Hadir</div>
-                        <div class="text-[11px] opacity-60 mt-1" id="db-rsvp-hadir-tamu">0 tamu</div>
-                    </div>
-                    <div class="data-card rounded-3xl p-5">
-                        <div class="text-3xl font-bold text-red-500" id="db-rsvp-tidak">0</div>
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Berhalangan</div>
-                        <div class="text-[11px] opacity-60 mt-1" id="db-rsvp-total">dari 0 RSVP</div>
-                    </div>
-                    <div class="data-card rounded-3xl p-5">
-                        <div class="text-3xl font-bold text-primary" id="db-ucapan">0</div>
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Total Ucapan</div>
-                        <div class="text-[11px] opacity-60 mt-1">di semua undangan</div>
-                    </div>
-                    <div class="data-card rounded-3xl p-5">
-                        <div class="text-3xl font-bold text-primary" id="db-checkin">0</div>
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Sudah Check-in</div>
-                        <div class="text-[11px] opacity-60 mt-1" id="db-tamu">dari 0 tamu terdaftar</div>
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-4 mb-8">
-                    <div class="data-card p-6 rounded-3xl">
-                        <h3 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest mb-4">
-                            <span class="material-symbols-outlined">event</span> Acara Terdekat
-                        </h3>
-                        <div id="db-upcoming" class="space-y-3 text-sm"></div>
-                    </div>
-                    <div class="data-card p-6 rounded-3xl">
-                        <h3 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest mb-4">
-                            <span class="material-symbols-outlined">palette</span> Tema Terpopuler
-                        </h3>
-                        <div id="db-themes" class="space-y-3 text-sm"></div>
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-3 gap-4">
-                    <div class="data-card p-6 rounded-3xl">
-                        <h3 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest mb-4">
-                            <span class="material-symbols-outlined">how_to_reg</span> RSVP Terbaru
-                        </h3>
-                        <div id="db-recent-rsvp" class="space-y-3 text-sm"></div>
-                    </div>
-                    <div class="data-card p-6 rounded-3xl">
-                        <h3 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest mb-4">
-                            <span class="material-symbols-outlined">chat</span> Ucapan Terbaru
-                        </h3>
-                        <div id="db-recent-ucapan" class="space-y-3 text-sm"></div>
-                    </div>
-                    <div class="data-card p-6 rounded-3xl">
-                        <h3 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest mb-4">
-                            <span class="material-symbols-outlined">qr_code_scanner</span> Check-in Terbaru
-                        </h3>
-                        <div id="db-recent-checkin" class="space-y-3 text-sm"></div>
                     </div>
                 </div>
             </div>
@@ -1762,7 +1684,7 @@
 
         async function init() {
             await loadInvitations();
-            const activeTab = localStorage.getItem('activeTab') || 'dashboard';
+            const activeTab = localStorage.getItem('activeTab') || 'settings';
             showTab(activeTab);
         }
 
@@ -1786,59 +1708,6 @@
                 document.getElementById('an-bar-tidak').style.width = pTidak + '%';
                 document.getElementById('an-bar-hadir-label').textContent = d.rsvp_hadir + ' (' + pHadir + '%)';
                 document.getElementById('an-bar-tidak-label').textContent = d.rsvp_tidak + ' (' + pTidak + '%)';
-            } catch (e) { /* abaikan */ }
-        }
-
-        // Dashboard KESELURUHAN: tidak memakai currentInvId sama sekali.
-        function openDashboardInvitation(id) {
-            const sel = document.getElementById('inv-selector');
-            if (sel) {
-                sel.value = String(id);
-                const opt = sel.options[sel.selectedIndex];
-                currentSlug = opt ? opt.dataset.slug : '';
-            }
-            currentInvId = id;
-            localStorage.setItem('lastInvId', currentInvId);
-            localStorage.setItem('activeTab', 'settings');
-            showTab('settings');
-        }
-
-        function dbDateLabel(s) {
-            if (!s) return '';
-            const d = new Date(String(s).replace(' ', 'T'));
-            if (isNaN(d)) return String(s);
-            return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-        }
-
-        async function loadDashboard() {
-            try {
-                const res = await fetch('api/admin_api?action=get_dashboard');
-                const data = await res.json();
-                if (!data.success) return;
-                const d = data.data;
-                document.getElementById('db-rsvp-hadir').textContent = d.rsvp_hadir;
-                document.getElementById('db-rsvp-hadir-tamu').textContent = d.rsvp_hadir_tamu + ' tamu';
-                document.getElementById('db-rsvp-tidak').textContent = d.rsvp_tidak;
-                document.getElementById('db-rsvp-total').textContent = 'dari ' + d.rsvp_total + ' RSVP';
-                document.getElementById('db-ucapan').textContent = d.ucapan_total;
-                document.getElementById('db-checkin').textContent = d.checkin_total;
-                document.getElementById('db-tamu').textContent = 'dari ' + d.tamu_total + ' tamu terdaftar';
-                const empty = '<p class="text-[12px] opacity-50">Belum ada data.</p>';
-                document.getElementById('db-upcoming').innerHTML = (d.upcoming || []).length ? (d.upcoming || []).map(u =>
-                    `<div class="flex items-center justify-between gap-3"><div class="min-w-0"><div class="font-bold truncate">${escapeHtml(u.title)}</div><div class="text-[11px] opacity-60">${dbDateLabel(u.date)} &middot; ${u.days_until === 0 ? 'hari ini' : u.days_until + ' hari lagi'}</div></div><button onclick="openDashboardInvitation(${u.id})" class="shrink-0 px-3 py-1.5 rounded-full border border-secondary/30 text-[11px] font-bold text-secondary">Buka</button></div>`
-                ).join('') : empty;
-                document.getElementById('db-themes').innerHTML = (d.themes || []).length ? (d.themes || []).map(t =>
-                    `<div class="flex items-center justify-between gap-3"><span class="font-bold truncate">${escapeHtml(t.theme)}</span><span class="text-[11px] opacity-60">${t.total} undangan</span></div>`
-                ).join('') : empty;
-                document.getElementById('db-recent-rsvp').innerHTML = (d.recent_rsvp || []).length ? (d.recent_rsvp || []).map(r =>
-                    `<div><div class="font-bold">${escapeHtml(r.nama)} <span class="text-[11px] font-semibold ${r.status === 'hadir' ? 'text-green-600' : 'text-red-500'}">${r.status === 'hadir' ? 'HADIR' : 'BERHALANGAN'}</span></div><div class="text-[11px] opacity-60">${escapeHtml(r.invitation_title)} &middot; ${r.jumlah_tamu} tamu &middot; ${dbDateLabel(r.created_at)}</div></div>`
-                ).join('') : empty;
-                document.getElementById('db-recent-ucapan').innerHTML = (d.recent_ucapan || []).length ? (d.recent_ucapan || []).map(u =>
-                    `<div><div class="font-bold">${escapeHtml(u.nama)}</div><div class="text-[12px] opacity-75 line-clamp-2">${escapeHtml(u.pesan)}</div><div class="text-[11px] opacity-60">${escapeHtml(u.invitation_title)} &middot; ${dbDateLabel(u.created_at)}</div></div>`
-                ).join('') : empty;
-                document.getElementById('db-recent-checkin').innerHTML = (d.recent_checkin || []).length ? (d.recent_checkin || []).map(c =>
-                    `<div><div class="font-bold">${escapeHtml(c.nama)}</div><div class="text-[11px] opacity-60">${escapeHtml(c.invitation_title)} &middot; ${dbDateLabel(c.checked_in_at)}</div></div>`
-                ).join('') : empty;
             } catch (e) { /* abaikan */ }
         }
 
@@ -2006,7 +1875,6 @@
             if (tabId === 'stories') loadStories();
             if (tabId === 'checkin') loadCheckin();
             if (tabId === 'analytics') loadAnalytics();
-            if (tabId === 'dashboard') loadDashboard();
 
             document.querySelector('.mobile-sidebar')?.classList.remove('is-open');
             document.querySelector('.admin-sidebar-backdrop')?.classList.remove('is-visible');
