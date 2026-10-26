@@ -1339,7 +1339,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         </p>
       </section>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-      <script>if(window.QRCode){new QRCode(document.getElementById('qrBox'), { text: "<?php echo htmlspecialchars($guestQrCode); ?>", width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });}</script>
+      <script>if(window.QRCode){var qb=document.getElementById('qrBox');new QRCode(qb, { text: "<?php echo htmlspecialchars($guestQrCode); ?>", width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });if(!document.getElementById('qrDownloadBtn')){var dw=document.createElement('div');dw.style.cssText='text-align:center;margin-top:14px';var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:inline-block;padding:12px 28px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};dw.appendChild(db);qb.parentNode.insertBefore(dw,qb.nextSibling);}}</script>
       <?php endif; ?>
 
       <section class="py-4 mb-6 text-center reveal" id="gift">
