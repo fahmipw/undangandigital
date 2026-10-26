@@ -153,6 +153,7 @@
                                     <th class="px-3 py-2">Nama</th>
                                     <th class="px-3 py-2">Link</th>
                                     <th class="px-3 py-2">Status</th>
+                                    <th class="px-3 py-2">Status WA</th>
                                     <th class="px-3 py-2">Aksi</th>
                                 </tr>
                             </thead>
@@ -160,6 +161,32 @@
                         </table>
                     </div>
                 </div>
+            </div>
+
+            <!-- Daftar Tamu yang Sudah Diinput -->
+            <div class="mt-10 border-t border-gray-200 pt-6">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-lg font-bold text-[#775a19]">Daftar Tamu yang Sudah Diinput</h3>
+                    <button type="button" onclick="loadGeneratorGuests()"
+                        class="btn-outline font-bold uppercase tracking-widest py-2 px-4 rounded-xl text-xs flex items-center gap-2">
+                        <span class="material-symbols-outlined text-base">refresh</span> Muat Ulang
+                    </button>
+                </div>
+                <p class="text-sm text-gray-600 mb-4"><span id="generator-guest-count">0</span> tamu. Tanda <span class="font-semibold text-green-600">Sudah dikirim</span> muncul saat tombol Kirim WA diklik, atau saat ditandai manual — pengiriman di dalam aplikasi WhatsApp sendiri tidak bisa dilacak dari sini.</p>
+                <div class="overflow-x-auto border border-gray-200 rounded-xl max-h-96 overflow-y-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-xs uppercase tracking-widest text-gray-500 sticky top-0">
+                            <tr>
+                                <th class="px-3 py-2 bg-gray-50">Nama</th>
+                                <th class="px-3 py-2 bg-gray-50">Link</th>
+                                <th class="px-3 py-2 bg-gray-50">Status WA</th>
+                                <th class="px-3 py-2 bg-gray-50">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="generator-guest-tbody"></tbody>
+                    </table>
+                </div>
+                <p id="generator-guest-empty" class="hidden text-sm text-gray-500 mt-3">Belum ada tamu yang diinput untuk undangan ini.</p>
             </div>
 
         </div>
@@ -174,7 +201,9 @@
         const baseUrl = "{{ url('/') }}";
 
         let currentGuestPhone = "";
+        let currentGuestSlug = "";
         let bulkResults = [];
+        let generatorGuests = [];
 
         function escHtml(s) {
             return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -186,6 +215,9 @@
 
         function showExistingGuest(name, slug) {
             const link = `${baseUrl}/${invSlug}?to=${slug}`;
+            currentGuestSlug = slug;
+            const known = generatorGuests.find(g => g.slug === slug);
+            currentGuestPhone = known ? (known.no_hp || '') : '';
             document.getElementById('guest_name').value = name;
             document.getElementById('result-link').value = link;
             document.getElementById('result-message').value = buildWaMessage(name, link);
@@ -262,9 +294,11 @@
                     document.getElementById('result-message').value = message;
 
                     currentGuestPhone = phoneInput;
+                    currentGuestSlug = guestSlug;
 
                     document.getElementById('result-container').classList.remove('hidden');
                     document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+                    loadGeneratorGuests();
                 } else {
                     alert(data.message || "Gagal membuat link.");
                 }
@@ -275,6 +309,85 @@
                 btn.disabled = false;
                 btn.innerHTML = '<span class="material-symbols-outlined">link</span> Generate Link';
             }
+        }
+
+        // Tandai WA terkirim / batalkan tanda. Mengembalikan {ok, wa_sent_at, message}.
+        // Gagal yang paling mungkin: migrasi wa_sent_at belum dijalankan.
+        async function markWa(slug, sent) {
+            try {
+                const res = await fetch("{{ url('api/mark_guest_wa') }}", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ invitation_id: invitationId, slug, sent })
+                });
+                const data = await res.json();
+                if (!data.success) return { ok: false, wa_sent_at: null, message: data.message || 'Gagal menandai.' };
+                return { ok: true, wa_sent_at: data.wa_sent_at, message: '' };
+            } catch (e) {
+                return { ok: false, wa_sent_at: null, message: 'Terjadi kesalahan sistem.' };
+            }
+        }
+
+        function formatWaDate(s) {
+            if (!s) return '';
+            const d = new Date(String(s).replace(' ', 'T'));
+            if (isNaN(d)) return '';
+            return d.toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        function waBadge(g) {
+            return g.wa_sent_at
+                ? `<span class="text-[11px] font-bold text-green-600">SUDAH DIKIRIM</span><div class="text-[11px] opacity-60">${escHtml(formatWaDate(g.wa_sent_at))}</div>`
+                : `<span class="text-[11px] font-bold text-gray-400">BELUM DIKIRIM</span>`;
+        }
+
+        async function loadGeneratorGuests() {
+            try {
+                const res = await fetch(`{{ url('api/generator_guests') }}?invitation_id=${invitationId}`);
+                const data = await res.json();
+                if (!data.success) return;
+                generatorGuests = (data.data || []).map(g => ({ ...g, link: `${baseUrl}/${invSlug}?to=${g.slug}` }));
+                renderGeneratorGuests();
+            } catch (e) { /* abaikan */ }
+        }
+
+        function renderGeneratorGuests() {
+            document.getElementById('generator-guest-count').textContent = generatorGuests.length;
+            document.getElementById('generator-guest-empty').classList.toggle('hidden', generatorGuests.length > 0);
+            document.getElementById('generator-guest-tbody').innerHTML = generatorGuests.map((g, i) =>
+                `<tr class="border-t border-gray-100">
+                    <td class="px-3 py-2 font-semibold">${escHtml(g.nama)}</td>
+                    <td class="px-3 py-2"><input type="text" readonly value="${escHtml(g.link)}" class="bg-gray-50 text-xs p-2 rounded w-full outline-none"></td>
+                    <td class="px-3 py-2">${waBadge(g)}</td>
+                    <td class="px-3 py-2 whitespace-nowrap">
+                        <button type="button" onclick="copyGeneratorLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><span class="material-symbols-outlined text-base">content_copy</span></button>
+                        <button type="button" onclick="sendGeneratorWA(${i})" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><span class="material-symbols-outlined text-base">send</span></button>
+                        <button type="button" onclick="toggleGeneratorWA(${i})" class="p-1.5 text-amber-600 hover:bg-gray-100 rounded-lg" title="${g.wa_sent_at ? 'Batalkan tanda terkirim' : 'Tandai sudah dikirim'}"><span class="material-symbols-outlined text-base">${g.wa_sent_at ? 'undo' : 'check'}</span></button>
+                    </td>
+                </tr>`
+            ).join('');
+        }
+
+        function copyGeneratorLink(i) {
+            if (!generatorGuests[i]) return;
+            navigator.clipboard.writeText(generatorGuests[i].link);
+        }
+
+        async function sendGeneratorWA(i) {
+            const g = generatorGuests[i];
+            if (!g) return;
+            window.open(bulkWaUrl(g.nama, g.link, g.no_hp || ''), '_blank');
+            const r = await markWa(g.slug, true);
+            if (r.ok) { g.wa_sent_at = r.wa_sent_at; renderGeneratorGuests(); }
+            else alert(r.message);
+        }
+
+        async function toggleGeneratorWA(i) {
+            const g = generatorGuests[i];
+            if (!g) return;
+            const r = await markWa(g.slug, !g.wa_sent_at);
+            if (r.ok) { g.wa_sent_at = r.wa_sent_at; renderGeneratorGuests(); }
+            else alert(r.message);
         }
 
         function parseBulkInput(text) {
@@ -320,18 +433,9 @@
                 const baru = bulkResults.filter(r => !r.existed).length;
                 const sudah = bulkResults.length - baru;
                 document.getElementById('bulk-summary').textContent = `Berhasil: ${bulkResults.length} link (${baru} baru, ${sudah} sudah ada). Baris kosong dan nama dobel di dalam daftar dilewati.`;
-                document.getElementById('bulk-tbody').innerHTML = bulkResults.map((r, i) =>
-                    `<tr class="border-t border-gray-100">
-                        <td class="px-3 py-2 font-semibold">${escHtml(r.nama)}</td>
-                        <td class="px-3 py-2"><input type="text" readonly value="${escHtml(r.link)}" class="bg-gray-50 text-xs p-2 rounded w-full outline-none"></td>
-                        <td class="px-3 py-2"><span class="text-[11px] font-bold ${r.existed ? 'text-amber-600' : 'text-green-600'}">${r.existed ? 'SUDAH ADA' : 'BARU'}</span></td>
-                        <td class="px-3 py-2 whitespace-nowrap">
-                            <button type="button" onclick="copyBulkLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><span class="material-symbols-outlined text-base">content_copy</span></button>
-                            <button type="button" onclick="sendBulkWA(${i})" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><span class="material-symbols-outlined text-base">send</span></button>
-                        </td>
-                    </tr>`
-                ).join('');
+                renderBulkTable();
                 document.getElementById('bulk-result').classList.remove('hidden');
+                loadGeneratorGuests();
             } catch (err) {
                 alert('Terjadi kesalahan sistem. Pastikan server berjalan.');
                 console.error(err);
@@ -341,15 +445,33 @@
             }
         }
 
+        function renderBulkTable() {
+            document.getElementById('bulk-tbody').innerHTML = bulkResults.map((r, i) =>
+                `<tr class="border-t border-gray-100">
+                    <td class="px-3 py-2 font-semibold">${escHtml(r.nama)}</td>
+                    <td class="px-3 py-2"><input type="text" readonly value="${escHtml(r.link)}" class="bg-gray-50 text-xs p-2 rounded w-full outline-none"></td>
+                    <td class="px-3 py-2"><span class="text-[11px] font-bold ${r.existed ? 'text-amber-600' : 'text-green-600'}">${r.existed ? 'SUDAH ADA' : 'BARU'}</span></td>
+                    <td class="px-3 py-2">${waBadge(r)}</td>
+                    <td class="px-3 py-2 whitespace-nowrap">
+                        <button type="button" onclick="copyBulkLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><span class="material-symbols-outlined text-base">content_copy</span></button>
+                        <button type="button" onclick="sendBulkWA(${i})" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><span class="material-symbols-outlined text-base">send</span></button>
+                    </td>
+                </tr>`
+            ).join('');
+        }
+
         function copyBulkLink(i) {
             if (!bulkResults[i]) return;
             navigator.clipboard.writeText(bulkResults[i].link);
         }
 
-        function sendBulkWA(i) {
+        async function sendBulkWA(i) {
             const r = bulkResults[i];
             if (!r) return;
             window.open(bulkWaUrl(r.nama, r.link, r.no_hp || ''), '_blank');
+            const res = await markWa(r.slug, true);
+            if (res.ok) { r.wa_sent_at = res.wa_sent_at; renderBulkTable(); loadGeneratorGuests(); }
+            else alert(res.message);
         }
 
         function copyAllBulkLinks() {
@@ -396,7 +518,7 @@
             });
         }
 
-        function sendWhatsapp() {
+        async function sendWhatsapp() {
             const msg = document.getElementById('result-message').value;
             let waUrl = `https://wa.me/`;
             if (currentGuestPhone) {
@@ -409,7 +531,14 @@
             }
             waUrl += `?text=${encodeURIComponent(msg)}`;
             window.open(waUrl, '_blank');
+            if (currentGuestSlug) {
+                const res = await markWa(currentGuestSlug, true);
+                if (res.ok) loadGeneratorGuests();
+                else alert(res.message);
+            }
         }
+
+        loadGeneratorGuests();
     </script>
 </body>
 

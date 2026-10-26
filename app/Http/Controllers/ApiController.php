@@ -275,7 +275,10 @@ class ApiController extends Controller
             return response()->json(['success' => false, 'message' => 'Maksimal 100 tamu per generate massal.'], 422);
         }
 
-        $existing = \App\Models\Guest::where('invitation_id', $invitation_id)->get(['nama', 'slug']);
+        $hasWaCol = \Illuminate\Support\Facades\Schema::hasColumn('guests', 'wa_sent_at');
+        $existingCols = ['nama', 'slug'];
+        if ($hasWaCol) $existingCols[] = 'wa_sent_at';
+        $existing = \App\Models\Guest::where('invitation_id', $invitation_id)->get($existingCols);
         $existingByName = [];
         foreach ($existing as $e) {
             $existingByName[mb_strtolower(trim($e->nama))] = $e;
@@ -297,7 +300,7 @@ class ApiController extends Controller
             }
 
             if (isset($existingByName[$key])) {
-                $results[] = ['nama' => $existingByName[$key]->nama, 'slug' => $existingByName[$key]->slug, 'no_hp' => $no_hp, 'existed' => true];
+                $results[] = ['nama' => $existingByName[$key]->nama, 'slug' => $existingByName[$key]->slug, 'no_hp' => $no_hp, 'existed' => true, 'wa_sent_at' => ($hasWaCol && $existingByName[$key]->wa_sent_at) ? (string) $existingByName[$key]->wa_sent_at : null];
                 continue;
             }
 
@@ -316,9 +319,60 @@ class ApiController extends Controller
                 'qr_code' => \App\Models\Guest::newQrCode($invitation_id)
             ]);
             $existingByName[$key] = $guest;
-            $results[] = ['nama' => $guest->nama, 'slug' => $guest->slug, 'no_hp' => $no_hp, 'existed' => false];
+            $results[] = ['nama' => $guest->nama, 'slug' => $guest->slug, 'no_hp' => $no_hp, 'existed' => false, 'wa_sent_at' => null];
         }
 
         return response()->json(['success' => true, 'data' => $results]);
+    }
+
+    /**
+     * Daftar tamu untuk halaman Link Generator, urutan terbaru dulu.
+     * Kolom wa_sent_at hanya diambil bila migrasinya sudah dijalankan,
+     * supaya halaman tidak fatal bila Fahmi belum menjalankan migrate.
+     */
+    public function generatorGuests(Request $request)
+    {
+        $invitation_id = $request->query('invitation_id', 1);
+        $cols = ['id', 'nama', 'slug', 'no_hp'];
+        if (\Illuminate\Support\Facades\Schema::hasColumn('guests', 'wa_sent_at')) {
+            $cols[] = 'wa_sent_at';
+        }
+        $rows = \App\Models\Guest::where('invitation_id', $invitation_id)
+            ->orderBy('id', 'DESC')->get($cols)
+            ->map(function ($g) {
+                return ['id' => $g->id, 'nama' => $g->nama, 'slug' => $g->slug, 'no_hp' => $g->no_hp, 'wa_sent_at' => isset($g->wa_sent_at) && $g->wa_sent_at ? (string) $g->wa_sent_at : null];
+            })->values();
+        return response()->json(['success' => true, 'data' => $rows]);
+    }
+
+    /**
+     * Tandai tamu sudah / belum dikirim via WhatsApp.
+     * Catatan jujur: yang bisa dilacak hanyalah klik tombol Kirim WA
+     * (atau penandaan manual) — pengiriman di dalam aplikasi WhatsApp
+     * sendiri tidak bisa diverifikasi dari server.
+     */
+    public function markGuestWa(Request $request)
+    {
+        $json = json_decode($request->getContent(), true) ?? [];
+        if (!empty($json)) {
+            $request->merge($json);
+        }
+        if (!\Illuminate\Support\Facades\Schema::hasColumn('guests', 'wa_sent_at')) {
+            return response()->json(['success' => false, 'message' => 'Kolom wa_sent_at belum ada. Jalankan php artisan migrate dulu.'], 422);
+        }
+        $invitation_id = $request->input('invitation_id', 1);
+        $slug = trim($request->input('slug', ''));
+        $sent = (bool) $request->input('sent', true);
+        if ($slug === '') {
+            return response()->json(['success' => false, 'message' => 'Slug tamu kosong.'], 422);
+        }
+        $updated = \App\Models\Guest::where('invitation_id', $invitation_id)
+            ->where('slug', $slug)
+            ->update(['wa_sent_at' => $sent ? now() : null]);
+        if (!$updated) {
+            return response()->json(['success' => false, 'message' => 'Tamu tidak ditemukan.'], 404);
+        }
+        $guest = \App\Models\Guest::where('invitation_id', $invitation_id)->where('slug', $slug)->first(['wa_sent_at']);
+        return response()->json(['success' => true, 'wa_sent_at' => $guest && $guest->wa_sent_at ? (string) $guest->wa_sent_at : null]);
     }
 }
