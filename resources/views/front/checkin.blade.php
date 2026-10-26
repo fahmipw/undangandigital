@@ -33,6 +33,16 @@
   .recent-item:last-child{border-bottom:none}
   .recent-item small{color:#8a7a5f;font-size:11px}
   .empty{color:#aaa;font-style:italic;font-size:13px;text-align:center;padding:12px}
+  /* Overlay animasi sukses (Lottie centang hijau) */
+  #success-overlay{position:fixed;inset:0;background:rgba(29,20,8,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+  #success-overlay.show{display:flex}
+  .success-box{background:#fff;border-radius:20px;padding:24px 28px 22px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.35);max-width:320px;width:100%;animation:pop .3s ease}
+  @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+  #success-anim{width:200px;height:200px;margin:0 auto}
+  #success-fallback{display:none;width:120px;height:120px;margin:16px auto;border-radius:50%;background:#dcfce7;color:#166534;font-size:72px;font-weight:800;align-items:center;justify-content:center}
+  #success-fallback.show{display:flex}
+  .success-name{font-size:20px;font-weight:800;color:#166534;margin-top:4px}
+  .success-sub{font-size:13px;color:#8a7a5f;margin-top:4px}
 </style>
 </head>
 <body>
@@ -65,6 +75,15 @@
   </div>
 </div>
 
+<div id="success-overlay" onclick="if(event.target===this) hideSuccessAnim()">
+  <div class="success-box">
+    <div id="success-anim"></div>
+    <div id="success-fallback">&#10003;</div>
+    <div class="success-name" id="success-name"></div>
+    <div class="success-sub">Check-in berhasil</div>
+  </div>
+</div>
+
 <script>
 var INV_ID = {{ (int)$inv_id }};
 var scanner = null, scanning = false, lastScan = 0;
@@ -94,6 +113,8 @@ async function doCheckin(code){
     if(d.success){
       showRes(true, d.already ? 'SUDAH HADIR' : 'CHECK-IN BERHASIL',
         d.nama + (d.already ? ' (sudah tercatat)' : ' • ' + (d.checked_in_at||'')));
+      // Animasi sukses hanya untuk check-in baru, bukan scan ulang yang sudah hadir
+      if(!d.already) showSuccessAnim(d.nama);
       refreshStats();
     }else{
       showRes(false, 'GAGAL', d.message || 'Kode tidak valid');
@@ -104,6 +125,49 @@ async function doCheckin(code){
 function manualGo(){
   var el = document.getElementById('manual');
   doCheckin(el.value); el.value='';
+}
+
+// --- Overlay animasi sukses (Lottie "Order Success" kiriman Fahmi) ---
+var successAnim = null, successTimer = null;
+
+function loadLottie(cb){
+  if(window.lottie) return cb(true);
+  var s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js';
+  s.onload = function(){ cb(true); };
+  s.onerror = function(){ cb(false); };
+  document.head.appendChild(s);
+}
+
+function hideSuccessAnim(){
+  document.getElementById('success-overlay').classList.remove('show');
+  clearTimeout(successTimer);
+}
+
+function showSuccessAnim(nama){
+  document.getElementById('success-name').textContent = nama || '';
+  document.getElementById('success-overlay').classList.add('show');
+  document.getElementById('success-fallback').classList.remove('show');
+  document.getElementById('success-anim').style.display = 'block';
+  loadLottie(function(ok){
+    if(!ok){
+      // Player gagal dimuat: tampilkan centang hijau statis sebagai cadangan
+      document.getElementById('success-anim').innerHTML = '';
+      document.getElementById('success-anim').style.display = 'none';
+      document.getElementById('success-fallback').classList.add('show');
+      return;
+    }
+    if(successAnim) successAnim.destroy();
+    successAnim = lottie.loadAnimation({
+      container: document.getElementById('success-anim'),
+      renderer: 'svg',
+      loop: false,
+      autoplay: true,
+      path: "{{ asset('lottie/order-success.json') }}"
+    });
+  });
+  clearTimeout(successTimer);
+  successTimer = setTimeout(hideSuccessAnim, 3000);
 }
 
 function loadLib(cb){
