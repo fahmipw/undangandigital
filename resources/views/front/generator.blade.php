@@ -119,6 +119,29 @@
             <p class="text-sm text-gray-600 mb-6">Gunakan halaman ini untuk menambahkan tamu undangan dan membuat pesan
                 WhatsApp otomatis.</p>
 
+            <!-- Template Pesan WhatsApp -->
+            <div class="mb-6 border border-gray-200 rounded-xl p-4 bg-gray-50">
+                <h3 class="text-sm font-bold text-[#775a19] uppercase tracking-widest mb-3">Template Pesan WhatsApp</h3>
+                <div class="flex flex-wrap gap-4 mb-3 text-sm">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="wa-template-mode" value="sistem" id="tpl-mode-sistem" class="accent-[#775a19]">
+                        Sistem (otomatis ada)
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="wa-template-mode" value="sendiri" id="tpl-mode-sendiri" class="accent-[#775a19]">
+                        Buat sendiri
+                    </label>
+                </div>
+                <textarea id="custom-template" rows="6" disabled
+                    placeholder="Tulis template sendiri di sini. Gunakan [nama] untuk nama tamu dan [link] untuk link undangan.&#10;&#10;Contoh: Halo [nama], kami mengundang Anda ke pernikahan kami. Silakan buka undangan di: [link]"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] transition-all text-sm bg-white disabled:bg-gray-100 disabled:text-gray-400"></textarea>
+                <p class="text-[10px] text-gray-500 mt-1">Pilihan dan template sendiri tersimpan di perangkat ini saja. Template yang dipilih berlaku untuk semua pesan WA dari halaman ini (tunggal, massal, dan daftar tamu).</p>
+                <div class="mt-3">
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2">Pratinjau</label>
+                    <div id="template-preview" class="w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-gray-700 whitespace-pre-line"></div>
+                </div>
+            </div>
+
             <form id="generator-form" onsubmit="generateLink(event)">
                 <div class="mb-4">
                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2">Nama Tamu
@@ -228,11 +251,13 @@
             <div class="mt-10 border-t border-gray-200 pt-6">
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="text-lg font-bold text-[#775a19]">Daftar Tamu yang Sudah Diinput</h3>
-                    <button type="button" onclick="loadGeneratorGuests()"
+                    <button type="button" id="btn-refresh-guests" onclick="loadGeneratorGuests()"
                         class="btn-outline font-bold uppercase tracking-widest py-2 px-4 rounded-xl text-xs flex items-center gap-2">
                         <span class="material-symbols-outlined text-base">refresh</span> Muat Ulang
                     </button>
                 </div>
+                <input type="text" id="generator-guest-search" placeholder="Cari nama tamu..." autocomplete="off"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] transition-all text-sm mb-4">
                 <p class="text-sm text-gray-600 mb-4"><span id="generator-guest-count">0</span> tamu. Tanda <span class="font-semibold text-green-600">Sudah dikirim</span> muncul saat tombol Kirim WA diklik, atau saat ditandai manual — pengiriman di dalam aplikasi WhatsApp sendiri tidak bisa dilacak dari sini.</p>
                 <div class="border border-gray-200 rounded-xl max-h-96 overflow-y-auto">
                     <table class="responsive-table w-full text-sm text-left">
@@ -245,7 +270,7 @@
                                 <th class="px-3 py-2 bg-gray-50">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="generator-guest-tbody"></tbody>
+                        <tbody id="generator-guest-tbody"><tr><td colspan="4" class="px-3 py-4 text-sm text-gray-500 text-center">Memuat daftar tamu...</td></tr></tbody>
                     </table>
                 </div>
                 <p id="generator-guest-empty" class="hidden text-sm text-gray-500 mt-3">Belum ada tamu yang diinput untuk undangan ini.</p>
@@ -271,8 +296,50 @@
             return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         }
 
+        // Template WA: 'sistem' = template bawaan di bawah (otomatis ada),
+        // 'sendiri' = teks dari kolom template dengan placeholder [nama]/[link].
+        // Pilihan + teks sendiri disimpan di perangkat ini (localStorage per
+        // undangan), bukan di server, supaya halaman publik ini tidak bisa
+        // dipakai orang lain untuk mengubah template undangan.
+        function safeStorageGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+        function safeStorageSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+        let templateMode = safeStorageGet(`gen_tpl_mode_${invSlug}`) || 'sistem';
+        let customTemplate = safeStorageGet(`gen_tpl_custom_${invSlug}`) || '';
+
         function buildWaMessage(name, link) {
+            if (templateMode === 'sendiri' && customTemplate.trim()) {
+                return customTemplate.replace(/\[nama\]/g, name).replace(/\[link\]/g, link);
+            }
             return `Kepada Yth,\n*${name}*\nDitempat\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i, teman dan juga sahabat, untuk menghadiri acara Resepsi kami\n\n*${groom} & ${bride}*\n\nPesan ini merupakan undangan resmi dari kami. Silahkan kunjungi link berikut untuk membuka undangan anda:\n${link}\n\nMerupakan suatu kebahagiaan jika Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu untuk kami. Terima kasih banyak atas waktu & perhatiannya.`;
+        }
+
+        function updateTemplatePreview() {
+            const el = document.getElementById('template-preview');
+            if (el) el.textContent = buildWaMessage('Nama Tamu', `${baseUrl}/${invSlug}?to=nama-tamu`);
+        }
+
+        function initTemplateUI() {
+            const radioSistem = document.getElementById('tpl-mode-sistem');
+            const radioSendiri = document.getElementById('tpl-mode-sendiri');
+            const area = document.getElementById('custom-template');
+            if (!radioSistem || !radioSendiri || !area) return;
+            if (templateMode === 'sendiri') radioSendiri.checked = true; else radioSistem.checked = true;
+            area.value = customTemplate;
+            area.disabled = templateMode !== 'sendiri';
+            document.querySelectorAll('input[name="wa-template-mode"]').forEach(r => {
+                r.addEventListener('change', () => {
+                    templateMode = document.querySelector('input[name="wa-template-mode"]:checked').value;
+                    safeStorageSet(`gen_tpl_mode_${invSlug}`, templateMode);
+                    area.disabled = templateMode !== 'sendiri';
+                    updateTemplatePreview();
+                });
+            });
+            area.addEventListener('input', () => {
+                customTemplate = area.value;
+                safeStorageSet(`gen_tpl_custom_${invSlug}`, customTemplate);
+                updateTemplatePreview();
+            });
+            updateTemplatePreview();
         }
 
         function showExistingGuest(name, slug) {
@@ -415,54 +482,159 @@
                 : `<span class="text-[11px] font-bold text-gray-400">BELUM DIKIRIM</span>`;
         }
 
+        let guestSearchTerm = '';
+        let filteredGeneratorGuests = [];
+        let editingSlug = null;
+        let editingName = '';
+
+        function syncGuestWa(slug, wa) {
+            const orig = generatorGuests.find(g => g.slug === slug);
+            if (orig) orig.wa_sent_at = wa;
+        }
+
         async function loadGeneratorGuests() {
+            const btn = document.getElementById('btn-refresh-guests');
+            const tbody = document.getElementById('generator-guest-tbody');
+            const emptyEl = document.getElementById('generator-guest-empty');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<span class="material-symbols-outlined text-base animate-spin">refresh</span> Memuat...'; }
+            if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="px-3 py-4 text-sm text-gray-500 text-center"><span class="material-symbols-outlined text-base animate-spin align-middle">refresh</span> Memuat daftar tamu...</td></tr>';
+            if (emptyEl) emptyEl.classList.add('hidden');
             try {
                 const res = await fetch(`{{ url('api/generator_guests') }}?invitation_id=${invitationId}`);
                 const data = await res.json();
-                if (!data.success) return;
+                if (!data.success) throw new Error('gagal');
                 generatorGuests = (data.data || []).map(g => ({ ...g, link: `${baseUrl}/${invSlug}?to=${g.slug}` }));
                 renderGeneratorGuests();
-            } catch (e) { /* abaikan */ }
+            } catch (e) {
+                if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="px-3 py-4 text-sm text-red-500 text-center">Gagal memuat daftar tamu. Coba muat ulang.</td></tr>';
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-base">refresh</span> Muat Ulang'; }
+            }
         }
 
         function renderGeneratorGuests() {
-            document.getElementById('generator-guest-count').textContent = generatorGuests.length;
-            document.getElementById('generator-guest-empty').classList.toggle('hidden', generatorGuests.length > 0);
-            document.getElementById('generator-guest-tbody').innerHTML = generatorGuests.map((g, i) =>
-                `<tr class="border-t border-gray-100">
-                    <td data-label="Nama" class="px-3 py-2 font-semibold">${escHtml(g.nama)}</td>
+            filteredGeneratorGuests = generatorGuests.filter(g => !guestSearchTerm || g.nama.toLowerCase().includes(guestSearchTerm) || g.slug.toLowerCase().includes(guestSearchTerm));
+            document.getElementById('generator-guest-count').textContent = guestSearchTerm ? `${filteredGeneratorGuests.length} dari ${generatorGuests.length}` : `${generatorGuests.length}`;
+            const emptyEl = document.getElementById('generator-guest-empty');
+            emptyEl.classList.toggle('hidden', filteredGeneratorGuests.length > 0);
+            emptyEl.textContent = guestSearchTerm ? 'Tidak ada tamu yang cocok dengan pencarian.' : 'Belum ada tamu yang diinput untuk undangan ini.';
+            document.getElementById('generator-guest-tbody').innerHTML = filteredGeneratorGuests.map((g, i) => {
+                const isEditing = g.slug === editingSlug;
+                const actions = isEditing
+                    ? `<button type="button" onclick="saveEditGuest()" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Simpan"><span class="material-symbols-outlined text-base">check</span></button>
+                       <button type="button" onclick="cancelEditGuest()" class="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg" title="Batal"><span class="material-symbols-outlined text-base">close</span></button>`
+                    : `<button type="button" onclick="copyGeneratorLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><span class="material-symbols-outlined text-base">content_copy</span></button>
+                       <button type="button" onclick="sendGeneratorWA(${i})" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><span class="material-symbols-outlined text-base">send</span></button>
+                       <button type="button" onclick="toggleGeneratorWA(${i})" class="p-1.5 text-amber-600 hover:bg-gray-100 rounded-lg" title="${g.wa_sent_at ? 'Batalkan tanda terkirim' : 'Tandai sudah dikirim'}"><span class="material-symbols-outlined text-base">${g.wa_sent_at ? 'undo' : 'check'}</span></button>
+                       <button type="button" onclick="startEditGuest(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Edit nama"><span class="material-symbols-outlined text-base">edit</span></button>
+                       <button type="button" onclick="deleteGeneratorGuest(${i})" class="p-1.5 text-red-400 hover:bg-gray-100 rounded-lg" title="Hapus tamu"><span class="material-symbols-outlined text-base">delete</span></button>`;
+                return `<tr class="border-t border-gray-100">
+                    <td data-label="Nama" class="px-3 py-2 font-semibold">${isEditing ? `<input type="text" id="edit-guest-name" value="${escHtml(editingName)}" class="w-full min-w-0 px-2 py-1.5 border border-gray-300 rounded-lg text-sm outline-none">` : escHtml(g.nama)}</td>
                     <td data-label="Link" class="px-3 py-2"><input type="text" readonly value="${escHtml(g.link)}" class="bg-gray-50 text-xs p-2 rounded w-full min-w-0 outline-none"></td>
                     <td data-label="Status WA" class="px-3 py-2">${waBadge(g)}</td>
-                    <td data-label="Aksi" class="px-3 py-2"><div class="flex gap-1 shrink-0">
-                        <button type="button" onclick="copyGeneratorLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><span class="material-symbols-outlined text-base">content_copy</span></button>
-                        <button type="button" onclick="sendGeneratorWA(${i})" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><span class="material-symbols-outlined text-base">send</span></button>
-                        <button type="button" onclick="toggleGeneratorWA(${i})" class="p-1.5 text-amber-600 hover:bg-gray-100 rounded-lg" title="${g.wa_sent_at ? 'Batalkan tanda terkirim' : 'Tandai sudah dikirim'}"><span class="material-symbols-outlined text-base">${g.wa_sent_at ? 'undo' : 'check'}</span></button>
-                    </div></td>
-                </tr>`
-            ).join('');
+                    <td data-label="Aksi" class="px-3 py-2"><div class="flex gap-1 shrink-0">${actions}</div></td>
+                </tr>`;
+            }).join('');
         }
 
         function copyGeneratorLink(i) {
-            if (!generatorGuests[i]) return;
-            navigator.clipboard.writeText(generatorGuests[i].link);
+            if (!filteredGeneratorGuests[i]) return;
+            navigator.clipboard.writeText(filteredGeneratorGuests[i].link);
         }
 
         async function sendGeneratorWA(i) {
-            const g = generatorGuests[i];
+            const g = filteredGeneratorGuests[i];
             if (!g) return;
             window.open(bulkWaUrl(g.nama, g.link, g.no_hp || ''), '_blank');
             const r = await markWa(g.slug, true);
-            if (r.ok) { g.wa_sent_at = r.wa_sent_at; renderGeneratorGuests(); }
+            if (r.ok) { g.wa_sent_at = r.wa_sent_at; syncGuestWa(g.slug, r.wa_sent_at); renderGeneratorGuests(); }
             else alert(r.message);
         }
 
         async function toggleGeneratorWA(i) {
-            const g = generatorGuests[i];
+            const g = filteredGeneratorGuests[i];
             if (!g) return;
             const r = await markWa(g.slug, !g.wa_sent_at);
-            if (r.ok) { g.wa_sent_at = r.wa_sent_at; renderGeneratorGuests(); }
+            if (r.ok) { g.wa_sent_at = r.wa_sent_at; syncGuestWa(g.slug, r.wa_sent_at); renderGeneratorGuests(); }
             else alert(r.message);
         }
+
+        function startEditGuest(i) {
+            const g = filteredGeneratorGuests[i];
+            if (!g) return;
+            editingSlug = g.slug;
+            editingName = g.nama;
+            renderGeneratorGuests();
+            const input = document.getElementById('edit-guest-name');
+            if (input) { input.focus(); try { input.setSelectionRange(input.value.length, input.value.length); } catch (e) {} }
+        }
+
+        function cancelEditGuest() {
+            editingSlug = null;
+            editingName = '';
+            renderGeneratorGuests();
+        }
+
+        async function saveEditGuest() {
+            const input = document.getElementById('edit-guest-name');
+            const nama = input ? input.value.trim() : '';
+            if (!nama) { alert('Nama tamu tidak boleh kosong.'); return; }
+            if (!editingSlug) return;
+            try {
+                const res = await fetch("{{ url('api/update_generator_guest') }}", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ invitation_id: invitationId, slug: editingSlug, nama })
+                });
+                const data = await res.json();
+                if (!data.success) { alert(data.message || 'Gagal menyimpan.'); return; }
+                const orig = generatorGuests.find(g => g.slug === editingSlug);
+                if (orig) orig.nama = nama;
+                const bulk = bulkResults.find(r => r.slug === editingSlug);
+                if (bulk) { bulk.nama = nama; renderBulkTable(); }
+                if (currentGuestSlug === editingSlug) {
+                    document.getElementById('guest_name').value = nama;
+                    document.getElementById('result-message').value = buildWaMessage(nama, `${baseUrl}/${invSlug}?to=${editingSlug}`);
+                }
+                editingSlug = null;
+                editingName = '';
+                renderGeneratorGuests();
+            } catch (e) {
+                alert('Terjadi kesalahan sistem.');
+            }
+        }
+
+        async function deleteGeneratorGuest(i) {
+            const g = filteredGeneratorGuests[i];
+            if (!g) return;
+            if (!confirm(`Hapus tamu "${g.nama}"? Link undangannya tidak akan berfungsi lagi.`)) return;
+            try {
+                const res = await fetch("{{ url('api/delete_generator_guest') }}", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ invitation_id: invitationId, slug: g.slug })
+                });
+                const data = await res.json();
+                if (!data.success) { alert(data.message || 'Gagal menghapus.'); return; }
+                generatorGuests = generatorGuests.filter(x => x.slug !== g.slug);
+                bulkResults = bulkResults.filter(r => r.slug !== g.slug);
+                renderBulkTable();
+                if (editingSlug === g.slug) { editingSlug = null; editingName = ''; }
+                if (currentGuestSlug === g.slug) {
+                    currentGuestSlug = '';
+                    currentGuestPhone = '';
+                    document.getElementById('result-container').classList.add('hidden');
+                }
+                renderGeneratorGuests();
+            } catch (e) {
+                alert('Terjadi kesalahan sistem.');
+            }
+        }
+
+        document.getElementById('generator-guest-search').addEventListener('input', function () {
+            guestSearchTerm = this.value.trim().toLowerCase();
+            renderGeneratorGuests();
+        });
 
         function parseBulkInput(text) {
             const guests = [];
@@ -613,6 +785,7 @@
         }
 
         loadGeneratorGuests();
+        initTemplateUI();
     </script>
 </body>
 

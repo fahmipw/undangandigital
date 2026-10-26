@@ -377,6 +377,57 @@ class ApiController extends Controller
     }
 
     /**
+     * Edit nama tamu dari halaman Link Generator. Slug (dan link) SENGAJA
+     * tidak diubah supaya link yang sudah terkirim tidak rusak. Nama baru
+     * yang persis sama dengan tamu lain ditolak agar tidak dobel.
+     */
+    public function updateGeneratorGuest(Request $request)
+    {
+        $json = json_decode($request->getContent(), true) ?? [];
+        if (!empty($json)) {
+            $request->merge($json);
+        }
+        $invitation_id = $request->input('invitation_id', 1);
+        $slug = trim($request->input('slug', ''));
+        $nama = trim($request->input('nama', ''));
+        if ($slug === '' || $nama === '') {
+            return response()->json(['success' => false, 'message' => 'Slug dan nama tamu tidak boleh kosong.'], 422);
+        }
+        $guest = \App\Models\Guest::where('invitation_id', $invitation_id)->where('slug', $slug)->first();
+        if (!$guest) {
+            return response()->json(['success' => false, 'message' => 'Tamu tidak ditemukan.'], 404);
+        }
+        $others = \App\Models\Guest::where('invitation_id', $invitation_id)->where('id', '!=', $guest->id)->get(['nama']);
+        foreach ($others as $o) {
+            if (mb_strtolower(trim($o->nama)) === mb_strtolower($nama)) {
+                return response()->json(['success' => false, 'message' => 'Nama tersebut sudah dipakai tamu lain.'], 422);
+            }
+        }
+        $guest->nama = $nama;
+        $guest->save();
+        return response()->json(['success' => true, 'data' => ['id' => $guest->id, 'nama' => $guest->nama, 'slug' => $guest->slug, 'no_hp' => $guest->no_hp, 'wa_sent_at' => $this->waIso($guest->wa_sent_at ?? null)]]);
+    }
+
+    /** Hapus tamu dari halaman Link Generator (linknya ikut tidak berlaku). */
+    public function deleteGeneratorGuest(Request $request)
+    {
+        $json = json_decode($request->getContent(), true) ?? [];
+        if (!empty($json)) {
+            $request->merge($json);
+        }
+        $invitation_id = $request->input('invitation_id', 1);
+        $slug = trim($request->input('slug', ''));
+        if ($slug === '') {
+            return response()->json(['success' => false, 'message' => 'Slug tamu kosong.'], 422);
+        }
+        $deleted = \App\Models\Guest::where('invitation_id', $invitation_id)->where('slug', $slug)->delete();
+        if (!$deleted) {
+            return response()->json(['success' => false, 'message' => 'Tamu tidak ditemukan.'], 404);
+        }
+        return response()->json(['success' => true]);
+    }
+
+    /**
      * Format wa_sent_at untuk frontend: aplikasi memakai timezone UTC
      * (config/app.php), jadi nilai mentah "08:30:00" adalah UTC, bukan WIB.
      * Kalau dikirim mentah, JS menafsirkannya sebagai waktu lokal dan
