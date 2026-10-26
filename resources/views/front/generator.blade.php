@@ -136,7 +136,7 @@
                     placeholder="Tulis template sendiri di sini. Gunakan [nama] untuk nama tamu dan [link] untuk link undangan.&#10;&#10;Contoh: Halo [nama], kami mengundang Anda ke pernikahan kami. Silakan buka undangan di: [link]"
                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] transition-all text-sm bg-white disabled:bg-gray-100 disabled:text-gray-400"></textarea>
                 <p class="text-[10px] text-gray-500 mt-1">Pilihan dan template sendiri tersimpan di perangkat ini saja. Template yang dipilih berlaku untuk semua pesan WA dari halaman ini (tunggal, massal, dan daftar tamu).</p>
-                <div class="mt-3">
+                <div class="mt-3" id="template-preview-wrap">
                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2">Pratinjau</label>
                     <div id="template-preview" class="w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-gray-700 whitespace-pre-line"></div>
                 </div>
@@ -208,8 +208,8 @@
             <!-- Generate Massal -->
             <div class="mt-10 border-t border-gray-200 pt-6">
                 <h3 class="text-lg font-bold text-[#775a19] mb-2">Generate Massal</h3>
-                <p class="text-sm text-gray-600 mb-4">Tempel daftar tamu, satu tamu per baris. Format: <span class="font-semibold">Nama | nomor WA</span> (nomor boleh kosong). Pemisah juga bisa titik koma atau tab. Maksimal 100 tamu sekali generate; nama yang sudah ada tidak dibuat ulang.</p>
-                <textarea id="bulk-input" rows="6" placeholder="Keluarga Bpk. Budi | 628123456789&#10;Ibu Sari&#10;Bpk. Ahmad | 628987654321"
+                <p class="text-sm text-gray-600 mb-4">Tempel daftar tamu, satu tamu per baris. Format: <span class="font-semibold">Nama, nomor WA</span> (pisahkan dengan koma; nomor boleh kosong). Contoh: Budi, 08123456789. Maksimal 100 tamu sekali generate; nama yang sudah ada tidak dibuat ulang.</p>
+                <textarea id="bulk-input" rows="6" placeholder="Budi, 08123456789&#10;Ibu Sari&#10;Ahmad, 628987654321"
                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] transition-all text-sm"></textarea>
                 <button type="button" id="btn-bulk" onclick="generateBulk()"
                     class="mt-4 w-full btn-primary font-bold uppercase tracking-widest py-3 rounded-xl flex items-center justify-center gap-2">
@@ -313,9 +313,21 @@
             return `Kepada Yth,\n*${name}*\nDitempat\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i, teman dan juga sahabat, untuk menghadiri acara Resepsi kami\n\n*${groom} & ${bride}*\n\nPesan ini merupakan undangan resmi dari kami. Silahkan kunjungi link berikut untuk membuka undangan anda:\n${link}\n\nMerupakan suatu kebahagiaan jika Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu untuk kami. Terima kasih banyak atas waktu & perhatiannya.`;
         }
 
+        // Saat mode Sendiri dipilih, pratinjau sistem tidak ditampilkan:
+        // kotak pratinjau disembunyikan sampai template sendiri ditulis,
+        // dan setelah itu pratinjau menampilkan template sendiri tersebut
+        // (bukan template sistem). Pengiriman dengan template sendiri yang
+        // masih kosong tetap memakai template sistem sebagai pengaman.
         function updateTemplatePreview() {
+            const wrap = document.getElementById('template-preview-wrap');
             const el = document.getElementById('template-preview');
-            if (el) el.textContent = buildWaMessage('Nama Tamu', `${baseUrl}/${invSlug}?to=nama-tamu`);
+            if (!wrap || !el) return;
+            if (templateMode === 'sendiri' && !customTemplate.trim()) {
+                wrap.classList.add('hidden');
+                return;
+            }
+            wrap.classList.remove('hidden');
+            el.textContent = buildWaMessage('Nama Tamu', `${baseUrl}/${invSlug}?to=nama-tamu`);
         }
 
         function initTemplateUI() {
@@ -636,15 +648,18 @@
             renderGeneratorGuests();
         });
 
+        // Format massal: "Nama, nomor WA" — koma saja sebagai pemisah.
+        // Baris tanpa koma berarti nama saja (nomor kosong).
         function parseBulkInput(text) {
             const guests = [];
             text.split('\n').forEach(line => {
                 const trimmed = line.trim();
                 if (!trimmed) return;
-                const parts = trimmed.split(/[|;\t]/).map(p => p.trim());
-                const nama = parts[0] || '';
+                const comma = trimmed.indexOf(',');
+                const nama = (comma === -1 ? trimmed : trimmed.slice(0, comma)).trim();
+                const no_hp = comma === -1 ? '' : trimmed.slice(comma + 1).trim();
                 if (!nama) return;
-                guests.push({ nama, no_hp: parts[1] || '' });
+                guests.push({ nama, no_hp });
             });
             return guests;
         }
