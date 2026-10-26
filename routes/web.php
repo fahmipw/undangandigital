@@ -37,6 +37,8 @@ Route::get('api/checkin_stats', [ApiController::class, 'checkinStats']);
 // --- Generator Route ---
 Route::get('/generator/{slug}', [FrontController::class, 'generator']);
 Route::post('api/generate_guest', [ApiController::class, 'generateGuest'])->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
+Route::get('api/search_guest', [ApiController::class, 'searchGuest']);
+Route::post('api/generate_guests_bulk', [ApiController::class, 'generateGuestsBulk'])->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
 
 // --- QR Check-in panitia (tanpa login, token di URL) ---
 Route::get('/checkin/{slug}/{token}', [FrontController::class, 'checkinPage']);

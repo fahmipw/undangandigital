@@ -233,4 +233,92 @@ class ApiController extends Controller
             'data' => $guest
         ]);
     }
+
+    /**
+     * Cari tamu yang sudah ada (untuk Link Generator, poin "cari tamu").
+     * Sengaja dibatasi: minimal 3 karakter, maksimal 5 hasil, dan TIDAK
+     * mengembalikan no_hp / qr_code — hanya nama + slug pembentuk link.
+     */
+    public function searchGuest(Request $request)
+    {
+        $invitation_id = $request->query('invitation_id', 1);
+        $q = trim($request->query('q', ''));
+        if (mb_strlen($q) < 3) {
+            return response()->json(['success' => true, 'data' => []]);
+        }
+        $rows = \App\Models\Guest::where('invitation_id', $invitation_id)
+            ->where('nama', 'LIKE', '%' . $q . '%')
+            ->orderBy('nama', 'ASC')->limit(5)
+            ->get(['nama', 'slug']);
+        return response()->json(['success' => true, 'data' => $rows]);
+    }
+
+    /**
+     * Generate massal untuk Link Generator: satu request, banyak tamu.
+     * Dibatasi 100 tamu per request. Nama yang persis sama (abaikan
+     * huruf besar/kecil) dengan tamu yang sudah ada TIDAK dibuat ulang,
+     * melainkan dikembalikan dengan existed=true agar tidak dobel.
+     */
+    public function generateGuestsBulk(Request $request)
+    {
+        $json = json_decode($request->getContent(), true) ?? [];
+        if (!empty($json)) {
+            $request->merge($json);
+        }
+
+        $invitation_id = $request->input('invitation_id', 1);
+        $guests = $request->input('guests', []);
+        if (!is_array($guests) || empty($guests)) {
+            return response()->json(['success' => false, 'message' => 'Daftar tamu kosong.'], 422);
+        }
+        if (count($guests) > 100) {
+            return response()->json(['success' => false, 'message' => 'Maksimal 100 tamu per generate massal.'], 422);
+        }
+
+        $existing = \App\Models\Guest::where('invitation_id', $invitation_id)->get(['nama', 'slug']);
+        $existingByName = [];
+        foreach ($existing as $e) {
+            $existingByName[mb_strtolower(trim($e->nama))] = $e;
+        }
+
+        $results = [];
+        $seenInBatch = [];
+        foreach ($guests as $g) {
+            $nama = trim(is_array($g) ? ($g['nama'] ?? '') : '');
+            if ($nama === '') continue;
+            $key = mb_strtolower($nama);
+            if (isset($seenInBatch[$key])) continue;
+            $seenInBatch[$key] = true;
+
+            $no_hp = trim(is_array($g) ? ($g['no_hp'] ?? '') : '');
+            $no_hp = preg_replace('/\D/', '', $no_hp);
+            if (substr($no_hp, 0, 1) === '0') {
+                $no_hp = '62' . substr($no_hp, 1);
+            }
+
+            if (isset($existingByName[$key])) {
+                $results[] = ['nama' => $existingByName[$key]->nama, 'slug' => $existingByName[$key]->slug, 'no_hp' => $no_hp, 'existed' => true];
+                continue;
+            }
+
+            $slug = \Illuminate\Support\Str::slug($nama);
+            if ($slug === '') $slug = 'tamu';
+            $count = \App\Models\Guest::where('invitation_id', $invitation_id)->where('slug', $slug)->count();
+            if ($count > 0) {
+                $slug = $slug . '-' . time() . '-' . count($results);
+            }
+
+            $guest = \App\Models\Guest::create([
+                'invitation_id' => $invitation_id,
+                'nama' => $nama,
+                'slug' => $slug,
+                'no_hp' => $no_hp,
+                'qr_code' => \App\Models\Guest::newQrCode($invitation_id)
+            ]);
+            $existingByName[$key] = $guest;
+            $results[] = ['nama' => $guest->nama, 'slug' => $guest->slug, 'no_hp' => $no_hp, 'existed' => false];
+        }
+
+        return response()->json(['success' => true, 'data' => $results]);
+    }
 }

@@ -63,8 +63,10 @@
                 <div class="mb-4">
                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2">Nama Tamu
                         *</label>
-                    <input type="text" id="guest_name" required placeholder="Contoh: Keluarga Bpk. Budi"
+                    <input type="text" id="guest_name" required placeholder="Contoh: Keluarga Bpk. Budi" autocomplete="off"
                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] transition-all">
+                    <div id="guest-suggestions" class="hidden mt-2 border border-gray-200 rounded-xl overflow-hidden"></div>
+                    <p class="text-[10px] text-gray-500 mt-1">Ketik minimal 3 huruf: bila tamu sudah ada, link lamanya akan muncul agar tidak dobel.</p>
                 </div>
                 <div class="mb-6">
                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2">No. WhatsApp
@@ -120,6 +122,46 @@
             </div>
 
 
+            <!-- Generate Massal -->
+            <div class="mt-10 border-t border-gray-200 pt-6">
+                <h3 class="text-lg font-bold text-[#775a19] mb-2">Generate Massal</h3>
+                <p class="text-sm text-gray-600 mb-4">Tempel daftar tamu, satu tamu per baris. Format: <span class="font-semibold">Nama | nomor WA</span> (nomor boleh kosong). Pemisah juga bisa titik koma atau tab. Maksimal 100 tamu sekali generate; nama yang sudah ada tidak dibuat ulang.</p>
+                <textarea id="bulk-input" rows="6" placeholder="Keluarga Bpk. Budi | 628123456789&#10;Ibu Sari&#10;Bpk. Ahmad | 628987654321"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] transition-all text-sm"></textarea>
+                <button type="button" id="btn-bulk" onclick="generateBulk()"
+                    class="mt-4 w-full btn-primary font-bold uppercase tracking-widest py-3 rounded-xl flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">groups</span>
+                    Generate Massal
+                </button>
+
+                <div id="bulk-result" class="hidden mt-6">
+                    <p id="bulk-summary" class="text-sm font-semibold text-gray-700 mb-3"></p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button type="button" onclick="copyAllBulkLinks()" id="btn-copy-all"
+                            class="btn-outline font-bold uppercase tracking-widest py-2 px-4 rounded-xl text-xs flex items-center gap-2">
+                            <span class="material-symbols-outlined text-base">content_copy</span> Salin Semua Link
+                        </button>
+                        <button type="button" onclick="downloadBulkCsv()"
+                            class="btn-outline font-bold uppercase tracking-widest py-2 px-4 rounded-xl text-xs flex items-center gap-2">
+                            <span class="material-symbols-outlined text-base">download</span> Unduh CSV
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto border border-gray-200 rounded-xl">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-gray-50 text-xs uppercase tracking-widest text-gray-500">
+                                <tr>
+                                    <th class="px-3 py-2">Nama</th>
+                                    <th class="px-3 py-2">Link</th>
+                                    <th class="px-3 py-2">Status</th>
+                                    <th class="px-3 py-2">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulk-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
     </div>
@@ -132,6 +174,50 @@
         const baseUrl = "{{ url('/') }}";
 
         let currentGuestPhone = "";
+        let bulkResults = [];
+
+        function escHtml(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        function buildWaMessage(name, link) {
+            return `Kepada Yth,\n*${name}*\nDitempat\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i, teman dan juga sahabat, untuk menghadiri acara Resepsi kami\n\n*${groom} & ${bride}*\n\nPesan ini merupakan undangan resmi dari kami. Silahkan kunjungi link berikut untuk membuka undangan anda:\n${link}\n\nMerupakan suatu kebahagiaan jika Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu untuk kami. Terima kasih banyak atas waktu & perhatiannya.`;
+        }
+
+        function showExistingGuest(name, slug) {
+            const link = `${baseUrl}/${invSlug}?to=${slug}`;
+            document.getElementById('guest_name').value = name;
+            document.getElementById('result-link').value = link;
+            document.getElementById('result-message').value = buildWaMessage(name, link);
+            currentGuestPhone = '';
+            document.getElementById('result-container').classList.remove('hidden');
+            document.getElementById('guest-suggestions').classList.add('hidden');
+            document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        let searchTimer = null;
+        document.getElementById('guest_name').addEventListener('input', function () {
+            const q = this.value.trim();
+            const box = document.getElementById('guest-suggestions');
+            clearTimeout(searchTimer);
+            if (q.length < 3) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+            searchTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`{{ url('api/search_guest') }}?invitation_id=${invitationId}&q=${encodeURIComponent(q)}`);
+                    const data = await res.json();
+                    if (!data.success || !data.data.length) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+                    box.innerHTML = `<div class="px-3 py-2 bg-amber-50 text-[11px] font-bold text-amber-800 uppercase tracking-widest">Tamu sudah ada — pakai link ini supaya tidak dobel:</div>` + data.data.map(g =>
+                        `<button type="button" onclick="showExistingGuest(${JSON.stringify(g.nama)}, ${JSON.stringify(g.slug)})" class="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm border-t border-gray-100">${escHtml(g.nama)}</button>`
+                    ).join('');
+                    box.classList.remove('hidden');
+                } catch (e) { /* abaikan */ }
+            }, 300);
+        });
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('#guest-suggestions') && e.target.id !== 'guest_name') {
+                document.getElementById('guest-suggestions').classList.add('hidden');
+            }
+        });
 
         async function generateLink(e) {
             e.preventDefault();
@@ -158,7 +244,7 @@
                     const guestSlug = data.data.slug;
                     const inviteLink = `${baseUrl}/${invSlug}?to=${guestSlug}`;
 
-                    const message = `Kepada Yth,\n*${nameInput}*\nDitempat\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i, teman dan juga sahabat, untuk menghadiri acara Resepsi kami\n\n*${groom} & ${bride}*\n\nPesan ini merupakan undangan resmi dari kami. Silahkan kunjungi link berikut untuk membuka undangan anda:\n${inviteLink}\n\nMerupakan suatu kebahagiaan jika Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu untuk kami. Terima kasih banyak atas waktu & perhatiannya.`;
+                    const message = buildWaMessage(nameInput, inviteLink);
 
                     document.getElementById('result-link').value = inviteLink;
                     document.getElementById('result-message').value = message;
@@ -177,6 +263,99 @@
                 btn.disabled = false;
                 btn.innerHTML = '<span class="material-symbols-outlined">link</span> Generate Link';
             }
+        }
+
+        function parseBulkInput(text) {
+            const guests = [];
+            text.split('\n').forEach(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
+                const parts = trimmed.split(/[|;\t]/).map(p => p.trim());
+                const nama = parts[0] || '';
+                if (!nama) return;
+                guests.push({ nama, no_hp: parts[1] || '' });
+            });
+            return guests;
+        }
+
+        function bulkWaUrl(name, link, phone) {
+            let waUrl = `https://wa.me/`;
+            if (phone) {
+                let cleanPhone = String(phone).replace(/\D/g, '');
+                if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.substring(1);
+                waUrl += cleanPhone;
+            }
+            waUrl += `?text=${encodeURIComponent(buildWaMessage(name, link))}`;
+            return waUrl;
+        }
+
+        async function generateBulk() {
+            const btn = document.getElementById('btn-bulk');
+            const guests = parseBulkInput(document.getElementById('bulk-input').value);
+            if (!guests.length) { alert('Isi dulu daftar tamunya, satu tamu per baris.'); return; }
+            if (guests.length > 100) { alert('Maksimal 100 tamu sekali generate. Daftar ini berisi ' + guests.length + ' tamu.'); return; }
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Generating...';
+            try {
+                const res = await fetch("{{ url('api/generate_guests_bulk') }}", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ invitation_id: invitationId, guests })
+                });
+                const data = await res.json();
+                if (!data.success) { alert(data.message || 'Gagal generate massal.'); return; }
+                bulkResults = (data.data || []).map(r => ({ ...r, link: `${baseUrl}/${invSlug}?to=${r.slug}` }));
+                const baru = bulkResults.filter(r => !r.existed).length;
+                const sudah = bulkResults.length - baru;
+                document.getElementById('bulk-summary').textContent = `Berhasil: ${bulkResults.length} link (${baru} baru, ${sudah} sudah ada). Baris kosong dan nama dobel di dalam daftar dilewati.`;
+                document.getElementById('bulk-tbody').innerHTML = bulkResults.map((r, i) =>
+                    `<tr class="border-t border-gray-100">
+                        <td class="px-3 py-2 font-semibold">${escHtml(r.nama)}</td>
+                        <td class="px-3 py-2"><input type="text" readonly value="${escHtml(r.link)}" class="bg-gray-50 text-xs p-2 rounded w-full outline-none"></td>
+                        <td class="px-3 py-2"><span class="text-[11px] font-bold ${r.existed ? 'text-amber-600' : 'text-green-600'}">${r.existed ? 'SUDAH ADA' : 'BARU'}</span></td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            <button type="button" onclick="copyBulkLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><span class="material-symbols-outlined text-base">content_copy</span></button>
+                            <button type="button" onclick="window.open(bulkWaUrl(${JSON.stringify(r.nama)}, ${JSON.stringify(r.link)}, ${JSON.stringify(r.no_hp || '')}), '_blank')" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><span class="material-symbols-outlined text-base">send</span></button>
+                        </td>
+                    </tr>`
+                ).join('');
+                document.getElementById('bulk-result').classList.remove('hidden');
+            } catch (err) {
+                alert('Terjadi kesalahan sistem. Pastikan server berjalan.');
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-symbols-outlined">groups</span> Generate Massal';
+            }
+        }
+
+        function copyBulkLink(i) {
+            if (!bulkResults[i]) return;
+            navigator.clipboard.writeText(bulkResults[i].link);
+        }
+
+        function copyAllBulkLinks() {
+            if (!bulkResults.length) return;
+            navigator.clipboard.writeText(bulkResults.map(r => r.link).join('\n')).then(() => {
+                const btn = document.getElementById('btn-copy-all');
+                const ori = btn.innerHTML;
+                btn.innerHTML = '<span class="material-symbols-outlined text-base">check</span> Tersalin';
+                setTimeout(() => { btn.innerHTML = ori; }, 2000);
+            });
+        }
+
+        function downloadBulkCsv() {
+            if (!bulkResults.length) return;
+            const escCsv = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+            const rows = [['Nama', 'Link', 'Status']];
+            bulkResults.forEach(r => rows.push([r.nama, r.link, r.existed ? 'Sudah ada' : 'Baru']));
+            const csv = '\uFEFF' + rows.map(r => r.map(escCsv).join(';')).join('\r\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'link-tamu-' + invSlug + '.csv';
+            a.click();
+            URL.revokeObjectURL(a.href);
         }
 
         function copyMessage() {
