@@ -196,6 +196,7 @@
         }
 
         let searchTimer = null;
+        let lastSearchResults = [];
         document.getElementById('guest_name').addEventListener('input', function () {
             const q = this.value.trim();
             const box = document.getElementById('guest-suggestions');
@@ -206,9 +207,20 @@
                     const res = await fetch(`{{ url('api/search_guest') }}?invitation_id=${invitationId}&q=${encodeURIComponent(q)}`);
                     const data = await res.json();
                     if (!data.success || !data.data.length) { box.classList.add('hidden'); box.innerHTML = ''; return; }
-                    box.innerHTML = `<div class="px-3 py-2 bg-amber-50 text-[11px] font-bold text-amber-800 uppercase tracking-widest">Tamu sudah ada — pakai link ini supaya tidak dobel:</div>` + data.data.map(g =>
-                        `<button type="button" onclick="showExistingGuest(${JSON.stringify(g.nama)}, ${JSON.stringify(g.slug)})" class="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm border-t border-gray-100">${escHtml(g.nama)}</button>`
+                    lastSearchResults = data.data;
+                    // Tombol saran TIDAK boleh memakai onclick="...JSON.stringify..."
+                    // karena string JSON bertanda petik ganda akan memotong atribut
+                    // onclick yang juga bertanda petik ganda sehingga kliknya mati.
+                    // Sebagai gantinya pakai data-idx + addEventListener.
+                    box.innerHTML = `<div class="px-3 py-2 bg-amber-50 text-[11px] font-bold text-amber-800 uppercase tracking-widest">Tamu sudah ada — pakai link ini supaya tidak dobel:</div>` + data.data.map((g, i) =>
+                        `<button type="button" data-idx="${i}" class="suggestion-btn w-full text-left px-3 py-2 hover:bg-gray-50 text-sm border-t border-gray-100">${escHtml(g.nama)}</button>`
                     ).join('');
+                    box.querySelectorAll('.suggestion-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const g = lastSearchResults[Number(btn.dataset.idx)];
+                            if (g) showExistingGuest(g.nama, g.slug);
+                        });
+                    });
                     box.classList.remove('hidden');
                 } catch (e) { /* abaikan */ }
             }, 300);
@@ -315,7 +327,7 @@
                         <td class="px-3 py-2"><span class="text-[11px] font-bold ${r.existed ? 'text-amber-600' : 'text-green-600'}">${r.existed ? 'SUDAH ADA' : 'BARU'}</span></td>
                         <td class="px-3 py-2 whitespace-nowrap">
                             <button type="button" onclick="copyBulkLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><span class="material-symbols-outlined text-base">content_copy</span></button>
-                            <button type="button" onclick="window.open(bulkWaUrl(${JSON.stringify(r.nama)}, ${JSON.stringify(r.link)}, ${JSON.stringify(r.no_hp || '')}), '_blank')" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><span class="material-symbols-outlined text-base">send</span></button>
+                            <button type="button" onclick="sendBulkWA(${i})" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><span class="material-symbols-outlined text-base">send</span></button>
                         </td>
                     </tr>`
                 ).join('');
@@ -332,6 +344,12 @@
         function copyBulkLink(i) {
             if (!bulkResults[i]) return;
             navigator.clipboard.writeText(bulkResults[i].link);
+        }
+
+        function sendBulkWA(i) {
+            const r = bulkResults[i];
+            if (!r) return;
+            window.open(bulkWaUrl(r.nama, r.link, r.no_hp || ''), '_blank');
         }
 
         function copyAllBulkLinks() {
