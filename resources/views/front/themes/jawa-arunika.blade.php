@@ -863,7 +863,7 @@ document.getElementById("musicFloat").addEventListener("click", async function()
   if(musicOn){
     const url=await resolveMusicUrl();
     if(url){ audioEl=new Audio(url); audioEl.loop=true; audioEl.volume=(JWA.musicVol||50)/100;
-      try{ await audioEl.play(); toast("Musik diputar"); }
+      try{ await audioEl.play(); }
       catch(e){ musicOn=false; this.classList.remove("playing"); toast("Musik tidak dapat diputar"); }
     } else { musicOn=false; this.classList.remove("playing"); toast("Belum ada musik pengiring"); }
   } else { if(audioEl){ audioEl.pause(); audioEl=null; } toast("Musik dijeda"); }

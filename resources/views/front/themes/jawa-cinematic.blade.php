@@ -311,21 +311,7 @@ tailwind.config = {
     </div>
   </section>
 
-  <!-- ============ DRESS CODE ============ -->
-  <section data-bg="#F8F5EE" class="relative px-6 py-24 text-center">
-    <p class="reveal text-golddim tracking-[.4em] text-[11px] mb-3">DRESS CODE</p>
-    <h3 class="reveal font-display text-mochadark text-4xl mb-6">Berbusana <span class="gold-text">Terbaik</span></h3>
-    <div class="reveal card-ivory rounded-2xl border border-gold/50 p-8 shadow-lg">
-      <p class="font-serif italic text-xl text-mochadark/90 leading-relaxed">{{ jwcGet('dress_code','Kami sangat menghargai kehadiran Bapak/Ibu/Saudara/i dengan busana batik atau busana formal bernuansa earth tone.') }}</p>
-      <div class="flex justify-center gap-3 mt-6" aria-hidden="true">
-        <span class="w-10 h-10 rounded-full border border-gold/60" style="background:#0A192F"></span>
-        <span class="w-10 h-10 rounded-full border border-gold/60" style="background:#D4AF37"></span>
-        <span class="w-10 h-10 rounded-full border border-gold/60" style="background:#C67B5C"></span>
-        <span class="w-10 h-10 rounded-full border border-gold/60" style="background:#4A3728"></span>
-        <span class="w-10 h-10 rounded-full border border-gold/60" style="background:#F8F5EE"></span>
-      </div>
-    </div>
-  </section>
+
 
   <!-- ============ GALERI ============ -->
   <section data-bg="#0A192F" class="relative px-6 py-24" id="sec-galeri">
@@ -566,7 +552,7 @@ async function toggleMusic(){
     if(url){audioEl=new Audio(url);audioEl.loop=true; audioEl.volume=(JC.musicVol||50)/100;
       try{await audioEl.play();}catch(e){musicOn=false;vinyl.classList.remove("playing");toast("Musik tidak dapat diputar");}
     }else{try{ac().resume();}catch(e){} stepIdx=0; pluckStep();}
-    if(musicOn) toast("Musik diputar untuk "+JC.guestName);
+
   }else{
     if(audioEl){audioEl.pause();audioEl=null;}
     clearTimeout(pluckTimer);

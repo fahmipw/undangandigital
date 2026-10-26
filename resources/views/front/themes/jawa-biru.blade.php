@@ -712,6 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const audioEl = document.getElementById('bgMusic');
   const musicFloat = document.getElementById('musicFloat');
   let audioStarted = false;
+  let gateOpened = false;
   async function initAudio() {
     try {
       const res = await fetch('/api/music?inv_id=' + (typeof INV_ID !== 'undefined' ? INV_ID : ''));
@@ -723,6 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (e) { /* abaikan */ }
     if (!audioEl.src && MUSIC_URL) { audioEl.src = MUSIC_URL; audioEl.load(); }
+    if (audioEl.src && gateOpened) { musicFloat.classList.remove('hidden'); if (MUS_AUTO && !audioStarted) playMusic(); }
   }
   initAudio();
 
@@ -750,7 +752,8 @@ document.addEventListener('DOMContentLoaded', () => {
           document.body.classList.remove('is-locked');
           const fm = document.getElementById('floatMenu');
           if (fm) fm.classList.remove('hidden');
-          if (musicFloat && audioEl.src) musicFloat.classList.remove('hidden');
+          gateOpened = true;
+          if (musicFloat) musicFloat.classList.remove('hidden');
           animateHero();
           ScrollTrigger.refresh();
         }

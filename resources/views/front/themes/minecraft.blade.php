@@ -435,7 +435,7 @@ body:not(.gate-open) .float-btns{display:none!important}
       </div>
       @endforeach
       @if(mcGet('gift_address'))<div class="mc-panel acct" style="grid-column:1/-1"><div class="bank">KIRIM HADIAH FISIK</div><div class="an">{{ mcGet('gift_address') }}</div>@if($giftRecipient)<div class="an" style="margin-top:6px">Penerima: {{ $giftRecipient }}</div>@endif
-      @if(mcGet('gift_maps_link'))<div style="margin-top:12px"><a href="{{ mcGet('gift_maps_link') }}" target="_blank" style="display:inline-block;padding:10px 26px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;opacity:.85">Lihat Peta</a></div>@endif</div>@endif
+      @if(mcGet('gift_maps_link'))<div style="margin-top:12px"><a href="{{ mcGet('gift_maps_link') }}" target="_blank" style="display:inline-block;padding:10px 26px;border:1px solid currentColor;color:inherit;border-radius:999px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;opacity:.85">Lihat Peta</a></div>@endif</div>@endif
     </div>
   </section>
   @endif
