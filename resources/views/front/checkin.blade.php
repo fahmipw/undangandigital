@@ -86,14 +86,16 @@
 
 <script>
 var INV_ID = {{ (int)$inv_id }};
+// Zona waktu acara dari Data Utama (WIB/WITA/WIT, default WIB).
+var EVENT_TZ_LABEL = "{{ $event_timezone ?? 'WIB' }}";
+var EVENT_TZ_IANA = {WIB: 'Asia/Jakarta', WITA: 'Asia/Makassar', WIT: 'Asia/Jayapura'}[EVENT_TZ_LABEL] || 'Asia/Jakarta';
 var scanner = null, scanning = false, lastScan = 0;
 
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 
 // Server menyimpan waktu dalam UTC; string tanpa zona harus dibaca sebagai
-// UTC (bukan waktu lokal) lalu ditampilkan eksplisit dalam WIB — kalau tidak,
-// jam tampil 7 jam lebih lambat dari jam dinding (bug yang sama seperti
-// waktu kirim WA dulu).
+// UTC (bukan waktu lokal) lalu ditampilkan dalam zona waktu acara
+// (Data Utama: WIB/WITA/WIT) — bukan hardcode WIB lagi.
 function parseServerTime(s){
   if(!s) return null;
   var t = String(s).trim().replace(' ', 'T');
@@ -101,10 +103,10 @@ function parseServerTime(s){
   var d = new Date(t);
   return isNaN(d.getTime()) ? null : d;
 }
-function formatWib(s){
+function formatEventTime(s){
   var d = parseServerTime(s);
   if(!d) return s || '';
-  return d.toLocaleString('id-ID', {timeZone:'Asia/Jakarta', day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '') + ' WIB';
+  return d.toLocaleString('id-ID', {timeZone:EVENT_TZ_IANA, day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '') + ' ' + EVENT_TZ_LABEL;
 }
 
 function showRes(ok, title, sub){
@@ -129,7 +131,7 @@ async function doCheckin(code){
     var d = await res.json();
     if(d.success){
       showRes(true, d.already ? 'SUDAH HADIR' : 'CHECK-IN BERHASIL',
-        d.nama + (d.already ? ' (sudah tercatat)' : ' • ' + formatWib(d.checked_in_at)));
+        d.nama + (d.already ? ' (sudah tercatat)' : ' • ' + formatEventTime(d.checked_in_at)));
       // Animasi diputar untuk semua scan yang berhasil — check-in baru
       // maupun scan ulang tamu yang sudah hadir (teksnya dibedakan).
       showSuccessAnim(d.nama, d.already);
@@ -238,7 +240,7 @@ async function refreshStats(){
     document.getElementById('st-out').textContent = d.total - d.checked_in;
     document.getElementById('recent').innerHTML = d.recent.length
       ? d.recent.map(function(r){
-          return '<div class="recent-item"><span>' + esc(r.nama) + '</span><small>' + esc(formatWib(r.checked_in_at)) + '</small></div>';
+          return '<div class="recent-item"><span>' + esc(r.nama) + '</span><small>' + esc(formatEventTime(r.checked_in_at)) + '</small></div>';
         }).join('')
       : '<div class="empty">Belum ada check-in.</div>';
   }catch(e){}

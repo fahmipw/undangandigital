@@ -127,6 +127,9 @@ class FrontController extends Controller
         return view('front.checkin', [
             'inv_id' => $invitation->id,
             'title' => $groom . ' & ' . $bride,
+            // Zona waktu acara dari Data Utama (WIB/WITA/WIT); dipakai
+            // halaman check-in untuk menampilkan jam, bukan hardcode WIB.
+            'event_timezone' => $settings['wedding_timezone'] ?? 'WIB',
         ]);
     }
 

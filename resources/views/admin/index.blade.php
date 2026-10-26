@@ -2215,13 +2215,14 @@
             const data = await res.json();
             const list = document.getElementById('guest-list');
             const baseUrl = window.location.origin + '/';
-            list.innerHTML = data.data.map(g => {
+            window._guestList = data.data || [];
+            list.innerHTML = data.data.map((g, i) => {
                 const link = `${baseUrl}${currentSlug}?to=${g.slug}`;
                 return `
                 <tr class="border-t border-outline-variant/20 hover:bg-secondary/5 transition-all">
                     <td class="px-6 py-4 font-semibold">${g.nama}</td>
                     <td class="px-6 py-4 text-xs">${g.no_hp || '-'}</td>
-                    <td class="px-6 py-4 text-center">${g.checked_in_at ? `<span class="material-symbols-outlined text-green-600" title="Hadir • ${g.checked_in_at}">check_circle</span>` : `<span class="material-symbols-outlined text-gray-300" title="Belum hadir">radio_button_unchecked</span>`}</td>
+                    <td class="px-6 py-4 text-center">${g.checked_in_at ? `<span class="material-symbols-outlined text-green-600" title="Hadir • ${ciTime(g.checked_in_at)}">check_circle</span>` : `<span class="material-symbols-outlined text-gray-300" title="Belum hadir">radio_button_unchecked</span>`}</td>
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-2">
                             <input type="text" readonly value="${link}" class="bg-secondary/5 text-[10px] p-2 rounded w-64 border-none outline-none">
@@ -2231,12 +2232,47 @@
                     <td class="px-6 py-4">
                         <div class="flex gap-2">
                             <button onclick="shareWA('${g.nama}', '${link}', '${g.no_hp}')" class="text-green-500 hover:scale-110" title="Kirim WA"><span class="material-symbols-outlined text-sm">chat</span></button>
+                            ${g.qr_code ? `<button onclick="downloadGuestQr(${i})" class="text-secondary hover:scale-110" title="Unduh QR"><span class="material-symbols-outlined text-sm">download</span></button>` : ''}
                             <button onclick="openEditGuest(${JSON.stringify(g).replace(/"/g, '&quot;')})" class="text-secondary hover:scale-110"><span class="material-symbols-outlined text-sm">edit</span></button>
                             <button onclick="deleteGuest(${g.id})" class="text-red-400 hover:scale-110"><span class="material-symbols-outlined text-sm">delete</span></button>
                         </div>
                     </td>
                 </tr>
             `}).join('');
+        }
+
+        // Unduh QR tamu sebagai PNG (512x512, cocok untuk cetak).
+        // Library qrcodejs dimuat malas dari CDN yang sama dengan yang
+        // dipakai tema undangan; QR dirender di elemen sementara lalu
+        // diunduh lewat canvas, tanpa mengubah halaman.
+        function loadQrLib(cb) {
+            if (window.QRCode) return cb(true);
+            const s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+            s.onload = () => cb(true);
+            s.onerror = () => cb(false);
+            document.head.appendChild(s);
+        }
+
+        function downloadGuestQr(i) {
+            const g = (window._guestList || [])[i];
+            if (!g || !g.qr_code) { alert('QR tamu ini belum dibuat.'); return; }
+            loadQrLib(ok => {
+                if (!ok) { alert('Gagal memuat library QR. Periksa koneksi internet.'); return; }
+                const holder = document.createElement('div');
+                holder.style.cssText = 'position:absolute;left:-9999px;top:0;';
+                document.body.appendChild(holder);
+                new QRCode(holder, { text: g.qr_code, width: 512, height: 512, correctLevel: QRCode.CorrectLevel.M });
+                const canvas = holder.querySelector('canvas');
+                const img = holder.querySelector('img');
+                const url = canvas ? canvas.toDataURL('image/png') : (img ? img.src : '');
+                document.body.removeChild(holder);
+                if (!url) { alert('Gagal membuat gambar QR.'); return; }
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'QR-' + String(g.nama).replace(/[^a-zA-Z0-9]+/g, '-') + '.png';
+                a.click();
+            });
         }
 
         function shareWA(nama, link, hp) {
@@ -2322,14 +2358,17 @@
         }
 
         // Server menyimpan waktu dalam UTC; string tanpa zona dibaca sebagai
-        // UTC lalu ditampilkan dalam WIB (kalau tidak, jam tampil 7 jam lambat).
+        // UTC lalu ditampilkan dalam zona waktu acara dari Data Utama
+        // (wedding_timezone: WIB/WITA/WIT), bukan hardcode WIB.
         function ciTime(s) {
             if (!s) return '';
             let t = String(s).trim().replace(' ', 'T');
             if (!/[+-]\d{2}:?\d{2}$/.test(t) && !t.endsWith('Z')) t += 'Z';
             const d = new Date(t);
             if (isNaN(d.getTime())) return s;
-            return d.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '') + ' WIB';
+            const label = (document.getElementById('set-wedding_timezone')?.value || 'WIB');
+            const iana = { WIB: 'Asia/Jakarta', WITA: 'Asia/Makassar', WIT: 'Asia/Jayapura' }[label] || 'Asia/Jakarta';
+            return d.toLocaleString('id-ID', { timeZone: iana, day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '') + ' ' + label;
         }
 
         async function refreshCiStats() {
