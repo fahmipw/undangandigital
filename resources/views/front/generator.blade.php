@@ -44,6 +44,66 @@
             background: #775a19;
             color: white;
         }
+
+        /* Tabel tamu muat penuh tanpa geser ke kanan */
+        .responsive-table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        .responsive-table th,
+        .responsive-table td {
+            overflow-wrap: anywhere;
+            vertical-align: middle;
+        }
+
+        .responsive-table input {
+            min-width: 0;
+        }
+
+        @media (max-width: 640px) {
+            .responsive-table thead {
+                display: none;
+            }
+
+            .responsive-table,
+            .responsive-table tbody,
+            .responsive-table tr,
+            .responsive-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .responsive-table tr {
+                border: 1px solid #e5e7eb;
+                border-radius: .75rem;
+                margin-bottom: .75rem;
+                padding: .5rem .75rem;
+            }
+
+            .responsive-table td {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: .5rem;
+                padding: .3rem 0;
+                border: none;
+            }
+
+            .responsive-table td::before {
+                content: attr(data-label);
+                font-size: 10px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: .05em;
+                color: #6b7280;
+                flex-shrink: 0;
+            }
+
+            .responsive-table td> * {
+                min-width: 0;
+            }
+        }
     </style>
 </head>
 
@@ -146,8 +206,9 @@
                             <span class="material-symbols-outlined text-base">download</span> Unduh CSV
                         </button>
                     </div>
-                    <div class="overflow-x-auto border border-gray-200 rounded-xl">
-                        <table class="w-full text-sm text-left">
+                    <div class="border border-gray-200 rounded-xl">
+                        <table class="responsive-table w-full text-sm text-left">
+                            <colgroup><col style="width:20%"><col style="width:32%"><col style="width:12%"><col style="width:18%"><col style="width:18%"></colgroup>
                             <thead class="bg-gray-50 text-xs uppercase tracking-widest text-gray-500">
                                 <tr>
                                     <th class="px-3 py-2">Nama</th>
@@ -173,8 +234,9 @@
                     </button>
                 </div>
                 <p class="text-sm text-gray-600 mb-4"><span id="generator-guest-count">0</span> tamu. Tanda <span class="font-semibold text-green-600">Sudah dikirim</span> muncul saat tombol Kirim WA diklik, atau saat ditandai manual — pengiriman di dalam aplikasi WhatsApp sendiri tidak bisa dilacak dari sini.</p>
-                <div class="overflow-x-auto border border-gray-200 rounded-xl max-h-96 overflow-y-auto">
-                    <table class="w-full text-sm text-left">
+                <div class="border border-gray-200 rounded-xl max-h-96 overflow-y-auto">
+                    <table class="responsive-table w-full text-sm text-left">
+                        <colgroup><col style="width:24%"><col style="width:36%"><col style="width:22%"><col style="width:18%"></colgroup>
                         <thead class="bg-gray-50 text-xs uppercase tracking-widest text-gray-500 sticky top-0">
                             <tr>
                                 <th class="px-3 py-2 bg-gray-50">Nama</th>
@@ -328,11 +390,23 @@
             }
         }
 
+        // Waktu server disimpan dalam UTC (config Laravel: UTC), sementara
+        // kode lama menafsirkan "2026-10-26 08:30:00" sebagai waktu lokal,
+        // sehingga jamnya meleset 7 jam padahal tanggalnya tetap benar.
+        // Perbaikan: string tanpa zona dianggap UTC (tambah 'Z'), string
+        // berzona ISO dipakai apa adanya, lalu ditampilkan eksplisit WIB.
+        function parseServerTime(s) {
+            if (!s) return null;
+            let t = String(s).trim().replace(' ', 'T');
+            if (!/[Zz]$/.test(t) && !/[+-]\d{2}:?\d{2}$/.test(t)) t += 'Z';
+            const d = new Date(t);
+            return isNaN(d) ? null : d;
+        }
+
         function formatWaDate(s) {
-            if (!s) return '';
-            const d = new Date(String(s).replace(' ', 'T'));
-            if (isNaN(d)) return '';
-            return d.toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const d = parseServerTime(s);
+            if (!d) return '';
+            return d.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         }
 
         function waBadge(g) {
@@ -356,14 +430,14 @@
             document.getElementById('generator-guest-empty').classList.toggle('hidden', generatorGuests.length > 0);
             document.getElementById('generator-guest-tbody').innerHTML = generatorGuests.map((g, i) =>
                 `<tr class="border-t border-gray-100">
-                    <td class="px-3 py-2 font-semibold">${escHtml(g.nama)}</td>
-                    <td class="px-3 py-2"><input type="text" readonly value="${escHtml(g.link)}" class="bg-gray-50 text-xs p-2 rounded w-full outline-none"></td>
-                    <td class="px-3 py-2">${waBadge(g)}</td>
-                    <td class="px-3 py-2 whitespace-nowrap">
+                    <td data-label="Nama" class="px-3 py-2 font-semibold">${escHtml(g.nama)}</td>
+                    <td data-label="Link" class="px-3 py-2"><input type="text" readonly value="${escHtml(g.link)}" class="bg-gray-50 text-xs p-2 rounded w-full min-w-0 outline-none"></td>
+                    <td data-label="Status WA" class="px-3 py-2">${waBadge(g)}</td>
+                    <td data-label="Aksi" class="px-3 py-2"><div class="flex gap-1 shrink-0">
                         <button type="button" onclick="copyGeneratorLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><span class="material-symbols-outlined text-base">content_copy</span></button>
                         <button type="button" onclick="sendGeneratorWA(${i})" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><span class="material-symbols-outlined text-base">send</span></button>
                         <button type="button" onclick="toggleGeneratorWA(${i})" class="p-1.5 text-amber-600 hover:bg-gray-100 rounded-lg" title="${g.wa_sent_at ? 'Batalkan tanda terkirim' : 'Tandai sudah dikirim'}"><span class="material-symbols-outlined text-base">${g.wa_sent_at ? 'undo' : 'check'}</span></button>
-                    </td>
+                    </div></td>
                 </tr>`
             ).join('');
         }
@@ -448,14 +522,14 @@
         function renderBulkTable() {
             document.getElementById('bulk-tbody').innerHTML = bulkResults.map((r, i) =>
                 `<tr class="border-t border-gray-100">
-                    <td class="px-3 py-2 font-semibold">${escHtml(r.nama)}</td>
-                    <td class="px-3 py-2"><input type="text" readonly value="${escHtml(r.link)}" class="bg-gray-50 text-xs p-2 rounded w-full outline-none"></td>
-                    <td class="px-3 py-2"><span class="text-[11px] font-bold ${r.existed ? 'text-amber-600' : 'text-green-600'}">${r.existed ? 'SUDAH ADA' : 'BARU'}</span></td>
-                    <td class="px-3 py-2">${waBadge(r)}</td>
-                    <td class="px-3 py-2 whitespace-nowrap">
+                    <td data-label="Nama" class="px-3 py-2 font-semibold">${escHtml(r.nama)}</td>
+                    <td data-label="Link" class="px-3 py-2"><input type="text" readonly value="${escHtml(r.link)}" class="bg-gray-50 text-xs p-2 rounded w-full min-w-0 outline-none"></td>
+                    <td data-label="Status" class="px-3 py-2"><span class="text-[11px] font-bold ${r.existed ? 'text-amber-600' : 'text-green-600'}">${r.existed ? 'SUDAH ADA' : 'BARU'}</span></td>
+                    <td data-label="Status WA" class="px-3 py-2">${waBadge(r)}</td>
+                    <td data-label="Aksi" class="px-3 py-2"><div class="flex gap-1 shrink-0">
                         <button type="button" onclick="copyBulkLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><span class="material-symbols-outlined text-base">content_copy</span></button>
                         <button type="button" onclick="sendBulkWA(${i})" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><span class="material-symbols-outlined text-base">send</span></button>
-                    </td>
+                    </div></td>
                 </tr>`
             ).join('');
         }

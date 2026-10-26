@@ -300,7 +300,7 @@ class ApiController extends Controller
             }
 
             if (isset($existingByName[$key])) {
-                $results[] = ['nama' => $existingByName[$key]->nama, 'slug' => $existingByName[$key]->slug, 'no_hp' => $no_hp, 'existed' => true, 'wa_sent_at' => ($hasWaCol && $existingByName[$key]->wa_sent_at) ? (string) $existingByName[$key]->wa_sent_at : null];
+                $results[] = ['nama' => $existingByName[$key]->nama, 'slug' => $existingByName[$key]->slug, 'no_hp' => $no_hp, 'existed' => true, 'wa_sent_at' => $this->waIso($hasWaCol ? $existingByName[$key]->wa_sent_at : null)];
                 continue;
             }
 
@@ -340,7 +340,7 @@ class ApiController extends Controller
         $rows = \App\Models\Guest::where('invitation_id', $invitation_id)
             ->orderBy('id', 'DESC')->get($cols)
             ->map(function ($g) {
-                return ['id' => $g->id, 'nama' => $g->nama, 'slug' => $g->slug, 'no_hp' => $g->no_hp, 'wa_sent_at' => isset($g->wa_sent_at) && $g->wa_sent_at ? (string) $g->wa_sent_at : null];
+                return ['id' => $g->id, 'nama' => $g->nama, 'slug' => $g->slug, 'no_hp' => $g->no_hp, 'wa_sent_at' => $this->waIso(isset($g->wa_sent_at) ? $g->wa_sent_at : null)];
             })->values();
         return response()->json(['success' => true, 'data' => $rows]);
     }
@@ -373,6 +373,24 @@ class ApiController extends Controller
             return response()->json(['success' => false, 'message' => 'Tamu tidak ditemukan.'], 404);
         }
         $guest = \App\Models\Guest::where('invitation_id', $invitation_id)->where('slug', $slug)->first(['wa_sent_at']);
-        return response()->json(['success' => true, 'wa_sent_at' => $guest && $guest->wa_sent_at ? (string) $guest->wa_sent_at : null]);
+        return response()->json(['success' => true, 'wa_sent_at' => $this->waIso($guest ? $guest->wa_sent_at : null)]);
+    }
+
+    /**
+     * Format wa_sent_at untuk frontend: aplikasi memakai timezone UTC
+     * (config/app.php), jadi nilai mentah "08:30:00" adalah UTC, bukan WIB.
+     * Kalau dikirim mentah, JS menafsirkannya sebagai waktu lokal dan
+     * jamnya meleset 7 jam (tanggal biasanya tetap benar). Karena itu
+     * kirim sebagai ISO berzona UTC (+00:00) agar JS mengonversinya
+     * dengan benar ke WIB.
+     */
+    private function waIso($value)
+    {
+        if (empty($value)) return null;
+        try {
+            return \Carbon\Carbon::parse($value, 'UTC')->toIso8601String();
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }
