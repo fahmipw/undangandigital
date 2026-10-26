@@ -80,7 +80,7 @@ $qrisName = jklGet('gift_qris_name', '');
 $musicUrl = null;
 if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
   $mp = $musicRecord->file_path;
-  $musicUrl = (str_starts_with($mp,'http') || str_starts_with($mp,'/')) ? $mp : asset('storage/'.ltrim($mp,'/'));
+  $musicUrl = (str_starts_with($mp,'http') || str_starts_with($mp,'/')) ? $mp : asset(ltrim($mp,'/'));
 }
 $musVol = (int) jklGet('music_volume', 50);
 $musAuto = jklGet('music_autoplay', '1') !== '0';
@@ -719,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
       const fp = data && data.music ? data.music.file_path : (data ? data.file_path : null);
       if (fp) {
-        audioEl.src = (fp.startsWith('http') || fp.startsWith('/')) ? fp : '/storage/' + fp.replace(/^\//, '');
+        audioEl.src = (fp.startsWith('http') || fp.startsWith('/')) ? fp : '/' + fp.replace(/^\//, '');
         audioEl.load();
       }
     } catch (e) { /* abaikan */ }

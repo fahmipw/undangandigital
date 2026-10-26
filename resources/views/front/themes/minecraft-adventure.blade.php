@@ -58,7 +58,7 @@ $qrisName = mcaGet('gift_qris_name', '');
 $musicUrl = null;
 if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
   $mp = $musicRecord->file_path;
-  $musicUrl = (str_starts_with($mp,'http') || str_starts_with($mp,'/')) ? $mp : asset('storage/'.ltrim($mp,'/'));
+  $musicUrl = (str_starts_with($mp,'http') || str_starts_with($mp,'/')) ? $mp : asset(ltrim($mp,'/'));
 }
 $musVol = (int) mcaGet('music_volume', 50);
 $musAuto = mcaGet('music_autoplay', '1') !== '0';
