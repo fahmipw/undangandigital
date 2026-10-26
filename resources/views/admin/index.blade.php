@@ -2321,6 +2321,17 @@
             alert('Link panitia baru dibuat.');
         }
 
+        // Server menyimpan waktu dalam UTC; string tanpa zona dibaca sebagai
+        // UTC lalu ditampilkan dalam WIB (kalau tidak, jam tampil 7 jam lambat).
+        function ciTime(s) {
+            if (!s) return '';
+            let t = String(s).trim().replace(' ', 'T');
+            if (!/[+-]\d{2}:?\d{2}$/.test(t) && !t.endsWith('Z')) t += 'Z';
+            const d = new Date(t);
+            if (isNaN(d.getTime())) return s;
+            return d.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '') + ' WIB';
+        }
+
         async function refreshCiStats() {
             try {
                 const res = await fetch(`api/checkin_stats?inv_id=${currentInvId}`);
@@ -2333,7 +2344,7 @@
                 box.innerHTML = d.recent.length ? d.recent.map(r =>
                     `<div class="flex justify-between items-center bg-white border border-outline-variant/30 rounded-xl px-4 py-2 text-sm">
                         <span class="font-semibold text-primary">${escapeHtml(r.nama)}</span>
-                        <span class="text-xs text-gray-500">${escapeHtml(r.checked_in_at || '')}</span>
+                        <span class="text-xs text-gray-500">${escapeHtml(ciTime(r.checked_in_at))}</span>
                     </div>`
                 ).join('') : '<p class="text-sm text-gray-400 italic">Belum ada check-in.</p>';
             } catch (e) {}

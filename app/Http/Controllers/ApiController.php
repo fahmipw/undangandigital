@@ -91,7 +91,10 @@ class ApiController extends Controller
             'success' => true,
             'nama' => $guest->nama,
             'already' => $already,
-            'checked_in_at' => $guest->checked_in_at ? (string) $guest->checked_in_at : null,
+            // ISO berzona UTC (bukan string polos) agar frontend menampilkannya
+            // dalam WIB, bukan waktu UTC mentah — akar masalah yang sama
+            // seperti waktu kirim WA sebelumnya.
+            'checked_in_at' => $this->waIso($guest->checked_in_at),
         ]);
     }
 
@@ -105,7 +108,10 @@ class ApiController extends Controller
         $total = \App\Models\Guest::where('invitation_id', $inv_id)->count();
         $checked = \App\Models\Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')->count();
         $recent = \App\Models\Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')
-            ->orderBy('checked_in_at', 'DESC')->limit(20)->get(['nama', 'checked_in_at']);
+            ->orderBy('checked_in_at', 'DESC')->limit(20)->get(['nama', 'checked_in_at'])
+            ->map(function ($g) {
+                return ['nama' => $g->nama, 'checked_in_at' => $this->waIso($g->checked_in_at)];
+            })->values();
 
         return response()->json([
             'success' => true,
@@ -435,6 +441,9 @@ class ApiController extends Controller
      * kirim sebagai ISO berzona UTC (+00:00) agar JS mengonversinya
      * dengan benar ke WIB.
      */
+    // Helper generik: nilai waktu DB (UTC) -> ISO berzona UTC.
+    // Dipakai wa_sent_at maupun checked_in_at agar frontend menampilkannya
+    // dalam WIB dengan benar.
     private function waIso($value)
     {
         if (empty($value)) return null;

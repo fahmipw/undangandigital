@@ -80,7 +80,7 @@
     <div id="success-anim"></div>
     <div id="success-fallback">&#10003;</div>
     <div class="success-name" id="success-name"></div>
-    <div class="success-sub">Check-in berhasil</div>
+    <div class="success-sub" id="success-sub">Check-in berhasil</div>
   </div>
 </div>
 
@@ -89,6 +89,23 @@ var INV_ID = {{ (int)$inv_id }};
 var scanner = null, scanning = false, lastScan = 0;
 
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+// Server menyimpan waktu dalam UTC; string tanpa zona harus dibaca sebagai
+// UTC (bukan waktu lokal) lalu ditampilkan eksplisit dalam WIB — kalau tidak,
+// jam tampil 7 jam lebih lambat dari jam dinding (bug yang sama seperti
+// waktu kirim WA dulu).
+function parseServerTime(s){
+  if(!s) return null;
+  var t = String(s).trim().replace(' ', 'T');
+  if(!/[+-]\d{2}:?\d{2}$/.test(t) && t.slice(-1) !== 'Z') t += 'Z';
+  var d = new Date(t);
+  return isNaN(d.getTime()) ? null : d;
+}
+function formatWib(s){
+  var d = parseServerTime(s);
+  if(!d) return s || '';
+  return d.toLocaleString('id-ID', {timeZone:'Asia/Jakarta', day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '') + ' WIB';
+}
 
 function showRes(ok, title, sub){
   var r = document.getElementById('result');
@@ -112,9 +129,10 @@ async function doCheckin(code){
     var d = await res.json();
     if(d.success){
       showRes(true, d.already ? 'SUDAH HADIR' : 'CHECK-IN BERHASIL',
-        d.nama + (d.already ? ' (sudah tercatat)' : ' • ' + (d.checked_in_at||'')));
-      // Animasi sukses hanya untuk check-in baru, bukan scan ulang yang sudah hadir
-      if(!d.already) showSuccessAnim(d.nama);
+        d.nama + (d.already ? ' (sudah tercatat)' : ' • ' + formatWib(d.checked_in_at)));
+      // Animasi diputar untuk semua scan yang berhasil — check-in baru
+      // maupun scan ulang tamu yang sudah hadir (teksnya dibedakan).
+      showSuccessAnim(d.nama, d.already);
       refreshStats();
     }else{
       showRes(false, 'GAGAL', d.message || 'Kode tidak valid');
@@ -144,17 +162,22 @@ function hideSuccessAnim(){
   clearTimeout(successTimer);
 }
 
-function showSuccessAnim(nama){
+function showFallbackAnim(){
+  document.getElementById('success-anim').innerHTML = '';
+  document.getElementById('success-anim').style.display = 'none';
+  document.getElementById('success-fallback').classList.add('show');
+}
+
+function showSuccessAnim(nama, already){
   document.getElementById('success-name').textContent = nama || '';
+  document.getElementById('success-sub').textContent = already ? 'Sudah tercatat hadir' : 'Check-in berhasil';
   document.getElementById('success-overlay').classList.add('show');
   document.getElementById('success-fallback').classList.remove('show');
   document.getElementById('success-anim').style.display = 'block';
   loadLottie(function(ok){
     if(!ok){
       // Player gagal dimuat: tampilkan centang hijau statis sebagai cadangan
-      document.getElementById('success-anim').innerHTML = '';
-      document.getElementById('success-anim').style.display = 'none';
-      document.getElementById('success-fallback').classList.add('show');
+      showFallbackAnim();
       return;
     }
     if(successAnim) successAnim.destroy();
@@ -163,8 +186,14 @@ function showSuccessAnim(nama){
       renderer: 'svg',
       loop: false,
       autoplay: true,
-      path: "{{ asset('lottie/order-success.json') }}"
+      // Path relatif dari root (bukan asset() absolut) supaya tetap benar
+      // apa pun host yang dipakai membuka halaman ini — asset() memakai
+      // APP_URL, yang bisa menunjuk 127.0.0.1 sehingga gagal di HP panitia.
+      path: '/lottie/order-success.json'
     });
+    // JSON gagal diunduh (mis. file belum ter-deploy): jangan tampil kosong,
+    // pakai centang hijau statis sebagai cadangan.
+    successAnim.addEventListener('data_failed', showFallbackAnim);
   });
   clearTimeout(successTimer);
   successTimer = setTimeout(hideSuccessAnim, 3000);
@@ -209,7 +238,7 @@ async function refreshStats(){
     document.getElementById('st-out').textContent = d.total - d.checked_in;
     document.getElementById('recent').innerHTML = d.recent.length
       ? d.recent.map(function(r){
-          return '<div class="recent-item"><span>' + esc(r.nama) + '</span><small>' + esc(r.checked_in_at||'') + '</small></div>';
+          return '<div class="recent-item"><span>' + esc(r.nama) + '</span><small>' + esc(formatWib(r.checked_in_at)) + '</small></div>';
         }).join('')
       : '<div class="empty">Belum ada check-in.</div>';
   }catch(e){}
