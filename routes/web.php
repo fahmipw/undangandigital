@@ -12,13 +12,13 @@ use App\Http\Controllers\LegacyApiController;
 |--------------------------------------------------------------------------
 */
 
-// --- Admin Panel Routes (Matching Old URLs) ---
-Route::get('login', [AdminController::class, 'showLogin'])->name('login');
-Route::post('login', [AdminController::class, 'login']);
+// --- Admin Panel Routes (path disamarkan: bukan /admin dan /login) ---
+Route::get('panel/masuk', [AdminController::class, 'showLogin'])->name('login');
+Route::post('panel/masuk', [AdminController::class, 'login']);
 Route::get('logout', [AdminController::class, 'logout']);
 
 Route::middleware('auth:admin')->group(function () {
-    Route::get('admin', [AdminController::class, 'index']);
+    Route::get('panel', [AdminController::class, 'index']);
     
     // Legacy Admin API
     Route::any('api/admin_api', [LegacyApiController::class, 'adminApi'])->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
