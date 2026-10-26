@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin | Elvy & Rokim</title>
+    <title>Login Admin</title>
     <link rel="stylesheet" href="{{ asset('styles.css') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:wght@700&family=Instrument+Serif&display=swap" rel="stylesheet">
@@ -34,27 +34,104 @@
     </script>
     <style>
         body {
-            background-color: #fbf9f5;
-            background-image: url('https://i.pinimg.com/474x/80/f7/69/80f769b3f507e84769bb365efc33f7a3.jpg');
-            background-size: cover;
-            background-position: center;
+            /* Latar: gradasi cokelat tua ke emas + semburat cahaya, tanpa gambar luar */
+            background:
+                radial-gradient(600px 420px at 85% 8%, rgba(246, 224, 187, 0.35), transparent 60%),
+                radial-gradient(520px 520px at 8% 92%, rgba(255, 219, 207, 0.28), transparent 60%),
+                linear-gradient(135deg, #2a1a12 0%, #4E342E 48%, #775a19 100%);
             background-attachment: fixed;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            overflow-x: hidden;
         }
         .login-card {
-            background: rgba(251, 249, 245, 0.85);
+            background: rgba(255, 253, 247, 0.94);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(119, 90, 25, 0.2);
+            border: 1px solid rgba(201, 162, 75, 0.45);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
             width: 100%;
             max-width: 400px;
+            position: relative;
+            z-index: 1;
+        }
+        /* Ornamen latar: cincin emas, semburat blur, dan titik-titik halus */
+        .bg-decor {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-decor .ring {
+            position: absolute;
+            border: 1px solid rgba(246, 224, 187, 0.35);
+            border-radius: 9999px;
+        }
+        .bg-decor .ring-1 {
+            width: 440px;
+            height: 440px;
+            top: -170px;
+            right: -130px;
+        }
+        .bg-decor .ring-2 {
+            width: 280px;
+            height: 280px;
+            bottom: -110px;
+            left: -90px;
+            border-color: rgba(246, 224, 187, 0.25);
+        }
+        .bg-decor .ring-3 {
+            width: 180px;
+            height: 180px;
+            top: 62%;
+            right: 12%;
+            border-color: rgba(246, 224, 187, 0.18);
+        }
+        .bg-decor .glow {
+            position: absolute;
+            border-radius: 9999px;
+            filter: blur(70px);
+        }
+        .bg-decor .glow-1 {
+            width: 280px;
+            height: 280px;
+            background: rgba(201, 162, 75, 0.35);
+            top: 12%;
+            left: 8%;
+        }
+        .bg-decor .glow-2 {
+            width: 240px;
+            height: 240px;
+            background: rgba(255, 219, 207, 0.25);
+            bottom: 8%;
+            right: 10%;
+        }
+        .bg-decor .dot-grid {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(246, 224, 187, 0.20) 1px, transparent 1px);
+            background-size: 28px 28px;
+            opacity: 0.5;
         }
     </style>
 </head>
 <body class="p-6">
+    <div class="bg-decor" aria-hidden="true">
+        <span class="ring ring-1"></span>
+        <span class="ring ring-2"></span>
+        <span class="ring ring-3"></span>
+        <span class="glow glow-1"></span>
+        <span class="glow glow-2"></span>
+        <span class="dot-grid"></span>
+    </div>
     <div class="login-card p-10 rounded-3xl shadow-2xl">
+        <div class="flex items-center justify-center gap-2 mb-6" aria-hidden="true">
+            <span class="h-px w-12 bg-[#c9a24b]/60"></span>
+            <span class="block w-2 h-2 rotate-45 bg-[#c9a24b]"></span>
+            <span class="h-px w-12 bg-[#c9a24b]/60"></span>
+        </div>
         <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center w-16 h-16 bg-secondary/10 rounded-full mb-4">
                 <span class="material-symbols-outlined text-secondary text-3xl">lock_person</span>
@@ -82,16 +159,10 @@
                 <input type="password" name="password" placeholder="Masukkan password" required class="w-full px-4 py-3 rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all text-on-surface">
             </div>
 
-            <button type="submit" class="w-full bg-secondary text-white py-4 rounded-xl font-label-caps tracking-widest shadow-lg hover:bg-primary transition-all active:scale-95 btn-3d">
+            <button type="submit" class="w-full bg-gradient-to-r from-secondary to-primary text-white py-4 rounded-xl font-label-caps tracking-widest shadow-lg hover:opacity-90 transition-all active:scale-95 btn-3d">
                 MASUK SEKARANG
             </button>
         </form>
-
-            <a href="{{ url('/') }}" class="text-secondary text-sm font-label-caps tracking-wider hover:underline flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined text-base">arrow_back</span>
-                KEMBALI KE UNDANGAN
-            </a>
-        </div>
     </div>
 </body>
 </html>
