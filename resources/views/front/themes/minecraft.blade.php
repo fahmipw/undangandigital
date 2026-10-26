@@ -400,7 +400,7 @@ body:not(.gate-open) .float-btns{display:none!important}
         <p class="score-empty">Tunjukkan pada panitia saat datang.<br>{{ $guestName }}</p>
       </div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-      <script>if(window.QRCode){new QRCode(document.getElementById('qrBoxMc'),{text:"{{ $guestQrCode }}",width:160,height:160,correctLevel:QRCode.CorrectLevel.M});}</script>
+      <script>if(window.QRCode){var qb=document.getElementById('qrBoxMc');new QRCode(qb,{text:"{{ $guestQrCode }}",width:160,height:160,correctLevel:QRCode.CorrectLevel.M});if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}</script>
       @endif
     </div>
   </section>
