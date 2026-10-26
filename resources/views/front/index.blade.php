@@ -666,7 +666,17 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           <?php echo (getSet('bride_nickname') ?: getSet('bride_name', 'Hawa')) . ' & ' . (getSet('groom_nickname') ?: getSet('groom_name', 'Adam')); ?>
         </h1>
       </div>
-      <div class="header-right">
+      <div class="header-right" style="display:flex;gap:10px;align-items:center">
+        <?php if (getSet('guest_qr_enabled') && !empty($guestQrCode)): ?>
+        <!-- Menu QR: tema default tidak punya menu bawah seperti tema lain,
+             jadi entri QR-nya ada di header, di samping tombol musik.
+             Syarat tampil sama dengan section QR: QR diaktifkan + tamu punya QR. -->
+        <button onclick="document.getElementById('qrcheckin').scrollIntoView({behavior:'smooth'})"
+          aria-label="QR Check-in" title="QR Check-in"
+          style="width:2.25rem;height:2.25rem;border-radius:9999px;background:#775a19;color:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(78,52,46,.2);cursor:pointer">
+          <span class="material-symbols-outlined" style="font-size:1.25rem">qr_code</span>
+        </button>
+        <?php endif; ?>
         <button id="music-toggle" aria-label="Toggle Musik">
           <span class="material-symbols-outlined">music_note</span>
           <div class="ping-ring"></div>
