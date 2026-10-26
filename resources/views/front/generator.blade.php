@@ -5,15 +5,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Guest Link Generator - {{ $bride }} & {{ $groom }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600&family=Work+Sans:wght@400;500&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet" />
     <style>
         body {
-            font-family: 'Work Sans', sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: #f5f3ef;
             color: #1b1c1a;
         }
@@ -21,7 +15,7 @@
         h1,
         h2,
         h3 {
-            font-family: 'Noto Serif', serif;
+            font-family: Georgia, 'Times New Roman', serif;
         }
 
         .btn-primary {
@@ -43,6 +37,31 @@
         .btn-outline:hover {
             background: #775a19;
             color: white;
+        }
+
+        /* Notifikasi toast (salin & hapus) */
+        #toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translate(-50%, 20px);
+            background: #1b1c1a;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 999px;
+            font-size: 14px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .25);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s, transform .25s;
+            z-index: 100;
+            max-width: calc(100vw - 32px);
+            text-align: center;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
         }
 
         /* Tabel tamu muat penuh tanpa geser ke kanan */
@@ -104,6 +123,231 @@
                 min-width: 0;
             }
         }
+
+        /* Utility subset (pengganti Tailwind CDN agar halaman ringan) */
+        * { box-sizing: border-box; }
+        body { margin: 0; }
+        h1, h2, h3, p, table { margin: 0; }
+        button, input, textarea, select { font: inherit; }
+        .icon { width: 1.25em; height: 1.25em; flex-shrink: 0; vertical-align: middle; }
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        [class~="block"] { display:block }
+        [class~="flex"] { display:flex }
+        [class~="grid"] { display:grid }
+        [class~="hidden"] { display:none }
+        [class~="flex-wrap"] { flex-wrap:wrap }
+        [class~="items-center"] { align-items:center }
+        [class~="justify-center"] { justify-content:center }
+        [class~="justify-between"] { justify-content:space-between }
+        [class~="shrink-0"] { flex-shrink:0 }
+        [class~="flex-shrink-0"] { flex-shrink:0 }
+        [class~="grid-cols-2"] { grid-template-columns:repeat(2,minmax(0,1fr)) }
+        [class~="min-h-screen"] { min-height:100vh }
+        [class~="w-full"] { width:100% }
+        [class~="max-w-xl"] { max-width:36rem }
+        [class~="min-w-0"] { min-width:0 }
+        [class~="max-h-96"] { max-height:24rem }
+        [class~="overflow-hidden"] { overflow:hidden }
+        [class~="overflow-y-auto"] { overflow-y:auto }
+        [class~="border"] { border:1px solid }
+        [class~="border-t"] { border-top:1px solid }
+        [class~="rounded"] { border-radius:0.25rem }
+        [class~="rounded-lg"] { border-radius:0.5rem }
+        [class~="rounded-xl"] { border-radius:0.75rem }
+        [class~="rounded-3xl"] { border-radius:1.5rem }
+        [class~="shadow-xl"] { box-shadow:0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.1) }
+        [class~="font-bold"] { font-weight:700 }
+        [class~="font-semibold"] { font-weight:600 }
+        [class~="uppercase"] { text-transform:uppercase }
+        [class~="tracking-widest"] { letter-spacing:0.1em }
+        [class~="text-center"] { text-align:center }
+        [class~="text-left"] { text-align:left }
+        [class~="whitespace-pre-line"] { white-space:pre-line }
+        [class~="outline-none"] { outline:none }
+        [class~="resize-none"] { resize:none }
+        [class~="cursor-pointer"] { cursor:pointer }
+        [class~="relative"] { position:relative }
+        [class~="sticky"] { position:sticky }
+        [class~="top-0"] { top:0 }
+        [class~="align-middle"] { vertical-align:middle }
+        [class~="transition-all"] { transition:all .2s }
+        [class~="bg-transparent"] { background-color:transparent }
+        [class~="accent-[#775a19]"] { accent-color:#775a19 }
+        [class~="text-xs"] { font-size:.75rem }
+        [class~="text-sm"] { font-size:.875rem }
+        [class~="text-base"] { font-size:1rem }
+        [class~="text-lg"] { font-size:1.125rem }
+        [class~="text-xl"] { font-size:1.25rem }
+        [class~="text-2xl"] { font-size:1.5rem }
+        [class~="text-[10px]"] { font-size:10px }
+        [class~="text-[11px]"] { font-size:11px }
+        [class~="p-0"] { padding:0 }
+        [class~="p-0.5"] { padding:0.125rem }
+        [class~="p-1"] { padding:0.25rem }
+        [class~="p-1.5"] { padding:0.375rem }
+        [class~="p-2"] { padding:0.5rem }
+        [class~="p-3"] { padding:0.75rem }
+        [class~="p-4"] { padding:1rem }
+        [class~="p-6"] { padding:1.5rem }
+        [class~="p-8"] { padding:2rem }
+        [class~="p-10"] { padding:2.5rem }
+        [class~="px-0"] { padding-left:0; padding-right:0 }
+        [class~="px-0.5"] { padding-left:0.125rem; padding-right:0.125rem }
+        [class~="px-1"] { padding-left:0.25rem; padding-right:0.25rem }
+        [class~="px-1.5"] { padding-left:0.375rem; padding-right:0.375rem }
+        [class~="px-2"] { padding-left:0.5rem; padding-right:0.5rem }
+        [class~="px-3"] { padding-left:0.75rem; padding-right:0.75rem }
+        [class~="px-4"] { padding-left:1rem; padding-right:1rem }
+        [class~="px-6"] { padding-left:1.5rem; padding-right:1.5rem }
+        [class~="px-8"] { padding-left:2rem; padding-right:2rem }
+        [class~="px-10"] { padding-left:2.5rem; padding-right:2.5rem }
+        [class~="py-0"] { padding-top:0; padding-bottom:0 }
+        [class~="py-0.5"] { padding-top:0.125rem; padding-bottom:0.125rem }
+        [class~="py-1"] { padding-top:0.25rem; padding-bottom:0.25rem }
+        [class~="py-1.5"] { padding-top:0.375rem; padding-bottom:0.375rem }
+        [class~="py-2"] { padding-top:0.5rem; padding-bottom:0.5rem }
+        [class~="py-3"] { padding-top:0.75rem; padding-bottom:0.75rem }
+        [class~="py-4"] { padding-top:1rem; padding-bottom:1rem }
+        [class~="py-6"] { padding-top:1.5rem; padding-bottom:1.5rem }
+        [class~="py-8"] { padding-top:2rem; padding-bottom:2rem }
+        [class~="py-10"] { padding-top:2.5rem; padding-bottom:2.5rem }
+        [class~="pt-0"] { padding-top:0 }
+        [class~="pt-0.5"] { padding-top:0.125rem }
+        [class~="pt-1"] { padding-top:0.25rem }
+        [class~="pt-1.5"] { padding-top:0.375rem }
+        [class~="pt-2"] { padding-top:0.5rem }
+        [class~="pt-3"] { padding-top:0.75rem }
+        [class~="pt-4"] { padding-top:1rem }
+        [class~="pt-6"] { padding-top:1.5rem }
+        [class~="pt-8"] { padding-top:2rem }
+        [class~="pt-10"] { padding-top:2.5rem }
+        [class~="pb-0"] { padding-bottom:0 }
+        [class~="pb-0.5"] { padding-bottom:0.125rem }
+        [class~="pb-1"] { padding-bottom:0.25rem }
+        [class~="pb-1.5"] { padding-bottom:0.375rem }
+        [class~="pb-2"] { padding-bottom:0.5rem }
+        [class~="pb-3"] { padding-bottom:0.75rem }
+        [class~="pb-4"] { padding-bottom:1rem }
+        [class~="pb-6"] { padding-bottom:1.5rem }
+        [class~="pb-8"] { padding-bottom:2rem }
+        [class~="pb-10"] { padding-bottom:2.5rem }
+        [class~="mt-0"] { margin-top:0 }
+        [class~="mt-0.5"] { margin-top:0.125rem }
+        [class~="mt-1"] { margin-top:0.25rem }
+        [class~="mt-1.5"] { margin-top:0.375rem }
+        [class~="mt-2"] { margin-top:0.5rem }
+        [class~="mt-3"] { margin-top:0.75rem }
+        [class~="mt-4"] { margin-top:1rem }
+        [class~="mt-6"] { margin-top:1.5rem }
+        [class~="mt-8"] { margin-top:2rem }
+        [class~="mt-10"] { margin-top:2.5rem }
+        [class~="mb-0"] { margin-bottom:0 }
+        [class~="mb-0.5"] { margin-bottom:0.125rem }
+        [class~="mb-1"] { margin-bottom:0.25rem }
+        [class~="mb-1.5"] { margin-bottom:0.375rem }
+        [class~="mb-2"] { margin-bottom:0.5rem }
+        [class~="mb-3"] { margin-bottom:0.75rem }
+        [class~="mb-4"] { margin-bottom:1rem }
+        [class~="mb-6"] { margin-bottom:1.5rem }
+        [class~="mb-8"] { margin-bottom:2rem }
+        [class~="mb-10"] { margin-bottom:2.5rem }
+        [class~="ml-0"] { margin-left:0 }
+        [class~="ml-0.5"] { margin-left:0.125rem }
+        [class~="ml-1"] { margin-left:0.25rem }
+        [class~="ml-1.5"] { margin-left:0.375rem }
+        [class~="ml-2"] { margin-left:0.5rem }
+        [class~="ml-3"] { margin-left:0.75rem }
+        [class~="ml-4"] { margin-left:1rem }
+        [class~="ml-6"] { margin-left:1.5rem }
+        [class~="ml-8"] { margin-left:2rem }
+        [class~="ml-10"] { margin-left:2.5rem }
+        [class~="mr-0"] { margin-right:0 }
+        [class~="mr-0.5"] { margin-right:0.125rem }
+        [class~="mr-1"] { margin-right:0.25rem }
+        [class~="mr-1.5"] { margin-right:0.375rem }
+        [class~="mr-2"] { margin-right:0.5rem }
+        [class~="mr-3"] { margin-right:0.75rem }
+        [class~="mr-4"] { margin-right:1rem }
+        [class~="mr-6"] { margin-right:1.5rem }
+        [class~="mr-8"] { margin-right:2rem }
+        [class~="mr-10"] { margin-right:2.5rem }
+        [class~="gap-0"] { gap:0 }
+        [class~="gap-0.5"] { gap:0.125rem }
+        [class~="gap-1"] { gap:0.25rem }
+        [class~="gap-1.5"] { gap:0.375rem }
+        [class~="gap-2"] { gap:0.5rem }
+        [class~="gap-3"] { gap:0.75rem }
+        [class~="gap-4"] { gap:1rem }
+        [class~="gap-6"] { gap:1.5rem }
+        [class~="gap-8"] { gap:2rem }
+        [class~="gap-10"] { gap:2.5rem }
+        [class~="bg-white"] { background-color:#fff }
+        [class~="text-white"] { color:#fff }
+        [class~="border-white"] { border-color:#fff }
+        [class~="bg-gray-50"] { background-color:#f9fafb }
+        [class~="text-gray-50"] { color:#f9fafb }
+        [class~="border-gray-50"] { border-color:#f9fafb }
+        [class~="bg-gray-100"] { background-color:#f3f4f6 }
+        [class~="text-gray-100"] { color:#f3f4f6 }
+        [class~="border-gray-100"] { border-color:#f3f4f6 }
+        [class~="bg-gray-200"] { background-color:#e5e7eb }
+        [class~="text-gray-200"] { color:#e5e7eb }
+        [class~="border-gray-200"] { border-color:#e5e7eb }
+        [class~="bg-gray-300"] { background-color:#d1d5db }
+        [class~="text-gray-300"] { color:#d1d5db }
+        [class~="border-gray-300"] { border-color:#d1d5db }
+        [class~="bg-gray-400"] { background-color:#9ca3af }
+        [class~="text-gray-400"] { color:#9ca3af }
+        [class~="border-gray-400"] { border-color:#9ca3af }
+        [class~="bg-gray-500"] { background-color:#6b7280 }
+        [class~="text-gray-500"] { color:#6b7280 }
+        [class~="border-gray-500"] { border-color:#6b7280 }
+        [class~="bg-gray-600"] { background-color:#4b5563 }
+        [class~="text-gray-600"] { color:#4b5563 }
+        [class~="border-gray-600"] { border-color:#4b5563 }
+        [class~="bg-gray-700"] { background-color:#374151 }
+        [class~="text-gray-700"] { color:#374151 }
+        [class~="border-gray-700"] { border-color:#374151 }
+        [class~="bg-green-500"] { background-color:#22c55e }
+        [class~="text-green-500"] { color:#22c55e }
+        [class~="border-green-500"] { border-color:#22c55e }
+        [class~="bg-green-600"] { background-color:#16a34a }
+        [class~="text-green-600"] { color:#16a34a }
+        [class~="border-green-600"] { border-color:#16a34a }
+        [class~="bg-red-400"] { background-color:#f87171 }
+        [class~="text-red-400"] { color:#f87171 }
+        [class~="border-red-400"] { border-color:#f87171 }
+        [class~="bg-red-500"] { background-color:#ef4444 }
+        [class~="text-red-500"] { color:#ef4444 }
+        [class~="border-red-500"] { border-color:#ef4444 }
+        [class~="bg-amber-50"] { background-color:#fffbeb }
+        [class~="text-amber-50"] { color:#fffbeb }
+        [class~="border-amber-50"] { border-color:#fffbeb }
+        [class~="bg-amber-600"] { background-color:#d97706 }
+        [class~="text-amber-600"] { color:#d97706 }
+        [class~="border-amber-600"] { border-color:#d97706 }
+        [class~="bg-amber-800"] { background-color:#92400e }
+        [class~="text-amber-800"] { color:#92400e }
+        [class~="border-amber-800"] { border-color:#92400e }
+        [class~="bg-#775a19"] { background-color:#775a19 }
+        [class~="text-#775a19"] { color:#775a19 }
+        [class~="border-#775a19"] { border-color:#775a19 }
+        [class~="opacity-50"] { opacity:.50 }
+        [class~="opacity-60"] { opacity:.60 }
+        [class~="opacity-75"] { opacity:.75 }
+        [class~="opacity-80"] { opacity:.80 }
+        [class~="hover:bg-gray-50"]:hover { background-color:#f9fafb }
+        [class~="hover:bg-gray-100"]:hover { background-color:#f3f4f6 }
+        [class~="hover:bg-gray-200"]:hover { background-color:#e5e7eb }
+        [class~="focus:outline-none"]:focus { outline:none }
+        [class~="focus:border-[#775a19]"]:focus { border-color:#775a19 }
+        [class~="focus:ring-1"]:focus { box-shadow:0 0 0 1px #775a19 }
+        [class~="focus:ring-[#775a19]"]:focus { box-shadow:0 0 0 1px #775a19 }
+        [class~="disabled:bg-gray-100"]:disabled { background-color:#f3f4f6 }
+        [class~="disabled:text-gray-400"]:disabled { color:#9ca3af }
+        [class~="bg-[#775a19]"] { background-color:#775a19 }
+        [class~="text-[#775a19]"] { color:#775a19 }
     </style>
 </head>
 
@@ -161,7 +405,7 @@
 
                 <button type="submit" id="btn-generate"
                     class="w-full btn-primary font-bold uppercase tracking-widest py-3 rounded-xl flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined">link</span>
+                    <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
                     Generate Link
                 </button>
             </form>
@@ -178,7 +422,7 @@
                         <button type="button" onclick="copyLink()" id="btn-copy-link"
                             class="flex-shrink-0 p-2 text-[#775a19] hover:bg-gray-200 rounded-lg transition-all"
                             title="Salin link">
-                            <span class="material-symbols-outlined text-base">content_copy</span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                         </button>
                     </div>
                 </div>
@@ -193,12 +437,12 @@
                 <div class="grid grid-cols-2 gap-3">
                     <button type="button" onclick="copyMessage()" id="btn-copy"
                         class="btn-outline font-bold uppercase tracking-widest py-3 rounded-xl flex items-center justify-center gap-2 text-xs">
-                        <span class="material-symbols-outlined text-base">content_copy</span>
+                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                         Copy Pesan
                     </button>
                     <button type="button" onclick="sendWhatsapp()" id="btn-wa"
                         class="btn-primary font-bold uppercase tracking-widest py-3 rounded-xl flex items-center justify-center gap-2 text-xs">
-                        <span class="material-symbols-outlined text-base">send</span>
+                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg>
                         Kirim via WA
                     </button>
                 </div>
@@ -213,7 +457,7 @@
                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] transition-all text-sm"></textarea>
                 <button type="button" id="btn-bulk" onclick="generateBulk()"
                     class="mt-4 w-full btn-primary font-bold uppercase tracking-widest py-3 rounded-xl flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined">groups</span>
+                    <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                     Generate Massal
                 </button>
 
@@ -222,11 +466,11 @@
                     <div class="flex flex-wrap gap-2 mb-4">
                         <button type="button" onclick="copyAllBulkLinks()" id="btn-copy-all"
                             class="btn-outline font-bold uppercase tracking-widest py-2 px-4 rounded-xl text-xs flex items-center gap-2">
-                            <span class="material-symbols-outlined text-base">content_copy</span> Salin Semua Link
+                            <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Salin Semua Link
                         </button>
                         <button type="button" onclick="downloadBulkCsv()"
                             class="btn-outline font-bold uppercase tracking-widest py-2 px-4 rounded-xl text-xs flex items-center gap-2">
-                            <span class="material-symbols-outlined text-base">download</span> Unduh CSV
+                            <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Unduh CSV
                         </button>
                     </div>
                     <div class="border border-gray-200 rounded-xl">
@@ -253,7 +497,7 @@
                     <h3 class="text-lg font-bold text-[#775a19]">Daftar Tamu yang Sudah Diinput</h3>
                     <button type="button" id="btn-refresh-guests" onclick="loadGeneratorGuests()"
                         class="btn-outline font-bold uppercase tracking-widest py-2 px-4 rounded-xl text-xs flex items-center gap-2">
-                        <span class="material-symbols-outlined text-base">refresh</span> Muat Ulang
+                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Muat Ulang
                     </button>
                 </div>
                 <input type="text" id="generator-guest-search" placeholder="Cari nama tamu..." autocomplete="off"
@@ -280,15 +524,48 @@
     </div>
     </div>
 
+    <div id="toast" role="status" aria-live="polite"></div>
+
     <script>
         const invitationId = {{ $invitation->id }};
         const invSlug = "{{ $invitation->slug }}";
         const bride = "{{ $bride }}";
         const groom = "{{ $groom }}";
         const baseUrl = "{{ url('/') }}";
+        const ICONS = {
+    link: `<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>`,
+    content_copy: `<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`,
+    send: `<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg>`,
+    groups: `<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>`,
+    download: `<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>`,
+    refresh: `<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`,
+    edit: `<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>`,
+    delete: `<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>`,
+    check: `<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`,
+    close: `<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`,
+    undo: `<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>`
+};
 
         let currentGuestPhone = "";
         let currentGuestSlug = "";
+        let toastTimer = null;
+
+        function showToast(msg) {
+            const el = document.getElementById('toast');
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+        }
+
+        function copyTextWithToast(text, okMsg) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => showToast(okMsg)).catch(() => showToast('Gagal menyalin, salin manual dari kolom.'));
+            } else {
+                showToast('Gagal menyalin, salin manual dari kolom.');
+            }
+        }
         let bulkResults = [];
         let generatorGuests = [];
 
@@ -414,7 +691,7 @@
             if (!nameInput) return;
 
             btn.disabled = true;
-            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Generating...';
+            btn.innerHTML = '<svg class="icon spin" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Generating...';
 
             try {
                 const res = await fetch("{{ url('api/generate_guest') }}", {
@@ -448,7 +725,7 @@
                 console.error(err);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<span class="material-symbols-outlined">link</span> Generate Link';
+                btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg> Generate Link';
             }
         }
 
@@ -508,8 +785,8 @@
             const btn = document.getElementById('btn-refresh-guests');
             const tbody = document.getElementById('generator-guest-tbody');
             const emptyEl = document.getElementById('generator-guest-empty');
-            if (btn) { btn.disabled = true; btn.innerHTML = '<span class="material-symbols-outlined text-base animate-spin">refresh</span> Memuat...'; }
-            if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="px-3 py-4 text-sm text-gray-500 text-center"><span class="material-symbols-outlined text-base animate-spin align-middle">refresh</span> Memuat daftar tamu...</td></tr>';
+            if (btn) { btn.disabled = true; btn.innerHTML = '<svg class="icon spin" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Memuat...'; }
+            if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="px-3 py-4 text-sm text-gray-500 text-center"><svg class="icon spin" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Memuat daftar tamu...</td></tr>';
             if (emptyEl) emptyEl.classList.add('hidden');
             try {
                 const res = await fetch(`{{ url('api/generator_guests') }}?invitation_id=${invitationId}`);
@@ -520,7 +797,7 @@
             } catch (e) {
                 if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="px-3 py-4 text-sm text-red-500 text-center">Gagal memuat daftar tamu. Coba muat ulang.</td></tr>';
             } finally {
-                if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-base">refresh</span> Muat Ulang'; }
+                if (btn) { btn.disabled = false; btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Muat Ulang'; }
             }
         }
 
@@ -533,13 +810,13 @@
             document.getElementById('generator-guest-tbody').innerHTML = filteredGeneratorGuests.map((g, i) => {
                 const isEditing = g.slug === editingSlug;
                 const actions = isEditing
-                    ? `<button type="button" onclick="saveEditGuest()" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Simpan"><span class="material-symbols-outlined text-base">check</span></button>
-                       <button type="button" onclick="cancelEditGuest()" class="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg" title="Batal"><span class="material-symbols-outlined text-base">close</span></button>`
-                    : `<button type="button" onclick="copyGeneratorLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><span class="material-symbols-outlined text-base">content_copy</span></button>
-                       <button type="button" onclick="sendGeneratorWA(${i})" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><span class="material-symbols-outlined text-base">send</span></button>
-                       <button type="button" onclick="toggleGeneratorWA(${i})" class="p-1.5 text-amber-600 hover:bg-gray-100 rounded-lg" title="${g.wa_sent_at ? 'Batalkan tanda terkirim' : 'Tandai sudah dikirim'}"><span class="material-symbols-outlined text-base">${g.wa_sent_at ? 'undo' : 'check'}</span></button>
-                       <button type="button" onclick="startEditGuest(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Edit nama"><span class="material-symbols-outlined text-base">edit</span></button>
-                       <button type="button" onclick="deleteGeneratorGuest(${i})" class="p-1.5 text-red-400 hover:bg-gray-100 rounded-lg" title="Hapus tamu"><span class="material-symbols-outlined text-base">delete</span></button>`;
+                    ? `<button type="button" onclick="saveEditGuest()" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Simpan"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></button>
+                       <button type="button" onclick="cancelEditGuest()" class="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg" title="Batal"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>`
+                    : `<button type="button" onclick="copyGeneratorLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
+                       <button type="button" onclick="sendGeneratorWA(${i})" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+                       <button type="button" onclick="toggleGeneratorWA(${i})" class="p-1.5 text-amber-600 hover:bg-gray-100 rounded-lg" title="${g.wa_sent_at ? 'Batalkan tanda terkirim' : 'Tandai sudah dikirim'}">${g.wa_sent_at ? ICONS.undo : ICONS.check}</button>
+                       <button type="button" onclick="startEditGuest(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Edit nama"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>
+                       <button type="button" onclick="deleteGeneratorGuest(${i})" class="p-1.5 text-red-400 hover:bg-gray-100 rounded-lg" title="Hapus tamu"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>`;
                 return `<tr class="border-t border-gray-100">
                     <td data-label="Nama" class="px-3 py-2 font-semibold">${isEditing ? `<input type="text" id="edit-guest-name" value="${escHtml(editingName)}" class="w-full min-w-0 px-2 py-1.5 border border-gray-300 rounded-lg text-sm outline-none">` : escHtml(g.nama)}</td>
                     <td data-label="Link" class="px-3 py-2"><input type="text" readonly value="${escHtml(g.link)}" class="bg-gray-50 text-xs p-2 rounded w-full min-w-0 outline-none"></td>
@@ -551,7 +828,7 @@
 
         function copyGeneratorLink(i) {
             if (!filteredGeneratorGuests[i]) return;
-            navigator.clipboard.writeText(filteredGeneratorGuests[i].link);
+            copyTextWithToast(filteredGeneratorGuests[i].link, 'Link tersalin.');
         }
 
         async function sendGeneratorWA(i) {
@@ -638,6 +915,7 @@
                     document.getElementById('result-container').classList.add('hidden');
                 }
                 renderGeneratorGuests();
+                showToast(`Tamu "${g.nama}" dihapus.`);
             } catch (e) {
                 alert('Terjadi kesalahan sistem.');
             }
@@ -681,7 +959,7 @@
             if (!guests.length) { alert('Isi dulu daftar tamunya, satu tamu per baris.'); return; }
             if (guests.length > 100) { alert('Maksimal 100 tamu sekali generate. Daftar ini berisi ' + guests.length + ' tamu.'); return; }
             btn.disabled = true;
-            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Generating...';
+            btn.innerHTML = '<svg class="icon spin" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Generating...';
             try {
                 const res = await fetch("{{ url('api/generate_guests_bulk') }}", {
                     method: "POST",
@@ -702,7 +980,7 @@
                 console.error(err);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<span class="material-symbols-outlined">groups</span> Generate Massal';
+                btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg> Generate Massal';
             }
         }
 
@@ -714,8 +992,8 @@
                     <td data-label="Status" class="px-3 py-2"><span class="text-[11px] font-bold ${r.existed ? 'text-amber-600' : 'text-green-600'}">${r.existed ? 'SUDAH ADA' : 'BARU'}</span></td>
                     <td data-label="Status WA" class="px-3 py-2">${waBadge(r)}</td>
                     <td data-label="Aksi" class="px-3 py-2"><div class="flex gap-1 shrink-0">
-                        <button type="button" onclick="copyBulkLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><span class="material-symbols-outlined text-base">content_copy</span></button>
-                        <button type="button" onclick="sendBulkWA(${i})" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><span class="material-symbols-outlined text-base">send</span></button>
+                        <button type="button" onclick="copyBulkLink(${i})" class="p-1.5 text-[#775a19] hover:bg-gray-100 rounded-lg" title="Salin link"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
+                        <button type="button" onclick="sendBulkWA(${i})" class="p-1.5 text-green-600 hover:bg-gray-100 rounded-lg" title="Kirim WA"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
                     </div></td>
                 </tr>`
             ).join('');
@@ -723,7 +1001,7 @@
 
         function copyBulkLink(i) {
             if (!bulkResults[i]) return;
-            navigator.clipboard.writeText(bulkResults[i].link);
+            copyTextWithToast(bulkResults[i].link, 'Link tersalin.');
         }
 
         async function sendBulkWA(i) {
@@ -737,12 +1015,7 @@
 
         function copyAllBulkLinks() {
             if (!bulkResults.length) return;
-            navigator.clipboard.writeText(bulkResults.map(r => r.link).join('\n')).then(() => {
-                const btn = document.getElementById('btn-copy-all');
-                const ori = btn.innerHTML;
-                btn.innerHTML = '<span class="material-symbols-outlined text-base">check</span> Tersalin';
-                setTimeout(() => { btn.innerHTML = ori; }, 2000);
-            });
+            copyTextWithToast(bulkResults.map(r => r.link).join('\n'), `Semua link tersalin (${bulkResults.length} link).`);
         }
 
         function downloadBulkCsv() {
@@ -760,23 +1033,11 @@
         }
 
         function copyMessage() {
-            const msg = document.getElementById('result-message').value;
-            navigator.clipboard.writeText(msg).then(() => {
-                const btn = document.getElementById('btn-copy');
-                const oriText = btn.innerHTML;
-                btn.innerHTML = '<span class="material-symbols-outlined text-base">check</span> Tersalin';
-                setTimeout(() => { btn.innerHTML = oriText; }, 2000);
-            });
+            copyTextWithToast(document.getElementById('result-message').value, 'Pesan tersalin.');
         }
 
         function copyLink() {
-            const link = document.getElementById('result-link').value;
-            navigator.clipboard.writeText(link).then(() => {
-                const btn = document.getElementById('btn-copy-link');
-                const oriText = btn.innerHTML;
-                btn.innerHTML = '<span class="material-symbols-outlined text-base">check</span>';
-                setTimeout(() => { btn.innerHTML = oriText; }, 2000);
-            });
+            copyTextWithToast(document.getElementById('result-link').value, 'Link tersalin.');
         }
 
         async function sendWhatsapp() {
