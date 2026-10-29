@@ -110,10 +110,14 @@ section{padding:68px 26px;text-align:center}
 .cd{width:72px;padding:16px 0;background:#fffdf7;border:1px solid rgba(180,101,58,.35);border-radius:6px;box-shadow:0 8px 20px rgba(143,78,44,.12)}
 .cd b{display:block;font-family:'Cormorant Garamond',serif;font-size:34px;color:var(--terra-dk)}
 .cd span{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--bark-dim)}
-.frame{width:160px;height:160px;margin:0 auto 16px;position:relative}
-.frame img,.frame .fb{width:100%;height:100%;object-fit:cover;border-radius:50%;border:6px solid #fffdf7;box-shadow:0 12px 30px rgba(143,78,44,.25);display:block}
+.frame{width:250px;height:250px;margin:0 auto 16px;position:relative}
+/* Foto mempelai duduk di dalam lingkaran bingkai bunga: posisi & ukuran
+   diukur dari file bingkai (pusat lingkaran 50.8%/46.2%, diameter 80.6%),
+   jadi foto tepat berada di dalam ring pink dan bunga menimpa bawah foto.
+   Hiasan daun 🌿 lama dihapus karena sudah digantikan bunga bingkai. */
+.frame .rb-photo,.frame .fb{position:absolute;left:10.5%;top:5.9%;width:80.6%;height:80.6%;object-fit:cover;border-radius:50%;box-shadow:0 12px 30px rgba(143,78,44,.25);display:block}
 .frame .fb{display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:64px;color:#fffdf7;background:linear-gradient(135deg,var(--sage),#6d7f45)}
-.frame::after{content:'🌿';position:absolute;bottom:-6px;right:-2px;font-size:30px;transform:rotate(-20deg)}
+.frame .rb-frame-art{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .couple-card{background:#fffdf7;border:1px solid rgba(180,101,58,.3);border-radius:8px;padding:36px 24px;margin:0 auto 18px;max-width:380px;box-shadow:0 14px 36px rgba(143,78,44,.12)}
 .couple-card h3{font-family:'Pinyon Script',cursive;font-size:38px;color:var(--terra-dk);font-weight:400}
 .couple-card .full{font-family:'Cormorant Garamond',serif;font-size:18px;margin:6px 0}
@@ -224,14 +228,14 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 <section id="mempelai">
   <div class="rv"><div class="sec-kicker">Assalamu'alaikum Wr. Wb.</div><div class="sec-title serif">Mempelai</div><div class="twine">🌿</div></div>
   <div class="couple-card rv">
-    <div class="frame">@if($bridePhoto)<img src="{{ $bridePhoto }}" alt="{{ $brideFull }}">@else<div class="fb">{{ $brideInitial }}</div>@endif</div>
+    <div class="frame">@if($bridePhoto)<img class="rb-photo" src="{{ $bridePhoto }}" alt="{{ $brideFull }}">@else<div class="fb">{{ $brideInitial }}</div>@endif<img class="rb-frame-art" src="{{ asset('images/rustic-boho/frame-bunga.png') }}" alt="" aria-hidden="true"></div>
     <h3>{{ $brideNick }}</h3><div class="full">{{ $brideFull }}</div>
     <p>Putri dari<br>{{ mcGet('bride_parents', mcGet('bride_child_of', '')) }}</p>
     @if(mcGet('bride_instagram'))<a href="https://instagram.com/{{ ltrim(mcGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.12em;text-decoration:none;opacity:.85"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>&#64;{{ ltrim(mcGet('bride_instagram'),'@') }}</a>@endif
   </div>
   <div class="amp rv">&amp;</div>
   <div class="couple-card rv">
-    <div class="frame">@if($groomPhoto)<img src="{{ $groomPhoto }}" alt="{{ $groomFull }}">@else<div class="fb">{{ $groomInitial }}</div>@endif</div>
+    <div class="frame">@if($groomPhoto)<img class="rb-photo" src="{{ $groomPhoto }}" alt="{{ $groomFull }}">@else<div class="fb">{{ $groomInitial }}</div>@endif<img class="rb-frame-art" src="{{ asset('images/rustic-boho/frame-bunga.png') }}" alt="" aria-hidden="true"></div>
     <h3>{{ $groomNick }}</h3><div class="full">{{ $groomFull }}</div>
     <p>Putra dari<br>{{ mcGet('groom_parents', mcGet('groom_child_of', '')) }}</p>
     @if(mcGet('groom_instagram'))<a href="https://instagram.com/{{ ltrim(mcGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.12em;text-decoration:none;opacity:.85"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>&#64;{{ ltrim(mcGet('groom_instagram'),'@') }}</a>@endif
@@ -475,7 +479,7 @@ function toggleMus(){
 
 var lbList=[], lbIdx=0;
 function lbCollect(){
-  lbList = Array.prototype.slice.call(document.querySelectorAll('.g-grid img, .photo, .planet, .frame img, .arch img'))
+  lbList = Array.prototype.slice.call(document.querySelectorAll('.g-grid img, .photo, .planet, .frame img.rb-photo, .arch img'))
     .filter(function(im){ return im.tagName==='IMG' && im.getAttribute('src'); });
 }
 function openLb(src){
@@ -517,7 +521,7 @@ function closeLb(){
   document.getElementById('lb').classList.remove('show');
   document.body.style.overflow = '';
 }
-document.querySelectorAll('.g-grid img, .photo, .planet, .frame img, .arch img').forEach(function(im){
+document.querySelectorAll('.g-grid img, .photo, .planet, .frame img.rb-photo, .arch img').forEach(function(im){
   if(im.tagName !== 'IMG' || !im.getAttribute('src')) return;
   im.style.cursor = 'zoom-in';
   im.addEventListener('click', function(){ openLb(im.src); });
