@@ -180,8 +180,16 @@ body::after{content:"";display:block;height:150px}
 .wish-empty{text-align:center;opacity:.6;font-size:14px;padding:12px}
 body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;visibility:hidden !important;pointer-events:none !important}
 
-.rv{opacity:0;transform:translateY(36px);transition:opacity .9s,transform .9s}
-.rv.on{opacity:1;transform:none}
+.rv{opacity:0;transform:scale(.82);transition:opacity .7s ease,transform .7s cubic-bezier(.34,1.56,.64,1)}
+.rv.on{opacity:1;transform:scale(1)}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+/* Foto galeri punya kemiringan (rotate) sendiri; aturan ini menjaga pop
+   zoom tetap jalan tanpa menghilangkan kemiringan, dan hover tetap nge-zoom. */
+.g-grid img.rv:nth-child(odd){transform:scale(.82) rotate(-1.2deg)}
+.g-grid img.rv:nth-child(even){transform:scale(.82) rotate(1.2deg)}
+.g-grid img.rv.on:nth-child(odd){transform:scale(1) rotate(-1.2deg)}
+.g-grid img.rv.on:nth-child(even){transform:scale(1) rotate(1.2deg)}
+.g-grid img.rv.on:hover{transform:rotate(0) scale(1.03)}
 @media(min-width:640px){.hero-names{font-size:64px}}
 
 /* Standar menu klasik emas */
@@ -228,14 +236,14 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 <section id="mempelai">
   <div class="rv"><div class="sec-kicker">Assalamu'alaikum Wr. Wb.</div><div class="sec-title serif">Mempelai</div><div class="twine">🌿</div></div>
   <div class="couple-card rv">
-    <div class="frame">@if($bridePhoto)<img class="rb-photo" src="{{ $bridePhoto }}" alt="{{ $brideFull }}">@else<div class="fb">{{ $brideInitial }}</div>@endif<img class="rb-frame-art" src="{{ asset('images/rustic-boho/frame-bunga.png') }}" alt="" aria-hidden="true"></div>
+    <div class="frame rv" style="transition-delay:120ms">@if($bridePhoto)<img class="rb-photo" src="{{ $bridePhoto }}" alt="{{ $brideFull }}">@else<div class="fb">{{ $brideInitial }}</div>@endif<img class="rb-frame-art" src="{{ asset('images/rustic-boho/frame-bunga.png') }}" alt="" aria-hidden="true"></div>
     <h3>{{ $brideNick }}</h3><div class="full">{{ $brideFull }}</div>
     <p>Putri dari<br>{{ mcGet('bride_parents', mcGet('bride_child_of', '')) }}</p>
     @if(mcGet('bride_instagram'))<a href="https://instagram.com/{{ ltrim(mcGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.12em;text-decoration:none;opacity:.85"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>&#64;{{ ltrim(mcGet('bride_instagram'),'@') }}</a>@endif
   </div>
   <div class="amp rv">&amp;</div>
   <div class="couple-card rv">
-    <div class="frame">@if($groomPhoto)<img class="rb-photo" src="{{ $groomPhoto }}" alt="{{ $groomFull }}">@else<div class="fb">{{ $groomInitial }}</div>@endif<img class="rb-frame-art" src="{{ asset('images/rustic-boho/frame-bunga.png') }}" alt="" aria-hidden="true"></div>
+    <div class="frame rv" style="transition-delay:120ms">@if($groomPhoto)<img class="rb-photo" src="{{ $groomPhoto }}" alt="{{ $groomFull }}">@else<div class="fb">{{ $groomInitial }}</div>@endif<img class="rb-frame-art" src="{{ asset('images/rustic-boho/frame-bunga.png') }}" alt="" aria-hidden="true"></div>
     <h3>{{ $groomNick }}</h3><div class="full">{{ $groomFull }}</div>
     <p>Putra dari<br>{{ mcGet('groom_parents', mcGet('groom_child_of', '')) }}</p>
     @if(mcGet('groom_instagram'))<a href="https://instagram.com/{{ ltrim(mcGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.12em;text-decoration:none;opacity:.85"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>&#64;{{ ltrim(mcGet('groom_instagram'),'@') }}</a>@endif
@@ -262,8 +270,8 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 @if(!empty($gallery))
 <section id="galeri">
   <div class="rv"><div class="sec-kicker">Momen Indah</div><div class="sec-title serif">Galeri</div><div class="twine">🌿</div></div>
-  <div class="g-grid rv">
-    @foreach(array_slice($gallery, 0, 8) as $img)<img src="{{ $img }}" alt="Galeri" loading="lazy">@endforeach
+  <div class="g-grid">
+    @foreach(array_slice($gallery, 0, 8) as $i => $img)<img class="rv" style="transition-delay:{{ $i*90 }}ms" src="{{ $img }}" alt="Galeri" loading="lazy">@endforeach
   </div>
 </section>
 @endif
@@ -282,7 +290,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 
 <section id="rsvp">
   <div class="rv"><div class="sec-kicker">Konfirmasi</div><div class="sec-title serif">RSVP</div><div class="twine">🌿</div></div>
-  <form id="rsvpForm" onsubmit="return sendRSVP(event)">
+  <form id="rsvpForm" class="rv" onsubmit="return sendRSVP(event)">
     <div class="field"><label>Nama Lengkap</label><input required id="rsvpNama" placeholder="Nama Anda" autocomplete="name"></div>
     <div class="field"><label>Konfirmasi Kehadiran</label>
       <div class="att-toggle">
@@ -322,7 +330,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 <section id="gift">
   <div class="rv"><div class="sec-kicker">Tanda Kasih</div><div class="sec-title serif">Hadiah</div><div class="twine">🌿</div></div>
 @if($qrisEnabled)
-<div style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
+<div class="rv" style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
 <div style="font-weight:800;letter-spacing:.18em;font-size:13px;color:#c0392b">QRIS</div>
 <p style="font-size:12px;opacity:.65;margin:4px 0 12px">Scan untuk kirim hadiah &mdash; semua e-wallet &amp; m-banking</p>
 <img src="{{ $qrisImage }}" alt="QRIS" style="width:210px;height:210px;object-fit:contain;margin:0 auto;display:block">
@@ -390,7 +398,7 @@ const INV_ID = {{ (int)$invId }};
 function openInv(){document.getElementById('cover').classList.add('open');document.body.style.overflow='';const m=document.getElementById('mus');if(m)m.play().catch(()=>{});}
 document.body.style.overflow='hidden';
 /* countdown diganti modul bawaan (resepsi+timezone) */
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{threshold:.12});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);setTimeout(function(){e.target.style.transitionDelay='0ms';},1500);}}),{threshold:.12});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 // dedaunan
 const cv=document.getElementById('leaves'),cx=cv.getContext('2d');let P=[];
@@ -473,6 +481,13 @@ function toggleMus(){
     document.getElementById('cover').classList.add('open');
     document.body.style.overflow = '';
     if(musCfg.autoplay && bgMus) startMus();
+    /* Elemen hero sudah sempat ter-observe di balik cover saat load,
+       jadi pop-nya diputar ulang setelah cover memudar agar terlihat. */
+    document.querySelectorAll('#hero .rv').forEach(function(el,i){
+      el.classList.remove('on');
+      void el.offsetWidth;
+      setTimeout(function(){ el.classList.add('on'); }, 450 + i*130);
+    });
   };
   initMus();
 })();
