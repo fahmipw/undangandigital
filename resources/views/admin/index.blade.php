@@ -1006,6 +1006,13 @@
                             <span class="material-symbols-outlined">style</span> Model Tampilan Tema
                         </h3>
                         <p class="text-xs text-gray-500">Pilih desain tampilan undangan. Pilihan warna di bawah hanya berlaku untuk tema Default.</p>
+                        <div class="flex gap-2">
+                            <input type="text" id="theme-search" autocomplete="off" placeholder="Cari nama tema… (mis. jawa, game, boho)"
+                                class="flex-1 border border-gray-200 rounded-2xl px-4 py-3 text-sm bg-white focus:border-secondary focus:outline-none">
+                            <button type="button" id="theme-search-clear" title="Hapus pencarian"
+                                class="border border-gray-200 rounded-2xl px-4 py-3 text-sm bg-white hover:border-secondary">✕</button>
+                        </div>
+                        <p id="theme-search-count" class="text-xs text-gray-500"></p>
                         <select id="set-theme" class="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm bg-white focus:border-secondary focus:outline-none">
                             <option value="default">Default — Klasik Emas (ikuti preset warna)</option>
                             <option value="minecraft">Premium — Minecraft</option>
@@ -1039,6 +1046,64 @@
                             <option value="jawa-puspa">Premium — Jawa Puspa (Klasik Terang)</option>
                             <option value="pixel-quest">Premium — Pixel Quest (Game)</option>
                         </select>
+                        <script>
+                        /* Cari & urutkan tema (abjad) di dropdown set-theme.
+                           Daftar opsi disimpan di JS, diurutkan abjad dari labelnya,
+                           lalu dirender ulang setiap pencarian diketik.
+                           Pengaman: tema yang sedang terpilih TIDAK PERNAH hilang dari
+                           daftar meski tidak cocok dengan kata kunci, supaya nilai yang
+                           tersimpan tidak pernah berubah diam-diam saat filter aktif.
+                           loadSettings() memanggil renderThemeOptions(nilaiTema) setelah
+                           memuat, supaya tema hasil load selalu tampil meski sedang
+                           ada filter aktif. */
+                        (function () {
+                            var sel = document.getElementById('set-theme');
+                            var search = document.getElementById('theme-search');
+                            var count = document.getElementById('theme-search-count');
+                            var clearBtn = document.getElementById('theme-search-clear');
+                            if (!sel || !search) return;
+                            var all = Array.prototype.map.call(sel.options, function (o) {
+                                return { value: o.value, text: o.text };
+                            });
+                            all.sort(function (a, b) {
+                                return a.text.localeCompare(b.text, 'id', { sensitivity: 'base' });
+                            });
+                            function renderThemeOptions(forceValue) {
+                                var q = (search.value || '').trim().toLowerCase();
+                                var cur = forceValue || sel.value;
+                                var list = all.filter(function (o) {
+                                    return !q
+                                        || o.text.toLowerCase().indexOf(q) !== -1
+                                        || o.value.toLowerCase().indexOf(q) !== -1
+                                        || o.value === cur;
+                                });
+                                sel.innerHTML = '';
+                                list.forEach(function (o) {
+                                    var op = document.createElement('option');
+                                    op.value = o.value;
+                                    op.textContent = o.text;
+                                    sel.appendChild(op);
+                                });
+                                if (!list.length) {
+                                    var op = document.createElement('option');
+                                    op.value = '';
+                                    op.textContent = 'Tidak ada tema yang cocok';
+                                    op.disabled = true;
+                                    sel.appendChild(op);
+                                }
+                                if (cur) sel.value = cur;
+                                if (count) count.textContent = list.length + ' dari ' + all.length + ' tema';
+                            }
+                            search.addEventListener('input', function () { renderThemeOptions(); });
+                            if (clearBtn) clearBtn.addEventListener('click', function () {
+                                search.value = '';
+                                renderThemeOptions();
+                                search.focus();
+                            });
+                            window.renderThemeOptions = renderThemeOptions;
+                            renderThemeOptions();
+                        })();
+                        </script>
                     </div>
                     <!-- Preset Themes Selection -->
                     <div class="data-card p-8 rounded-3xl space-y-6">
@@ -1917,6 +1982,9 @@
                     }
                 }
             });
+
+            // Tema: pastikan nilai hasil load tampil meski daftar sedang difilter pencarian
+            if (window.renderThemeOptions && data.data['theme']) window.renderThemeOptions(data.data['theme']);
 
             let banksData = [];
             if (data.data['gift_banks']) {
