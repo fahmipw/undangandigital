@@ -199,6 +199,195 @@ tailwind.config = {
 </style>
 </head>
 <body class="is-locked antialiased">
+<!-- Amplop pembuka Jawa: depan tertutup rapat (sisi alamat), dibuka dari belakang -->
+<div id="envOverlay" aria-hidden="true">
+  <div class="env-scene">
+    <div class="env-head">
+      <div class="env-head-label">THE WEDDING OF</div>
+      <div class="env-head-names">{{ $brideNick }} &amp; {{ $groomNick }}</div>
+    </div>
+    <div class="env-row">
+      <img class="env-wayang left" src="{{ asset('images/amplop/wayang-wanita-emas.png') }}" alt="">
+      <div class="env-wrap">
+      <div class="env-face env-face-front">
+        <div class="env-front-paper">
+          <div class="env-frame"></div>
+          <div class="env-sender">Dari:<br><b>{{ $brideNick }} &amp; {{ $groomNick }}</b></div>
+          <div class="env-rings"><div class="env-ring r1"></div><div class="env-ring r2"></div></div>
+          <div class="env-recipient">Kepada Yth.<br><b>{{ $guestName }}</b><br><span class="env-to-apology">Mohon maaf apabila ada kesalahan penulisan nama dan gelar</span></div>
+        </div>
+      </div>
+      <div class="env-face env-face-back">
+<div class="env-card">
+          <div class="env-card-label">THE WEDDING OF</div>
+          <div class="env-card-names">{{ $groomNick }} &amp; {{ $brideNick }}</div>
+          <div class="env-card-date" data-env-date="{{ $rDate }}"><span class="env-card-day"></span><span class="env-card-num"><b></b><i></i></span><span class="env-card-month"></span></div>
+          <div class="env-card-div"></div>
+          <div class="env-card-mark">&#10022;</div>
+        </div>
+        <div class="env-back"></div>
+        <div class="env-front"></div>
+        <div class="env-fold-l"></div><div class="env-fold-r"></div>
+        <div class="env-flap"></div>
+      </div>
+    </div>
+      <img class="env-wayang right" src="{{ asset('images/amplop/wayang-pria-emas.png') }}" alt="">
+    </div>
+    <button id="envOpenBtn" type="button" class="env-open-btn">BUKA UNDANGAN</button>
+    <div class="env-hint">Ketuk untuk membuka undangan</div>
+  </div>
+</div>
+<style>
+#envOverlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,#5a2c1a 0%,#2b1410 72%),repeating-linear-gradient(45deg,rgba(212,163,31,.05) 0 2px,transparent 2px 14px);transition:opacity .5s ease,visibility 0s linear .5s}
+#envOverlay.gone{opacity:0;visibility:hidden}
+#envOverlay .env-scene{display:flex;flex-direction:column;align-items:center}
+#envOverlay .env-head{text-align:center;margin-bottom:22px;transition:opacity .4s ease}
+#envOverlay .env-head-label{font-size:11px;letter-spacing:.35em;color:#d9a31f;font-weight:700}
+#envOverlay .env-head-names{font-family:Georgia,serif;font-size:30px;font-weight:700;color:#fdf6dd;margin-top:8px}
+#envOverlay .env-wrap{position:relative;width:min(320px,62vw);height:280px;perspective:900px;transform-style:preserve-3d;transition:transform .9s ease-in-out}
+#envOverlay .env-row{display:flex;align-items:flex-end;justify-content:center;width:100%}
+#envOverlay .env-wayang{height:min(260px,62vw);width:auto;flex:none;pointer-events:none;z-index:1}
+#envOverlay .env-wayang.left{transform:scaleX(-1);margin-right:-8px}
+#envOverlay .env-wayang.right{transform:scaleX(-1);margin-left:-8px}
+#envOverlay .env-wrap{z-index:2;flex:none}
+#envOverlay.flip .env-wrap{transform:rotateY(180deg)}
+#envOverlay.zoom .env-wrap{transform:scale(2.2)}
+#envOverlay .env-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+#envOverlay .env-face-front{z-index:2}
+#envOverlay .env-face-back{z-index:1;transform:rotateY(180deg)}
+#envOverlay .env-front-paper{position:absolute;inset:0;background:linear-gradient(180deg,#fffdf4,#f6eeda);border:1px solid #ddd2b8;border-radius:10px;box-shadow:0 24px 60px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+#envOverlay .env-frame{position:absolute;inset:10px;border:1px solid rgba(180,160,120,.55);border-radius:6px;pointer-events:none}
+#envOverlay .env-sender{position:absolute;top:18px;left:18px;font-size:10px;letter-spacing:.12em;color:#8a7a5a;text-align:left;line-height:1.6}
+#envOverlay .env-sender b{font-size:11px;color:#5a4632;letter-spacing:.02em}
+#envOverlay .env-rings{position:absolute;top:18px;right:14px;width:72px;height:60px}
+#envOverlay .env-ring{position:absolute;top:0;width:44px;height:44px;border-radius:50%;border:5px solid #d9a31f;box-shadow:0 0 0 1px #b8912a,inset 0 0 0 1px rgba(255,255,255,.5),0 4px 10px rgba(0,0,0,.25)}
+#envOverlay .env-ring.r1{left:0}
+#envOverlay .env-ring.r2{right:0;top:8px}
+#envOverlay .env-recipient{position:relative;font-size:13px;color:#6b5a41;line-height:1.5}
+#envOverlay .env-recipient b{font-size:20px;color:#3a2a1a}
+#envOverlay .env-to-apology{display:block;margin-top:6px;font-size:11px;font-style:italic;line-height:1.45;color:#8a7a5a}
+#envOverlay .env-back{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,#fffdf4,#f6eeda);border:1px solid #ddd2b8;border-radius:10px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+#envOverlay .env-card{position:absolute;left:50%;top:10px;z-index:2;width:min(210px,66vw);height:260px;transform:translateX(-50%);background:linear-gradient(180deg,#fff8e7,#f3e4c2);border-radius:8px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.3);transition:transform .85s cubic-bezier(.22,1,.36,1)}
+#envOverlay.open .env-card,#envOverlay.zoom .env-card{transform:translateX(-50%) translateY(-200px);transition-delay:.25s}
+#envOverlay.zoomcard .env-card{transform:translateX(-50%) translateY(-200px) scale(5);transition-delay:0s;transition-duration:1.05s;z-index:10}
+#envOverlay .env-card-label{font-size:9px;letter-spacing:.35em;color:#8a7a5a;font-weight:700}
+#envOverlay .env-card-date{display:flex;align-items:stretch;justify-content:center;gap:8px;color:#5a4632}
+#envOverlay .env-card-day,#envOverlay .env-card-month{display:flex;align-items:center;font-family:Georgia,serif;font-size:11px}
+#envOverlay .env-card-num{display:flex;flex-direction:column;align-items:center;border-left:1px solid rgba(180,160,120,.6);border-right:1px solid rgba(180,160,120,.6);padding:0 8px}
+#envOverlay .env-card-num b{font-size:22px;line-height:1;color:#3a2a1a}
+#envOverlay .env-card-num i{font-style:normal;font-size:8px;letter-spacing:.2em;color:#8a7a5a;margin-top:2px}
+#envOverlay .env-card-names{font-family:Georgia,serif;font-size:24px;font-weight:700;color:#6d421e;line-height:1.3}
+#envOverlay .env-card-div{width:44px;height:1px;background:#c9a45c}
+#envOverlay .env-card-mark{font-size:16px;color:#c9a45c}
+#envOverlay .env-front{position:absolute;left:2px;right:2px;bottom:2px;z-index:3;height:165px;background:linear-gradient(180deg,#fbf6e9,#efe5cb);clip-path:polygon(0 0,50% 52%,100% 0,100% 100%,0 100%);border-radius:0 0 8px 8px}
+#envOverlay .env-fold-l{position:absolute;left:2px;top:2px;bottom:2px;width:50%;z-index:3;background:linear-gradient(180deg,#f5eeda,#e9dfc6);clip-path:polygon(0 0,0 100%,100% 52%)}
+#envOverlay .env-fold-r{position:absolute;right:2px;top:2px;bottom:2px;width:50%;z-index:3;background:linear-gradient(180deg,#f5eeda,#e9dfc6);clip-path:polygon(100% 0,100% 100%,0 52%)}
+#envOverlay .env-flap{position:absolute;top:2px;left:2px;right:2px;z-index:4;height:126px;background:linear-gradient(180deg,#f6eeda,#e8dcc0);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top center;transition:transform .7s ease .15s}
+#envOverlay.open .env-flap,#envOverlay.zoom .env-flap{transform:rotateX(180deg);z-index:1}
+#envOverlay.zoomcard .env-head,#envOverlay.zoomcard .env-open-btn,#envOverlay.zoomcard .env-hint{opacity:0}
+#envOverlay.zoomcard .env-back,#envOverlay.zoomcard .env-front,#envOverlay.zoomcard .env-fold-l,#envOverlay.zoomcard .env-fold-r,#envOverlay.zoomcard .env-flap,#envOverlay.zoomcard .env-face-front{opacity:0;transition:opacity .8s ease}
+@keyframes envFloat{0%,100%{top:10px}50%{top:-14px}}
+#envOverlay.floating .env-card{animation:envFloat 1.2s ease-in-out infinite}
+#envOverlay.open .env-open-btn,#envOverlay.open .env-hint,#envOverlay.flip .env-open-btn,#envOverlay.flip .env-hint{opacity:0}
+#envOverlay .env-open-btn{margin-top:26px;background:#8e1b12;color:#fff;border:2px solid #d9a31f;border-radius:999px;padding:13px 34px;font-size:14px;font-weight:700;letter-spacing:.15em;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:opacity .4s ease,transform .15s ease}
+#envOverlay .env-open-btn:active{transform:scale(.96)}
+#envOverlay .env-hint{margin-top:14px;font-size:12px;letter-spacing:.2em;color:#f4d58a;opacity:.75;transition:opacity .4s ease}
+#envOverlay .env-burst{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;z-index:5}
+#envOverlay .env-bit{position:absolute;left:0;top:0;margin:-8px 0 0 -8px;line-height:1;pointer-events:none}
+</style>
+<script>
+function envSurprise(){
+  var ov = document.getElementById('envOverlay');
+  if (!ov) return;
+  var wrap = ov.querySelector('.env-wrap');
+  var r = wrap ? wrap.getBoundingClientRect() : {left:window.innerWidth/2-120, top:window.innerHeight/2-140, width:240};
+  var layer = document.createElement('div');
+  layer.className = 'env-burst';
+  layer.style.left = (r.left + r.width/2) + 'px';
+  layer.style.top = (r.top + 12) + 'px';
+  var shapes = ['\u2726','\u2727','\u25CF','\u2766','\u2665','\u2605'];
+  var colors = ['#d9a31f','#ffedb0','#fffdf4','#8e1b12','#e8a0a0','#f4d58a'];
+  for (var i = 0; i < 28; i++) {
+    var s = document.createElement('span');
+    s.className = 'env-bit';
+    s.textContent = shapes[Math.floor(Math.random()*shapes.length)];
+    s.style.color = colors[Math.floor(Math.random()*colors.length)];
+    s.style.fontSize = (11 + Math.floor(Math.random()*10)) + 'px';
+    layer.appendChild(s);
+    var dx = Math.floor(Math.random()*340) - 170;
+    var dy = -Math.floor(60 + Math.random()*190);
+    var rot = Math.floor(Math.random()*520) - 260;
+    if (s.animate) {
+      s.animate([
+        {transform:'translate(0,0) rotate(0deg) scale(.6)', opacity:0},
+        {transform:'translate('+(dx*0.18)+'px,'+(dy*0.18)+'px) rotate('+(rot*0.2)+'deg) scale(1.15)', opacity:1, offset:0.12},
+        {transform:'translate('+(dx*0.92)+'px,'+(dy*0.92)+'px) rotate('+(rot*0.8)+'deg) scale(1)', opacity:1, offset:0.6},
+        {transform:'translate('+dx+'px,'+(dy+46)+'px) rotate('+rot+'deg) scale(.7)', opacity:0}
+      ], {duration:1700, easing:'cubic-bezier(.17,.67,.35,1)', delay:i*28, fill:'forwards'});
+    }
+  }
+  ov.appendChild(layer);
+  setTimeout(function(){ if (layer.parentNode) layer.parentNode.removeChild(layer); }, 2600);
+}
+function withEnvelope(fn){
+  return function(){
+    var self = this, args = arguments;
+    function run(){ fn.apply(self, args); }
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { run(); return; }
+    var ov = document.getElementById('envOverlay');
+    if (!ov || ov.dataset.done) { run(); return; }
+    ov.dataset.done = '1';
+    ov.classList.add('flip');
+    setTimeout(function(){ ov.classList.add('open'); envSurprise(); }, 900);
+    setTimeout(function(){ ov.classList.add('gone'); }, 2900);
+    setTimeout(function(){ ov.remove(); run(); }, 3400);
+  };
+}
+(function(){
+  var dd = document.querySelector('#envOverlay .env-card-date');
+  if (dd) {
+    var raw = dd.getAttribute('data-env-date') || '';
+    var mt = raw.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if (mt) {
+      var dt = new Date(+mt[1], +mt[2]-1, +mt[3]);
+      var days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+      var months = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      var set = function(sel, txt){ var el = dd.querySelector(sel); if (el) el.textContent = txt; };
+      set('.env-card-day', days[dt.getDay()]);
+      set('.env-card-num b', String(dt.getDate()));
+      set('.env-card-num i', String(dt.getFullYear()));
+      set('.env-card-month', months[dt.getMonth()+1]);
+    }
+  }
+  var ov = document.getElementById('envOverlay');
+  var btn = document.getElementById('envOpenBtn');
+  if (!ov || !btn) return;
+  btn.addEventListener('click', function(){
+    if (ov.dataset.done) return;
+    ov.dataset.done = '1';
+    function finish(){
+      var g = document.getElementById('cover-gate') || document.getElementById('cover');
+      if (g) g.style.display = 'none';
+      document.body.classList.remove('is-locked', 'locked');
+      document.body.style.overflow = '';
+      ov.remove();
+      var b = document.getElementById('btn-open') || document.getElementById('openBtn');
+      if (b) { b.click(); return; }
+      if (typeof window.openInv === 'function') { window.openInv(); }
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { finish(); return; }
+    ov.classList.add('flip');
+    setTimeout(function(){ ov.classList.add('open'); envSurprise(); }, 850);
+    setTimeout(function(){ ov.classList.add('floating'); }, 1950);
+    setTimeout(function(){ ov.classList.remove('floating'); ov.classList.add('zoomcard'); }, 3150);
+    setTimeout(function(){ ov.classList.add('gone'); }, 4300);
+    setTimeout(finish, 4700);
+  });
+})();
+</script>
+
+
+
 <svg width="0" height="0" class="absolute" aria-hidden="true">
   <defs>
     <linearGradient id="goldLin" x1="0" y1="0" x2="1" y2="1">
@@ -742,7 +931,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Buka undangan ---
   const btnOpen = document.getElementById('btn-open');
   if (btnOpen) {
-    btnOpen.addEventListener('click', () => {
+    btnOpen.addEventListener('click', withEnvelope(() => {
       const gate = document.getElementById('cover-gate');
       gsap.to(gate, {
         yPercent: -100, duration: 1.15, ease: 'power4.inOut',
@@ -758,7 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ScrollTrigger.refresh();
         }
       });
-    });
+    }));
   }
 
   function animateHero() {
