@@ -671,7 +671,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         <!-- Menu QR: tema default tidak punya menu bawah seperti tema lain,
              jadi entri QR-nya ada di header, di samping tombol musik.
              Syarat tampil sama dengan section QR: QR diaktifkan + tamu punya QR. -->
-        <button onclick="document.getElementById('qrcheckin').scrollIntoView({behavior:'smooth'})"
+        <button onclick="openQrModal()"
           aria-label="QR Check-in" title="QR Check-in"
           style="width:2.25rem;height:2.25rem;border-radius:9999px;background:#775a19;color:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(78,52,46,.2);cursor:pointer">
           <span class="material-symbols-outlined" style="font-size:1.25rem">qr_code</span>
@@ -762,6 +762,9 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
               <p class="font-title-sm text-body-md font-semibold">
                 <?php echo getSet('bride_parents', 'Bapak Yakub & Ibu Rahel'); ?>
               </p>
+              <?php if (getSet('bride_instagram')): ?>
+              <a href="https://instagram.com/<?php echo ltrim(getSet('bride_instagram'), '@'); ?>" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-1 mt-2 text-xs font-semibold text-secondary hover:underline"><span class="material-symbols-outlined text-base">photo_camera</span>@<?php echo ltrim(getSet('bride_instagram'), '@'); ?></a>
+              <?php endif; ?>
             </div>
           </div>
 
@@ -810,6 +813,9 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
               <p class="font-title-sm text-body-md font-semibold">
                 <?php echo getSet('groom_parents', 'Bapak Ibrahim & Ibu Sarah'); ?>
               </p>
+              <?php if (getSet('groom_instagram')): ?>
+              <a href="https://instagram.com/<?php echo ltrim(getSet('groom_instagram'), '@'); ?>" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-1 mt-2 text-xs font-semibold text-secondary hover:underline"><span class="material-symbols-outlined text-base">photo_camera</span>@<?php echo ltrim(getSet('groom_instagram'), '@'); ?></a>
+              <?php endif; ?>
             </div>
           </div>
 
@@ -821,6 +827,43 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           <h2 class="font-headline-md text-headline-md text-primary text-3d">Galeri Prewedding</h2>
           <div class="w-16 h-[2px] bg-secondary-container mx-auto mt-4"></div>
         </div>
+        <?php if (getSet('prewedding_video_file') || getSet('prewedding_video_link')): ?>
+      <?php
+        $prewedFile = getSet('prewedding_video_file');
+        $prewedLink = getSet('prewedding_video_link');
+        $prewedYtId = null;
+        if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
+        $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
+      ?>
+        <div class="text-center mb-8">
+          <p class="font-label-caps text-label-caps text-secondary uppercase">Video Prewedding</p>
+        </div>
+        <div class="relative w-full max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-xl border border-outline-variant/30">
+          <div style="position:relative;padding-top:56.25%">
+            <?php if ($prewedFile): ?>
+            <video controls preload="metadata" playsinline src="<?php echo asset($prewedFile); ?>" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
+            <?php elseif ($prewedYtId): ?>
+            <button type="button" onclick="playPrewed(this, '<?php echo $prewedYtId; ?>')" aria-label="Putar Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
+              <img src="<?php echo $prewedThumb; ?>" alt="Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85">
+              <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
+            </button>
+            <?php elseif ($prewedLink): ?>
+            <a href="<?php echo $prewedLink; ?>" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
+              <span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
+            </a>
+            <?php endif; ?>
+          </div>
+        </div>
+        <?php if ($prewedLink): ?>
+        <div class="mt-5 flex justify-center">
+          <a href="<?php echo $prewedLink; ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary text-on-secondary text-xs font-bold uppercase tracking-widest hover:shadow-lg transition-all active:scale-95">
+            <span class="material-symbols-outlined text-base">play_circle</span>
+            <span>Buka Video</span>
+          </a>
+        </div>
+        <?php endif; ?>
+        <?php endif; ?>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 reveal-stagger perspective-container">
           <?php if (!empty($gallery)): ?>
           <?php  foreach ($gallery as $index => $img): ?>
@@ -1103,53 +1146,12 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           <?php endif; ?>
         </div>
       </section>
-      <?php if (getSet('prewedding_video_file') || getSet('prewedding_video_link')): ?>
-      <?php
-        $prewedFile = getSet('prewedding_video_file');
-        $prewedLink = getSet('prewedding_video_link');
-        $prewedYtId = null;
-        if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
-        $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
-      ?>
-      <section class="px-margin-page mb-section-gap text-center reveal" id="video">
-        <div class="inline-block px-4 py-1 border-b border-secondary/30 mb-4">
-          <p class="font-label-caps text-label-caps text-secondary uppercase">Video Prewedding</p>
-        </div>
-        <h2 class="font-display-lg text-display-lg text-primary mb-4">Momen Prewedding</h2>
-        <p class="text-sm text-secondary/70 mb-8 max-w-md mx-auto leading-relaxed">Saksikan momen kebersamaan kami dalam video prewedding berikut.</p>
-        <div class="relative w-full max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-xl border border-outline-variant/30">
-          <div style="position:relative;padding-top:56.25%">
-            <?php if ($prewedFile): ?>
-            <video controls preload="metadata" playsinline src="<?php echo asset($prewedFile); ?>" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
-            <?php elseif ($prewedYtId): ?>
-            <button type="button" onclick="playPrewed(this, '<?php echo $prewedYtId; ?>')" aria-label="Putar Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
-              <img src="<?php echo $prewedThumb; ?>" alt="Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85">
-              <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
-            </button>
-            <?php elseif ($prewedLink): ?>
-            <a href="<?php echo $prewedLink; ?>" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
-              <span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
-              <span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
-            </a>
-            <?php endif; ?>
-          </div>
-        </div>
-        <?php if ($prewedLink): ?>
-        <div class="mt-5 flex justify-center">
-          <a href="<?php echo $prewedLink; ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary text-on-secondary text-xs font-bold uppercase tracking-widest hover:shadow-lg transition-all active:scale-95">
-            <span class="material-symbols-outlined text-base">play_circle</span>
-            <span>Buka Video</span>
-          </a>
-        </div>
-        <?php endif; ?>
-      </section>
       <script>
       function playPrewed(btn, id){
         var wrap = btn.parentNode;
         wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>';
       }
       </script>
-      <?php endif; ?>
       <section class="px-margin-page mb-12 reveal">
         <div class="relative group">
           <div
@@ -1385,18 +1387,22 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       </section>
 
       <?php if (getSet('guest_qr_enabled') && !empty($guestQrCode)): ?>
-      <!-- QR CHECK-IN (opsional, tampil bila diaktifkan di admin) -->
-      <section class="px-margin-page mb-section-gap text-center reveal" id="qrcheckin">
-        <span class="font-label-caps text-label-caps text-secondary mb-2 block">KEHADIRAN</span>
-        <h2 class="font-display-lg text-headline-md text-primary mb-6">QR Check-in</h2>
-        <div id="qrBox" class="inline-block p-4 bg-white rounded-2xl shadow-lg"></div>
-        <p class="text-sm text-on-surface-variant mt-4 font-body-md">
-          Tunjukkan QR code ini kepada panitia saat kedatangan.<br>
-          Nama: <strong><?php echo htmlspecialchars($guestName); ?></strong>
-        </p>
-      </section>
+      <div id="qrModal" style="position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
+        <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+          <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
+          <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
+          <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+          <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
+          <p style="margin:16px 0 0;font-weight:600;color:#2b2118"><?php echo htmlspecialchars($guestName); ?></p>
+          <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+        </div>
+      </div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-      <script>if(window.QRCode){var qb=document.getElementById('qrBox');new QRCode(qb, { text: "<?php echo htmlspecialchars($guestQrCode); ?>", width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });if(!document.getElementById('qrDownloadBtn')){var dw=document.createElement('div');dw.style.cssText='text-align:center;margin-top:14px';var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:inline-block;padding:12px 28px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};dw.appendChild(db);qb.parentNode.insertBefore(dw,qb.nextSibling);}}</script>
+      <script>
+      function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
+      function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
+      if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb, { text: "<?php echo htmlspecialchars($guestQrCode); ?>", width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
+      </script>
       <?php endif; ?>
 
       <section class="py-4 mb-6 text-center reveal" id="gift">
@@ -1467,6 +1473,12 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
               </button>
             </div>
             <?php endforeach; ?>
+            <?php if (getSet('gift_qris_enabled') === '1' && trim((string)getSet('gift_qris_image', '')) !== ''): ?>
+            <div class="bg-surface p-4 rounded-xl border border-secondary-container/20 shadow-sm text-center">
+              <p class="font-label-caps text-[10px] text-secondary">QRIS &mdash; <?php echo htmlspecialchars(getSet('gift_qris_name', 'QRIS')); ?></p>
+              <img src="<?php echo htmlspecialchars(asset(getSet('gift_qris_image'))); ?>" alt="QRIS" class="w-48 h-48 object-contain mx-auto mt-3">
+            </div>
+            <?php endif; ?>
 
             <div
               class="bg-surface p-4 rounded-xl flex items-center justify-between border border-secondary-container/20 shadow-sm">

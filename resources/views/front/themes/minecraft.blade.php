@@ -321,16 +321,17 @@ body:not(.gate-open) .float-btns{display:none!important}
         <p class="time">{{ $rTimeS }} &ndash; {{ $rTimeE }} {{ mcGet('wedding_timezone','WIB') }}</p>
         <p>{{ mcGet('reception_location', mcGet('wedding_location', 'Kediaman Mempelai')) }}</p>
         @if(!$sameLoc && mcGet('reception_map_link'))<a class="mc-btn map-btn" href="{{ mcGet('reception_map_link') }}" target="_blank" rel="noopener" style="font-size:10px">&#9673; BUKA PETA</a>@endif @if(mcGet('live_stream_link'))@php $lvE = mcGet('live_stream_link'); if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$lvE, $lm2)) { $lvE = 'https://www.youtube-nocookie.com/embed/'.$lm2[1]; } @endphp<div style="margin:12px auto 2px;max-width:330px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden"><div style="position:relative;padding-top:56.25%"><iframe src="{{ $lvE }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div>@endif @if(mcGet('live_stream_link'))<a class="mc-btn map-btn" target="_blank" href="{{ mcGet('live_stream_link') }}" style="margin-left:8px">Live Streaming</a>@endif
-@if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div style="margin:12px auto 2px;max-width:330px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@if($pwL)<a class="mc-btn map-btn" target="_blank" href="{{ $pwL }}" style="margin-left:8px">Video Prewedding</a>@endif @endif
 @if($sameLoc && $mainMapLink)<div style="text-align:center;margin-top:12px"><a class="mc-btn map-btn" target="_blank" rel="noopener" href="{{ $mainMapLink }}">&#9673; BUKA PETA</a></div>@endif
       </div>
     </div>
   </section>
 
-  @if(!empty($gallery))
+  @if(!empty($gallery) || mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))
   <section class="block reveal" id="gallerySec">
     <div class="sec-head"><canvas class="sec-ico" data-icon="frame" width="16" height="16"></canvas><h2 class="sec-title">GALERI PETUALANGAN</h2><canvas class="sec-ico" data-icon="frame" width="16" height="16"></canvas></div>
     <p class="sec-sub">Momen yang diabadikan dalam balok kenangan.</p>
+    <p style="text-align:center;font-size:11px;letter-spacing:.25em;font-weight:700;margin:18px 0 10px">VIDEO PREWEDDING</p>
+    @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div style="margin:12px auto 2px;max-width:330px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@if($pwL)<a class="mc-btn map-btn" target="_blank" href="{{ $pwL }}" style="margin-left:8px">Video Prewedding</a>@endif @endif
     <div class="frames">
       @foreach(array_slice($gallery, 0, 8) as $i => $img)
       <div class="item-frame"><img src="{{ $img }}" alt="Galeri {{ $i + 1 }}" loading="lazy"><p>Kenangan {{ $i + 1 }}</p></div>
@@ -394,15 +395,24 @@ body:not(.gate-open) .float-btns{display:none!important}
         <h4>&#9733; UCAPAN MASUK</h4>
         <div id="ucapanList"><div class="score-empty">Memuat ucapan...</div></div>
       </div>
-      @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
-      <div class="scoreboard" style="margin-top:16px">
-        <h4>&#9673; QR CHECK-IN</h4>
-        <div id="qrBoxMc" style="display:inline-block;padding:12px;background:#fff;border:3px solid #5b5b5b"></div>
-        <p class="score-empty">Tunjukkan pada panitia saat datang.<br>{{ $guestName }}</p>
-      </div>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-      <script>if(window.QRCode){var qb=document.getElementById('qrBoxMc');new QRCode(qb,{text:"{{ $guestQrCode }}",width:160,height:160,correctLevel:QRCode.CorrectLevel.M});if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}</script>
-      @endif
+@if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
+<div id="qrModal" style="position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);padding:20px" onclick="if(event.target===this)closeQrModal()">
+  <div style="background:#101010;border:3px solid #000;box-shadow:inset 2px 2px 0 rgba(255,255,255,.12),0 0 0 2px #3a3a3a,0 24px 60px rgba(0,0,0,.5);padding:22px 18px;max-width:340px;width:100%;text-align:center;position:relative">
+    <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:6px;right:10px;border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:#fff">&times;</button>
+    <h4 style="font-family:'Press Start 2P',monospace;font-size:13px;color:#7bff5e;margin:0 0 10px">QR CHECK-IN</h4>
+    <p style="font-size:11px;line-height:1.7;color:#c8d2dc;margin:0 0 16px">Tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+    <div style="background:#fff;padding:12px;display:inline-block;border:3px solid #5b5b5b"><div id="qrModalBox"></div></div>
+    <p style="margin:14px 0 0;font-size:12px;font-weight:700;color:#fdf6dd">{{ $guestName }}</p>
+    <button id="qrModalDownloadBtn" type="button" class="mc-btn gold" style="display:block;width:100%;margin-top:14px;padding:12px;font-size:11px">UNDUH QR</button>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
+function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
+if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:180,height:180,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
+</script>
+@endif
     </div>
   </section>
 
@@ -457,6 +467,7 @@ body:not(.gate-open) .float-btns{display:none!important}
 <div class="float-btns">
   <button class="mc-btn" id="dayNightBtn" title="Siang / Malam">&#9728;</button>
   <button class="mc-btn" id="musicBtn" title="Musik">&#9834;</button>
+  @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))<button class="mc-btn" id="qrBtn" title="QR Check-in" onclick="openQrModal()"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>@endif
 </div>
 <div id="toast"></div>
 <script>

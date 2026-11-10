@@ -144,6 +144,8 @@ select.pq-input{appearance:none}
 #logoMini span{display:block;font-size:8px;color:#fff;text-shadow:1px 1px 0 #5d3a1f}
 #musicBtn{width:46px;height:46px;border-radius:10px;background:rgba(20,14,6,.82);border:3px solid #fff;
   color:#fff;font-size:20px;cursor:pointer;margin-top:6px}
+#qrBtn{width:46px;height:46px;border-radius:10px;background:rgba(20,14,6,.82);border:3px solid #fff;
+  color:#fff;font-size:20px;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center}
 .pips{display:flex;gap:4px}
 .pip{width:22px;height:22px;border-radius:5px;background:#3a2a18;border:2px solid #6e4f2e;
   display:flex;align-items:center;justify-content:center;font-size:12px;filter:grayscale(1);opacity:.55}
@@ -282,6 +284,7 @@ select.pq-input{appearance:none}
     <div>
       <div id="logoMini">PIXEL QUEST<span>WEDDING ADVENTURE</span></div>
       <button id="musicBtn" title="Musik">&#9834;</button>
+    @if(jklGet('guest_qr_enabled') && !empty($guestQrCode))<button id="qrBtn" title="QR Check-in" onclick="openPanel('qr')"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>@endif
     </div>
   </div>
   <div id="hint" hidden></div>
@@ -882,12 +885,13 @@ function openPanel(id){
         <p>${esc(MC.groomChild)} dari<br>${esc(MC.groomParents)}</p>${MC.groomIg?`<a href="https://instagram.com/${esc(MC.groomIg.replace(/^@/,''))}" target="_blank" rel="noopener" class="pq-btn" style="display:inline-block;margin-top:8px;font-size:8px;padding:8px 10px">&#64;${esc(MC.groomIg.replace(/^@/,''))}</a>`:""}</div>
     </div>
     <p style="font-size:20px;color:#5a4a30;text-align:center;margin-top:6px">${esc(MC.quotes||"")}</p>
-    ${MC.guestQrOn&&MC.guestQr?`<div class="qr-card"><h2 class="ptitle" style="font-size:12px">KARTU TAMU</h2>
-<p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p>
-<div id="qrBox" style="display:flex;justify-content:center"></div></div>`:""}`;
+    `;
     drawFace($("#faceBride"),{skin:"#f0c49c",hair:"#2b2b2b",shirt:"#e8a2b0",style:"bride"});
     drawFace($("#faceGroom"),{skin:"#c98d5f",hair:"#2b2b2b",shirt:"#3f8fd1"});
-    if(MC.guestQrOn&&MC.guestQr&&window.QRCode){
+  }
+  else if(id==="qr"){
+    body.innerHTML=`<div class="ptitle">KARTU TAMU</div><div class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</div><div class="qr-card"><div id="qrBox" style="display:flex;justify-content:center"></div><p class="psub" style="margin-top:10px">Nama: <b>${esc(MC.guestName)}</b></p></div>`;
+    if(window.QRCode&&MC.guestQrOn&&MC.guestQr){
       new QRCode($("#qrBox"),{text:MC.guestQr,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});
       var qb=document.getElementById('qrBox');if(qb){if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}
     }
@@ -904,7 +908,7 @@ function openPanel(id){
       <h3>RESEPSI</h3><p>${esc(MC.resepsiDate)}</p><p class="tm">${esc(MC.resepsiTime)}</p>
       <p>${esc(MC.resepsiVenue)}</p>
       ${MC.resepsiMaps?`<a href="${esc(MC.resepsiMaps)}" target="_blank" rel="noopener" class="pq-btn gold" style="display:inline-block;margin-top:8px;font-size:9px;padding:10px 14px">LIHAT LOKASI</a>`:""}
-      ${MC.liveStream?`<div style="margin-top:10px;border:3px solid #0f380f;box-shadow:0 0 0 2px #9bbc0f;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%"><iframe src="${esc(MC.liveEmbed)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div><a href="${esc(MC.liveStream)}" target="_blank" rel="noopener" class="pq-btn" style="display:inline-block;margin-top:8px;margin-left:6px;font-size:9px;padding:10px 14px">LIVE STREAMING</a>`:""}${(MC.prewedFile||MC.prewedLink)?'<div style="margin-top:10px;border:3px solid #0f380f;box-shadow:0 0 0 2px #9bbc0f;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%">' + (MC.prewedFile?'<video controls preload="metadata" playsinline src="'+esc(MC.prewedFile)+'" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>':MC.prewedEmbed?'<iframe src="'+esc(MC.prewedEmbed)+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>':'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:9px;font-weight:700;letter-spacing:.15em">&#9654; TONTON VIDEO PREWEDDING</a>') + '</div></div>' + (MC.prewedLink?'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" class="pq-btn" style="display:inline-block;margin-top:8px;margin-left:6px;font-size:9px;padding:10px 14px">VIDEO PREWEDDING</a>':'') : ""}
+      ${MC.liveStream?`<div style="margin-top:10px;border:3px solid #0f380f;box-shadow:0 0 0 2px #9bbc0f;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%"><iframe src="${esc(MC.liveEmbed)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div><a href="${esc(MC.liveStream)}" target="_blank" rel="noopener" class="pq-btn" style="display:inline-block;margin-top:8px;margin-left:6px;font-size:9px;padding:10px 14px">LIVE STREAMING</a>`:""}
     </div></div>
     <a href="${MC.gcalUrl}" target="_blank" rel="noopener" class="pq-btn" style="display:block;text-align:center;margin-top:4px;font-size:10px">+ SIMPAN KE GOOGLE CALENDAR</a>`;
   }
@@ -921,7 +925,7 @@ function openPanel(id){
   }
   else if(id==="gallery"){
     const g=MC.gallery||[];
-    body.innerHTML=`<div class="ptitle">GALERI KENANGAN</div><div class="psub">Momen-momen indah</div>`+
+    body.innerHTML=`<div class="ptitle">GALERI KENANGAN</div><div class="psub">Momen-momen indah</div>${(MC.prewedFile||MC.prewedLink)?'<div style="margin-top:10px;border:3px solid #0f380f;box-shadow:0 0 0 2px #9bbc0f;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%">' + (MC.prewedFile?'<video controls preload="metadata" playsinline src="'+esc(MC.prewedFile)+'" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>':MC.prewedEmbed?'<iframe src="'+esc(MC.prewedEmbed)+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>':'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:9px;font-weight:700;letter-spacing:.15em">&#9654; TONTON VIDEO PREWEDDING</a>') + '</div></div>' + (MC.prewedLink?'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" class="pq-btn" style="display:inline-block;margin-top:8px;margin-left:6px;font-size:9px;padding:10px 14px">VIDEO PREWEDDING</a>':'') : ""}`+
     (g.length?`<div class="frames2">${g.map((im,i)=>`<div class="frame2" data-full="${esc(im)}"><img src="${esc(im)}" alt="Galeri ${i+1}" loading="lazy"><p>FOTO ${i+1}</p></div>`).join("")}</div>`
     :`<p style="font-size:20px;color:#7a6a4a">Galeri kenangan akan segera hadir.</p>`);
     $$("#panelBody .frame2").forEach(f=>f.addEventListener("click",()=>openLightbox(f.dataset.full)));

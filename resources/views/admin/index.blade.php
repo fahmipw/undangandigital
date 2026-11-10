@@ -578,24 +578,7 @@
                             <input type="text" id="set-live_stream_link"
                                 placeholder="Contoh: https://youtube.com/live/xxxxx atau https://zoom.us/...">
                         </div>
-                        <div class="rsvp-field pt-2">
-                            <label>VIDEO PREWEDDING (OPSIONAL)</label>
-                            <input type="hidden" id="set-prewedding_video_file">
-                            <div class="flex flex-col gap-2 mt-2">
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    <button type="button" onclick="document.getElementById('prewedding-video-upload').click()"
-                                        class="px-4 py-2 rounded-xl bg-secondary text-white text-xs font-bold uppercase hover:bg-secondary/80 transition-all">Pilih File Video</button>
-                                    <span id="prewedding-video-name" class="text-xs opacity-60">Belum ada video</span>
-                                    <button type="button" id="btn-delete-prewedding_video" onclick="deletePreweddingVideo()"
-                                        class="px-3 py-2 rounded-xl bg-red-500 text-white text-xs font-bold uppercase hover:bg-red-600 transition-all" style="display:none;">Hapus</button>
-                                </div>
-                                <input type="file" id="prewedding-video-upload" class="hidden" accept="video/mp4,video/webm,video/quicktime,.mov,.mkv" onchange="uploadPreweddingVideo()">
-                                <video id="preview-prewedding_video" controls preload="metadata" class="hidden w-full max-w-md rounded-xl border border-outline-variant/30"></video>
-                                <input type="text" id="set-prewedding_video_link"
-                                    placeholder="atau tempel link YouTube, contoh: https://www.youtube.com/watch?v=xxxxx">
-                                <p class="text-[11px] opacity-60 leading-relaxed">Unggah file video (MP4/WebM/MOV, maks 100MB) atau tempel link YouTube. Jika keduanya diisi, file yang diunggah yang ditampilkan di undangan.</p>
-                            </div>
-                        </div>
+
                     </div>
 
                     <div class="data-card p-8 rounded-3xl space-y-6 md:col-span-2">
@@ -760,6 +743,24 @@
                     </label>
                 </div>
                 <p class="text-xs text-gray-500 -mt-4 mb-4">Seret foto untuk mengubah urutannya — urutan ini yang tampil di undangan.</p>
+                        <div class="rsvp-field pt-2">
+                            <label>VIDEO PREWEDDING (OPSIONAL)</label>
+                            <input type="hidden" id="set-prewedding_video_file">
+                            <div class="flex flex-col gap-2 mt-2">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <button type="button" onclick="document.getElementById('prewedding-video-upload').click()"
+                                        class="px-4 py-2 rounded-xl bg-secondary text-white text-xs font-bold uppercase hover:bg-secondary/80 transition-all">Pilih File Video</button>
+                                    <span id="prewedding-video-name" class="text-xs opacity-60">Belum ada video</span>
+                                    <button type="button" id="btn-delete-prewedding_video" onclick="deletePreweddingVideo()"
+                                        class="px-3 py-2 rounded-xl bg-red-500 text-white text-xs font-bold uppercase hover:bg-red-600 transition-all" style="display:none;">Hapus</button>
+                                </div>
+                                <input type="file" id="prewedding-video-upload" class="hidden" accept="video/mp4,video/webm,video/quicktime,.mov,.mkv" onchange="uploadPreweddingVideo()">
+                                <video id="preview-prewedding_video" controls preload="metadata" class="hidden w-full max-w-md rounded-xl border border-outline-variant/30"></video>
+                                <input type="text" id="set-prewedding_video_link"
+                                    placeholder="atau tempel link YouTube, contoh: https://www.youtube.com/watch?v=xxxxx">
+                                <p class="text-[11px] opacity-60 leading-relaxed">Unggah file video (MP4/WebM/MOV, maks 100MB) atau tempel link YouTube. Jika keduanya diisi, file yang diunggah yang ditampilkan di undangan.</p>
+                            </div>
+                        </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="gallery-list">
                     <!-- Photos will load here -->
                 </div>

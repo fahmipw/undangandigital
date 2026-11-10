@@ -226,6 +226,11 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
       background:linear-gradient(135deg,#e0bb43,#b38618); color:#1b130e; cursor:pointer;
       box-shadow:0 8px 22px rgba(212,175,55,.45); border:1px solid rgba(245,223,152,.6); }
     #musicFloat[hidden]{ display:none !important; }
+    #qrFloatBtn{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:188px;
+      width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97)); color:#e6c887; cursor:pointer;
+      box-shadow:0 10px 24px rgba(90,70,20,.45); border:1px solid rgba(201,164,92,.8); }
+    #qrFloatBtn[hidden]{ display:none !important; }
     #musicFloat .bars{ display:none; align-items:flex-end; gap:2px; height:16px; }
     #musicFloat.playing .bars{ display:flex; }
     #musicFloat.playing .note{ display:none; }
@@ -682,7 +687,35 @@ function withEnvelope(fn){
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">Galeri Kenangan</h2>
     <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Momen berharga kami</p>
-    @if(!empty($gallery) && count($gallery))
+        @if(jwaGet('prewedding_video_file') || jwaGet('prewedding_video_link'))
+@php
+  $prewedFile = jwaGet('prewedding_video_file');
+  $prewedLink = jwaGet('prewedding_video_link');
+  $prewedYtId = null;
+  if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
+  $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
+@endphp
+    <p style="font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:#c9a45c;margin-bottom:12px" class="relative z-10">Video Prewedding</p>
+    <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+<div style="position:relative;padding-top:56.25%">
+@if($prewedFile)
+<video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
+@elseif($prewedYtId)
+<button type="button" onclick="playPrewed(this, '{{ $prewedYtId }}')" aria-label="Putar Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
+<img src="{{ $prewedThumb }}" alt="Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85">
+<span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
+</button>
+@elseif($prewedLink)
+<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
+<span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
+<span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
+</a>
+@endif
+</div>
+</div>
+    @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
+    @endif
+@if(!empty($gallery) && count($gallery))
     <div class="relative z-10 w-full max-w-[340px] grid grid-cols-2 gap-3">
       @foreach(array_slice($gallery, 0, 8) as $i => $img)
       <div class="anim-scale gal-item relative overflow-hidden rounded-2xl border border-jawa-gold/25 cursor-pointer {{ $i % 3 === 0 ? 'row-span-2' : '' }}" data-full="{{ $img }}">
@@ -728,16 +761,25 @@ function withEnvelope(fn){
   </section>
 
   <!-- ================= 9. RSVP & BUKU TAMU ================= -->
-@if(jwaGet('guest_qr_enabled') && !empty($guestQrCode))
-<section id="sec-qr" style="position:relative;padding:72px 24px;display:flex;flex-direction:column;align-items:center;text-align:center">
-  <h2 style="font-family:serif;font-size:30px;margin-bottom:10px">QR Check-In</h2>
-  <p style="opacity:.75;max-width:340px;line-height:1.7;margin-bottom:22px">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
-  <div style="background:#fff;padding:16px;border-radius:18px;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrBox"></div></div>
-  <p style="margin-top:16px;font-weight:600">{{ $guestName }}</p>
-</section>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>if(window.QRCode){var qb=document.getElementById('qrBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:200,height:200,correctLevel:QRCode.CorrectLevel.M});if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}</script>
-@endif
+  @if(jwaGet('guest_qr_enabled') && !empty($guestQrCode))
+  <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in" hidden><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
+  <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
+    <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
+      <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
+      <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+      <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
+      <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
+      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+  function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
+  function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
+  if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:200,height:200,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
+  </script>
+  @endif
   <section class="scroll-section relative py-24 px-6 flex flex-col items-center text-center overflow-hidden bg-jawa-bg/60" style="background-color:#101410;background-image:radial-gradient(100% 55% at 50% 0%,rgba(90,140,90,.09),transparent 65%)" id="sec-ucapan">
     {!! jwaCorners(0) !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
@@ -822,38 +864,7 @@ function withEnvelope(fn){
   </section>
 
   <!-- ================= 11. FOOTER ================= -->
-@if(jwaGet('prewedding_video_file') || jwaGet('prewedding_video_link'))
-@php
-  $prewedFile = jwaGet('prewedding_video_file');
-  $prewedLink = jwaGet('prewedding_video_link');
-  $prewedYtId = null;
-  if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
-  $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
-@endphp
-<section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" id="sec-video">
-    <p class="anim-fade text-[10px] uppercase tracking-[0.4em] text-jawa-gold mb-2 relative z-10">Video Prewedding</p>
-    <h2 class="anim-zoom font-cinzel text-[1.7rem] tracking-[0.18em] text-gold-gradient mb-3 relative z-10">MOMEN PREWEDDING</h2>
-    <p class="anim-fade font-serif italic text-stone-300 text-[15px] leading-relaxed mb-9 max-w-[320px] relative z-10">Saksikan momen kebersamaan kami dalam video prewedding berikut.</p>
-    <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
-<div style="position:relative;padding-top:56.25%">
-@if($prewedFile)
-<video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
-@elseif($prewedYtId)
-<button type="button" onclick="playPrewed(this, '{{ $prewedYtId }}')" aria-label="Putar Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
-<img src="{{ $prewedThumb }}" alt="Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85">
-<span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
-</button>
-@elseif($prewedLink)
-<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
-<span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
-<span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
-</a>
-@endif
-</div>
-</div>
-@if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
-  </section>
-@endif
+
 <script>
 function playPrewed(btn, id){
   var wrap = btn.parentNode;
@@ -1011,6 +1022,7 @@ document.getElementById("btn-open").addEventListener("click",withEnvelope(()=>{
     document.body.classList.remove("is-locked");
     const g=document.getElementById("cover-gate"); if(g) g.remove();
     document.getElementById("musicFloat").hidden=false;
+    var qf=document.getElementById("qrFloatBtn");if(qf)qf.hidden=false;
     if (JWA.musicAuto) { const mf=document.getElementById("musicFloat"); if(mf && !musicOn) mf.click(); }
     initSectionScrollAnimations();
     initParallax();
@@ -1189,11 +1201,9 @@ document.querySelectorAll(".copy-btn").forEach(b=>b.addEventListener("click", as
         <a href="#sec-acara" data-sec="sec-acara"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path stroke-linecap="round" d="M8 3v4M16 3v4M3 10h18"/></svg><span>Acara</span></a>
         <a href="#sec-galeri" data-sec="sec-galeri"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path stroke-linecap="round" stroke-linejoin="round" d="m5 19 5.5-5.5 3 3L19 11l2 2"/></svg><span>Galeri</span></a>
         <a href="#sec-kisah" data-sec="sec-kisah"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.5C10 4.8 7 4.3 4.5 4.5v13c2.5-.2 5.5.3 7.5 2 2-1.7 5-2.2 7.5-2v-13C17 4.3 14 4.8 12 6.5z"/><path stroke-linecap="round" d="M12 6.5v13"/></svg><span>Kisah</span></a>
-        <a href="#sec-qr" data-sec="sec-qr"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg><span>QR</span></a>
-        <a href="#sec-ucapan" data-sec="sec-ucapan"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg><span>RSVP</span></a>
-        <a href="#sec-ucapan" data-sec="sec-ucapan"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span>Ucapan</span></a>
+        <a href="#rsvpForm" data-sec="rsvpForm"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg><span>RSVP</span></a>
+        <a href="#wishForm" data-sec="wishForm"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span>Ucapan</span></a>
         <a href="#sec-gift" data-sec="sec-gift"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8v13H3V8M1 3h22v5H1zM12 8v13M12 8H7.5a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8zm0 0h4.5a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8z"/></svg><span>Gift</span></a>
-        <a href="#sec-video" data-sec="sec-video"><svg class="w-[21px] h-[21px]" viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg><span>Video</span></a>
         <a href="#sec-live" data-sec="sec-live"><svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path fill="currentColor" stroke="none" d="M10 8.3v7.4c0 .6.7 1 1.2.7l6-3.7c.5-.3.5-1 0-1.3l-6-3.7c-.5-.3-1.2.1-1.2.6z"/></svg><span>Live</span></a>
       </nav>
 
@@ -1204,8 +1214,8 @@ document.querySelectorAll(".copy-btn").forEach(b=>b.addEventListener("click", as
   var links = [].slice.call(bar.querySelectorAll('a[data-sec]'));
   links = links.filter(function(a){ var s = document.getElementById(a.getAttribute('data-sec')); if(!s){ a.remove(); return false; } a._sec = s; return true; });
   function spy(){
-    var y = window.scrollY + window.innerHeight * 0.4, cur = null;
-    links.forEach(function(a){ if(a._sec.offsetTop <= y) cur = a; });
+    var y = window.innerHeight * 0.4, cur = links[0] || null;
+    links.forEach(function(a){ if(a._sec.getBoundingClientRect().top <= y) cur = a; });
     links.forEach(function(a){ a.classList.toggle('active', a === cur); });
   }
   window.addEventListener('scroll', spy, {passive:true});

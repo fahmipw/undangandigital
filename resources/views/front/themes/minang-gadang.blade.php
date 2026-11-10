@@ -157,6 +157,7 @@ section{padding:70px 26px;text-align:center;position:relative}
 footer{padding:60px 26px 100px;text-align:center}
 footer .cinzel{font-size:30px;color:var(--emas-lt)}
 #musBtn{position:fixed;bottom:22px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid var(--emas);background:rgba(8,42,27,.9);color:var(--emas-lt);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#qrFloatBtn{position:fixed;bottom:192px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid rgba(201,164,92,.85);background:linear-gradient(160deg,#3a2c17,#171106);color:#e6c887;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(90,70,20,.5)}
 
 /* === fitur bawaan default: lightbox, menu, progress, musik === */
 .pbar{position:fixed;top:0;left:0;right:0;height:3px;z-index:96;background:transparent}
@@ -181,7 +182,7 @@ body::after{content:"";display:block;height:150px}
 .att-toggle button{flex:1;padding:13px 8px;border:1px solid #d4af37;background:transparent;color:#faf6ec;font-family:'Jost',sans-serif;font-size:14px;cursor:pointer;transition:.25s;border-radius:10px}
 .att-toggle button.on{background:#d4af37;color:#0c3b26;font-weight:500}
 .wish-empty{text-align:center;opacity:.6;font-size:14px;padding:12px}
-body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;visibility:hidden !important;pointer-events:none !important}
+body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar{opacity:0 !important;visibility:hidden !important;pointer-events:none !important}
 
 .rv{opacity:0;transform:translateY(36px);transition:opacity .9s,transform .9s}
 .rv.on{opacity:1;transform:none}
@@ -402,12 +403,42 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 </section>
 
 <!-- GALERI -->
-@if(!empty($gallery))
+@if(!empty($gallery) || mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))
 <section id="galeri">
   <div class="rv"><div class="sec-kicker">Momen Indah</div><div class="sec-title">Galeri</div><div class="ukir">◆</div></div>
+    @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))
+@php
+  $prewedFile = mcGet('prewedding_video_file');
+  $prewedLink = mcGet('prewedding_video_link');
+  $prewedYtId = null;
+  if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
+  $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
+@endphp
+  <div class="rv"><div class="sec-kicker">Video Prewedding</div></div>
+<div class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.25)">
+<div style="position:relative;padding-top:56.25%">
+@if($prewedFile)
+<video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
+@elseif($prewedYtId)
+<button type="button" onclick="playPrewed(this, '{{ $prewedYtId }}')" aria-label="Putar Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
+<img src="{{ $prewedThumb }}" alt="Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85">
+<span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
+</button>
+@elseif($prewedLink)
+<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
+<span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
+<span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
+</a>
+@endif
+</div>
+</div>
+<div class="rv" style="margin-top:16px">@if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="display:inline-block;padding:11px 28px;border-radius:999px;background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;font-size:11px;font-weight:700;letter-spacing:.22em;text-decoration:none">BUKA VIDEO</a>@endif</div>
+  @endif
+@if(!empty($gallery))
   <div class="g-grid rv">
     @foreach(array_slice($gallery, 0, 8) as $img)<img src="{{ $img }}" alt="Galeri {{ $brideNick }} & {{ $groomNick }}" loading="lazy">@endforeach
   </div>
+  @endif
 </section>
 @endif
 
@@ -443,16 +474,23 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 
 <!-- UCAPAN -->
 @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
-<!-- QR CHECK-IN (opsional, tampil bila diaktifkan di admin) -->
-<section id="qrcheckin">
-<div class="rv"><div class="sec-kicker">Kehadiran</div><div class="sec-title dekor">QR Check-in</div></div>
-<div class="rv" style="max-width:340px;margin:0 auto;text-align:center">
-<div id="qrBox" style="display:inline-block;padding:14px;background:#fff;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.12)"></div>
-<p style="font-size:13px;opacity:.75;margin-top:14px;line-height:1.7">Tunjukkan QR code ini kepada panitia<br>saat kedatangan.<br>Nama: <b>{{ $guestName }}</b></p>
+<button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
+<div id="qrModal" style="position:fixed;inset:0;z-index:96;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
+  <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+    <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
+    <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
+    <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+    <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
+    <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
+    <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+  </div>
 </div>
-</section>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>if(window.QRCode){var qb=document.getElementById('qrBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:200,height:200,correctLevel:QRCode.CorrectLevel.M});if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}</script>
+<script>
+function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
+function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
+if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:200,height:200,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
+</script>
 @endif
 <section id="ucapan">
   <div class="rv"><div class="sec-kicker">Doa &amp; Harapan</div><div class="sec-title">Ucapan</div><div class="ukir">◆</div></div>
@@ -491,36 +529,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked .pbar{opacity:0 !important;vi
 </section>
 @endif
 
-@if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))
-@php
-  $prewedFile = mcGet('prewedding_video_file');
-  $prewedLink = mcGet('prewedding_video_link');
-  $prewedYtId = null;
-  if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
-  $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
-@endphp
-<section id="video">
-<div class="rv"><div class="sec-kicker">Video Prewedding</div><div class="sec-title">Momen Prewedding</div></div>
-<div class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.25)">
-<div style="position:relative;padding-top:56.25%">
-@if($prewedFile)
-<video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
-@elseif($prewedYtId)
-<button type="button" onclick="playPrewed(this, '{{ $prewedYtId }}')" aria-label="Putar Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
-<img src="{{ $prewedThumb }}" alt="Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85">
-<span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
-</button>
-@elseif($prewedLink)
-<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
-<span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
-<span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
-</a>
-@endif
-</div>
-</div>
-<div class="rv" style="margin-top:16px">@if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="display:inline-block;padding:11px 28px;border-radius:999px;background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;font-size:11px;font-weight:700;letter-spacing:.22em;text-decoration:none">BUKA VIDEO</a>@endif</div>
-</section>
-@endif
+
 <script>
 function playPrewed(btn, id){
   var wrap = btn.parentNode;
@@ -817,10 +826,8 @@ async function sendWish(e){
     ['galeri','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path stroke-linecap="round" stroke-linejoin="round" d="m5 19 5.5-5.5 3 3L19 11l2 2"/></svg>','Galeri'],
     ['kisah','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.5C10 4.8 7 4.3 4.5 4.5v13c2.5-.2 5.5.3 7.5 2 2-1.7 5-2.2 7.5-2v-13C17 4.3 14 4.8 12 6.5z"/><path stroke-linecap="round" d="M12 6.5v13"/></svg>','Kisah'],
     ['rsvp','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>','RSVP'],
-    ['qrcheckin','<svg fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" viewBox=\"0 0 24 24\"><rect x=\"3.5\" y=\"3.5\" width=\"6.5\" height=\"6.5\" rx=\"1.5\"/><rect x=\"14\" y=\"3.5\" width=\"6.5\" height=\"6.5\" rx=\"1.5\"/><rect x=\"3.5\" y=\"14\" width=\"6.5\" height=\"6.5\" rx=\"1.5\"/><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z\"/></svg>','QR'],
     ['ucapan','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>','Ucapan'],
     ['gift','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8v13H3V8M1 3h22v5H1zM12 8v13M12 8H7.5a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8zm0 0h4.5a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8z"/></svg>','Gift'],
-    ['video','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>','Video'],
     ['live','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path fill="currentColor" stroke="none" d="M10 8.3v7.4c0 .6.7 1 1.2.7l6-3.7c.5-.3.5-1 0-1.3l-6-3.7c-.5-.3-1.2.1-1.2.6z"/></svg>','Live']
   ];
   var nav = document.getElementById('fmenu');

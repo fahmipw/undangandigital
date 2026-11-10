@@ -95,8 +95,9 @@ section{position:relative;padding:56px 20px}
 .rv.on{opacity:1;transform:none}
 /* ---------- progress & menu ---------- */
 .pbar{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--gold),#ffdf80);z-index:120;box-shadow:0 0 8px #e8b93c}
-body.locked .pbar,body.locked #fmenu,body.locked #musBtn{display:none!important}
+body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn{display:none!important}
 #musBtn{position:fixed;top:14px;right:14px;z-index:110;width:46px;height:46px;border-radius:12px;border:3px solid var(--wood-d);background:var(--wood);color:#fff;font-size:20px;cursor:pointer;box-shadow:0 4px 0 var(--wood-d)}
+#qrFloatBtn{position:fixed;top:70px;right:14px;z-index:110;width:46px;height:46px;border-radius:12px;border:3px solid var(--wood-d);background:var(--wood);color:#fff;font-size:20px;cursor:pointer;box-shadow:0 4px 0 var(--wood-d);display:flex;align-items:center;justify-content:center}
 #musBtn:active{transform:translateY(3px);box-shadow:none}
 #musBtn.off{opacity:.55}
 #fmenu{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:110;display:flex;gap:2px;background:#2b1d0ef2;border:3px solid #120b04;border-radius:14px;padding:6px 8px;max-width:96vw;overflow-x:auto;scrollbar-width:none;box-shadow:0 6px 18px rgba(0,0,0,.4)}
@@ -226,6 +227,7 @@ footer{padding:50px 20px 110px;text-align:center}
 <body class="locked">
 <div class="pbar" id="pbar"></div>
 <button id="musBtn" aria-label="Musik">♪</button>
+  @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))<button id="qrFloatBtn" aria-label="QR Check-in" title="QR Check-in" onclick="openQrModal()"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>@endif
 <div id="hud"><span class="star">★</span><span>Panen: <span id="panenCount">0</span></span></div>
 <div class="wrap">
 <!-- ================= COVER ================= -->
@@ -443,18 +445,24 @@ footer{padding:50px 20px 110px;text-align:center}
 </section>
 
 <!-- ================= GALERI ================= -->
-@if(!empty($gallery) && count($gallery))
+@if((!empty($gallery) && count($gallery)) || mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))
 <section id="galeri">
   <div class="sec-head rv">
     <div class="sec-kicker">▦ PAPAN PENGUMUMAN ▦</div>
     <div class="sec-title">Galeri</div>
     <div class="fence"></div>
   </div>
+    @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))
+  <div class="sec-kicker" style="text-align:center;margin-bottom:12px">▦ VIDEO PREWEDDING ▦</div>
+  @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div style="margin:12px auto 2px;max-width:330px;border:3px solid #7a4a21;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.25);overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@if($pwL)<a class="btn-gold" target="_blank" href="{{ $pwL }}" style="">Video Prewedding</a>@endif @endif
+  @endif
+@if(!empty($gallery) && count($gallery))
   <div class="g-grid rv">
     @foreach(array_slice($gallery, 0, 8) as $img)
     <div class="g-frame"><img src="{{ $img }}" alt="Galeri" loading="lazy"></div>
     @endforeach
   </div>
+  @endif
   <p class="rv" style="text-align:center;font-size:12px;color:var(--ink-soft);margin-top:14px">Klik foto untuk memperbesar • geser untuk lanjut</p>
 </section>
 @endif
@@ -515,26 +523,27 @@ footer{padding:50px 20px 110px;text-align:center}
       @if(mcGet('live_stream_link'))
       <a class="btn-gold" target="_blank" href="{{ mcGet('live_stream_link') }}">LIVE STREAMING</a>
       @endif
-      @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div style="margin:12px auto 2px;max-width:330px;border:3px solid #7a4a21;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.25);overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@if($pwL)<a class="btn-gold" target="_blank" href="{{ $pwL }}" style="">Video Prewedding</a>@endif @endif
     </div>
   </div>
 </section>
 
 @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
-<!-- QR CHECK-IN -->
-<section id="qrcheckin">
-  <div class="sec-head rv">
-    <div class="sec-kicker">✓ KEHADIRAN ✓</div>
-    <div class="sec-title">QR Check-in</div>
-    <div class="fence"></div>
+<div id="qrModal" style="position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
+  <div style="background:#fffdf4;border:3px solid var(--wood);border-radius:14px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+    <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#5b4636">&times;</button>
+    <h2 style="font-size:22px;color:#5b4636;margin:0 0 6px">QR Check-In</h2>
+    <p style="font-size:13px;line-height:1.6;color:var(--ink-soft);margin:0 0 18px">Tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+    <div style="background:#fff;padding:14px;border-radius:12px;display:inline-block;box-shadow:0 8px 24px rgba(0,0,0,.12)"><div id="qrModalBox"></div></div>
+    <p style="margin:16px 0 0;font-weight:700;color:#2b2118">{{ $guestName }}</p>
+    <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
   </div>
-  <div class="qr-card rv">
-    <div id="qrBox" style="display:inline-block;padding:14px;background:#fff;border-radius:12px"></div>
-    <p style="font-size:13px;color:var(--ink-soft);margin-top:14px;line-height:1.7">Tunjukkan QR code ini kepada panitia<br>saat kedatangan.<br>Nama: <b>{{ $guestName }}</b></p>
-  </div>
-</section>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>if(window.QRCode){var qb=document.getElementById('qrBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:200,height:200,correctLevel:QRCode.CorrectLevel.M});if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}</script>
+<script>
+function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
+function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
+if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:200,height:200,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
+</script>
 @endif
 
 <!-- ================= RSVP ================= -->
@@ -718,7 +727,6 @@ window.addEventListener('scroll', function(){
     ['galeri','▦','Galeri'],
     ['kisah','✎','Kisah'],
     ['acara','◷','Acara'],
-    ['qrcheckin','▩','QR'],
     ['rsvp','✓','RSVP'],
     ['ucapan','✉','Ucapan'],
     ['gift','✦','Gift']
