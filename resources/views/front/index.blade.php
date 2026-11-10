@@ -717,7 +717,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       <section id="mempelai" class="px-margin-page mb-section-gap relative z-10 pt-24">
 
         <div class="text-center mb-12 reveal">
-          <span class="font-label-caps text-label-caps text-secondary mb-2 block">MEMPELAI</span>
+          <span class="font-label-caps text-label-caps text-secondary mb-2 block reveal-down">MEMPELAI</span>
           <h2 class="font-display-lg text-headline-md text-primary text-3d">Pasangan Berbahagia</h2>
         </div>
 
@@ -823,7 +823,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       </section>
       <section class="py-12 reveal" id="gallery">
         <div class="text-center mb-10">
-          <span class="font-label-caps text-label-caps text-secondary mb-2 block">MEMORABILIA</span>
+          <span class="font-label-caps text-label-caps text-secondary mb-2 block reveal-down">MEMORABILIA</span>
           <h2 class="font-headline-md text-headline-md text-primary text-3d">Galeri Prewedding</h2>
           <div class="w-16 h-[2px] bg-secondary-container mx-auto mt-4"></div>
         </div>
@@ -836,9 +836,8 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
       ?>
         <div class="text-center mb-8">
-          <p class="font-label-caps text-label-caps text-secondary uppercase">Video Prewedding</p>
         </div>
-        <div class="relative w-full max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-xl border border-outline-variant/30">
+        <div id="prewedBox" class="relative w-full max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-xl border border-outline-variant/30">
           <div style="position:relative;padding-top:56.25%">
             <?php if ($prewedFile): ?>
             <video controls preload="metadata" playsinline src="<?php echo asset($prewedFile); ?>" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
@@ -1016,7 +1015,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           </div>
 
           <div class="text-center mb-8 pt-4">
-            <span class="font-label-caps text-label-caps text-secondary mb-2 block">JOURNEY</span>
+            <span class="font-label-caps text-label-caps text-secondary mb-2 block reveal-down">JOURNEY</span>
             <h2 class="font-display-lg text-headline-md text-primary">Kisah Kasih</h2>
           </div>
 
@@ -1060,7 +1059,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       <!-- QUOTES SECTION -->
       <section id="quotes" class="py-12 reveal">
         <div class="text-center mb-10">
-          <span class="font-label-caps text-label-caps text-secondary mb-2 block">QUOTES</span>
+          <span class="font-label-caps text-label-caps text-secondary mb-2 block reveal-down">QUOTES</span>
         </div>
         <div class="mt-4 text-center">
           <div class="inline-block p-6 border border-[#D4AF37]/30 rounded-xl bg-surface shadow-sm max-w-sm mx-auto">
@@ -1149,7 +1148,8 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       <script>
       function playPrewed(btn, id){
         var wrap = btn.parentNode;
-        wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>';
+        wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&enablejsapi=1" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>';
+      if(window.prewedPauseMusic) window.prewedPauseMusic();
       }
       </script>
       <section class="px-margin-page mb-12 reveal">
@@ -1296,7 +1296,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 
         <!-- Header -->
         <div class="text-center mb-8">
-          <span class="font-label-caps text-label-caps text-secondary mb-2 block">RESERVASI</span>
+          <span class="font-label-caps text-label-caps text-secondary mb-2 block reveal-down">RESERVASI</span>
           <h2 class="font-headline-md text-headline-md text-primary">Konfirmasi Kehadiran</h2>
           <p class="font-body-md text-on-surface-variant mt-2 text-sm">Kehadiran Anda adalah kebahagiaan kami.</p>
         </div>
@@ -1505,7 +1505,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       </section>
       <section class="py-6 border-t border-secondary-container/10 reveal" id="guestbook">
         <div class="text-center mb-8">
-          <span class="font-label-caps text-label-caps text-secondary mb-2 block">WISHES</span>
+          <span class="font-label-caps text-label-caps text-secondary mb-2 block reveal-down">WISHES</span>
           <h2 class="font-headline-md text-headline-md text-primary">Ucapan & Doa</h2>
           <p class="text-sm text-on-surface-variant mt-2 font-body-md">Tuliskan doa dan ucapan terbaik Anda</p>
         </div>

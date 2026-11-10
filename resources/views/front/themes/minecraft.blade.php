@@ -219,6 +219,9 @@ body:not(.gate-open) .float-btns{display:none!important}
 .creeper-peek{position:absolute;z-index:2;cursor:pointer;transition:transform .3s}
 .reveal{opacity:0;transform:translateY(36px);transition:opacity .7s ease,transform .7s ease}
 .reveal.in{opacity:1;transform:none}
+.reveal-down{opacity:0;transform:translateY(-56px);transition:opacity .7s ease,transform .7s ease}
+.reveal-down.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal,.reveal-down{opacity:1!important;transform:none!important;transition:none}}
 @media (prefers-reduced-motion:reduce){
   .cover-card,.heart-sep canvas,.mc-dialog .next{animation:none}
   .reveal{transition:none;opacity:1;transform:none}
@@ -268,7 +271,7 @@ body:not(.gate-open) .float-btns{display:none!important}
 </div>
 @endif
   <section class="block reveal" id="couple">
-    <div class="sec-head"><canvas class="sec-ico" data-icon="heart" width="16" height="16"></canvas><h2 class="sec-title">MEMILIH PARTY</h2><canvas class="sec-ico" data-icon="heart" width="16" height="16"></canvas></div>
+    <div class="sec-head reveal-down"><canvas class="sec-ico" data-icon="heart" width="16" height="16"></canvas><h2 class="sec-title">MEMILIH PARTY</h2><canvas class="sec-ico" data-icon="heart" width="16" height="16"></canvas></div>
     <p class="sec-sub">Dua pemain. Satu tim. Selamanya.</p>
     <div class="couple-grid">
       <div class="mc-panel player-card">
@@ -290,7 +293,7 @@ body:not(.gate-open) .float-btns{display:none!important}
   </section>
 
   <section class="block reveal" id="countdownSec">
-    <div class="sec-head"><canvas class="sec-ico" data-icon="clock" width="16" height="16"></canvas><h2 class="sec-title">HITUNG MUNDUR</h2><canvas class="sec-ico" data-icon="clock" width="16" height="16"></canvas></div>
+    <div class="sec-head reveal-down"><canvas class="sec-ico" data-icon="clock" width="16" height="16"></canvas><h2 class="sec-title">HITUNG MUNDUR</h2><canvas class="sec-ico" data-icon="clock" width="16" height="16"></canvas></div>
     <p class="sec-sub">Quest dimulai dalam...</p>
     <div class="hud">
       <div class="hud-slot"><span class="num" id="cdD">00</span><span class="unit">HARI</span></div>
@@ -301,7 +304,7 @@ body:not(.gate-open) .float-btns{display:none!important}
   </section>
 
   <section class="block reveal" id="eventSec">
-    <div class="sec-head"><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas><h2 class="sec-title">QUEST LOG</h2><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas></div>
+    <div class="sec-head reveal-down"><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas><h2 class="sec-title">QUEST LOG</h2><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas></div>
     <p class="sec-sub">Dua misi utama menantimu.</p>
     <div class="adv">
       <div class="icon"><canvas id="icoAkad" width="16" height="16"></canvas></div>
@@ -328,10 +331,9 @@ body:not(.gate-open) .float-btns{display:none!important}
 
   @if(!empty($gallery) || mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))
   <section class="block reveal" id="gallerySec">
-    <div class="sec-head"><canvas class="sec-ico" data-icon="frame" width="16" height="16"></canvas><h2 class="sec-title">GALERI PETUALANGAN</h2><canvas class="sec-ico" data-icon="frame" width="16" height="16"></canvas></div>
+    <div class="sec-head reveal-down"><canvas class="sec-ico" data-icon="frame" width="16" height="16"></canvas><h2 class="sec-title">GALERI PETUALANGAN</h2><canvas class="sec-ico" data-icon="frame" width="16" height="16"></canvas></div>
     <p class="sec-sub">Momen yang diabadikan dalam balok kenangan.</p>
-    <p style="text-align:center;font-size:11px;letter-spacing:.25em;font-weight:700;margin:18px 0 10px">VIDEO PREWEDDING</p>
-    @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div style="margin:12px auto 2px;max-width:330px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@if($pwL)<a class="mc-btn map-btn" target="_blank" href="{{ $pwL }}" style="margin-left:8px">Video Prewedding</a>@endif @endif
+    @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div id="prewedBox" style="margin:12px auto 2px;max-width:330px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@endif @endif
     <div class="frames">
       @foreach(array_slice($gallery, 0, 8) as $i => $img)
       <div class="item-frame"><img src="{{ $img }}" alt="Galeri {{ $i + 1 }}" loading="lazy"><p>Kenangan {{ $i + 1 }}</p></div>
@@ -342,7 +344,7 @@ body:not(.gate-open) .float-btns{display:none!important}
 
   @if(!empty($stories) && count($stories))
   <section class="block reveal" id="storySec">
-    <div class="sec-head"><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas><h2 class="sec-title">CATATAN PETUALANGAN</h2><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas></div>
+    <div class="sec-head reveal-down"><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas><h2 class="sec-title">CATATAN PETUALANGAN</h2><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas></div>
     <p class="sec-sub">Jejak langkah kami hingga ke sini.</p>
     @foreach($stories as $st)
     <div class="adv">
@@ -354,7 +356,7 @@ body:not(.gate-open) .float-btns{display:none!important}
   @endif
 
   <section class="block reveal" id="rsvpSec">
-    <div class="sec-head"><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas><h2 class="sec-title">KONFIRMASI MISI</h2><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas></div>
+    <div class="sec-head reveal-down"><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas><h2 class="sec-title">KONFIRMASI MISI</h2><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas></div>
     <p class="sec-sub">Apakah kamu akan bergabung dalam party?</p>
     <div class="mc-panel rsvp-panel">
       <form id="rsvpForm">
@@ -381,7 +383,7 @@ body:not(.gate-open) .float-btns{display:none!important}
   </section>
 
   <section class="block reveal" id="ucapanSec">
-    <div class="sec-head"><canvas class="sec-ico" data-icon="mail" width="16" height="16"></canvas><h2 class="sec-title">PAPAN UCAPAN</h2><canvas class="sec-ico" data-icon="mail" width="16" height="16"></canvas></div>
+    <div class="sec-head reveal-down"><canvas class="sec-ico" data-icon="mail" width="16" height="16"></canvas><h2 class="sec-title">PAPAN UCAPAN</h2><canvas class="sec-ico" data-icon="mail" width="16" height="16"></canvas></div>
     <p class="sec-sub">Tinggalkan pesan di papan desa.</p>
     <div class="mc-panel rsvp-panel">
       <form id="ucapanForm">
@@ -418,7 +420,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 
   @if(!empty($accounts))
   <section class="block reveal" id="giftSec">
-    <div class="sec-head"><canvas class="sec-ico" data-icon="chest" width="16" height="16"></canvas><h2 class="sec-title">PETI HADIAH</h2><canvas class="sec-ico" data-icon="chest" width="16" height="16"></canvas></div>
+    <div class="sec-head reveal-down"><canvas class="sec-ico" data-icon="chest" width="16" height="16"></canvas><h2 class="sec-title">PETI HADIAH</h2><canvas class="sec-ico" data-icon="chest" width="16" height="16"></canvas></div>
     <p class="sec-sub">Klik petinya untuk membuka.</p>
     <div class="chest-zone">
       <div class="chest" id="chest" role="button" tabindex="0" aria-label="Buka peti hadiah">
@@ -656,6 +658,7 @@ $("#musicBtn").addEventListener("click",e=>{
   e.stopPropagation();musicOn=!musicOn;
   $("#musicBtn").innerHTML=musicOn?"&#9835;":"&#9834;";
   if(musicOn){
+    if(window.prewedPauseVideo)window.prewedPauseVideo();prewedMusicWasOn=false;
     if(MC.musicUrl&&!audioEl){
       audioEl=new Audio(MC.musicUrl);audioEl.loop=true;audioEl.volume=(MC.musVol||50)/100;
       audioEl.addEventListener("error",()=>{useFile=false;audioEl=null;mstep=0;playStep();});
@@ -664,10 +667,50 @@ $("#musicBtn").addEventListener("click",e=>{
     else{try{ac().resume();}catch(err){} mstep=0;playStep();}
     toast("MUSIK: ON");
   }else{
+    prewedMusicWasOn=false;
     clearTimeout(musicTimer);if(audioEl)audioEl.pause();toast("MUSIK: OFF");
   }
   blip(musicOn?880:440,0.08,0.05);
 });
+
+var prewedMusicWasOn=false;
+function prewedPauseMusic(){ if(musicOn){ musicOn=false; $("#musicBtn").innerHTML="&#9834;"; clearTimeout(musicTimer); if(audioEl)audioEl.pause(); prewedMusicWasOn=true; } }
+function prewedResumeMusic(){ if(prewedMusicWasOn){ prewedMusicWasOn=false; musicOn=true; $("#musicBtn").innerHTML="&#9835;"; if(audioEl&&MC.musicUrl){useFile=true;audioEl.play().catch(function(){});} else { try{ac().resume();}catch(e){} mstep=0;playStep(); } } }
+
+/* ---------- Video prewedding: autoplay saat terlihat + musik saling jeda ---------- */
+var prewedBox=document.getElementById('prewedBox');
+function prewedYtCmd(fn){ if(!prewedBox)return; var f=prewedBox.querySelector('iframe'); if(f&&f.contentWindow){ try{ f.contentWindow.postMessage('{"event":"command","func":"'+fn+'","args":""}','*'); }catch(e){} } }
+function prewedPlayVideo(){
+  if(!prewedBox)return;
+  var v=prewedBox.querySelector('video');
+  if(v){ var p=v.play(); if(p&&p.catch)p.catch(function(){}); return; }
+  var f=prewedBox.querySelector('iframe');
+  if(f){ if(!f.dataset.prewedAuto){ f.dataset.prewedAuto='1'; f.src=f.src+(f.src.indexOf('?')>=0?'&':'?')+'autoplay=1&enablejsapi=1'; } else { prewedYtCmd('playVideo'); } prewedPauseMusic(); }
+}
+function prewedPauseVideo(){
+  if(!prewedBox)return;
+  var v=prewedBox.querySelector('video'); if(v&&!v.paused){ v.pause(); return; }
+  prewedYtCmd('pauseVideo');
+}
+(function(){
+  if(!prewedBox) return;
+  var v=prewedBox.querySelector('video');
+  if(v&&!v._prewedBound){ v._prewedBound=true;
+    v.addEventListener('play',function(){ prewedPauseMusic(); });
+    v.addEventListener('pause',function(){ prewedResumeMusic(); });
+    v.addEventListener('ended',function(){ prewedResumeMusic(); });
+  }
+  if(!('IntersectionObserver' in window)) return;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(en.isIntersecting){ prewedPlayVideo(); }
+      else{ prewedPauseVideo(); prewedResumeMusic(); }
+    });
+  },{threshold:0.35});
+  io.observe(prewedBox);
+})();
+window.prewedPauseVideo=prewedPauseVideo;
+window.prewedPauseMusic=prewedPauseMusic;
 
 /* ---------- dialog ---------- */
 const dlg={i:0,typing:false,timer:null};
@@ -818,7 +861,7 @@ $("#openBtn").addEventListener("click",()=>{
   cover.style.transform="translateY(-100%)";cover.style.opacity="0.2";
   setTimeout(()=>{cover.style.display="none";
     const main=$("#main");main.hidden=false;
-    $$(".reveal").forEach(el=>io.observe(el));
+$$(".reveal,.reveal-down").forEach(el=>io.observe(el));
     typeDialog();tickCd();loadRsvp();loadUcapan();levelUp();main.scrollIntoView();},850);
 });
 (function(){let p=0;const iv=setInterval(()=>{p=Math.min(100,p+8+Math.random()*14);

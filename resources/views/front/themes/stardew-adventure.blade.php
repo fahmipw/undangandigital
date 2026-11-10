@@ -67,7 +67,7 @@ if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)(
 $prewedLink = sdaGet('prewedding_video_link','');
 $prewedFile = sdaGet('prewedding_video_file','');
 $prewedEmbed = '';
-if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pqm)) { $prewedEmbed = 'https://www.youtube-nocookie.com/embed/'.$pqm[1]; }
+if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pqm)) { $prewedEmbed = 'https://www.youtube-nocookie.com/embed/'.$pqm[1].'?autoplay=1&enablejsapi=1'; }
 $prewedFileUrl = $prewedFile ? asset(ltrim($prewedFile,'/')) : '';
 $invId = $inv_id ?? 0;
 ?>
@@ -222,6 +222,10 @@ select.sd-input{appearance:none}
 .qr-card{background:#fffdf4;border:3px solid var(--wood);border-radius:8px;padding:16px;text-align:center;margin-top:14px}
 .qr-card #qrBox img,.qr-card #qrBox canvas{margin:0 auto}
 @media (prefers-reduced-motion:reduce){#actBtn.ready{animation:none}}
+/* Panel: Fade In Up */
+#panelBody{opacity:0;transform:translateY(14px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+#panelBody.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){#panelBody{opacity:1!important;transform:none!important;transition:none}#panelBody }
 </style>
 </head>
 <body>
@@ -398,9 +402,24 @@ function toggleMusic(){
     if(audioEl&&MC.musicUrl){useFile=true;audioEl.play().catch(()=>{useFile=false;mstep=0;playStep();});}
     else{try{ac().resume();}catch(e){}mstep=0;playStep();}
   }else{clearTimeout(musicTimer);if(audioEl)audioEl.pause();}
+  if(musicOn)prewedPauseVideo(); prewedMusicWasOn=false;
   blip(musicOn?880:440,0.08,0.05);
 }
 $("#musicBtn").addEventListener("click",e=>{e.stopPropagation();toggleMusic();toast(musicOn?"MUSIK: ON":"MUSIK: OFF");});
+
+/* ---------- Video prewedding di panel Galeri: autoplay + musik saling jeda ---------- */
+var prewedMusicWasOn=false;
+function prewedPauseMusic(){ if(musicOn){ musicOn=false; $("#musicBtn").innerHTML="&#9834;"; clearTimeout(musicTimer); if(audioEl)audioEl.pause(); prewedMusicWasOn=true; } }
+function prewedResumeMusic(){ if(prewedMusicWasOn){ prewedMusicWasOn=false; musicOn=true; $("#musicBtn").innerHTML="&#9835;"; if(audioEl&&MC.musicUrl){useFile=true;audioEl.play().catch(function(){});} else { try{ac().resume();}catch(e){} mstep=0;playStep(); } } }
+function prewedYtCmdPanel(fn){ var f=document.querySelector('#panelBody iframe'); if(f&&f.contentWindow){ try{ f.contentWindow.postMessage('{"event":"command","func":"'+fn+'","args":""}','*'); }catch(e){} } }
+function prewedPauseVideo(){ var v=document.querySelector('#panelBody video'); if(v&&!v.paused){ v.pause(); return; } prewedYtCmdPanel('pauseVideo'); }
+function prewedPanelOpened(){
+  var v=document.querySelector('#panelBody video');
+  if(v){ v.addEventListener('play',function(){ prewedPauseMusic(); }); v.addEventListener('pause',function(){ prewedResumeMusic(); }); v.addEventListener('ended',function(){ prewedResumeMusic(); }); var p=v.play(); if(p&&p.catch)p.catch(function(){}); return; }
+  var f=document.querySelector('#panelBody iframe');
+  if(f){ prewedPauseMusic(); }
+}
+window.prewedPauseVideo=prewedPauseVideo;
 /* ---------- pilih karakter ---------- */
 const CHARS=[
   {name:"TANI",   skin:"#c98d5f",hair:"#2b2b2b",shirt:"#00a8a8",pants:"#3b3bbf"},
@@ -660,7 +679,7 @@ ${MC.akad.maps?`<a class="sd-btn gold" style="font-size:10px;margin-top:10px;dis
 <div><h3>RESEPSI</h3><p>${MC.resepsi.date}</p><p class="tm">${MC.resepsi.time}</p><p>${esc(MC.resepsi.venue)}</p>
 ${MC.resepsi.maps?`<a class="sd-btn gold" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.resepsi.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}${MC.liveStream?`<div style="margin-top:10px;border:3px solid #7a4a21;border-radius:8px;overflow:hidden;max-width:320px;box-shadow:0 4px 10px rgba(0,0,0,.25)"><div style="position:relative;padding-top:56.25%"><iframe src="${esc(MC.liveEmbed)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div><a class="sd-btn" style="font-size:10px;margin-top:10px;margin-left:8px;display:inline-block;text-decoration:none" href="${esc(MC.liveStream)}" target="_blank" rel="noopener">LIVE STREAMING</a>`:""}</div></div>`,
 gallery:()=>`<h2 class="ptitle">GALERI LUMBUNG</h2><p class="psub">Panen kenangan terbaik.</p>
-${(MC.prewedFile||MC.prewedLink)?'<div style="margin-top:10px;border:3px solid #7a4a21;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.25);overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%">' + (MC.prewedFile?'<video controls preload="metadata" playsinline src="'+esc(MC.prewedFile)+'" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>':MC.prewedEmbed?'<iframe src="'+esc(MC.prewedEmbed)+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>':'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:9px;font-weight:700;letter-spacing:.15em">&#9654; TONTON VIDEO PREWEDDING</a>') + '</div></div>' + (MC.prewedLink?'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" class="sd-btn" style="font-size:10px;margin-top:10px;margin-left:8px;display:inline-block;text-decoration:none">VIDEO PREWEDDING</a>':'') : ""}
+${(MC.prewedFile||MC.prewedLink)?'<div style="margin-top:10px;border:3px solid #7a4a21;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.25);overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%">' + (MC.prewedFile?'<video controls preload="metadata" playsinline src="'+esc(MC.prewedFile)+'" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>':MC.prewedEmbed?'<iframe src="'+esc(MC.prewedEmbed)+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>':'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:9px;font-weight:700;letter-spacing:.15em">&#9654; TONTON VIDEO PREWEDDING</a>') + '</div></div>' : ""}
 <div class="frames2">
 @foreach(array_slice($gallery, 0, 6) as $i => $img)
 <div class="frame2" data-full="{{ $img }}"><img src="{{ $img }}" alt="Galeri {{ $i+1 }}" loading="lazy"><p>Kenangan {{ $i+1 }}</p></div>
@@ -712,11 +731,15 @@ gift:()=>`<h2 class="ptitle">GUDANG HARTA</h2><p class="psub">Klik petinya untuk
 @if(empty($accounts))<p class="psub">Belum ada info hadiah.</p>@endif`
 };
 
+/* Panel: Fade In Up */
+function panelAnimate(){requestAnimationFrame(function(){var pb=document.querySelector('#panelBody');if(pb)pb.classList.add('in');});}
 function openPanel(id){
   markVisited(id);
   panelOpen=true;gameOn=false;
   $("#panelBody").innerHTML=TPL[id]();
   $("#panelOverlay").hidden=false;
+  panelAnimate();
+  if(id==="gallery")prewedPanelOpened();
   $("#panel").scrollTop=0;
   if(id==="couple"){
     drawFace($("#pfB"),{skin:"#f0c49c",hair:"#5a3a22",shirt:"#c2437f",style:"bride"});
@@ -738,12 +761,15 @@ function openQrPanel(){
   panelOpen=true;gameOn=false;
   $("#panelBody").innerHTML=TPL.qr();
   $("#panelOverlay").hidden=false;
+  panelAnimate();
   if(window.QRCode){
     new QRCode($("#qrBox"),{text:MC.guestQr,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});
     var qb=document.getElementById('qrBox');if(qb){if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}
   }
 }
 function closePanel(){
+  var pb=document.querySelector('#panelBody');if(pb)pb.classList.remove('in');
+  prewedPauseVideo();prewedResumeMusic();
   $("#panelOverlay").hidden=true;panelOpen=false;gameOn=true;
   stopCd();blip(440,0.07,0.05);
   if(visited.size>=LOCS.length&&!completedShown){completedShown=true;
@@ -836,6 +862,7 @@ function openComplete(){
 <p style="font-family:'Press Start 2P',monospace;font-size:13px;color:#3a5a22">${esc(MC.brideNick)} &amp; ${esc(MC.groomNick)}</p>
 <p style="font-family:'Press Start 2P',monospace;font-size:9px;color:#777;margin-top:14px">${esc(MC.dateText)}</p></div>`;
   $("#panelOverlay").hidden=false;
+  panelAnimate();
   levelUp();setTimeout(levelUp,400);
   for(let i=0;i<5;i++)setTimeout(()=>heartFx(Math.random()*VW,VH*0.3,8),i*220);
 }

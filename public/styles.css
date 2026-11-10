@@ -233,6 +233,24 @@ body.no-scroll {
   transition-delay: 0.48s;
 }
 
+/* Fade In Down (dari atas) */
+.reveal-down {
+  opacity: 0;
+  transform: translateY(-56px);
+  transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal-down.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-down { opacity: 1 !important; transform: none !important; transition: none; }
+}
+
+
 .reveal-stagger.visible>*:nth-child(6) {
   transition-delay: 0.58s;
 }

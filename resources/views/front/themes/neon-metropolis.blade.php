@@ -209,6 +209,9 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 
 .rv{opacity:0;transform:translateY(36px);transition:opacity .9s,transform .9s}
 .rv.on{opacity:1;transform:none}
+.rvd{opacity:0;transform:translateY(-36px);transition:opacity .9s,transform .9s}
+.rvd.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv,.rvd{opacity:1!important;transform:none!important;transition:none}}
 @media (prefers-reduced-motion:reduce){.flyer,.neon,.neon-p,.nheart{animation:none}}
 
 /* Standar menu klasik emas */
@@ -305,7 +308,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 
 <!-- COUNTDOWN -->
 <section>
-<div class="rv"><div class="sec-kicker">Menuju Hari Bahagia</div><div class="sec-title">Hitung Mundur</div></div>
+<div class="rvd"><div class="sec-kicker">Menuju Hari Bahagia</div><div class="sec-title">Hitung Mundur</div></div>
 <div class="rv"><div class="nline"></div></div>
 <div class="cd-grid rv">
 <div class="cd t3d"><b id="cdD">0</b><span>Hari</span></div>
@@ -317,7 +320,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 
 <!-- MEMPELAI -->
 <section id="mempelai">
-<div class="rv"><div class="sec-kicker">Assalamu'alaikum Wr. Wb.</div><div class="sec-title">Mempelai</div></div>
+<div class="rvd"><div class="sec-kicker">Assalamu'alaikum Wr. Wb.</div><div class="sec-title">Mempelai</div></div>
 <div class="rv"><div class="nline"></div></div>
 <div class="card t3d couple-card rv">
 @if($bridePhoto)<img class="photo tz" src="{{ $bridePhoto }}" alt="{{ $brideFull }}">@else<div class="photo-fallback tz">{{ $brideInitial }}</div>@endif
@@ -336,7 +339,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 
 <!-- ACARA -->
 <section id="acara">
-<div class="rv"><div class="sec-kicker">Waktu &amp; Tempat</div><div class="sec-title">Rangkaian Acara</div></div>
+<div class="rvd"><div class="sec-kicker">Waktu &amp; Tempat</div><div class="sec-title">Rangkaian Acara</div></div>
 <div class="rv"><div class="nline"></div></div>
 <div class="card t3d event rv">
 <h3 class="tz">Akad Nikah</h3>
@@ -358,7 +361,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 <!-- GALERI -->
 @if(!empty($gallery) || mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))
 <section id="galeri">
-<div class="rv"><div class="sec-kicker">Momen Indah</div><div class="sec-title">Galeri</div></div>
+<div class="rvd"><div class="sec-kicker">Momen Indah</div><div class="sec-title">Galeri</div></div>
 <div class="rv"><div class="nline"></div></div>
   @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))
 @php
@@ -368,8 +371,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
   if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
   $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
 @endphp
-  <div class="rv"><div class="sec-kicker">Video Prewedding</div></div>
-<div class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.25)">
+<div id="prewedBox" class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.25)">
 <div style="position:relative;padding-top:56.25%">
 @if($prewedFile)
 <video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
@@ -399,7 +401,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 <!-- KISAH -->
 @if(!empty($stories) && count($stories))
 <section id="kisah">
-<div class="rv"><div class="sec-kicker">Perjalanan Kami</div><div class="sec-title">Kisah Cinta</div></div>
+<div class="rvd"><div class="sec-kicker">Perjalanan Kami</div><div class="sec-title">Kisah Cinta</div></div>
 <div class="rv"><div class="nline"></div></div>
 <div class="tl">
 @foreach($stories as $st)
@@ -415,7 +417,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 
 <!-- RSVP -->
 <section id="rsvp">
-<div class="rv"><div class="sec-kicker">Konfirmasi</div><div class="sec-title">RSVP</div></div>
+<div class="rvd"><div class="sec-kicker">Konfirmasi</div><div class="sec-title">RSVP</div></div>
 <div class="rv"><div class="nline"></div></div>
 <form id="rsvpForm" onsubmit="return sendRSVP(event)">
     <div class="field"><label>Nama Lengkap</label><input required id="rsvpNama" placeholder="Nama Anda" autocomplete="name"></div>
@@ -452,7 +454,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 </script>
 @endif
 <section id="ucapan">
-<div class="rv"><div class="sec-kicker">Doa &amp; Harapan</div><div class="sec-title">Ucapan</div></div>
+<div class="rvd"><div class="sec-kicker">Doa &amp; Harapan</div><div class="sec-title">Ucapan</div></div>
 <div class="rv"><div class="nline"></div></div>
 <div id="wishList" class="rv"></div>
 <form id="wishForm" class="rv" onsubmit="return sendWish(event)" style="margin-top:22px">
@@ -465,7 +467,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 <!-- GIFT -->
 @if(!empty($accounts) || mcGet('gift_address'))
 <section id="gift">
-<div class="rv"><div class="sec-kicker">Tanda Kasih</div><div class="sec-title">Hadiah</div></div>
+<div class="rvd"><div class="sec-kicker">Tanda Kasih</div><div class="sec-title">Hadiah</div></div>
 <div class="rv"><div class="nline"></div></div>
 @if($qrisEnabled)
 <div style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
@@ -494,7 +496,8 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 <script>
 function playPrewed(btn, id){
   var wrap = btn.parentNode;
-  wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>';
+  wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&enablejsapi=1" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>';
+if(window.prewedPauseMusic) window.prewedPauseMusic();
 }
 </script>
 @if(mcGet('live_stream_link'))
@@ -506,7 +509,7 @@ function playPrewed(btn, id){
   $liveThumb = $liveId ? 'https://i.ytimg.com/vi/' . $liveId . '/hqdefault.jpg' : '';
 @endphp
 <section id="live">
-<div class="rv"><div class="sec-kicker">Live Streaming</div><div class="sec-title">Saksikan Langsung</div></div>
+<div class="rvd"><div class="sec-kicker">Live Streaming</div><div class="sec-title">Saksikan Langsung</div></div>
 <div class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.25)">
 <div style="position:relative;padding-top:56.25%">
 @if($liveId)
@@ -551,7 +554,7 @@ document.body.style.overflow='hidden';
 /* countdown diganti modul bawaan (resepsi+timezone) */
 // reveal
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{threshold:.12});
-document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+document.querySelectorAll('.rv,.rvd').forEach(el=>io.observe(el));
 // hujan neon
 const cv=document.getElementById('petals'),cx=cv.getContext('2d');let P=[];
 function rs(){cv.width=innerWidth;cv.height=innerHeight}rs();addEventListener('resize',rs);
@@ -650,9 +653,49 @@ function startMus(){
 function toggleMus(){
   var b = document.getElementById('musBtn');
   if(!bgMus) return;
-  if(!musPlaying){ startMus(); }
-  else { bgMus.pause(); musPlaying = false; window.musicPlaying = false; if(b) b.classList.remove('playing'); }
+  if(!musPlaying){ if(window.prewedPauseVideo) window.prewedPauseVideo(); prewedMusicWasOn=false; startMus(); }
+  else { bgMus.pause(); musPlaying = false; window.musicPlaying = false; if(b) b.classList.remove('playing'); prewedMusicWasOn=false; }
 }
+
+var prewedMusicWasOn=false;
+function prewedPauseMusic(){ if(musPlaying&&bgMus){ bgMus.pause(); musPlaying=false; window.musicPlaying=false; var b=document.getElementById('musBtn'); if(b)b.classList.remove('playing'); prewedMusicWasOn=true; } }
+function prewedResumeMusic(){ if(prewedMusicWasOn){ prewedMusicWasOn=false; startMus(); } }
+
+/* ---------- Video prewedding: autoplay saat terlihat + musik saling jeda ---------- */
+var prewedBox=document.getElementById('prewedBox');
+function prewedYtCmd(fn){ if(!prewedBox)return; var f=prewedBox.querySelector('iframe'); if(f&&f.contentWindow){ try{ f.contentWindow.postMessage('{"event":"command","func":"'+fn+'","args":""}','*'); }catch(e){} } }
+function prewedPlayVideo(){
+  if(!prewedBox)return;
+  var v=prewedBox.querySelector('video');
+  if(v){ var p=v.play(); if(p&&p.catch)p.catch(function(){}); return; }
+  var b=prewedBox.querySelector('button[onclick*="playPrewed"]');
+  if(b){ b.click(); return; }
+  prewedYtCmd('playVideo'); prewedPauseMusic();
+}
+function prewedPauseVideo(){
+  if(!prewedBox)return;
+  var v=prewedBox.querySelector('video'); if(v&&!v.paused){ v.pause(); return; }
+  prewedYtCmd('pauseVideo');
+}
+(function(){
+  if(!prewedBox) return;
+  var v=prewedBox.querySelector('video');
+  if(v&&!v._prewedBound){ v._prewedBound=true;
+    v.addEventListener('play',function(){ prewedPauseMusic(); });
+    v.addEventListener('pause',function(){ prewedResumeMusic(); });
+    v.addEventListener('ended',function(){ prewedResumeMusic(); });
+  }
+  if(!('IntersectionObserver' in window)) return;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(en.isIntersecting){ prewedPlayVideo(); }
+      else{ prewedPauseVideo(); prewedResumeMusic(); }
+    });
+  },{threshold:0.35});
+  io.observe(prewedBox);
+})();
+window.prewedPauseVideo=prewedPauseVideo;
+window.prewedPauseMusic=prewedPauseMusic;
 (function(){
   document.body.classList.add('locked');
   window.openInv = function(){

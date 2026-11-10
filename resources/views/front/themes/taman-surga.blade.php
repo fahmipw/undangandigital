@@ -185,6 +185,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
 #musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
 #musicFloat .bars span{background:#e6c887!important}
 #vinyl{bottom:96px!important}
+@media (prefers-reduced-motion:reduce){}
 </style>
 </head>
 <body class="is-locked bg-[#cfe3f2] text-surga-ink font-sans antialiased">
@@ -368,7 +369,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
         &ldquo;Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.&rdquo;
       </p>
       <svg class="w-48 h-6 mx-auto my-3" viewBox="0 0 300 40"><use href="#ts-divider"/></svg>
-      <p class="anim-fade text-[11px] font-semibold tracking-[0.25em] uppercase text-surga-gold">QS. Ar-R&umacr;m : 21</p>
+      <p class="anim-fade-down text-[11px] font-semibold tracking-[0.25em] uppercase text-surga-gold">QS. Ar-R&umacr;m : 21</p>
     </div>
   </section>
 
@@ -376,7 +377,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
   <section id="sec-profil" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden"
     style="background:linear-gradient(180deg,transparent,rgba(232,162,176,.12),transparent)">
     <svg class="butterfly pointer-events-none absolute top-16 right-[10%] w-10 z-0" style="animation-delay:-2s"><use href="#ts-butterfly"/></svg>
-    <p class="anim-fade text-[10px] uppercase tracking-[0.4em] text-surga-deepsage mb-2 relative z-10">Assalamu&rsquo;alaikum Warahmatullaahi Wabarakaatuh</p>
+    <p class="anim-fade-down text-[10px] uppercase tracking-[0.4em] text-surga-deepsage mb-2 relative z-10">Assalamu&rsquo;alaikum Warahmatullaahi Wabarakaatuh</p>
     <h2 class="anim-zoom font-script text-[2.6rem] text-surga-ink mb-2 relative z-10">Mempelai</h2>
     <svg class="anim-fade w-48 h-6 relative z-10 mb-3" viewBox="0 0 300 40"><use href="#ts-divider"/></svg>
     <p class="anim-fade font-serif italic text-surga-ink/65 text-[15px] leading-relaxed mb-10 max-w-[300px] relative z-10">Dengan penuh sukacita, kami mengundang Bapak/Ibu/Saudara/i untuk hadir dan memberikan do&rsquo;a restu pada pernikahan kami.</p>
@@ -427,7 +428,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
   <!-- ================= 6. COUNTDOWN ================= -->
 @if(jklGet('quotes'))
   <section id="sec-quotes" class="scroll-section relative py-16 px-6 flex flex-col items-center text-center overflow-hidden" style="background:linear-gradient(180deg,transparent,rgba(201,164,92,.10),transparent)">
-    <p class="anim-fade text-[10px] uppercase tracking-[0.4em] text-surga-deepsage mb-3 relative z-10">Quotes</p>
+    <p class="anim-fade-down text-[10px] uppercase tracking-[0.4em] text-surga-deepsage mb-3 relative z-10">Quotes</p>
     <p class="anim-zoom font-serif italic text-surga-ink/80 text-lg leading-relaxed max-w-[330px] relative z-10">&ldquo;{{ jklGet('quotes') }}&rdquo;</p>
   </section>
   @endif
@@ -497,7 +498,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     <svg class="butterfly pointer-events-none absolute top-14 right-[8%] w-10 z-0" style="animation-delay:-1s"><use href="#ts-butterfly"/></svg>
     <svg class="anim-zoom relative z-10 w-14 h-14 mb-3 sway-slow"><use href="#ts-flower"/></svg>
     <h2 class="anim-zoom font-script text-[2.6rem] text-surga-ink mb-2 relative z-10">Memorable Moment</h2>
-    <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-surga-deepsage/80 mb-8 relative z-10">Galeri kenangan kami</p>
+    <p class="anim-fade-down text-[11px] tracking-[0.3em] uppercase text-surga-deepsage/80 mb-8 relative z-10">Galeri kenangan kami</p>
         @if(jklGet('prewedding_video_file') || jklGet('prewedding_video_link'))
 @php
   $prewedFile = jklGet('prewedding_video_file');
@@ -506,8 +507,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
   if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
   $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
 @endphp
-    <p style="font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:#c9a45c;margin-bottom:12px" class="relative z-10">Video Prewedding</p>
-    <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+    <div id="prewedBox" class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
 <div style="position:relative;padding-top:56.25%">
 @if($prewedFile)
 <video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
@@ -544,7 +544,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
   <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" id="sec-kisah">
     <svg class="anim-zoom relative z-10 w-14 h-14 mb-3 sway-slow"><use href="#ts-flower-white"/></svg>
     <h2 class="anim-zoom font-script text-[2.6rem] text-surga-ink mb-2 relative z-10">Our Story</h2>
-    <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-surga-deepsage/80 mb-10 relative z-10">Perjalanan cinta kami</p>
+    <p class="anim-fade-down text-[11px] tracking-[0.3em] uppercase text-surga-deepsage/80 mb-10 relative z-10">Perjalanan cinta kami</p>
     @if(!empty($stories) && count($stories))
     <div class="relative z-10 w-full max-w-[320px] pl-8 pb-10 text-left">
       <div class="absolute left-[9px] top-2 bottom-2 w-0.5 rounded" style="background:linear-gradient(180deg,#c9a227,#7a9b76)"></div>
@@ -661,7 +661,8 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
 <script>
 function playPrewed(btn, id){
   var wrap = btn.parentNode;
-  wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>';
+  wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&enablejsapi=1" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>';
+if(window.prewedPauseMusic) window.prewedPauseMusic();
 }
 </script>
 @if(jklGet('live_stream_link'))
@@ -673,7 +674,7 @@ function playPrewed(btn, id){
   $liveThumb = $liveId ? 'https://i.ytimg.com/vi/' . $liveId . '/hqdefault.jpg' : '';
 @endphp
 <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" style="background:linear-gradient(180deg,transparent,rgba(201,164,92,.10),transparent)" id="sec-live">
-    <p class="anim-fade text-[10px] uppercase tracking-[0.4em] text-surga-deepsage mb-2 relative z-10">Live Streaming</p>
+    <p class="anim-fade-down text-[10px] uppercase tracking-[0.4em] text-surga-deepsage mb-2 relative z-10">Live Streaming</p>
     <h2 class="anim-zoom font-script text-[2.6rem] text-surga-ink mb-3 relative z-10">Saksikan Langsung</h2>
     <p class="anim-fade font-serif italic text-surga-ink/65 text-[15px] leading-relaxed mb-9 max-w-[320px] relative z-10">Bagi Bapak/Ibu/Saudara/i yang berhalangan hadir, silakan saksikan acara kami secara langsung melalui tayangan berikut.</p>
     <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
@@ -828,11 +829,12 @@ function initParallax(){
 /* ---------- 3. ANIMASI SCROLL ---------- */
 function initSectionScrollAnimations(){
   gsap.utils.toArray(".scroll-section").forEach(sec=>{
-    const Z=sec.querySelectorAll(".anim-zoom"), F=sec.querySelectorAll(".anim-fade");
+    const Z=sec.querySelectorAll(".anim-zoom"), F=sec.querySelectorAll(".anim-fade"), D=sec.querySelectorAll(".anim-fade-down");
     const tl=gsap.timeline({ scrollTrigger:{ trigger:sec, start:"top 78%", end:"bottom 25%",
       toggleActions:"play none none reverse" }});
     if(Z.length) tl.fromTo(Z,{scale:.82,y:28,opacity:0},{scale:1,y:0,opacity:1,duration:1.1,ease:"power3.out",stagger:.12},.05);
     if(F.length) tl.fromTo(F,{y:20,opacity:0},{y:0,opacity:1,duration:.9,ease:"power2.out",stagger:.08},.18);
+    if(D.length) tl.fromTo(D,{y:-20,opacity:0},{y:0,opacity:1,duration:.9,ease:"power2.out",stagger:.08},.18);
   });
   ScrollTrigger.refresh();
 }
@@ -883,9 +885,51 @@ async function startMusic(auto){
   catch(e){ if(!auto) toast("Musik tidak dapat diputar"); }
 }
 document.getElementById("musicFloat").addEventListener("click", async function(){
-  if(musicOn && audioEl){ audioEl.pause(); musicOn=false; this.classList.remove("playing"); return; }
+  if(musicOn && audioEl){ audioEl.pause(); musicOn=false; this.classList.remove("playing"); prewedMusicWasOn=false; return; }
+  if(window.prewedPauseVideo) window.prewedPauseVideo();
+  prewedMusicWasOn=false;
   startMusic(false);
 });
+
+var prewedMusicWasOn=false;
+function prewedPauseMusic(){ if(musicOn&&audioEl){ audioEl.pause(); musicOn=false; document.getElementById('musicFloat').classList.remove('playing'); prewedMusicWasOn=true; } }
+function prewedResumeMusic(){ if(prewedMusicWasOn){ prewedMusicWasOn=false; startMusic(false); } }
+
+/* ---------- Video prewedding: autoplay saat terlihat + musik saling jeda ---------- */
+var prewedBox=document.getElementById('prewedBox');
+function prewedYtCmd(fn){ if(!prewedBox)return; var f=prewedBox.querySelector('iframe'); if(f&&f.contentWindow){ try{ f.contentWindow.postMessage('{"event":"command","func":"'+fn+'","args":""}','*'); }catch(e){} } }
+function prewedPlayVideo(){
+  if(!prewedBox)return;
+  var v=prewedBox.querySelector('video');
+  if(v){ var p=v.play(); if(p&&p.catch)p.catch(function(){}); return; }
+  var b=prewedBox.querySelector('button[onclick*="playPrewed"]');
+  if(b){ b.click(); return; }
+  prewedYtCmd('playVideo'); prewedPauseMusic();
+}
+function prewedPauseVideo(){
+  if(!prewedBox)return;
+  var v=prewedBox.querySelector('video'); if(v&&!v.paused){ v.pause(); return; }
+  prewedYtCmd('pauseVideo');
+}
+(function(){
+  if(!prewedBox) return;
+  var v=prewedBox.querySelector('video');
+  if(v&&!v._prewedBound){ v._prewedBound=true;
+    v.addEventListener('play',function(){ prewedPauseMusic(); });
+    v.addEventListener('pause',function(){ prewedResumeMusic(); });
+    v.addEventListener('ended',function(){ prewedResumeMusic(); });
+  }
+  if(!('IntersectionObserver' in window)) return;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(en.isIntersecting){ prewedPlayVideo(); }
+      else{ prewedPauseVideo(); prewedResumeMusic(); }
+    });
+  },{threshold:0.35});
+  io.observe(prewedBox);
+})();
+window.prewedPauseVideo=prewedPauseVideo;
+window.prewedPauseMusic=prewedPauseMusic;
 
 /* ---------- 7. RSVP ---------- */
 document.getElementById("rsvpForm").addEventListener("submit", async function(e){

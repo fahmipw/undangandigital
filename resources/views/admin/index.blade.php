@@ -744,7 +744,7 @@
                 </div>
                 <p class="text-xs text-gray-500 -mt-4 mb-4">Seret foto untuk mengubah urutannya — urutan ini yang tampil di undangan.</p>
                         <div class="rsvp-field pt-2">
-                            <label>VIDEO PREWEDDING (OPSIONAL)</label>
+                            <label style="position:static;display:block">VIDEO PREWEDDING (OPSIONAL)</label>
                             <input type="hidden" id="set-prewedding_video_file">
                             <div class="flex flex-col gap-2 mt-2">
                                 <div class="flex items-center gap-2 flex-wrap">

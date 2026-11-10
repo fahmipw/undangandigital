@@ -258,6 +258,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
 #musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
 #musicFloat .bars span{background:#e6c887!important}
 #vinyl{bottom:96px!important}
+@media (prefers-reduced-motion:reduce){}
 </style>
 </head>
 <body class="is-locked bg-[#080605] text-jawa-cream font-sans antialiased">
@@ -547,7 +548,7 @@ function withEnvelope(fn){
         &ldquo;Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.&rdquo;
       </p>
       <div class="hairline-gold w-24 mx-auto my-4"></div>
-      <p class="anim-fade text-[11px] font-semibold tracking-[0.25em] uppercase text-jawa-gold">QS. Ar-R&umacr;m : 21</p>
+      <p class="anim-down text-[11px] font-semibold tracking-[0.25em] uppercase text-jawa-gold">QS. Ar-R&umacr;m : 21</p>
     </div>
 
     <div class="orn anim-left pointer-events-none absolute bottom-[9%] left-[2%] w-[26%] z-20" data-speed="1.6" data-rot="0">
@@ -617,7 +618,7 @@ function withEnvelope(fn){
   <!-- ================= 6. ACARA & COUNTDOWN ================= -->
 @if(jwaGet('quotes'))
   <section id="sec-quotes" class="scroll-section relative py-16 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:#1d140d">
-    <p class="anim-fade font-cinzel text-[11px] uppercase tracking-[0.4em] text-jawa-gold mb-3 relative z-10">Quotes</p>
+    <p class="anim-down font-cinzel text-[11px] uppercase tracking-[0.4em] text-jawa-gold mb-3 relative z-10">Quotes</p>
     <p class="anim-zoom font-serif italic text-stone-200 text-lg leading-relaxed max-w-[330px] relative z-10">&ldquo;{{ jwaGet('quotes') }}&rdquo;</p>
   </section>
   @endif
@@ -627,7 +628,7 @@ function withEnvelope(fn){
     <div class="relative z-10 w-full max-w-[340px] mx-auto">
       <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn" alt=""  data-speed="0.7" data-rot="0" />
       <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2">Rangkaian Acara</h2>
-      <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Menuju hari bahagia</p>
+      <p class="anim-down text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Menuju hari bahagia</p>
 
       <div class="anim-scale grid grid-cols-4 gap-2 mb-10">
         <div class="card-dark py-4"><div class="font-cinzel text-[1.5rem] text-gold-gradient" id="cd-d">00</div><div class="text-[9px] tracking-[0.25em] text-stone-400 mt-1">HARI</div></div>
@@ -686,7 +687,7 @@ function withEnvelope(fn){
     {!! jwaCorners(0) !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">Galeri Kenangan</h2>
-    <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Momen berharga kami</p>
+    <p class="anim-down text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Momen berharga kami</p>
         @if(jwaGet('prewedding_video_file') || jwaGet('prewedding_video_link'))
 @php
   $prewedFile = jwaGet('prewedding_video_file');
@@ -695,8 +696,7 @@ function withEnvelope(fn){
   if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
   $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
 @endphp
-    <p style="font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:#c9a45c;margin-bottom:12px" class="relative z-10">Video Prewedding</p>
-    <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+    <div id="prewedBox" class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
 <div style="position:relative;padding-top:56.25%">
 @if($prewedFile)
 <video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
@@ -740,7 +740,7 @@ function withEnvelope(fn){
     {!! jwaCorners(1, '', 'flowers') !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">Kisah Cinta</h2>
-    <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-10 relative z-10">Perjalanan kami berdua</p>
+    <p class="anim-down text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-10 relative z-10">Perjalanan kami berdua</p>
     @if(!empty($stories) && count($stories))
     <div class="relative z-10 w-full max-w-[320px] pl-8 pb-24 text-left">
       <div class="absolute left-[9px] top-2 bottom-2 w-px bg-jawa-gold/40"></div>
@@ -784,7 +784,7 @@ function withEnvelope(fn){
     {!! jwaCorners(0) !!}
     <img src="{{ $ASSET }}ASSET-JAWA-REV-8-REVISII.png" class="orn anim-scale sec-head-orn relative z-10" alt=""  data-speed="0.7" data-rot="0" />
     <h2 class="anim-fade font-cinzel text-[1.65rem] text-gold-gradient mb-2 relative z-10">RSVP &amp; Buku Tamu</h2>
-    <p class="anim-fade text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Konfirmasi kehadiran Anda</p>
+    <p class="anim-down text-[11px] tracking-[0.3em] uppercase text-jawa-gold/80 mb-8">Konfirmasi kehadiran Anda</p>
 
     <form id="rsvpForm" class="anim-scale relative z-10 w-full max-w-[340px] card-dark p-6 mb-6 text-left">
       <label class="block text-[10px] tracking-[0.25em] text-jawa-gold font-semibold mb-2">NAMA LENGKAP</label>
@@ -868,7 +868,8 @@ function withEnvelope(fn){
 <script>
 function playPrewed(btn, id){
   var wrap = btn.parentNode;
-  wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>';
+  wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&enablejsapi=1" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>';
+if(window.prewedPauseMusic) window.prewedPauseMusic();
 }
 </script>
 @if(jwaGet('live_stream_link'))
@@ -880,7 +881,7 @@ function playPrewed(btn, id){
   $liveThumb = $liveId ? 'https://i.ytimg.com/vi/' . $liveId . '/hqdefault.jpg' : '';
 @endphp
 <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden" id="sec-live">
-    <p class="anim-fade text-[10px] uppercase tracking-[0.4em] text-jawa-gold mb-2 relative z-10">Live Streaming</p>
+    <p class="anim-down text-[10px] uppercase tracking-[0.4em] text-jawa-gold mb-2 relative z-10">Live Streaming</p>
     <h2 class="anim-zoom font-cinzel text-[1.7rem] tracking-[0.18em] text-gold-gradient mb-3 relative z-10">SAKSIKAN LANGSUNG</h2>
     <p class="anim-fade font-serif italic text-stone-300 text-[15px] leading-relaxed mb-9 max-w-[320px] relative z-10">Bagi Bapak/Ibu/Saudara/i yang berhalangan hadir, silakan saksikan acara kami secara langsung melalui tayangan berikut.</p>
     <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
@@ -907,10 +908,10 @@ function playLive(btn, id){
   <footer class="relative px-6 pt-20 pb-28 text-center overflow-hidden bg-jawa-bg/80">
     <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" class="orn sway-node sway-subtle w-[26%] max-w-[110px] mx-auto mb-5 opacity-90" alt=""  data-speed="0.8" data-rot="0" />
     <p class="anim-fade font-serif italic text-stone-300 text-[16px] max-w-[300px] mx-auto leading-relaxed mb-6">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kami.</p>
-    <p class="anim-fade text-stone-500 text-xs mb-2 tracking-[0.2em] uppercase">Kami yang berbahagia,</p>
+    <p class="anim-down text-stone-500 text-xs mb-2 tracking-[0.2em] uppercase">Kami yang berbahagia,</p>
     <h4 class="anim-fade font-cinzel text-[1.7rem] text-gold-gradient mb-6">{{ $groomNick }} &amp; {{ $brideNick }}</h4>
     <div class="hairline-gold w-40 mx-auto mb-5"></div>
-    <p class="anim-fade text-stone-500 text-[10px] tracking-[0.35em] uppercase">Matur Nuwun &bull; {{ jwaDate($rDate) }}</p>
+    <p class="anim-down text-stone-500 text-[10px] tracking-[0.35em] uppercase">Matur Nuwun &bull; {{ jwaDate($rDate) }}</p>
     <img src="{{ asset('images/jawa-puspa/ornamen-bawah.webp') }}" alt="" class="absolute bottom-0 left-0 w-full opacity-70 pointer-events-none" />
   </footer>
 </main>
@@ -1002,7 +1003,7 @@ function initSectionScrollAnimations(){
   gsap.utils.toArray(".scroll-section").forEach(sec=>{
     const L=sec.querySelectorAll(".anim-left"), R=sec.querySelectorAll(".anim-right"),
           U=sec.querySelectorAll(".anim-up"), S=sec.querySelectorAll(".anim-scale"),
-          F=sec.querySelectorAll(".anim-fade");
+          F=sec.querySelectorAll(".anim-fade"), D=sec.querySelectorAll(".anim-down");
     const tl=gsap.timeline({ scrollTrigger:{ trigger:sec, start:"top 78%", end:"bottom 25%",
       toggleActions:"play none none reverse" }});
     if(L.length) tl.fromTo(L,{x:-36,opacity:0},{x:0,opacity:1,duration:1.1,ease:"expo.out",stagger:.1},0);
@@ -1010,6 +1011,7 @@ function initSectionScrollAnimations(){
     if(S.length) tl.fromTo(S,{scale:.82,y:30,opacity:0},{scale:1,y:0,opacity:1,duration:1.1,ease:"power3.out",stagger:.12},.08);
     if(F.length) tl.fromTo(F,{y:20,opacity:0},{y:0,opacity:1,duration:.9,ease:"power2.out",stagger:.08},.18);
     if(U.length) tl.fromTo(U,{y:36,opacity:0},{y:0,opacity:1,duration:1,ease:"expo.out",stagger:.08},.12);
+    if(D.length) tl.fromTo(D,{y:-36,opacity:0},{y:0,opacity:1,duration:1,ease:"expo.out",stagger:.08},.12);
   });
   ScrollTrigger.refresh();
 }
@@ -1106,7 +1108,50 @@ document.getElementById("musicFloat").addEventListener("click", async function()
       catch(e){ musicOn=false; this.classList.remove("playing"); toast("Musik tidak dapat diputar"); }
     } else { musicOn=false; this.classList.remove("playing"); toast("Belum ada musik pengiring"); }
   } else { if(audioEl){ audioEl.pause(); audioEl=null; } toast("Musik dijeda"); }
+
+  if(musicOn&&window.prewedPauseVideo) window.prewedPauseVideo();
+  prewedMusicWasOn=false;
 });
+
+var prewedMusicWasOn=false;
+function prewedPauseMusic(){ if(musicOn){ musicOn=false; var mf=document.getElementById('musicFloat'); if(mf)mf.classList.remove('playing'); if(audioEl){audioEl.pause();audioEl=null;} prewedMusicWasOn=true; } }
+function prewedResumeMusic(){ if(prewedMusicWasOn){ prewedMusicWasOn=false; var mf=document.getElementById('musicFloat'); if(mf)mf.click(); } }
+
+/* ---------- Video prewedding: autoplay saat terlihat + musik saling jeda ---------- */
+var prewedBox=document.getElementById('prewedBox');
+function prewedYtCmd(fn){ if(!prewedBox)return; var f=prewedBox.querySelector('iframe'); if(f&&f.contentWindow){ try{ f.contentWindow.postMessage('{"event":"command","func":"'+fn+'","args":""}','*'); }catch(e){} } }
+function prewedPlayVideo(){
+  if(!prewedBox)return;
+  var v=prewedBox.querySelector('video');
+  if(v){ var p=v.play(); if(p&&p.catch)p.catch(function(){}); return; }
+  var b=prewedBox.querySelector('button[onclick*="playPrewed"]');
+  if(b){ b.click(); return; }
+  prewedYtCmd('playVideo'); prewedPauseMusic();
+}
+function prewedPauseVideo(){
+  if(!prewedBox)return;
+  var v=prewedBox.querySelector('video'); if(v&&!v.paused){ v.pause(); return; }
+  prewedYtCmd('pauseVideo');
+}
+(function(){
+  if(!prewedBox) return;
+  var v=prewedBox.querySelector('video');
+  if(v&&!v._prewedBound){ v._prewedBound=true;
+    v.addEventListener('play',function(){ prewedPauseMusic(); });
+    v.addEventListener('pause',function(){ prewedResumeMusic(); });
+    v.addEventListener('ended',function(){ prewedResumeMusic(); });
+  }
+  if(!('IntersectionObserver' in window)) return;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(en.isIntersecting){ prewedPlayVideo(); }
+      else{ prewedPauseVideo(); prewedResumeMusic(); }
+    });
+  },{threshold:0.35});
+  io.observe(prewedBox);
+})();
+window.prewedPauseVideo=prewedPauseVideo;
+window.prewedPauseMusic=prewedPauseMusic;
 
 /* ---------- 8. RSVP ---------- */
 let attendVal="hadir";

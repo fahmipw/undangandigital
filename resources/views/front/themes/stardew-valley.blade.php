@@ -93,6 +93,9 @@ section{position:relative;padding:56px 20px}
 /* ---------- reveal ---------- */
 .rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
 .rv.on{opacity:1;transform:none}
+.rvd{opacity:0;transform:translateY(-26px);transition:opacity .7s ease,transform .7s ease}
+.rvd.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv,.rvd{opacity:1!important;transform:none!important;transition:none}}
 /* ---------- progress & menu ---------- */
 .pbar{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--gold),#ffdf80);z-index:120;box-shadow:0 0 8px #e8b93c}
 body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn{display:none!important}
@@ -390,7 +393,7 @@ footer{padding:50px 20px 110px;text-align:center}
 
 <!-- ================= MEMPELAI ================= -->
 <section id="mempelai">
-  <div class="sec-head rv">
+  <div class="sec-head rvd">
     <div class="sec-kicker">★ KARAKTER UTAMA ★</div>
     <div class="sec-title">Mempelai</div>
     <div class="fence"></div>
@@ -447,14 +450,13 @@ footer{padding:50px 20px 110px;text-align:center}
 <!-- ================= GALERI ================= -->
 @if((!empty($gallery) && count($gallery)) || mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))
 <section id="galeri">
-  <div class="sec-head rv">
+  <div class="sec-head rvd">
     <div class="sec-kicker">▦ PAPAN PENGUMUMAN ▦</div>
     <div class="sec-title">Galeri</div>
     <div class="fence"></div>
   </div>
     @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))
-  <div class="sec-kicker" style="text-align:center;margin-bottom:12px">▦ VIDEO PREWEDDING ▦</div>
-  @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div style="margin:12px auto 2px;max-width:330px;border:3px solid #7a4a21;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.25);overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@if($pwL)<a class="btn-gold" target="_blank" href="{{ $pwL }}" style="">Video Prewedding</a>@endif @endif
+  @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div id="prewedBox" style="margin:12px auto 2px;max-width:330px;border:3px solid #7a4a21;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.25);overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@endif @endif
   @endif
 @if(!empty($gallery) && count($gallery))
   <div class="g-grid rv">
@@ -470,7 +472,7 @@ footer{padding:50px 20px 110px;text-align:center}
 <!-- ================= KISAH ================= -->
 @if(!empty($stories) && count($stories))
 <section id="kisah">
-  <div class="sec-head rv">
+  <div class="sec-head rvd">
     <div class="sec-kicker">✎ JURNAL PETUALANGAN ✎</div>
     <div class="sec-title">Kisah Cinta</div>
     <div class="fence"></div>
@@ -488,7 +490,7 @@ footer{padding:50px 20px 110px;text-align:center}
 @endif
 <!-- ================= ACARA ================= -->
 <section id="acara">
-  <div class="sec-head rv">
+  <div class="sec-head rvd">
     <div class="sec-kicker">◷ PAPAN PETUNJUK ◷</div>
     <div class="sec-title">Waktu &amp; Tempat</div>
     <div class="fence"></div>
@@ -548,7 +550,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 
 <!-- ================= RSVP ================= -->
 <section id="rsvp">
-  <div class="sec-head rv">
+  <div class="sec-head rvd">
     <div class="sec-kicker">✓ KONFIRMASI ✓</div>
     <div class="sec-title">RSVP</div>
     <div class="fence"></div>
@@ -571,7 +573,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 
 <!-- ================= UCAPAN ================= -->
 <section id="ucapan">
-  <div class="sec-head rv">
+  <div class="sec-head rvd">
     <div class="sec-kicker">✉ PAPAN SURAT ✉</div>
     <div class="sec-title">Ucapan</div>
     <div class="fence"></div>
@@ -586,7 +588,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 
 <!-- ================= GIFT ================= -->
 <section id="gift">
-  <div class="sec-head rv">
+  <div class="sec-head rvd">
     <div class="sec-kicker">✦ GUDANG HADIAH ✦</div>
     <div class="sec-title">Gift</div>
     <div class="fence"></div>
@@ -678,8 +680,8 @@ async function startMusic(){
     musEl.src = url; musEl.volume = 0;
     var btn = document.getElementById('musBtn');
     btn.onclick = function(){
-      if(musEl.paused){ musEl.play().catch(function(){}); btn.classList.remove('off'); }
-      else{ musEl.pause(); btn.classList.add('off'); }
+      if(musEl.paused){ if(window.prewedPauseVideo)window.prewedPauseVideo(); prewedMusicWasOn=false; musEl.play().catch(function(){}); btn.classList.remove('off'); }
+      else{ musEl.pause(); btn.classList.add('off'); prewedMusicWasOn=false; }
     };
     if(autoplay){
       musEl.play().then(function(){
@@ -691,6 +693,46 @@ async function startMusic(){
     }
   }catch(e){ var b1 = document.getElementById('musBtn'); if(b1){ b1.classList.add('off'); b1.onclick = function(){ alert('Musik belum tersedia untuk undangan ini.'); }; } }
 }
+
+
+var prewedMusicWasOn=false;
+function prewedPauseMusic(){ if(musEl&&!musEl.paused){ musEl.pause(); var b=document.getElementById('musBtn'); if(b)b.classList.add('off'); prewedMusicWasOn=true; } }
+function prewedResumeMusic(){ if(prewedMusicWasOn){ prewedMusicWasOn=false; if(musEl){ musEl.play().catch(function(){}); var b=document.getElementById('musBtn'); if(b)b.classList.remove('off'); } } }
+
+/* ---------- Video prewedding: autoplay saat terlihat + musik saling jeda ---------- */
+var prewedBox=document.getElementById('prewedBox');
+function prewedYtCmd(fn){ if(!prewedBox)return; var f=prewedBox.querySelector('iframe'); if(f&&f.contentWindow){ try{ f.contentWindow.postMessage('{"event":"command","func":"'+fn+'","args":""}','*'); }catch(e){} } }
+function prewedPlayVideo(){
+  if(!prewedBox)return;
+  var v=prewedBox.querySelector('video');
+  if(v){ var p=v.play(); if(p&&p.catch)p.catch(function(){}); return; }
+  var f=prewedBox.querySelector('iframe');
+  if(f){ if(!f.dataset.prewedAuto){ f.dataset.prewedAuto='1'; f.src=f.src+(f.src.indexOf('?')>=0?'&':'?')+'autoplay=1&enablejsapi=1'; } else { prewedYtCmd('playVideo'); } prewedPauseMusic(); }
+}
+function prewedPauseVideo(){
+  if(!prewedBox)return;
+  var v=prewedBox.querySelector('video'); if(v&&!v.paused){ v.pause(); return; }
+  prewedYtCmd('pauseVideo');
+}
+(function(){
+  if(!prewedBox) return;
+  var v=prewedBox.querySelector('video');
+  if(v&&!v._prewedBound){ v._prewedBound=true;
+    v.addEventListener('play',function(){ prewedPauseMusic(); });
+    v.addEventListener('pause',function(){ prewedResumeMusic(); });
+    v.addEventListener('ended',function(){ prewedResumeMusic(); });
+  }
+  if(!('IntersectionObserver' in window)) return;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(en.isIntersecting){ prewedPlayVideo(); }
+      else{ prewedPauseVideo(); prewedResumeMusic(); }
+    });
+  },{threshold:0.35});
+  io.observe(prewedBox);
+})();
+window.prewedPauseVideo=prewedPauseVideo;
+window.prewedPauseMusic=prewedPauseMusic;
 
 /* ---------- countdown ---------- */
 function tickCd(){
@@ -710,7 +752,7 @@ setInterval(tickCd, 1000); tickCd();
 
 /* ---------- reveal ---------- */
 var io = new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}});},{threshold:.12});
-$$('.rv').forEach(function(el){io.observe(el);});
+$$('.rv,.rvd').forEach(function(el){io.observe(el);});
 
 /* ---------- progress ---------- */
 window.addEventListener('scroll', function(){

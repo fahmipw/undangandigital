@@ -67,7 +67,7 @@ if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)(
 $prewedLink = jklGet('prewedding_video_link','');
 $prewedFile = jklGet('prewedding_video_file','');
 $prewedEmbed = '';
-if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pqm)) { $prewedEmbed = 'https://www.youtube-nocookie.com/embed/'.$pqm[1]; }
+if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pqm)) { $prewedEmbed = 'https://www.youtube-nocookie.com/embed/'.$pqm[1].'?autoplay=1&enablejsapi=1'; }
 $prewedFileUrl = $prewedFile ? asset(ltrim($prewedFile,'/')) : '';
 $invId = $inv_id ?? 0;
 $gcalDates = str_replace('-','',$rDate).'T'.str_replace(':','',$rTimeS).'00/'.str_replace('-','',$rDate).'T'.str_replace(':','',$rTimeE).'00';
@@ -248,6 +248,10 @@ select.pq-input{appearance:none}
 .complete h2{font-family:'Press Start 2P',monospace;font-size:17px;color:#3a5a22;margin-bottom:14px;line-height:1.8}
 .complete p{font-size:22px;color:#5a4a30;margin-bottom:10px}
 @media (prefers-reduced-motion:reduce){#actBtn.ready,#dlgNext{animation:none}}
+/* Panel: Fade In Up */
+#panelBody{opacity:0;transform:translateY(14px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+#panelBody.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){#panelBody{opacity:1!important;transform:none!important;transition:none}#panelBody }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
@@ -550,9 +554,24 @@ function toggleMusic(){
     if(audioEl&&MC.musicUrl){useFile=true;audioEl.play().catch(()=>{useFile=false;mstep=0;playStep();});}
     else{try{ac().resume();}catch(e){}mstep=0;playStep();}
   }else{clearTimeout(musicTimer);if(audioEl)audioEl.pause();}
+  if(musicOn)prewedPauseVideo(); prewedMusicWasOn=false;
   blip(musicOn?880:440,0.08,0.05);
 }
 $("#musicBtn").addEventListener("click",e=>{e.stopPropagation();toggleMusic();toast(musicOn?"MUSIK: ON":"MUSIK: OFF");});
+
+/* ---------- Video prewedding di panel Galeri: autoplay + musik saling jeda ---------- */
+var prewedMusicWasOn=false;
+function prewedPauseMusic(){ if(musicOn){ musicOn=false; $("#musicBtn").innerHTML="&#9834;"; clearTimeout(musicTimer); if(audioEl)audioEl.pause(); prewedMusicWasOn=true; } }
+function prewedResumeMusic(){ if(prewedMusicWasOn){ prewedMusicWasOn=false; musicOn=true; $("#musicBtn").innerHTML="&#9835;"; if(audioEl&&MC.musicUrl){useFile=true;audioEl.play().catch(function(){});} else { try{ac().resume();}catch(e){} mstep=0;playStep(); } } }
+function prewedYtCmdPanel(fn){ var f=document.querySelector('#panelBody iframe'); if(f&&f.contentWindow){ try{ f.contentWindow.postMessage('{"event":"command","func":"'+fn+'","args":""}','*'); }catch(e){} } }
+function prewedPauseVideo(){ var v=document.querySelector('#panelBody video'); if(v&&!v.paused){ v.pause(); return; } prewedYtCmdPanel('pauseVideo'); }
+function prewedPanelOpened(){
+  var v=document.querySelector('#panelBody video');
+  if(v){ v.addEventListener('play',function(){ prewedPauseMusic(); }); v.addEventListener('pause',function(){ prewedResumeMusic(); }); v.addEventListener('ended',function(){ prewedResumeMusic(); }); var p=v.play(); if(p&&p.catch)p.catch(function(){}); return; }
+  var f=document.querySelector('#panelBody iframe');
+  if(f){ prewedPauseMusic(); }
+}
+window.prewedPauseVideo=prewedPauseVideo;
 
 /* ================= PILIH KARAKTER ================= */
 const CHARS=[
@@ -872,6 +891,8 @@ function checkQuestComplete(){
 }
 
 /* ================= PANEL ================= */
+/* Panel: Fade In Up */
+function panelAnimate(){requestAnimationFrame(function(){var pb=document.querySelector('#panelBody');if(pb)pb.classList.add('in');});}
 function openPanel(id){
   const body=$("#panelBody");
   if(id==="couple"){
@@ -925,7 +946,7 @@ function openPanel(id){
   }
   else if(id==="gallery"){
     const g=MC.gallery||[];
-    body.innerHTML=`<div class="ptitle">GALERI KENANGAN</div><div class="psub">Momen-momen indah</div>${(MC.prewedFile||MC.prewedLink)?'<div style="margin-top:10px;border:3px solid #0f380f;box-shadow:0 0 0 2px #9bbc0f;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%">' + (MC.prewedFile?'<video controls preload="metadata" playsinline src="'+esc(MC.prewedFile)+'" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>':MC.prewedEmbed?'<iframe src="'+esc(MC.prewedEmbed)+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>':'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:9px;font-weight:700;letter-spacing:.15em">&#9654; TONTON VIDEO PREWEDDING</a>') + '</div></div>' + (MC.prewedLink?'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" class="pq-btn" style="display:inline-block;margin-top:8px;margin-left:6px;font-size:9px;padding:10px 14px">VIDEO PREWEDDING</a>':'') : ""}`+
+    body.innerHTML=`<div class="ptitle">GALERI KENANGAN</div><div class="psub">Momen-momen indah</div>${(MC.prewedFile||MC.prewedLink)?'<div style="margin-top:10px;border:3px solid #0f380f;box-shadow:0 0 0 2px #9bbc0f;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%">' + (MC.prewedFile?'<video controls preload="metadata" playsinline src="'+esc(MC.prewedFile)+'" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>':MC.prewedEmbed?'<iframe src="'+esc(MC.prewedEmbed)+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>':'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:9px;font-weight:700;letter-spacing:.15em">&#9654; TONTON VIDEO PREWEDDING</a>') + '</div></div>' : ""}`+
     (g.length?`<div class="frames2">${g.map((im,i)=>`<div class="frame2" data-full="${esc(im)}"><img src="${esc(im)}" alt="Galeri ${i+1}" loading="lazy"><p>FOTO ${i+1}</p></div>`).join("")}</div>`
     :`<p style="font-size:20px;color:#7a6a4a">Galeri kenangan akan segera hadir.</p>`);
     $$("#panelBody .frame2").forEach(f=>f.addEventListener("click",()=>openLightbox(f.dataset.full)));
@@ -980,9 +1001,11 @@ function openPanel(id){
       <button class="pq-btn gold" onclick="closePanel()">LANJUTKAN PETUALANGAN</button>
     </div>`;
   }
+  if(id==="gallery")prewedPanelOpened();
   $("#panelOverlay").hidden=false;
+  panelAnimate();
 }
-function closePanel(){ $("#panelOverlay").hidden=true; }
+function closePanel(){ var pb=document.querySelector('#panelBody');if(pb)pb.classList.remove('in');prewedPauseVideo();prewedResumeMusic(); $("#panelOverlay").hidden=true; }
 $("#panelClose").addEventListener("click",closePanel);
 $("#panelOverlay").addEventListener("click",e=>{ if(e.target.id==="panelOverlay") closePanel(); });
 

@@ -171,15 +171,61 @@
       if (!bgMusic) return;
       
       if (!musicPlaying) {
+        if (window.prewedPauseVideo) window.prewedPauseVideo(); prewedMusicWasOn = false;
         startMusic(bgMusic.currentTime);
       } else {
         bgMusic.pause();
         musicPlaying = false;
         window.musicPlaying = false; // Update global reference
         updateMusicUI(false);
+        prewedMusicWasOn = false;
       }
     });
   }
+
+
+  /* ---------- Video prewedding: autoplay saat terlihat + musik saling jeda ---------- */
+  var prewedMusicWasOn = false;
+  function prewedPauseMusic(){ if(musicPlaying&&bgMusic){ bgMusic.pause(); musicPlaying=false; window.musicPlaying=false; updateMusicUI(false); prewedMusicWasOn=true; } }
+  function prewedResumeMusic(){ if(prewedMusicWasOn){ prewedMusicWasOn=false; startMusic(bgMusic?bgMusic.currentTime:0); } }
+
+/* ---------- Video prewedding: autoplay saat terlihat + musik saling jeda ---------- */
+var prewedBox=document.getElementById('prewedBox');
+function prewedYtCmd(fn){ if(!prewedBox)return; var f=prewedBox.querySelector('iframe'); if(f&&f.contentWindow){ try{ f.contentWindow.postMessage('{"event":"command","func":"'+fn+'","args":""}','*'); }catch(e){} } }
+function prewedPlayVideo(){
+  if(!prewedBox)return;
+  var v=prewedBox.querySelector('video');
+  if(v){ var p=v.play(); if(p&&p.catch)p.catch(function(){}); return; }
+  var b=prewedBox.querySelector('button[onclick*="playPrewed"]');
+  if(b){ b.click(); return; }
+  prewedYtCmd('playVideo'); prewedPauseMusic();
+}
+function prewedPauseVideo(){
+  if(!prewedBox)return;
+  var v=prewedBox.querySelector('video'); if(v&&!v.paused){ v.pause(); return; }
+  prewedYtCmd('pauseVideo');
+}
+(function(){
+  if(!prewedBox) return;
+  var v=prewedBox.querySelector('video');
+  if(v&&!v._prewedBound){ v._prewedBound=true;
+    v.addEventListener('play',function(){ prewedPauseMusic(); });
+    v.addEventListener('pause',function(){ prewedResumeMusic(); });
+    v.addEventListener('ended',function(){ prewedResumeMusic(); });
+  }
+  if(!('IntersectionObserver' in window)) return;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(en.isIntersecting){ prewedPlayVideo(); }
+      else{ prewedPauseVideo(); prewedResumeMusic(); }
+    });
+  },{threshold:0.35});
+  io.observe(prewedBox);
+})();
+window.prewedPauseVideo=prewedPauseVideo;
+window.prewedPauseMusic=prewedPauseMusic;
+  window.prewedPauseVideo = prewedPauseVideo;
+  window.prewedPauseMusic = prewedPauseMusic;
 
   /* =============================================
      DOT NAVIGATION
@@ -305,7 +351,7 @@
      ============================================= */
   function initScrollReveal() {
     var elements = document.querySelectorAll(
-      ".reveal, .reveal-scale, .reveal-left, .reveal-right, .reveal-stagger"
+      ".reveal, .reveal-scale, .reveal-left, .reveal-right, .reveal-stagger, .reveal-down"
     );
     if (!elements.length) return;
 
