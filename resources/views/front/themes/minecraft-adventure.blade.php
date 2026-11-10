@@ -64,6 +64,11 @@ $musVol = (int) mcaGet('music_volume', 50);
 $musAuto = mcaGet('music_autoplay', '1') !== '0';
 $liveEmbed = mcaGet('live_stream_link','');
 if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$liveEmbed, $pqm)) { $liveEmbed = 'https://www.youtube-nocookie.com/embed/'.$pqm[1]; }
+$prewedLink = mcaGet('prewedding_video_link','');
+$prewedFile = mcaGet('prewedding_video_file','');
+$prewedEmbed = '';
+if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pqm)) { $prewedEmbed = 'https://www.youtube-nocookie.com/embed/'.$pqm[1]; }
+$prewedFileUrl = $prewedFile ? asset(ltrim($prewedFile,'/')) : '';
 $invId = $inv_id ?? 0;
 ?>
 <!DOCTYPE html>
@@ -276,6 +281,9 @@ const MC = {
   musAuto: @json($musAuto),
   liveStream: @json(mcaGet('live_stream_link', '')),
   liveEmbed: @json($liveEmbed),
+  prewedFile: @json($prewedFileUrl),
+  prewedLink: @json($prewedLink),
+  prewedEmbed: @json($prewedEmbed),
   brideNick: @json($brideNick), groomNick: @json($groomNick),
   brideFull: @json($brideFull), groomFull: @json($groomFull),
   guestName: @json($guestName),
@@ -585,7 +593,7 @@ event:()=>`<h2 class="ptitle">BALAI QUEST</h2><p class="psub">Dua misi utama men
 ${MC.akad.maps?`<a class="mc-btn" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.akad.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}</div></div>
 <div class="adv"><div class="ic"><canvas class="ev-ic" data-ic="heart" width="16" height="16"></canvas></div>
 <div><h3>RESEPSI</h3><p>${MC.resepsi.date}</p><p class="tm">${MC.resepsi.time}</p><p>${esc(MC.resepsi.venue)}</p>
-${MC.resepsi.maps?`<a class="mc-btn" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.resepsi.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}${MC.liveStream?`<div style="margin-top:10px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%"><iframe src="${esc(MC.liveEmbed)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div><a class="mc-btn" style="font-size:10px;margin-top:8px;display:inline-block;text-decoration:none" href="${esc(MC.liveStream)}" target="_blank" rel="noopener">LIVE STREAMING</a>`:""}</div></div>`,
+${MC.resepsi.maps?`<a class="mc-btn" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.resepsi.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}${MC.liveStream?`<div style="margin-top:10px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%"><iframe src="${esc(MC.liveEmbed)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div><a class="mc-btn" style="font-size:10px;margin-top:8px;display:inline-block;text-decoration:none" href="${esc(MC.liveStream)}" target="_blank" rel="noopener">LIVE STREAMING</a>`:""}${(MC.prewedFile||MC.prewedLink)?'<div style="margin-top:10px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%">' + (MC.prewedFile?'<video controls preload="metadata" playsinline src="'+esc(MC.prewedFile)+'" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>':MC.prewedEmbed?'<iframe src="'+esc(MC.prewedEmbed)+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>':'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:9px;font-weight:700;letter-spacing:.15em">&#9654; TONTON VIDEO PREWEDDING</a>') + '</div></div>' + (MC.prewedLink?'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" class="mc-btn" style="font-size:10px;margin-top:8px;display:inline-block;text-decoration:none">VIDEO PREWEDDING</a>':'') : ""}</div></div>`,
 gallery:()=>`<h2 class="ptitle">GALERI</h2><p class="psub">Balok-balok kenangan.</p>
 <div class="frames2">
 @foreach(array_slice($gallery, 0, 6) as $i => $img)

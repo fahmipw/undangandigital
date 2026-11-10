@@ -578,6 +578,24 @@
                             <input type="text" id="set-live_stream_link"
                                 placeholder="Contoh: https://youtube.com/live/xxxxx atau https://zoom.us/...">
                         </div>
+                        <div class="rsvp-field pt-2">
+                            <label>VIDEO PREWEDDING (OPSIONAL)</label>
+                            <input type="hidden" id="set-prewedding_video_file">
+                            <div class="flex flex-col gap-2 mt-2">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <button type="button" onclick="document.getElementById('prewedding-video-upload').click()"
+                                        class="px-4 py-2 rounded-xl bg-secondary text-white text-xs font-bold uppercase hover:bg-secondary/80 transition-all">Pilih File Video</button>
+                                    <span id="prewedding-video-name" class="text-xs opacity-60">Belum ada video</span>
+                                    <button type="button" id="btn-delete-prewedding_video" onclick="deletePreweddingVideo()"
+                                        class="px-3 py-2 rounded-xl bg-red-500 text-white text-xs font-bold uppercase hover:bg-red-600 transition-all" style="display:none;">Hapus</button>
+                                </div>
+                                <input type="file" id="prewedding-video-upload" class="hidden" accept="video/mp4,video/webm,video/quicktime,.mov,.mkv" onchange="uploadPreweddingVideo()">
+                                <video id="preview-prewedding_video" controls preload="metadata" class="hidden w-full max-w-md rounded-xl border border-outline-variant/30"></video>
+                                <input type="text" id="set-prewedding_video_link"
+                                    placeholder="atau tempel link YouTube, contoh: https://www.youtube.com/watch?v=xxxxx">
+                                <p class="text-[11px] opacity-60 leading-relaxed">Unggah file video (MP4/WebM/MOV, maks 100MB) atau tempel link YouTube. Jika keduanya diisi, file yang diunggah yang ditampilkan di undangan.</p>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="data-card p-8 rounded-3xl space-y-6 md:col-span-2">
@@ -1948,7 +1966,7 @@
         async function loadSettings() {
             const res = await fetch(`api/admin_api?action=get_settings&inv_id=${currentInvId}`);
             const data = await res.json();
-            const keys = ['theme', 'groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'groom_instagram', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'bride_instagram', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'gift_address', 'gift_maps_link', 'gift_recipient_name', 'gift_qris_enabled', 'gift_qris_image', 'gift_qris_name', 'rsvp_whatsapp', 'quotes', 'wa_template', 'music_volume', 'music_autoplay', 'theme_preset', 'theme_primary', 'theme_secondary', 'theme_background', 'theme_primary_container', 'theme_secondary_container', 'theme_surface_container_low'];
+            const keys = ['theme', 'groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'groom_instagram', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'bride_instagram', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'prewedding_video_file', 'prewedding_video_link', 'gift_address', 'gift_maps_link', 'gift_recipient_name', 'gift_qris_enabled', 'gift_qris_image', 'gift_qris_name', 'rsvp_whatsapp', 'quotes', 'wa_template', 'music_volume', 'music_autoplay', 'theme_preset', 'theme_primary', 'theme_secondary', 'theme_background', 'theme_primary_container', 'theme_secondary_container', 'theme_surface_container_low'];
             keys.forEach(k => {
                 const el = document.getElementById('set-' + k);
                 if (el) el.value = data.data[k] || (k === 'music_volume' ? '50' : (k === 'music_autoplay' ? '1' : ''));
@@ -1965,6 +1983,9 @@
                         preview.classList.add('hidden');
                         placeholder.classList.remove('hidden');
                     }
+                }
+                if (k === 'prewedding_video_file') {
+                    updatePreweddingPreview(data.data[k] || '');
                 }
                 if (k === 'groom_photo' || k === 'bride_photo') {
                     const preview = document.getElementById('preview-' + k);
@@ -2277,6 +2298,65 @@
 
         // Fungsi ini sudah digantikan oleh deleteGalleryItem di atas
         // async function deletePhoto(id) { }
+
+        async function uploadPreweddingVideo() {
+            const input = document.getElementById('prewedding-video-upload');
+            if (!input.files.length) return;
+            const formData = new FormData();
+            formData.append('video', input.files[0]);
+            const res = await fetch(`api/admin_api?action=upload_prewedding_video&inv_id=${currentInvId}`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('set-prewedding_video_file').value = data.path;
+                updatePreweddingPreview(data.path, data.name);
+                alert('Video berhasil diunggah! Jangan lupa simpan perubahan.');
+            } else {
+                alert(data.message || 'Gagal mengunggah video.');
+            }
+            input.value = '';
+        }
+
+        function updatePreweddingPreview(path, name) {
+            const nameEl = document.getElementById('prewedding-video-name');
+            const preview = document.getElementById('preview-prewedding_video');
+            const btnDelete = document.getElementById('btn-delete-prewedding_video');
+            if (path) {
+                if (nameEl) nameEl.textContent = name || path.split('/').pop();
+                if (preview) { preview.src = path; preview.classList.remove('hidden'); }
+                if (btnDelete) btnDelete.style.display = 'inline-block';
+            } else {
+                if (nameEl) nameEl.textContent = 'Belum ada video';
+                if (preview) { preview.removeAttribute('src'); preview.load(); preview.classList.add('hidden'); }
+                if (btnDelete) btnDelete.style.display = 'none';
+            }
+        }
+
+        function deletePreweddingVideo() {
+            Swal.fire({
+                title: 'Hapus video prewedding?',
+                text: "Video akan dihapus dari data utama.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#775a19',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase',
+                    cancelButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('set-prewedding_video_file').value = '';
+                    updatePreweddingPreview('');
+                    saveSettings();
+                }
+            });
+        }
 
         async function loadGuests() {
             const res = await fetch(`api/admin_api?action=get_guests&inv_id=${currentInvId}`);

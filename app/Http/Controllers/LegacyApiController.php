@@ -367,6 +367,26 @@ class LegacyApiController extends Controller
                 }
                 return response()->json(['success' => true]);
 
+            case 'upload_prewedding_video':
+                if (!$request->hasFile('video')) {
+                    return response()->json(['success' => false, 'message' => 'No file uploaded'], 400);
+                }
+                $file = $request->file('video');
+                $allowedTypes = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska'];
+                if (!in_array($file->getMimeType(), $allowedTypes) && !in_array($file->getClientMimeType(), $allowedTypes)) {
+                    return response()->json(['success' => false, 'message' => 'Tipe file tidak didukung. Gunakan MP4, WebM, atau MOV.'], 400);
+                }
+                $fileSize = $file->getSize();
+                if ($fileSize > 100 * 1024 * 1024) {
+                    return response()->json(['success' => false, 'message' => 'Ukuran file maksimal 100MB'], 400);
+                }
+                if (!file_exists(public_path('uploads'))) {
+                    mkdir(public_path('uploads'), 0777, true);
+                }
+                $filename = uniqid('prewed_') . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads'), $filename);
+                return response()->json(['success' => true, 'path' => 'uploads/' . $filename, 'name' => $file->getClientOriginalName()]);
+
             case 'upload_bank_logo':
                 if (!$request->hasFile('image')) {
                     return response()->json(['success' => false, 'message' => 'No file uploaded'], 400);

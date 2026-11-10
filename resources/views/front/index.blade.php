@@ -1103,6 +1103,53 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           <?php endif; ?>
         </div>
       </section>
+      <?php if (getSet('prewedding_video_file') || getSet('prewedding_video_link')): ?>
+      <?php
+        $prewedFile = getSet('prewedding_video_file');
+        $prewedLink = getSet('prewedding_video_link');
+        $prewedYtId = null;
+        if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
+        $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
+      ?>
+      <section class="px-margin-page mb-section-gap text-center reveal" id="video">
+        <div class="inline-block px-4 py-1 border-b border-secondary/30 mb-4">
+          <p class="font-label-caps text-label-caps text-secondary uppercase">Video Prewedding</p>
+        </div>
+        <h2 class="font-display-lg text-display-lg text-primary mb-4">Momen Prewedding</h2>
+        <p class="text-sm text-secondary/70 mb-8 max-w-md mx-auto leading-relaxed">Saksikan momen kebersamaan kami dalam video prewedding berikut.</p>
+        <div class="relative w-full max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-xl border border-outline-variant/30">
+          <div style="position:relative;padding-top:56.25%">
+            <?php if ($prewedFile): ?>
+            <video controls preload="metadata" playsinline src="<?php echo asset($prewedFile); ?>" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
+            <?php elseif ($prewedYtId): ?>
+            <button type="button" onclick="playPrewed(this, '<?php echo $prewedYtId; ?>')" aria-label="Putar Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
+              <img src="<?php echo $prewedThumb; ?>" alt="Video Prewedding" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85">
+              <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
+            </button>
+            <?php elseif ($prewedLink): ?>
+            <a href="<?php echo $prewedLink; ?>" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
+              <span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
+            </a>
+            <?php endif; ?>
+          </div>
+        </div>
+        <?php if ($prewedLink): ?>
+        <div class="mt-5 flex justify-center">
+          <a href="<?php echo $prewedLink; ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary text-on-secondary text-xs font-bold uppercase tracking-widest hover:shadow-lg transition-all active:scale-95">
+            <span class="material-symbols-outlined text-base">play_circle</span>
+            <span>Buka Video</span>
+          </a>
+        </div>
+        <?php endif; ?>
+      </section>
+      <script>
+      function playPrewed(btn, id){
+        var wrap = btn.parentNode;
+        wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>';
+      }
+      </script>
+      <?php endif; ?>
       <section class="px-margin-page mb-12 reveal">
         <div class="relative group">
           <div
