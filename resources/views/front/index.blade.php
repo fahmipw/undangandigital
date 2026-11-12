@@ -56,7 +56,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
   <meta property="og:title" content="Undangan Pernikahan <?php echo (getSet('bride_nickname') ?: getSet('bride_name', 'Hawa')) . ' & ' . (getSet('groom_nickname') ?: getSet('groom_name', 'Adam')); ?>" />
   <meta property="og:description" content="Tanpa mengurangi rasa hormat, kami mengundang Anda untuk menghadiri pernikahan <?php echo getSet('bride_name', 'Hawa Ananda') . ' & ' . getSet('groom_name', 'Adam Firdaus'); ?>. Klik untuk melihat detail undangan." />
   <?php 
-    $previewImage = getSet('bride_photo') ?: (getSet('groom_photo') ?: asset('gunungan_utuh.png'));
+    $previewImage = getSet('og_preview_photo') ?: (getSet('bride_photo') ?: (getSet('groom_photo') ?: asset('gunungan_utuh.png')));
     if (!str_starts_with($previewImage, 'http')) {
       $previewImage = asset($previewImage);
     }
@@ -1391,7 +1391,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
           <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
           <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
-          <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+          <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
           <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
           <p style="margin:16px 0 0;font-weight:600;color:#2b2118"><?php echo htmlspecialchars($guestName); ?></p>
           <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>

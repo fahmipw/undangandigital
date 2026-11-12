@@ -79,6 +79,11 @@ $invId = $inv_id ?? 0;
 <title>Petualangan Undangan &mdash; {{ $brideNick }} &amp; {{ $groomNick }}</title>
 <meta property="og:type" content="website">
 <meta property="og:title" content="Undangan Pernikahan {{ $brideNick }} & {{ $groomNick }}">
+<meta property="og:url" content="{{ url()->current() }}">
+<meta property="og:description" content="Tanpa mengurangi rasa hormat, kami mengundang Anda untuk menghadiri pernikahan {{ $brideFull }} & {{ $groomFull }}. Klik untuk melihat detail undangan.">
+<meta property="og:image" content="{{ asset(mcaGet('og_preview_photo') ? mcaGet('og_preview_photo') : (mcaGet('bride_photo') ? mcaGet('bride_photo') : (mcaGet('groom_photo') ? mcaGet('groom_photo') : 'gunungan_utuh.png'))) }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">

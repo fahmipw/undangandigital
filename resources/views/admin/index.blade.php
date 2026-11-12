@@ -499,6 +499,42 @@
                                         id="set-bride_instagram" placeholder="Contoh: nama.username"></div>
                             </div>
                         </div>
+
+                        <hr class="opacity-10">
+
+                        <!-- Foto Preview (OG) -->
+                        <div class="space-y-4">
+                            <div
+                                class="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider mb-2">
+                                <span class="material-symbols-outlined text-sm">share</span> Foto Preview (Link
+                                WhatsApp)
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <div class="w-48 text-center relative">
+                                    <label
+                                        class="block aspect-[120/63] bg-secondary/5 rounded-xl border border-dashed border-secondary/30 flex flex-col items-center justify-center cursor-pointer overflow-hidden group">
+                                        <img id="preview-og_preview_photo"
+                                            class="w-full h-full object-cover hidden">
+                                        <div id="placeholder-og_preview_photo" class="text-secondary opacity-40">
+                                            <span class="material-symbols-outlined">add_a_photo</span>
+                                            <p class="text-[8px] font-bold">FOTO PREVIEW</p>
+                                        </div>
+                                        <input type="file" class="hidden" accept="image/*"
+                                            onchange="uploadProfilePhoto('og_preview')">
+                                        <input type="hidden" id="set-og_preview_photo">
+                                    </label>
+                                    <button onclick="deletePhoto('og_preview')"
+                                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors z-10"
+                                        id="btn-delete-og_preview_photo" style="display:none;">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
+                                </div>
+                                <p class="text-[11px] opacity-60 leading-relaxed flex-1">Foto ini yang tampil
+                                    saat link undangan dibagikan di WhatsApp. Unggah satu foto kedua mempelai
+                                    (disarankan 1200×630). Jika kosong, dipakai foto mempelai wanita, lalu foto
+                                    pria.</p>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="data-card p-8 rounded-3xl space-y-6">
@@ -737,10 +773,16 @@
             <div id="tab-gallery" class="tab-content hidden">
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="font-display-lg text-3xl text-primary">Galeri Foto</h2>
-                    <label class="btn-theme px-6 py-3 rounded-xl font-bold text-xs uppercase cursor-pointer">
-                        + Unggah Foto
-                        <input type="file" id="gallery-upload" class="hidden" accept="image/*" onchange="uploadPhoto()">
-                    </label>
+                    <div class="flex items-center gap-3">
+                        <button onclick="saveSettings()"
+                            class="btn-theme px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg">
+                            Simpan Perubahan
+                        </button>
+                        <label class="btn-theme px-6 py-3 rounded-xl font-bold text-xs uppercase cursor-pointer">
+                            + Unggah Foto
+                            <input type="file" id="gallery-upload" class="hidden" accept="image/*" onchange="uploadPhoto()">
+                        </label>
+                    </div>
                 </div>
                 <p class="text-xs text-gray-500 -mt-4 mb-4">Seret foto untuk mengubah urutannya — urutan ini yang tampil di undangan.</p>
                         <div class="rsvp-field pt-2">
@@ -1967,7 +2009,7 @@
         async function loadSettings() {
             const res = await fetch(`api/admin_api?action=get_settings&inv_id=${currentInvId}`);
             const data = await res.json();
-            const keys = ['theme', 'groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'groom_instagram', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'bride_instagram', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'prewedding_video_file', 'prewedding_video_link', 'gift_address', 'gift_maps_link', 'gift_recipient_name', 'gift_qris_enabled', 'gift_qris_image', 'gift_qris_name', 'rsvp_whatsapp', 'quotes', 'wa_template', 'music_volume', 'music_autoplay', 'theme_preset', 'theme_primary', 'theme_secondary', 'theme_background', 'theme_primary_container', 'theme_secondary_container', 'theme_surface_container_low'];
+            const keys = ['theme', 'groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'groom_instagram', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'bride_instagram', 'og_preview_photo', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'prewedding_video_file', 'prewedding_video_link', 'gift_address', 'gift_maps_link', 'gift_recipient_name', 'gift_qris_enabled', 'gift_qris_image', 'gift_qris_name', 'rsvp_whatsapp', 'quotes', 'wa_template', 'music_volume', 'music_autoplay', 'theme_preset', 'theme_primary', 'theme_secondary', 'theme_background', 'theme_primary_container', 'theme_secondary_container', 'theme_surface_container_low'];
             keys.forEach(k => {
                 const el = document.getElementById('set-' + k);
                 if (el) el.value = data.data[k] || (k === 'music_volume' ? '50' : (k === 'music_autoplay' ? '1' : ''));
@@ -1988,7 +2030,7 @@
                 if (k === 'prewedding_video_file') {
                     updatePreweddingPreview(data.data[k] || '');
                 }
-                if (k === 'groom_photo' || k === 'bride_photo') {
+                if (k === 'groom_photo' || k === 'bride_photo' || k === 'og_preview_photo') {
                     const preview = document.getElementById('preview-' + k);
                     const placeholder = document.getElementById('placeholder-' + k);
                     const btnDelete = document.getElementById('btn-delete-' + k);
@@ -2313,7 +2355,7 @@
             if (data.success) {
                 document.getElementById('set-prewedding_video_file').value = data.path;
                 updatePreweddingPreview(data.path, data.name);
-                alert('Video berhasil diunggah! Jangan lupa simpan perubahan.');
+                await saveSettings();
             } else {
                 alert(data.message || 'Gagal mengunggah video.');
             }

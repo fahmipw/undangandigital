@@ -75,6 +75,10 @@ $invId = $inv_id ?? 0;
 <meta property="og:type" content="website">
 <meta property="og:title" content="Undangan Pernikahan {{ $brideNick }} & {{ $groomNick }}">
 <meta property="og:description" content="Tanpa mengurangi rasa hormat, kami mengundang Anda untuk menghadiri pernikahan {{ $brideFull }} & {{ $groomFull }}.">
+<meta property="og:url" content="{{ url()->current() }}">
+<meta property="og:image" content="{{ asset(mcGet('og_preview_photo') ? mcGet('og_preview_photo') : (mcGet('bride_photo') ? mcGet('bride_photo') : (mcGet('groom_photo') ? mcGet('groom_photo') : 'gunungan_utuh.png'))) }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
