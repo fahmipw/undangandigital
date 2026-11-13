@@ -141,8 +141,6 @@ tailwind.config = {
   #coverNames .cn-names{font-family:'Pinyon Script',cursive;font-size:3rem;line-height:1.15;color:#fdf6dd;margin-top:6px;text-shadow:0 3px 16px rgba(0,0,0,.65)}
   #coverNames .cn-names span{color:#e6c887}
   #coverNames .cn-date{font-family:'Playfair Display',serif;font-size:13px;letter-spacing:.18em;color:#f4e8c8;margin-top:8px;text-shadow:0 2px 10px rgba(0,0,0,.6)}
-  #skipVideo{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:20;background:rgba(42,31,20,.55);color:#f4e8c8;border:1px solid rgba(230,200,135,.7);border-radius:999px;padding:9px 20px;font-size:11px;letter-spacing:.2em;font-weight:600;cursor:pointer;backdrop-filter:blur(3px)}
-  #skipVideo.hidden{display:none}
   .invitation-frame{max-width:430px;margin:0 auto;position:relative;background:#fffdf7;
     box-shadow:0 0 60px rgba(90,75,40,.35);overflow:hidden;min-height:100vh}
   body.is-locked{overflow:hidden}
@@ -242,7 +240,6 @@ tailwind.config = {
       <p class="cn-names">{{ $groomNick }} <span>&amp;</span> {{ $brideNick }}</p>
       <p class="cn-date">{{ jpnDate($rDate) }}</p>
     </div>
-    <button id="skipVideo" type="button" class="hidden">Lewati Video &rsaquo;</button>
     <div id="gate-content" class="relative z-10 h-full flex flex-col justify-between px-6 py-8">
       <div id="gate-header">
         <p class="text-[11px] tracking-[0.35em] text-[#f4e8c8] font-semibold" style="text-shadow:0 2px 8px rgba(0,0,0,.5)">THE WEDDING OF</p>
@@ -814,8 +811,6 @@ window.prewedPauseMusic=prewedPauseMusic;
       });
       const gc = document.getElementById('gate-content');
       if (gc) gc.style.pointerEvents = 'none';
-      const sk = document.getElementById('skipVideo');
-      if (sk) sk.classList.remove('hidden');
       let opened = false;
       const finish = () => { if (!opened) { opened = true; openInvitation(); } };
       cv.addEventListener('ended', () => { setTimeout(finish, 1200); }, { once: true });
@@ -826,7 +821,6 @@ window.prewedPauseMusic=prewedPauseMusic;
           if (cn) cn.classList.add('show');
         }
       });
-      if (sk) sk.addEventListener('click', finish, { once: true });
       const t0 = Date.now();
       const watchdog = setInterval(() => {
         if (opened) { clearInterval(watchdog); return; }
