@@ -13,6 +13,13 @@ if (!function_exists('mcGet')) {
     return $s[$key];
   }
 }
+if (!function_exists('mcHexRgb')) {
+  function mcHexRgb($hex) {
+    $hex = ltrim((string)$hex, '#');
+    if (strlen($hex) === 3) $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+    return hexdec(substr($hex, 0, 2)).', '.hexdec(substr($hex, 2, 2)).', '.hexdec(substr($hex, 4, 2));
+  }
+}
 if (!function_exists('mcDate')) {
   function mcDate($dateStr) {
     if (!$dateStr) return '';
@@ -65,6 +72,19 @@ if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
 $musVol = (int) mcGet('music_volume', 50);
 $musAuto = mcGet('music_autoplay', '1') !== '0';
 $invId = $inv_id ?? 0;
+/* ---------- Preset Tema Desain (mode penuh: semua warna ikut preset) ---------- */
+$preset_primary = mcGet('theme_primary', '#361f1a');
+$preset_secondary = mcGet('theme_secondary', '#775a19');
+$preset_background = mcGet('theme_background', '#fbf9f5');
+$preset_primary_container = mcGet('theme_primary_container', '#4e342e');
+$preset_secondary_container = mcGet('theme_secondary_container', '#fed488');
+$preset_surface_low = mcGet('theme_surface_container_low', '#f5f3ef');
+$preset_primary_rgb = mcHexRgb($preset_primary);
+$preset_secondary_rgb = mcHexRgb($preset_secondary);
+$preset_background_rgb = mcHexRgb($preset_background);
+$preset_primary_container_rgb = mcHexRgb($preset_primary_container);
+$preset_secondary_container_rgb = mcHexRgb($preset_secondary_container);
+$preset_surface_low_rgb = mcHexRgb($preset_surface_low);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -83,54 +103,55 @@ $invId = $inv_id ?? 0;
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
-:root{--grass:#6abe30;--grass-dark:#4e9a26;--dirt:#8a5f3c;--stone:#7d7d7d;--panel:#c6c6c6;
-  --ink:#1c1c1c;--gold:#fcee5e;--red:#e03131}
+:root{--preset-primary:<?php echo $preset_primary; ?>;--preset-secondary:<?php echo $preset_secondary; ?>;--preset-background:<?php echo $preset_background; ?>;--preset-primary-container:<?php echo $preset_primary_container; ?>;--preset-secondary-container:<?php echo $preset_secondary_container; ?>;--preset-surface-low:<?php echo $preset_surface_low; ?>;--preset-primary-rgb:<?php echo $preset_primary_rgb; ?>;--preset-secondary-rgb:<?php echo $preset_secondary_rgb; ?>;--preset-background-rgb:<?php echo $preset_background_rgb; ?>;--preset-primary-container-rgb:<?php echo $preset_primary_container_rgb; ?>;--preset-secondary-container-rgb:<?php echo $preset_secondary_container_rgb; ?>;--preset-surface-low-rgb:<?php echo $preset_surface_low_rgb; ?>}
+:root{--grass:#6abe30;--grass-dark:#4e9a26;--dirt:#8a5f3c;--stone:#7d7d7d;--panel:var(--preset-surface-low);
+  --ink:var(--preset-primary);--gold:var(--preset-secondary);--red:#e03131}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
-body{font-family:'VT323',monospace;font-size:20px;line-height:1.45;background:#0d1420;color:#f2f2f2;overflow-x:hidden}
+body{font-family:'VT323',monospace;font-size:20px;line-height:1.45;background:var(--preset-primary-container);color:var(--preset-background);overflow-x:hidden}
 canvas{image-rendering:pixelated;image-rendering:crisp-edges}
-#loader{position:fixed;inset:0;z-index:200;background:#0d1420;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transition:opacity .6s}
+#loader{position:fixed;inset:0;z-index:200;background:var(--preset-primary-container);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transition:opacity .6s}
 #loader.done{opacity:0;pointer-events:none}
 #loader .t{font-family:'Press Start 2P',monospace;font-size:14px;color:#fff;letter-spacing:1px}
-#loadbar{width:min(420px,80vw);height:26px;background:#111;border:3px solid #000;box-shadow:inset 2px 2px 0 rgba(0,0,0,.6),0 0 0 2px #3a3a3a}
-#loadfill{height:100%;width:0%;background:linear-gradient(#7bd94f,#4e9a26);transition:width .25s}
+#loadbar{width:min(420px,80vw);height:26px;background:#111;border:3px solid #000;box-shadow:inset 2px 2px 0 rgba(0,0,0,.6),0 0 0 2px var(--preset-primary)}
+#loadfill{height:100%;width:0%;background:linear-gradient(var(--preset-secondary-container),var(--preset-secondary));transition:width .25s}
 #loadpct{font-family:'Press Start 2P',monospace;font-size:11px;color:var(--gold)}
 #cover{position:relative;height:100svh;min-height:620px;overflow:hidden}
 #world{position:absolute;inset:0;width:100%;height:100%}
 .cover-ui{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center;z-index:2}
 .cover-card{max-width:min(560px,92vw);padding:30px 28px 26px;animation:floaty 4s ease-in-out infinite}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.kicker{font-family:'Press Start 2P',monospace;font-size:11px;letter-spacing:3px;color:#3f5b23;margin-bottom:16px}
-.names{font-family:'Press Start 2P',monospace;font-size:clamp(26px,7vw,46px);line-height:1.35;color:#2b2b2b;text-shadow:3px 3px 0 rgba(255,255,255,.5);margin-bottom:10px}
+.kicker{font-family:'Press Start 2P',monospace;font-size:11px;letter-spacing:3px;color:var(--preset-primary);margin-bottom:16px}
+.names{font-family:'Press Start 2P',monospace;font-size:clamp(26px,7vw,46px);line-height:1.35;color:var(--preset-primary);text-shadow:3px 3px 0 rgba(255,255,255,.5);margin-bottom:10px}
 .names .amp{color:#c22f2f;font-size:.7em;vertical-align:middle}
-.date-line{font-size:26px;color:#3a3a3a;margin-bottom:20px}
+.date-line{font-size:26px;color:var(--preset-primary);margin-bottom:20px}
 .to-label{font-size:22px;color:#555;margin-bottom:6px}
-.guest-name{font-family:'Press Start 2P',monospace;font-size:13px;color:#2b2b2b;margin-bottom:20px;line-height:1.7}
-.mc-panel{background:var(--panel);border:3px solid #141414;color:var(--ink);
+.guest-name{font-family:'Press Start 2P',monospace;font-size:13px;color:var(--preset-primary);margin-bottom:20px;line-height:1.7}
+.mc-panel{background:var(--panel);border:3px solid var(--preset-primary);color:var(--ink);
   box-shadow:inset 3px 3px 0 rgba(255,255,255,.6),inset -3px -3px 0 rgba(0,0,0,.35)}
-.mc-btn{font-family:'Press Start 2P',monospace;font-size:13px;color:#fff;text-shadow:2px 2px 0 #3a3a3a;
-  background:linear-gradient(#a3a3a3,#7f7f7f);border:2px solid #0a0a0a;cursor:pointer;
+.mc-btn{font-family:'Press Start 2P',monospace;font-size:13px;color:#fff;text-shadow:2px 2px 0 var(--preset-primary);
+  background:linear-gradient(var(--preset-primary-container),var(--preset-primary));border:2px solid #0a0a0a;cursor:pointer;
   box-shadow:inset 2px 2px 0 rgba(255,255,255,.5),inset -2px -2px 0 rgba(0,0,0,.5);
   padding:15px 22px;letter-spacing:1px;transition:transform .06s}
 .mc-btn:hover{filter:brightness(1.08)}
 .mc-btn:active{transform:translateY(2px);box-shadow:inset -2px -2px 0 rgba(255,255,255,.25),inset 2px 2px 0 rgba(0,0,0,.5)}
-.mc-btn.green{background:linear-gradient(#79d154,#4e9a26)}
-.mc-btn.gold{background:linear-gradient(#ffe36e,#d9a821);text-shadow:2px 2px 0 #6e4d05}
-.mc-input{width:100%;background:#0f0f0f;color:#fff;border:2px solid #9a9a9a;font-family:'VT323',monospace;
+.mc-btn.green{background:linear-gradient(var(--preset-secondary-container),var(--preset-secondary))}
+.mc-btn.gold{background:linear-gradient(var(--preset-secondary-container),var(--preset-secondary));text-shadow:2px 2px 0 var(--preset-primary)}
+.mc-input{width:100%;background:var(--preset-primary);color:#fff;border:2px solid #9a9a9a;font-family:'VT323',monospace;
   font-size:21px;padding:11px 12px;box-shadow:inset 2px 2px 0 rgba(0,0,0,.7);outline:none}
 .mc-input:focus{border-color:#fff}
 select.mc-input{appearance:none}
-label.lbl{font-family:'Press Start 2P',monospace;font-size:10px;color:#3a3a3a;display:block;margin:14px 0 7px;letter-spacing:1px}
-#main{background:linear-gradient(rgba(10,14,22,.92),rgba(10,14,22,.94)),
-  repeating-conic-gradient(#141b29 0% 25%, #101623 0% 50%) 0 0/48px 48px;padding-bottom:60px}
+label.lbl{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--preset-primary);display:block;margin:14px 0 7px;letter-spacing:1px}
+#main{background:linear-gradient(rgb(var(--preset-primary-rgb) / .92),rgb(var(--preset-primary-rgb) / .94)),
+  repeating-conic-gradient(var(--preset-primary) 0% 25%, var(--preset-primary-container) 0% 50%) 0 0/48px 48px;padding-bottom:60px}
 section.block{max-width:860px;margin:0 auto;padding:56px 20px 8px}
 .sec-head{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:26px}
 .sec-head canvas{width:34px;height:34px;flex:none}
 .sec-title{font-family:'Press Start 2P',monospace;font-size:clamp(15px,4vw,22px);color:#fff;
   text-shadow:3px 3px 0 #000;letter-spacing:1px;text-align:center}
-.sec-sub{text-align:center;color:#9fb3c8;font-size:22px;margin:-14px 0 26px}
-.mc-dialog{background:rgba(8,8,8,.82);border:3px solid #f2f2f2;color:#fff;padding:20px 22px;
-  min-height:132px;cursor:pointer;box-shadow:0 0 0 3px #141414,8px 8px 0 rgba(0,0,0,.45);
+.sec-sub{text-align:center;color:var(--preset-secondary-container);font-size:22px;margin:-14px 0 26px}
+.mc-dialog{background:rgb(var(--preset-primary-rgb) / .82);border:3px solid var(--preset-background);color:#fff;padding:20px 22px;
+  min-height:132px;cursor:pointer;box-shadow:0 0 0 3px var(--preset-primary),8px 8px 0 rgba(0,0,0,.45);
   font-size:23px;position:relative}
 .mc-dialog .speaker{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--gold);display:block;margin-bottom:10px;letter-spacing:1px}
 .mc-dialog .next{position:absolute;right:14px;bottom:10px;color:var(--gold);animation:blink 1s steps(2) infinite;font-size:20px}
@@ -138,78 +159,78 @@ section.block{max-width:860px;margin:0 auto;padding:56px 20px 8px}
 .couple-grid{display:grid;grid-template-columns:1fr;gap:22px}
 @media(min-width:680px){.couple-grid{grid-template-columns:1fr auto 1fr;align-items:center}}
 .player-card{padding:26px 22px;text-align:center}
-.player-card canvas.face{width:112px;height:112px;margin-bottom:14px;background:#8ab6e0;border:3px solid #141414;box-shadow:inset -4px -4px 0 rgba(0,0,0,.25)}
-.player-card h3{font-family:'Press Start 2P',monospace;font-size:16px;color:#2b2b2b;margin-bottom:8px;line-height:1.5}
-.player-tag{display:inline-block;font-family:'Press Start 2P',monospace;font-size:9px;background:#2b2b2b;color:var(--gold);
+.player-card canvas.face{width:112px;height:112px;margin-bottom:14px;background:#8ab6e0;border:3px solid var(--preset-primary);box-shadow:inset -4px -4px 0 rgba(0,0,0,.25)}
+.player-card h3{font-family:'Press Start 2P',monospace;font-size:16px;color:var(--preset-primary);margin-bottom:8px;line-height:1.5}
+.player-tag{display:inline-block;font-family:'Press Start 2P',monospace;font-size:9px;background:var(--preset-primary);color:var(--gold);
   padding:7px 10px;margin-bottom:12px;letter-spacing:1px}
-.player-card p{font-size:21px;color:#3d3d3d}
+.player-card p{font-size:21px;color:var(--preset-primary)}
 .heart-sep{display:flex;justify-content:center}
 .heart-sep canvas{width:54px;height:54px;animation:beat 1.1s ease-in-out infinite}
 @keyframes beat{0%,100%{transform:scale(1)}25%{transform:scale(1.18)}45%{transform:scale(1)}}
 .hud{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:640px;margin:0 auto}
-.hud-slot{background:#101010;border:3px solid #000;box-shadow:inset 2px 2px 0 rgba(255,255,255,.12),0 0 0 2px #3a3a3a;
+.hud-slot{background:var(--preset-primary);border:3px solid #000;box-shadow:inset 2px 2px 0 rgba(255,255,255,.12),0 0 0 2px var(--preset-primary);
   padding:16px 6px;text-align:center}
-.hud-slot .num{font-family:'Press Start 2P',monospace;font-size:clamp(18px,6vw,30px);color:#7bff5e;text-shadow:2px 2px 0 #063;display:block;margin-bottom:8px}
-.hud-slot .unit{font-family:'Press Start 2P',monospace;font-size:9px;color:#9fb3c8;letter-spacing:1px}
-.adv{background:#1b1b1b;border:2px solid #000;box-shadow:inset 2px 2px 0 rgba(255,255,255,.08);
+.hud-slot .num{font-family:'Press Start 2P',monospace;font-size:clamp(18px,6vw,30px);color:var(--preset-secondary);text-shadow:2px 2px 0 #063;display:block;margin-bottom:8px}
+.hud-slot .unit{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--preset-secondary-container);letter-spacing:1px}
+.adv{background:var(--preset-primary);border:2px solid #000;box-shadow:inset 2px 2px 0 rgba(255,255,255,.08);
   display:flex;gap:16px;padding:18px;margin-bottom:16px;align-items:flex-start}
 .adv .icon{flex:none;width:58px;height:58px;background:var(--panel);border:3px solid #000;
   box-shadow:inset 2px 2px 0 rgba(255,255,255,.5),inset -2px -2px 0 rgba(0,0,0,.4);
   display:flex;align-items:center;justify-content:center}
 .adv .icon canvas{width:38px;height:38px}
 .adv h3{font-family:'Press Start 2P',monospace;font-size:12px;color:var(--gold);margin-bottom:8px;letter-spacing:1px;line-height:1.6}
-.adv p{color:#cfcfcf;font-size:21px}
-.adv .time{color:#7bff5e;font-size:22px}
+.adv p{color:var(--preset-background);font-size:21px}
+.adv .time{color:var(--preset-secondary);font-size:22px}
 .map-btn{margin-top:14px;display:inline-block;text-decoration:none}
 .frames{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
 @media(min-width:680px){.frames{grid-template-columns:repeat(4,1fr)}}
-.item-frame{background:#5d4126;border:3px solid #141414;box-shadow:inset 3px 3px 0 rgba(255,255,255,.25),inset -3px -3px 0 rgba(0,0,0,.5);padding:10px}
-.item-frame img{width:100%;display:block;aspect-ratio:1;object-fit:cover;background:#000;border:2px solid #2a1d0e}
-.item-frame p{text-align:center;color:#ffe9b8;font-size:19px;margin-top:8px}
+.item-frame{background:var(--preset-primary-container);border:3px solid var(--preset-primary);box-shadow:inset 3px 3px 0 rgba(255,255,255,.25),inset -3px -3px 0 rgba(0,0,0,.5);padding:10px}
+.item-frame img{width:100%;display:block;aspect-ratio:1;object-fit:cover;background:#000;border:2px solid var(--preset-primary)}
+.item-frame p{text-align:center;color:var(--preset-secondary-container);font-size:19px;margin-top:8px}
 .rsvp-panel{padding:26px 24px}
-.scoreboard{margin-top:22px;background:#101010;border:3px solid #000;box-shadow:0 0 0 2px #3a3a3a;padding:6px 0}
-.scoreboard h4{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--gold);padding:12px 16px;letter-spacing:1px;border-bottom:2px solid #2a2a2a}
-.score-row{display:flex;justify-content:space-between;gap:10px;padding:9px 16px;border-bottom:1px solid #222;font-size:20px;color:#e8e8e8;align-items:center}
+.scoreboard{margin-top:22px;background:var(--preset-primary);border:3px solid #000;box-shadow:0 0 0 2px var(--preset-primary);padding:6px 0}
+.scoreboard h4{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--gold);padding:12px 16px;letter-spacing:1px;border-bottom:2px solid var(--preset-primary-container)}
+.score-row{display:flex;justify-content:space-between;gap:10px;padding:9px 16px;border-bottom:1px solid #222;font-size:20px;color:var(--preset-background);align-items:center}
 .score-row:last-child{border-bottom:none}
-.score-row .st-ok{color:#7bff5e}.score-row .st-no{color:#ff7b7b}
+.score-row .st-ok{color:var(--preset-secondary)}.score-row .st-no{color:#ff7b7b}
 .score-row small{color:#888;font-size:17px}
 .score-empty{padding:14px 16px;color:#777;font-size:20px}
 .msg-row{padding:12px 16px;border-bottom:1px solid #222}
 .msg-row:last-child{border-bottom:none}
 .msg-row .nm{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--gold);margin-bottom:6px}
-.msg-row .ps{font-size:21px;color:#e8e8e8}
+.msg-row .ps{font-size:21px;color:var(--preset-background)}
 .msg-row .tm{font-size:17px;color:#777;margin-top:4px}
 .chest-zone{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0 4px}
 .chest{width:132px;height:104px;position:relative;cursor:pointer;perspective:400px}
 .chest .base{position:absolute;left:0;right:0;bottom:0;height:66px;background:linear-gradient(#a9743f,#7d5327);
-  border:3px solid #141414;box-shadow:inset 0 6px 0 rgba(255,255,255,.18)}
+  border:3px solid var(--preset-primary);box-shadow:inset 0 6px 0 rgba(255,255,255,.18)}
 .chest .base::after{content:"";position:absolute;left:50%;top:8px;transform:translateX(-50%);width:16px;height:22px;
-  background:linear-gradient(#d8d8d8,#8a8a8a);border:2px solid #141414}
+  background:linear-gradient(#d8d8d8,#8a8a8a);border:2px solid var(--preset-primary)}
 .chest .lid{position:absolute;left:0;right:0;top:0;height:44px;background:linear-gradient(#b9834b,#8a5e2e);
-  border:3px solid #141414;transform-origin:top center;transition:transform .45s cubic-bezier(.3,1.4,.5,1);z-index:2}
+  border:3px solid var(--preset-primary);transform-origin:top center;transition:transform .45s cubic-bezier(.3,1.4,.5,1);z-index:2}
 .chest.open .lid{transform:rotateX(-105deg)}
 .chest .glow{position:absolute;left:8%;right:8%;top:34px;height:44px;background:radial-gradient(ellipse at center,#ffe9a3 0%,rgba(255,220,120,.55) 45%,transparent 75%);
   opacity:0;transition:opacity .5s;z-index:1}
 .chest.open .glow{opacity:1;animation:glowpulse 1.6s ease-in-out infinite}
 @keyframes glowpulse{50%{opacity:.55}}
-.chest-label{font-family:'Press Start 2P',monospace;font-size:10px;color:#ffe9b8;letter-spacing:1px}
+.chest-label{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--preset-secondary-container);letter-spacing:1px}
 .gift-accounts{display:grid;gap:14px;margin-top:18px;grid-template-columns:1fr}
 @media(min-width:640px){.gift-accounts{grid-template-columns:1fr 1fr}}
 .acct{padding:18px}
-.acct .bank{font-family:'Press Start 2P',monospace;font-size:12px;color:#2b2b2b;margin-bottom:8px}
-.acct .no{font-family:'Press Start 2P',monospace;font-size:15px;color:#123f12;letter-spacing:1px;margin-bottom:4px;word-break:break-all}
+.acct .bank{font-family:'Press Start 2P',monospace;font-size:12px;color:var(--preset-primary);margin-bottom:8px}
+.acct .no{font-family:'Press Start 2P',monospace;font-size:15px;color:var(--preset-primary);letter-spacing:1px;margin-bottom:4px;word-break:break-all}
 .acct .an{font-size:20px;color:#444;margin-bottom:12px}
 .copy-btn{font-size:11px;padding:10px 14px}
 .thanks-card{text-align:center;padding:38px 26px}
-.thanks-card h2{font-family:'Press Start 2P',monospace;font-size:clamp(18px,5vw,28px);color:#2b6b1c;margin-bottom:16px;line-height:1.6}
-.thanks-card p{font-size:23px;color:#3d3d3d;max-width:560px;margin:0 auto 12px}
-.fam{font-family:'Press Start 2P',monospace;font-size:11px;color:#6b6b6b;line-height:2;margin-top:18px}
-.footer-note{text-align:center;color:#5b6b80;font-size:19px;padding:34px 20px 10px}
+.thanks-card h2{font-family:'Press Start 2P',monospace;font-size:clamp(18px,5vw,28px);color:var(--preset-secondary);margin-bottom:16px;line-height:1.6}
+.thanks-card p{font-size:23px;color:var(--preset-primary);max-width:560px;margin:0 auto 12px}
+.fam{font-family:'Press Start 2P',monospace;font-size:11px;color:var(--preset-primary);line-height:2;margin-top:18px}
+.footer-note{text-align:center;color:var(--preset-secondary-container);font-size:19px;padding:34px 20px 10px}
 body:not(.gate-open) .float-btns{display:none!important}
-.float-btns{position:fixed;right:14px;bottom:14px;z-index:90;display:flex;flex-direction:column;gap:10px}
+.float-btns{position:fixed;right:14px;bottom:132px;z-index:90;display:flex;flex-direction:column;gap:10px}
 .float-btns button{width:52px;height:52px;font-size:20px;padding:0;display:flex;align-items:center;justify-content:center}
 #toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(20px);z-index:120;
-  background:#101010;color:#fff;border:2px solid #fff;box-shadow:0 0 0 2px #000,6px 6px 0 rgba(0,0,0,.4);
+  background:var(--preset-primary);color:#fff;border:2px solid #fff;box-shadow:0 0 0 2px #000,6px 6px 0 rgba(0,0,0,.4);
   font-family:'Press Start 2P',monospace;font-size:11px;padding:14px 18px;opacity:0;pointer-events:none;
   transition:opacity .3s,transform .3s;max-width:88vw;text-align:center;line-height:1.7}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -231,6 +252,17 @@ body:not(.gate-open) .float-btns{display:none!important}
   .reveal{transition:none;opacity:1;transform:none}
   html{scroll-behavior:auto}
 }
+/* Menu bawah pill klasik emas */
+#bottomNav{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:46;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:2px 0;row-gap:2px;background:rgb(var(--preset-background-rgb) / .94);border:1px solid rgb(var(--preset-secondary-rgb) / .4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgb(var(--preset-secondary-rgb) / .25);width:min(96vw,500px);max-width:96vw}
+#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:var(--preset-secondary);background:transparent;border:none;box-shadow:none;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+#bottomNav a svg{width:21px;height:21px}
+#bottomNav a.active{background:rgb(var(--preset-secondary-rgb) / .14);box-shadow:inset 0 0 0 1.5px var(--preset-secondary);color:var(--preset-secondary)}
+#bottomNav[hidden]{display:none!important}
+@media (max-width:400px){
+#bottomNav a{flex:1 1 18%;min-width:0;max-width:64px}
+  #toast{bottom:132px}
+}
+body:not(.gate-open) #bottomNav{display:none!important}
 </style>
 </head>
 <body>
@@ -270,8 +302,8 @@ body:not(.gate-open) .float-btns{display:none!important}
   </section>
 
 @if(mcGet('quotes'))
-<div style="max-width:640px;margin:0 auto 26px;padding:18px 22px;text-align:center" class="mc-panel">
-<p style="font-family:'VT323',monospace;font-size:22px;line-height:1.5;color:#3d3d3d">&ldquo;{{ mcGet('quotes') }}&rdquo;</p>
+<div id="quotes" style="max-width:640px;margin:0 auto 26px;padding:18px 22px;text-align:center" class="mc-panel">
+<p style="font-family:'VT323',monospace;font-size:22px;line-height:1.5;color:var(--preset-primary)">&ldquo;{{ mcGet('quotes') }}&rdquo;</p>
 </div>
 @endif
   <section class="block reveal" id="couple">
@@ -327,7 +359,7 @@ body:not(.gate-open) .float-btns{display:none!important}
         <p>{{ mcDate($rDate) }}</p>
         <p class="time">{{ $rTimeS }} &ndash; {{ $rTimeE }} {{ mcGet('wedding_timezone','WIB') }}</p>
         <p>{{ mcGet('reception_location', mcGet('wedding_location', 'Kediaman Mempelai')) }}</p>
-        @if(!$sameLoc && mcGet('reception_map_link'))<a class="mc-btn map-btn" href="{{ mcGet('reception_map_link') }}" target="_blank" rel="noopener" style="font-size:10px">&#9673; BUKA PETA</a>@endif @if(mcGet('live_stream_link'))@php $lvE = mcGet('live_stream_link'); if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$lvE, $lm2)) { $lvE = 'https://www.youtube-nocookie.com/embed/'.$lm2[1]; } @endphp<div style="margin:12px auto 2px;max-width:330px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden"><div style="position:relative;padding-top:56.25%"><iframe src="{{ $lvE }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div>@endif @if(mcGet('live_stream_link'))<a class="mc-btn map-btn" target="_blank" href="{{ mcGet('live_stream_link') }}" style="margin-left:8px">Live Streaming</a>@endif
+        @if(!$sameLoc && mcGet('reception_map_link'))<a class="mc-btn map-btn" href="{{ mcGet('reception_map_link') }}" target="_blank" rel="noopener" style="font-size:10px">&#9673; BUKA PETA</a>@endif @if(mcGet('live_stream_link'))@php $lvE = mcGet('live_stream_link'); if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$lvE, $lm2)) { $lvE = 'https://www.youtube-nocookie.com/embed/'.$lm2[1]; } @endphp<div style="margin:12px auto 2px;max-width:330px;border:3px solid #222;box-shadow:inset 0 0 0 2px var(--preset-primary);border-radius:4px;overflow:hidden"><div style="position:relative;padding-top:56.25%"><iframe src="{{ $lvE }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div>@endif @if(mcGet('live_stream_link'))<a class="mc-btn map-btn" target="_blank" href="{{ mcGet('live_stream_link') }}" style="margin-left:8px">Live Streaming</a>@endif
 @if($sameLoc && $mainMapLink)<div style="text-align:center;margin-top:12px"><a class="mc-btn map-btn" target="_blank" rel="noopener" href="{{ $mainMapLink }}">&#9673; BUKA PETA</a></div>@endif
       </div>
     </div>
@@ -337,7 +369,7 @@ body:not(.gate-open) .float-btns{display:none!important}
   <section class="block reveal" id="gallerySec">
     <div class="sec-head reveal-down"><canvas class="sec-ico" data-icon="frame" width="16" height="16"></canvas><h2 class="sec-title">GALERI PETUALANGAN</h2><canvas class="sec-ico" data-icon="frame" width="16" height="16"></canvas></div>
     <p class="sec-sub">Momen yang diabadikan dalam balok kenangan.</p>
-    @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div id="prewedBox" style="margin:12px auto 2px;max-width:330px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@endif @endif
+    @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div id="prewedBox" style="margin:12px auto 2px;max-width:330px;border:3px solid #222;box-shadow:inset 0 0 0 2px var(--preset-primary);border-radius:4px;overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:var(--preset-surface-low);text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@endif @endif
     <div class="frames">
       @foreach(array_slice($gallery, 0, 8) as $i => $img)
       <div class="item-frame"><img src="{{ $img }}" alt="Galeri {{ $i + 1 }}" loading="lazy"><p>Kenangan {{ $i + 1 }}</p></div>
@@ -407,13 +439,13 @@ body:not(.gate-open) .float-btns{display:none!important}
       </div>
 @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
 <div id="qrModal" style="position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);padding:20px" onclick="if(event.target===this)closeQrModal()">
-  <div style="background:#101010;border:3px solid #000;box-shadow:inset 2px 2px 0 rgba(255,255,255,.12),0 0 0 2px #3a3a3a,0 24px 60px rgba(0,0,0,.5);padding:22px 18px;max-width:340px;width:100%;text-align:center;position:relative">
+  <div style="background:var(--preset-primary);border:3px solid #000;box-shadow:inset 2px 2px 0 rgba(255,255,255,.12),0 0 0 2px var(--preset-primary),0 24px 60px rgba(0,0,0,.5);padding:22px 18px;max-width:340px;width:100%;text-align:center;position:relative">
     <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:6px;right:10px;border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:#fff">&times;</button>
-    <h4 style="font-family:'Press Start 2P',monospace;font-size:13px;color:#7bff5e;margin:0 0 10px">QR CHECK-IN</h4>
-    <p style="font-size:11px;line-height:1.7;color:#c8d2dc;margin:0 0 16px">Tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
-    <div style="background:#fff;padding:12px;display:inline-block;border:3px solid #5b5b5b"><div id="qrModalBox"></div></div>
-    <p style="margin:14px 0 0;font-size:12px;font-weight:700;color:#fdf6dd">{{ $guestName }}</p>
-    <p style="margin:6px 0 0;font-size:12px;color:#fdf6dd">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
+    <h4 style="font-family:'Press Start 2P',monospace;font-size:13px;color:var(--preset-secondary);margin:0 0 10px">QR CHECK-IN</h4>
+    <p style="font-size:11px;line-height:1.7;color:var(--preset-secondary-container);margin:0 0 16px">Tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+    <div style="background:#fff;padding:12px;display:inline-block;border:3px solid var(--preset-primary)"><div id="qrModalBox"></div></div>
+    <p style="margin:14px 0 0;font-size:12px;font-weight:700;color:var(--preset-surface-low)">{{ $guestName }}</p>
+    <p style="margin:6px 0 0;font-size:12px;color:var(--preset-surface-low)">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
     <button id="qrModalDownloadBtn" type="button" class="mc-btn gold" style="display:block;width:100%;margin-top:14px;padding:12px;font-size:11px">UNDUH QR</button>
   </div>
 </div>
@@ -467,7 +499,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
       <h2>&#9733; QUEST COMPLETE! &#9733;</h2>
       <p>Terima kasih telah menjadi bagian dari petualangan kami. Kehadiran dan doa restumu adalah hadiah terbaik &mdash; tanpamu, quest ini takkan lengkap.</p>
       <p>Kami yang berbahagia,</p>
-      <p class="px-font" style="font-family:'Press Start 2P',monospace;font-size:13px;color:#2b6b1c">{{ $brideNick }} &amp; {{ $groomNick }}</p>
+      <p class="px-font" style="font-family:'Press Start 2P',monospace;font-size:13px;color:var(--preset-secondary)">{{ $brideNick }} &amp; {{ $groomNick }}</p>
       <div class="fam">{{ mcDate($wDate) }}</div>
     </div>
     <p class="footer-note">Dibuat dengan &#10084; dan balok-balok cinta &mdash; edisi video game</p>
@@ -480,6 +512,16 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
   <button class="mc-btn" id="musicBtn" title="Musik">&#9834;</button>
   @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))<button class="mc-btn" id="qrBtn" title="QR Check-in" onclick="openQrModal()"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>@endif
 </div>
+<nav id="bottomNav" aria-label="Menu undangan">
+  <a href="#couple" data-sec="couple"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7.5-4.7-9.5-9C1 8.5 3 5 6.5 5c2 0 3.5 1 4.5 2.5C12 6 13.5 5 15.5 5 19 5 21 8.5 20.5 12c-2 4.3-8.5 9-8.5 9z"/></svg><span>Mempelai</span></a>
+  <a href="#quotes" data-sec="quotes"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 5.5C4.9 6.7 4 8.6 4 10.9V18h6.4v-6.4H7.2c0-1.9.8-3.2 2.3-4.2l-3.1-1.8zm9 0c-1.7 1.2-2.6 3.1-2.6 5.4V18h6.4v-6.4h-3.2c0-1.9.8-3.2 2.3-4.2l-3.1-1.8z"/></svg><span>Quotes</span></a>
+  <a href="#eventSec" data-sec="eventSec"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path stroke-linecap="round" d="M8 3v4M16 3v4M3 10h18"/></svg><span>Acara</span></a>
+  <a href="#gallerySec" data-sec="gallerySec"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path stroke-linecap="round" stroke-linejoin="round" d="m5 19 5.5-5.5 3 3L19 11l2 2"/></svg><span>Galeri</span></a>
+  <a href="#storySec" data-sec="storySec"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.5C10 4.8 7 4.3 4.5 4.5v13c2.5-.2 5.5.3 7.5 2 2-1.7 5-2.2 7.5-2v-13C17 4.3 14 4.8 12 6.5z"/><path stroke-linecap="round" d="M12 6.5v13"/></svg><span>Kisah</span></a>
+  <a href="#giftSec" data-sec="giftSec"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8v13H3V8M1 3h22v5H1zM12 8v13M12 8H7.5a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8zm0 0h4.5a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8z"/></svg><span>Gift</span></a>
+  <a href="#rsvpSec" data-sec="rsvpSec"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg><span>RSVP</span></a>
+  <a href="#ucapanSec" data-sec="ucapanSec"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span>Ucapan</span></a>
+</nav>
 <div id="toast"></div>
 <script>
 "use strict";
@@ -886,6 +928,24 @@ function loop(now){const dt=Math.min(0.05,(now-last)/1000);last=now;
 paintIcons();sizeFx();buildWorld();placeCreeper();
 addEventListener("resize",()=>{sizeFx();buildWorld();});
 requestAnimationFrame(loop);
+/* ---------- menu bawah pill (klasik emas) ---------- */
+(function(){
+  var nav=document.getElementById('bottomNav');if(!nav)return;
+  var items=[];
+  Array.prototype.forEach.call(nav.querySelectorAll('a[data-sec]'),function(a){
+    var el=document.getElementById(a.getAttribute('data-sec'));
+    if(!el){a.remove();return;}
+    a.addEventListener('click',function(e){e.preventDefault();el.scrollIntoView({behavior:'smooth'});});
+    items.push([a,el]);
+  });
+  if(!items.length){nav.style.display='none';return;}
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(en.isIntersecting){items.forEach(function(it){it[0].classList.toggle('active',it[1]===en.target);});}
+    });
+  },{rootMargin:'-40% 0px -50% 0px'});
+  items.forEach(function(it){io.observe(it[1]);});
+})();
 </script>
 </body>
 </html>

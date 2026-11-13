@@ -47,25 +47,6 @@ class LegacyApiController extends Controller
                     'data' => Invitation::orderBy('created_at', 'DESC')->get()
                 ]);
 
-            case 'get_analytics':
-                // Analitik per undangan terpilih: RSVP, ucapan, tamu, check-in
-                $rsvpHadir = Rsvp::where('invitation_id', $inv_id)->where('status', 'hadir');
-                $hadirCount = (clone $rsvpHadir)->count();
-                $hadirGuests = (int) (clone $rsvpHadir)->sum('jumlah_tamu');
-                $tidakCount = Rsvp::where('invitation_id', $inv_id)->where('status', 'tidak')->count();
-                return response()->json([
-                    'success' => true,
-                    'data' => [
-                        'rsvp_hadir' => $hadirCount,
-                        'rsvp_hadir_tamu' => $hadirGuests,
-                        'rsvp_tidak' => $tidakCount,
-                        'rsvp_total' => $hadirCount + $tidakCount,
-                        'ucapan_total' => Ucapan::where('invitation_id', $inv_id)->count(),
-                        'tamu_total' => Guest::where('invitation_id', $inv_id)->count(),
-                        'checkin_total' => Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')->count(),
-                    ]
-                ]);
-
             case 'get_stats':
                 // Undangan "aktif" = tanggal acaranya (resepsi, fallback akad)
                 // belum lewat; undangan tanpa tanggal dianggap masih aktif.

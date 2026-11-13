@@ -29,6 +29,13 @@ if (!function_exists('mcTime')) {
     return preg_match('/^\d{1,2}(:\d{2})?$/', $t) ? (strpos($t, ':') === false ? $t.':00' : $t) : '08:00';
   }
 }
+/* Preset warna admin (theme_primary dkk; fallback Classic Gold). */
+$presetPrimary = mcGet('theme_primary', '#361f1a');
+$presetSecondary = mcGet('theme_secondary', '#775a19');
+$presetBackground = mcGet('theme_background', '#fbf9f5');
+$presetPrimaryContainer = mcGet('theme_primary_container', '#4e342e');
+$presetSecondaryContainer = mcGet('theme_secondary_container', '#fed488');
+$presetSurfaceLow = mcGet('theme_surface_container_low', '#f5f3ef');
 $groomNick = mcGet('groom_nickname') ?: mcGet('groom_name', 'Mempelai Pria');
 $brideNick = mcGet('bride_nickname') ?: mcGet('bride_name', 'Mempelai Wanita');
 $groomFull = mcGet('groom_name', 'Mempelai Pria');
@@ -81,10 +88,11 @@ $groomInitial = mb_substr($groomNick, 0, 1); $brideInitial = mb_substr($brideNic
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>/* Preset warna admin — 6 warna theme_preset (dibaca di preamble). */:root{--preset-primary:{{ $presetPrimary }};--preset-secondary:{{ $presetSecondary }};--preset-background:{{ $presetBackground }};--preset-primary-container:{{ $presetPrimaryContainer }};--preset-secondary-container:{{ $presetSecondaryContainer }};--preset-surface-low:{{ $presetSurfaceLow }}}</style>
 <style>
-:root{--krim:#f7f4ea;--krim2:#fbf9f2;--pinus:#2f4a3a;--pinus-dk:#22392c;--sage:#8ba888;
---emas:#c9a24b;--emas-dk:#a8823a;--perunggu:#7a5f28;
---tinta:#3d4a3a;--tinta-dim:rgba(61,74,58,.66)}
+:root{--krim:var(--preset-surface-low);--krim2:var(--preset-background);--pinus:var(--preset-primary-container);--pinus-dk:var(--preset-primary);--sage:var(--preset-secondary-container);
+--emas:var(--preset-secondary);--emas-dk:var(--preset-secondary);--perunggu:var(--preset-secondary);
+--tinta:var(--preset-primary);--tinta-dim:rgba(61,74,58,.66)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
 body{font-family:'Jost',sans-serif;background:var(--krim);color:var(--tinta);overflow-x:hidden;font-weight:300}
@@ -107,7 +115,7 @@ body{font-family:'Jost',sans-serif;background:var(--krim);color:var(--tinta);ove
 .btn-pill{display:inline-block;margin-top:18px;padding:12px 44px;background:rgba(251,249,242,.95);border:1.5px solid var(--emas);border-radius:999px;color:var(--perunggu);font-family:'Cormorant Garamond',serif;font-size:20px;cursor:pointer;transition:.35s;box-shadow:0 8px 24px rgba(122,95,40,.2)}
 .btn-pill:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(122,95,40,.3)}
 /* ---------- tombol & section umum ---------- */
-.btn{display:inline-flex;align-items:center;gap:10px;margin-top:16px;padding:13px 38px;background:linear-gradient(135deg,#d8b45e,#c9a24b 55%,#a8823a);border:none;border-radius:999px;color:#fffdf6;font-size:12px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;font-family:'Jost';font-weight:500;transition:.35s;box-shadow:0 8px 24px rgba(122,95,40,.3)}
+.btn{display:inline-flex;align-items:center;gap:10px;margin-top:16px;padding:13px 38px;background:linear-gradient(135deg,#d8b45e,var(--preset-secondary) 55%,var(--preset-secondary));border:none;border-radius:999px;color:#fffdf6;font-size:12px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;font-family:'Jost';font-weight:500;transition:.35s;box-shadow:0 8px 24px rgba(122,95,40,.3)}
 .btn:hover{transform:translateY(-2px)}
 .btn-line{display:inline-block;padding:11px 30px;border:1px solid var(--emas);color:var(--perunggu);font-size:11px;letter-spacing:.26em;text-transform:uppercase;cursor:pointer;background:transparent;border-radius:999px;transition:.3s;text-decoration:none;font-family:'Jost'}
 .btn-line:hover{background:rgba(201,162,75,.12)}
@@ -115,7 +123,7 @@ section{padding:64px 26px;text-align:center;position:relative}
 .sec-kicker{font-size:10px;letter-spacing:.44em;text-transform:uppercase;color:var(--sage);margin-bottom:10px;font-weight:500}
 .sec-title{font-family:'Playfair Display',serif;font-size:34px;font-weight:600;color:var(--perunggu)}
 .daun-div{display:block;width:170px;margin:14px auto}
-.card{background:#fffdf8;border:1px solid rgba(139,168,136,.5);border-radius:10px;padding:34px 24px;margin:0 auto 18px;max-width:400px;box-shadow:0 12px 32px rgba(61,74,58,.1)}
+.card{background:var(--preset-background);border:1px solid rgba(139,168,136,.5);border-radius:10px;padding:34px 24px;margin:0 auto 18px;max-width:400px;box-shadow:0 12px 32px rgba(61,74,58,.1)}
 /* ---------- hero ---------- */
 #hero{min-height:96vh;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;background:var(--krim2)}
 .hero-scene{position:absolute;inset:0;width:100%;height:100%}
@@ -125,7 +133,7 @@ section{padding:64px 26px;text-align:center;position:relative}
 .hero-names .amp{display:block;font-size:.6em;color:var(--emas-dk)}
 .hero-date{letter-spacing:.3em;font-size:13px;color:var(--tinta-dim);text-transform:uppercase;margin-top:8px}
 .cd-grid{display:flex;justify-content:center;gap:10px;margin-top:26px}
-.cd{width:72px;padding:16px 0;background:#fffdf8;border:1px solid rgba(201,162,75,.55);border-radius:10px;box-shadow:0 8px 20px rgba(61,74,58,.1)}
+.cd{width:72px;padding:16px 0;background:var(--preset-background);border:1px solid var(--preset-secondary);border-radius:10px;box-shadow:0 8px 20px rgba(61,74,58,.1)}
 .cd b{display:block;font-family:'Playfair Display',serif;font-size:30px;color:var(--perunggu)}
 .cd span{font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--tinta-dim)}
 .photo{width:150px;height:150px;border-radius:50%;object-fit:cover;margin:0 auto 16px;border:3px solid var(--emas);box-shadow:0 10px 28px rgba(122,95,40,.25);display:block}
@@ -142,57 +150,57 @@ section{padding:64px 26px;text-align:center;position:relative}
 .g-grid img{width:100%;height:190px;object-fit:cover;border-radius:10px;border:3px solid #fff;box-shadow:0 8px 22px rgba(61,74,58,.16);transition:.4s}
 .g-grid img:hover{transform:scale(1.03)}
 .tl{max-width:400px;margin:26px auto 0;text-align:left}
-.tl-item{background:#fffdf8;border-left:3px solid var(--emas);border-radius:0 10px 10px 0;padding:18px 20px;margin-bottom:14px;box-shadow:0 8px 22px rgba(61,74,58,.1)}
+.tl-item{background:var(--preset-background);border-left:3px solid var(--emas);border-radius:0 10px 10px 0;padding:18px 20px;margin-bottom:14px;box-shadow:0 8px 22px rgba(61,74,58,.1)}
 .tl-item h4{font-family:'Playfair Display',serif;font-size:20px;color:var(--perunggu)}
 .tl-item p{font-size:14px;color:var(--tinta-dim);line-height:1.7;margin-top:6px}
 /* ---------- section dalam hutan (rsvp & gift) ---------- */
-section.deep{background:linear-gradient(180deg,#2a4433,#1d3126);color:#f5ead0;overflow:hidden}
+section.deep{background:linear-gradient(180deg,#2a4433,#1d3126);color:var(--preset-surface-low);overflow:hidden}
 section.deep .sec-kicker{color:var(--sage)}
-section.deep .sec-title{color:#f2d67c}
+section.deep .sec-title{color:var(--preset-secondary-container)}
 section.deep .field label{color:var(--sage)}
-section.deep .field input,section.deep .field select,section.deep .field textarea{background:rgba(247,244,234,.07);border:1px solid rgba(201,162,75,.5);color:#f5ead0}
+section.deep .field input,section.deep .field select,section.deep .field textarea{background:rgba(247,244,234,.07);border:1px solid var(--preset-secondary);color:var(--preset-surface-low)}
 section.deep .field input::placeholder,section.deep .field textarea::placeholder{color:rgba(245,234,208,.4)}
-section.deep .wish{background:rgba(247,244,234,.06);border:1px solid rgba(201,162,75,.35)}
-section.deep .wish b{color:#f2d67c}
+section.deep .wish{background:rgba(247,244,234,.06);border:1px solid var(--preset-secondary)}
+section.deep .wish b{color:var(--preset-secondary-container)}
 section.deep .wish p{color:rgba(245,234,208,.75)}
-section.deep .bank{background:rgba(247,244,234,.06);border:1px dashed rgba(201,162,75,.55)}
-section.deep .bank .no{color:#f2d67c}
+section.deep .bank{background:rgba(247,244,234,.06);border:1px dashed var(--preset-secondary)}
+section.deep .bank .no{color:var(--preset-secondary-container)}
 section.deep .bank .an,section.deep .bank p{color:rgba(245,234,208,.7)}
 .deep-pines{position:absolute;bottom:-6px;left:0;width:100%;pointer-events:none;opacity:.5}
 .field{margin:0 auto 14px;max-width:380px;text-align:left}
 .field label{display:block;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--sage);margin-bottom:8px;font-weight:500}
-.field input,.field select,.field textarea{width:100%;background:#fffdf8;border:1px solid rgba(139,168,136,.55);border-radius:10px;color:var(--tinta);padding:13px 16px;font-family:'Jost';font-size:15px;outline:none}
+.field input,.field select,.field textarea{width:100%;background:var(--preset-background);border:1px solid rgba(139,168,136,.55);border-radius:10px;color:var(--tinta);padding:13px 16px;font-family:'Jost';font-size:15px;outline:none}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--emas);box-shadow:0 0 0 3px rgba(201,162,75,.15)}
-.wish{background:#fffdf8;border:1px solid rgba(139,168,136,.4);border-radius:10px;padding:16px 18px;margin:0 auto 12px;max-width:400px;text-align:left;box-shadow:0 6px 18px rgba(61,74,58,.08)}
+.wish{background:var(--preset-background);border:1px solid rgba(139,168,136,.4);border-radius:10px;padding:16px 18px;margin:0 auto 12px;max-width:400px;text-align:left;box-shadow:0 6px 18px rgba(61,74,58,.08)}
 .wish-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
 .wtime{font-size:11px;opacity:.55;white-space:nowrap}
 .wish b{font-family:'Playfair Display',serif;color:var(--perunggu);font-size:17px}
 .wish .st{font-size:10px;letter-spacing:.2em;color:var(--emas-dk);text-transform:uppercase;margin-left:8px;font-weight:500}
 .wish p{font-size:14px;color:var(--tinta-dim);margin-top:6px;line-height:1.6}
-.bank{background:#fffdf8;border:1px dashed rgba(201,162,75,.6);border-radius:10px;padding:24px;margin:0 auto 14px;max-width:380px}
+.bank{background:var(--preset-background);border:1px dashed rgba(201,162,75,.6);border-radius:10px;padding:24px;margin:0 auto 14px;max-width:380px}
 .bank .bk{font-size:11px;letter-spacing:.34em;color:var(--sage);text-transform:uppercase;font-weight:500}
 .bank .no{font-family:'Playfair Display',serif;font-size:28px;margin:10px 0 4px;letter-spacing:.04em;color:var(--perunggu)}
 .bank .an{font-size:14px;color:var(--tinta-dim)}
 .copy{margin-top:12px}
 footer{padding:60px 26px 110px;text-align:center;background:var(--krim2)}
 footer .serif{font-size:38px;color:var(--perunggu)}
-#musBtn{position:fixed;bottom:22px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid var(--emas);background:linear-gradient(135deg,#fffdf8,#f0e8d2);color:var(--perunggu);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;bottom:130px!important;box-shadow:0 8px 22px rgba(122,95,40,.3)}
-#qrFloatBtn{position:fixed;bottom:192px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid rgba(201,164,92,.85);background:linear-gradient(160deg,#3a2c17,#171106);color:#e6c887;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(90,70,20,.5)}
+#musBtn{position:fixed;bottom:22px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid var(--emas);background:linear-gradient(135deg,var(--preset-background),#f0e8d2);color:var(--perunggu);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;bottom:130px!important;box-shadow:0 8px 22px rgba(122,95,40,.3)}
+#qrFloatBtn{position:fixed;bottom:192px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid var(--preset-secondary);background:linear-gradient(160deg,var(--preset-primary-container),var(--preset-primary));color:var(--preset-secondary-container);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(90,70,20,.5)}
 
 /* === fitur bawaan default: lightbox, menu, progress, musik === */
 .pbar{position:fixed;top:0;left:0;right:0;height:3px;z-index:96;background:transparent}
-.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c9a24b,#a8823a)}
+.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--preset-secondary),var(--preset-secondary))}
 .lb{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.35s;padding:20px;touch-action:pan-y}
 #lbImg{max-width:100%;max-height:86vh;border-radius:8px;will-change:transform,opacity}
 .lb.show{opacity:1;visibility:visible}
-.lb img{max-width:100%;max-height:86vh;border:2px solid #c9a24b}
+.lb img{max-width:100%;max-height:86vh;border:2px solid var(--preset-secondary)}
 .lb-x{position:absolute;top:16px;right:22px;font-size:40px;color:#fff;cursor:pointer;line-height:1;z-index:201}
 .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);font-size:32px;color:#fff;cursor:pointer;padding:16px 12px;z-index:201;user-select:none;opacity:.85;line-height:1}
 .lb-prev{left:6px}.lb-next{right:6px}.lb-prev:hover,.lb-next:hover{opacity:1}
 .lb-count{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:#fff;font-size:13px;letter-spacing:.15em;z-index:201;font-family:inherit}
-.fmenu{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:90;display:flex;gap:2px 0;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
+.fmenu{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:90;display:flex;gap:2px 0;background:var(--preset-background);border:1px solid var(--preset-secondary);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
 .fmenu::-webkit-scrollbar{display:none}
-.fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:#978045;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:.25s}
+.fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:var(--preset-secondary);text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:.25s}
 .fmenu a i{font-style:normal;line-height:0}
 .fmenu a svg{width:21px;height:21px}
 @media (max-width:400px){
@@ -200,12 +208,12 @@ footer .serif{font-size:38px;color:var(--perunggu)}
   #musBtn{bottom:140px!important}
   #qrFloatBtn{bottom:202px!important}
 }
-.fmenu a.active{background:rgba(151,128,69,.14);box-shadow:inset 0 0 0 1.5px #b8934a;color:#7c652f}
+.fmenu a.active{background:var(--preset-secondary-container);box-shadow:inset 0 0 0 1.5px var(--preset-secondary);color:var(--preset-secondary)}
 body::after{content:"";display:block;height:150px}
-#musBtn.playing{outline:2px solid #a8823a;outline-offset:2px}
+#musBtn.playing{outline:2px solid var(--preset-secondary);outline-offset:2px}
 .att-toggle{display:flex;gap:10px}
-.att-toggle button{flex:1;padding:13px 8px;border:1px solid #c9a24b;background:transparent;color:#f5ead0;font-family:'Jost',sans-serif;font-size:14px;cursor:pointer;transition:.25s;border-radius:10px}
-.att-toggle button.on{background:#c9a24b;color:#22392c;font-weight:500}
+.att-toggle button{flex:1;padding:13px 8px;border:1px solid var(--preset-secondary);background:transparent;color:var(--preset-surface-low);font-family:'Jost',sans-serif;font-size:14px;cursor:pointer;transition:.25s;border-radius:10px}
+.att-toggle button.on{background:var(--preset-secondary);color:var(--preset-primary);font-weight:500}
 .wish-empty{text-align:center;opacity:.6;font-size:14px;padding:12px}
 body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar{opacity:0 !important;visibility:hidden !important;pointer-events:none !important}
 
@@ -216,7 +224,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 @media (prefers-reduced-motion:reduce){.rv,.rvd{opacity:1!important;transform:none!important;transition:none}}
 
 /* Standar menu klasik emas */
-#musBtn{background:linear-gradient(160deg,#3a2c17,#171106)!important;border:1px solid rgba(201,164,92,.85)!important;color:#e6c887!important;box-shadow:0 10px 26px rgba(90,70,20,.5)!important}
+#musBtn{background:linear-gradient(160deg,var(--preset-primary-container),var(--preset-primary))!important;border:1px solid var(--preset-secondary)!important;color:var(--preset-secondary-container)!important;box-shadow:0 10px 26px rgba(90,70,20,.5)!important}
 </style>
 </head>
 <body>
@@ -439,7 +447,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
   if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
   $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
 @endphp
-<div id="prewedBox" class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.25)">
+<div id="prewedBox" class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid var(--preset-secondary);box-shadow:0 18px 40px rgba(0,0,0,.25)">
 <div style="position:relative;padding-top:56.25%">
 @if($prewedFile)
 <video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
@@ -449,14 +457,14 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
 </button>
 @elseif($prewedLink)
-<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
+<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:var(--preset-background);text-decoration:none">
 <span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
 <span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
 </a>
 @endif
 </div>
 </div>
-<div class="rv" style="margin-top:16px">@if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="display:inline-block;padding:11px 28px;border-radius:999px;background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;font-size:11px;font-weight:700;letter-spacing:.22em;text-decoration:none">BUKA VIDEO</a>@endif</div>
+<div class="rv" style="margin-top:16px">@if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="display:inline-block;padding:11px 28px;border-radius:999px;background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-primary);font-size:11px;font-weight:700;letter-spacing:.22em;text-decoration:none">BUKA VIDEO</a>@endif</div>
   @endif
 @if(!empty($gallery))
   <div class="g-grid rv">
@@ -503,14 +511,14 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
 <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
 <div id="qrModal" style="position:fixed;inset:0;z-index:96;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
-  <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
-    <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
-    <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
-    <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+  <div style="background:var(--preset-background);border:2px solid var(--preset-secondary);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+    <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:var(--preset-primary)">&times;</button>
+    <h2 style="font-family:serif;font-size:24px;color:var(--preset-primary);margin:0 0 6px">QR Check-In</h2>
+    <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:var(--preset-primary)">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
     <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
-    <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
-    <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
-    <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+    <p style="margin:16px 0 0;font-weight:600;color:var(--preset-primary)">{{ $guestName }}</p>
+    <p style="margin:6px 0 0;font-size:13px;color:var(--preset-primary)">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
+    <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:var(--preset-secondary);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
   </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -538,7 +546,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 <div class="rvd"><div class="sec-kicker">Tanda Kasih</div><div class="sec-title serif">Hadiah</div></div>
 <svg class="daun-div rv" viewBox="0 0 160 24"><use href="#laurel"/></svg>
 @if($qrisEnabled)
-<div style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
+<div style="max-width:340px;margin:0 auto 18px;background:var(--preset-background);border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:var(--preset-primary);grid-column:1/-1">
 <div style="font-weight:800;letter-spacing:.18em;font-size:13px;color:#c0392b">QRIS</div>
 <p style="font-size:12px;opacity:.65;margin:4px 0 12px">Scan untuk kirim hadiah &mdash; semua e-wallet &amp; m-banking</p>
 <img src="{{ $qrisImage }}" alt="QRIS" style="width:210px;height:210px;object-fit:contain;margin:0 auto;display:block">
@@ -547,15 +555,15 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 </div>
 @endif
 @foreach($accounts as $a)
-<div class="card bank rv" style="background:rgba(247,244,234,.06);border:1px dashed rgba(201,162,75,.55)">
+<div class="card bank rv" style="background:rgba(247,244,234,.06);border:1px dashed var(--preset-secondary)">
 <div class="bk" style="color:var(--sage)">{{ $a['bank'] }}</div>
     @if(!empty($a['logo']))<img src="{{ $a['logo'] }}" alt="Logo bank" style="height:36px;max-width:150px;object-fit:contain;margin:10px auto 0;display:block">@endif
-<div class="no" style="color:#f2d67c">{{ $a['no'] }}</div>
+<div class="no" style="color:var(--preset-secondary-container)">{{ $a['no'] }}</div>
 <div class="an" style="color:rgba(245,234,208,.7)">a.n. {{ $a['an'] }}</div>
-<button class="btn-line copy" onclick="copyNo('{{ $a['no'] }}')" style="color:#f2d67c;border-color:var(--emas)">Salin Nomor</button>
+<button class="btn-line copy" onclick="copyNo('{{ $a['no'] }}')" style="color:var(--preset-secondary-container);border-color:var(--emas)">Salin Nomor</button>
 </div>
 @endforeach
-@if(mcGet('gift_address'))<div class="card bank rv" style="background:rgba(247,244,234,.06);border:1px dashed rgba(201,162,75,.55)"><div class="bk" style="color:var(--sage)">Kirim Hadiah Fisik</div><p style="font-size:14px;color:rgba(245,234,208,.7);margin-top:10px;line-height:1.7">{{ mcGet('gift_address') }}</p>@if($giftRecipient)<p style="font-size:13px;opacity:.75;margin-top:8px">Penerima: {{ $giftRecipient }}</p>@endif
+@if(mcGet('gift_address'))<div class="card bank rv" style="background:rgba(247,244,234,.06);border:1px dashed var(--preset-secondary)"><div class="bk" style="color:var(--sage)">Kirim Hadiah Fisik</div><p style="font-size:14px;color:rgba(245,234,208,.7);margin-top:10px;line-height:1.7">{{ mcGet('gift_address') }}</p>@if($giftRecipient)<p style="font-size:13px;opacity:.75;margin-top:8px">Penerima: {{ $giftRecipient }}</p>@endif
     @if(mcGet('gift_maps_link'))<div style="margin-top:12px"><a href="{{ mcGet('gift_maps_link') }}" target="_blank" style="display:inline-block;padding:10px 26px;border:1px solid currentColor;color:inherit;border-radius:999px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;opacity:.85">Lihat Peta</a></div>@endif</div>@endif
 </section>
 @endif
@@ -578,7 +586,7 @@ if(window.prewedPauseMusic) window.prewedPauseMusic();
 @endphp
 <section id="live">
 <div class="rvd"><div class="sec-kicker">Live Streaming</div><div class="sec-title">Saksikan Langsung</div></div>
-<div class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.25)">
+<div class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid var(--preset-secondary);box-shadow:0 18px 40px rgba(0,0,0,.25)">
 <div style="position:relative;padding-top:56.25%">
 @if($liveId)
 <button type="button" onclick="playLive(this, '{{ $liveId }}')" aria-label="Putar Live Streaming" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
@@ -590,7 +598,7 @@ if(window.prewedPauseMusic) window.prewedPauseMusic();
 @endif
 </div>
 </div>
-<div class="rv" style="margin-top:16px"><a href="{{ $liveUrl }}" target="_blank" rel="noopener" style="display:inline-block;padding:11px 28px;border-radius:999px;background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;font-size:11px;font-weight:700;letter-spacing:.22em;text-decoration:none">BUKA LIVE STREAMING</a></div>
+<div class="rv" style="margin-top:16px"><a href="{{ $liveUrl }}" target="_blank" rel="noopener" style="display:inline-block;padding:11px 28px;border-radius:999px;background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-primary);font-size:11px;font-weight:700;letter-spacing:.22em;text-decoration:none">BUKA LIVE STREAMING</a></div>
 </section>
 @endif
 <script>

@@ -124,6 +124,13 @@ if (!function_exists('jwaCorners')) {
     return $h.'</div>';
   }
 }
+/* Preset warna admin (theme_primary dkk; fallback Classic Gold). */
+$presetPrimary = jwaGet('theme_primary', '#361f1a');
+$presetSecondary = jwaGet('theme_secondary', '#775a19');
+$presetBackground = jwaGet('theme_background', '#fbf9f5');
+$presetPrimaryContainer = jwaGet('theme_primary_container', '#4e342e');
+$presetSecondaryContainer = jwaGet('theme_secondary_container', '#fed488');
+$presetSurfaceLow = jwaGet('theme_surface_container_low', '#f5f3ef');
 $groomNick = jwaGet('groom_nickname') ?: jwaGet('groom_name', 'Mempelai Pria');
 $brideNick = jwaGet('bride_nickname') ?: jwaGet('bride_name', 'Mempelai Wanita');
 $groomFull = jwaGet('groom_name', 'Mempelai Pria');
@@ -194,26 +201,27 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
           serif: ['"Cormorant Garamond"','serif'],
           sans: ['"Plus Jakarta Sans"','sans-serif'],
         },
-        colors: { jawa: { bg:'#120d0a', card:'#1b130e', gold:'#d4af37', lightgold:'#f5df98', cream:'#f7efe6' } }
+        colors: { jawa: { bg:'{{ $presetPrimary }}', card:'{{ $presetPrimaryContainer }}', gold:'{{ $presetSecondary }}', lightgold:'{{ $presetSecondaryContainer }}', cream:'{{ $presetBackground }}' } }
       }}
     }
   </script>
-  <style>
+  <style>/* Preset warna admin — 6 warna theme_preset (dibaca di preamble). */:root{--preset-primary:{{ $presetPrimary }};--preset-secondary:{{ $presetSecondary }};--preset-background:{{ $presetBackground }};--preset-primary-container:{{ $presetPrimaryContainer }};--preset-secondary-container:{{ $presetSecondaryContainer }};--preset-surface-low:{{ $presetSurfaceLow }}}</style>
+<style>
     *{ -webkit-tap-highlight-color:transparent; box-sizing:border-box; }
     html{ scroll-behavior:smooth; }
     body.is-locked{ overflow:hidden !important; height:100dvh !important; }
     body.is-locked main{ touch-action:none; }
     .invitation-frame{ width:100%; max-width:430px; margin:0 auto; position:relative;
-      overflow-x:hidden; background-color:#16100c; box-shadow:0 0 80px rgba(0,0,0,.95); }
+      overflow-x:hidden; background-color:var(--preset-primary-container); box-shadow:0 0 80px rgba(0,0,0,.95); }
     .sway-node{ transform-origin:bottom center; will-change:transform; backface-visibility:hidden; }
     .bloom{ will-change:transform,opacity; }
-    .text-gold-gradient{ background:linear-gradient(135deg,#f9e6a7 0%,#d4af37 50%,#9c7618 100%);
+    .text-gold-gradient{ background:linear-gradient(135deg,var(--preset-secondary-container) 0%,var(--preset-secondary) 50%,var(--preset-secondary) 100%);
       -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
-    .btn-gold-gradient{ background:linear-gradient(135deg,#e0bb43 0%,#f7e3a1 50%,#b38618 100%);
+    .btn-gold-gradient{ background:linear-gradient(135deg,var(--preset-secondary) 0%,var(--preset-secondary-container) 50%,var(--preset-secondary) 100%);
       box-shadow:0 6px 24px rgba(212,175,55,.4); transition:transform .2s, box-shadow .2s; }
     .btn-gold-gradient:hover{ box-shadow:0 8px 30px rgba(212,175,55,.55); }
     .btn-gold-gradient:active{ transform:scale(.96); }
-    .btn-outline-gold{ border:1px solid rgba(212,175,55,.55); color:#f5df98; transition:.25s; }
+    .btn-outline-gold{ border:1px solid rgba(212,175,55,.55); color:var(--preset-secondary-container); transition:.25s; }
     .btn-outline-gold:hover{ background:rgba(212,175,55,.12); }
     .sec-head-orn{ width:34%; max-width:132px; margin:0 auto 10px; opacity:.9; }
     .hairline-gold{ height:1px; background:linear-gradient(90deg,transparent,rgba(212,175,55,.7),transparent); }
@@ -221,29 +229,29 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
       border:1px solid rgba(212,175,55,.28); border-radius:1.25rem;
       box-shadow:0 18px 45px -18px rgba(0,0,0,.8); }
     .field-dark{ width:100%; background:rgba(0,0,0,.35); border:1px solid rgba(212,175,55,.3);
-      border-radius:.8rem; padding:.8rem 1rem; color:#f7efe6; font-size:.9rem; outline:none; transition:.25s; }
+      border-radius:.8rem; padding:.8rem 1rem; color:var(--preset-background); font-size:.9rem; outline:none; transition:.25s; }
     .field-dark::placeholder{ color:#8d8378; }
     .field-dark:focus{ border-color:rgba(212,175,55,.8); box-shadow:0 0 0 3px rgba(212,175,55,.12); }
-    select.field-dark option{ background:#1b130e; }
+    select.field-dark option{ background:var(--preset-primary-container); }
     /* musik melayang */
     #musicFloat{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:18px;
       width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(135deg,#e0bb43,#b38618); color:#1b130e; cursor:pointer;
+      background:linear-gradient(135deg,var(--preset-secondary),var(--preset-secondary)); color:var(--preset-primary-container); cursor:pointer;
       box-shadow:0 8px 22px rgba(212,175,55,.45); border:1px solid rgba(245,223,152,.6); }
     #musicFloat[hidden]{ display:none !important; }
     #qrFloatBtn{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:188px;
       width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97)); color:#e6c887; cursor:pointer;
-      box-shadow:0 10px 24px rgba(90,70,20,.45); border:1px solid rgba(201,164,92,.8); }
+      background:linear-gradient(160deg,var(--preset-primary-container),var(--preset-primary)); color:var(--preset-secondary-container); cursor:pointer;
+      box-shadow:0 10px 24px rgba(90,70,20,.45); border:1px solid var(--preset-secondary); }
     #qrFloatBtn[hidden]{ display:none !important; }
     #musicFloat .bars{ display:none; align-items:flex-end; gap:2px; height:16px; }
     #musicFloat.playing .bars{ display:flex; }
     #musicFloat.playing .note{ display:none; }
-    #musicFloat .bars span{ width:3px; background:#1b130e; border-radius:2px; animation:eq 0.9s ease-in-out infinite; }
+    #musicFloat .bars span{ width:3px; background:var(--preset-primary-container); border-radius:2px; animation:eq 0.9s ease-in-out infinite; }
     #musicFloat .bars span:nth-child(2){ animation-delay:.2s; } #musicFloat .bars span:nth-child(3){ animation-delay:.45s; }
     @keyframes eq{ 0%,100%{height:6px;} 50%{height:16px;} }
     #toast{ position:fixed; left:50%; bottom:84px; transform:translate(-50%,16px); z-index:60;
-      background:#1b130e; color:#f7efe6; border:1px solid rgba(212,175,55,.6); border-radius:9999px;
+      background:var(--preset-primary-container); color:var(--preset-background); border:1px solid rgba(212,175,55,.6); border-radius:9999px;
       padding:.65rem 1.4rem; font-size:.8rem; letter-spacing:.05em; opacity:0; transition:.3s;
       pointer-events:none; max-width:86vw; text-align:center; white-space:nowrap;
       overflow:hidden; text-overflow:ellipsis; }
@@ -254,25 +262,25 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
     @media (prefers-reduced-motion:reduce){ .sway-node{ animation:none !important; } .wind-sway{ animation:none !important; } }
   
 /* Standar menu klasik emas: bottom bar */
-#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px 0;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
+#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px 0;background:var(--preset-background);border:1px solid var(--preset-secondary);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
 #floatMenu::-webkit-scrollbar,#bottomNav::-webkit-scrollbar{display:none}
-#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;height:auto;padding:7px 0;border-radius:13px;color:#978045!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;height:auto;padding:7px 0;border-radius:13px;color:var(--preset-secondary)!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 #floatMenu a svg,#bottomNav a svg{width:21px;height:21px}
-#floatMenu a.active,#bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
+#floatMenu a.active,#bottomNav a.active{background:var(--preset-secondary-container)!important;box-shadow:inset 0 0 0 1.5px var(--preset-secondary)!important;color:var(--preset-secondary)!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
-#musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+#musicFloat{bottom:130px!important;background:linear-gradient(160deg,var(--preset-primary-container),var(--preset-primary))!important;border:1px solid var(--preset-secondary)!important;color:var(--preset-secondary-container)!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
 @media (max-width:400px){
   #bottomNav a,#floatMenu a{flex:1 1 18%;min-width:0;max-width:64px}
   #musicFloat{bottom:140px!important}
   #qrFloatBtn{bottom:198px!important}
   #toast{bottom:150px!important}
 }
-#musicFloat .bars span{background:#e6c887!important}
+#musicFloat .bars span{background:var(--preset-secondary-container)!important}
 #vinyl{bottom:96px!important}
 @media (prefers-reduced-motion:reduce){}
 </style>
 </head>
-<body class="is-locked bg-[#080605] text-jawa-cream font-sans antialiased">
+<body class="is-locked bg-[var(--preset-primary)] text-jawa-cream font-sans antialiased">
 <!-- Amplop pembuka Jawa: depan tertutup rapat (sisi alamat), dibuka dari belakang -->
 <div id="envOverlay" aria-hidden="true">
   <div class="env-scene">
@@ -312,12 +320,12 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
   </div>
 </div>
 <style>
-#envOverlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,#7c4a18 0%,#2a1806 72%),repeating-linear-gradient(45deg,rgba(212,163,31,.05) 0 2px,transparent 2px 14px);transition:opacity .5s ease,visibility 0s linear .5s}
+#envOverlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,var(--preset-primary-container) 0%,var(--preset-primary) 72%),repeating-linear-gradient(45deg,rgba(212,163,31,.05) 0 2px,transparent 2px 14px);transition:opacity .5s ease,visibility 0s linear .5s}
 #envOverlay.gone{opacity:0;visibility:hidden}
 #envOverlay .env-scene{display:flex;flex-direction:column;align-items:center}
 #envOverlay .env-head{text-align:center;margin-bottom:22px;transition:opacity .4s ease}
-#envOverlay .env-head-label{font-size:11px;letter-spacing:.35em;color:#d9a31f;font-weight:700}
-#envOverlay .env-head-names{font-family:Georgia,serif;font-size:30px;font-weight:700;color:#fdf6dd;margin-top:8px}
+#envOverlay .env-head-label{font-size:11px;letter-spacing:.35em;color:var(--preset-secondary);font-weight:700}
+#envOverlay .env-head-names{font-family:Georgia,serif;font-size:30px;font-weight:700;color:var(--preset-background);margin-top:8px}
 #envOverlay .env-wrap{position:relative;width:min(320px,62vw);height:280px;perspective:900px;transform-style:preserve-3d;transition:transform .9s ease-in-out}
 #envOverlay .env-row{display:flex;align-items:flex-end;justify-content:center;width:100%}
 #envOverlay .env-wayang{height:min(260px,62vw);width:auto;flex:none;pointer-events:none;z-index:1}
@@ -331,28 +339,28 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
 #envOverlay .env-face-back{z-index:1;transform:rotateY(180deg)}
 #envOverlay .env-front-paper{position:absolute;inset:0;background:linear-gradient(180deg,#fffdf4,#f6eeda);border:1px solid #ddd2b8;border-radius:10px;box-shadow:0 24px 60px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
 #envOverlay .env-frame{position:absolute;inset:10px;border:1px solid rgba(180,160,120,.55);border-radius:6px;pointer-events:none}
-#envOverlay .env-sender{position:absolute;top:18px;left:18px;font-size:10px;letter-spacing:.12em;color:#8a7a5a;text-align:left;line-height:1.6}
+#envOverlay .env-sender{position:absolute;top:18px;left:18px;font-size:10px;letter-spacing:.12em;color:var(--preset-primary);text-align:left;line-height:1.6}
 #envOverlay .env-sender b{font-size:11px;color:#5a4632;letter-spacing:.02em}
 #envOverlay .env-rings{position:absolute;top:18px;right:14px;width:72px;height:60px}
-#envOverlay .env-ring{position:absolute;top:0;width:44px;height:44px;border-radius:50%;border:5px solid #d9a31f;box-shadow:0 0 0 1px #b8912a,inset 0 0 0 1px rgba(255,255,255,.5),0 4px 10px rgba(0,0,0,.25)}
+#envOverlay .env-ring{position:absolute;top:0;width:44px;height:44px;border-radius:50%;border:5px solid var(--preset-secondary);box-shadow:0 0 0 1px #b8912a,inset 0 0 0 1px rgba(255,255,255,.5),0 4px 10px rgba(0,0,0,.25)}
 #envOverlay .env-ring.r1{left:0}
 #envOverlay .env-ring.r2{right:0;top:8px}
 #envOverlay .env-recipient{position:relative;font-size:13px;color:#6b5a41;line-height:1.5}
 #envOverlay .env-recipient b{font-size:20px;color:#3a2a1a}
-#envOverlay .env-to-apology{display:block;margin-top:6px;font-size:11px;font-style:italic;line-height:1.45;color:#8a7a5a}
+#envOverlay .env-to-apology{display:block;margin-top:6px;font-size:11px;font-style:italic;line-height:1.45;color:var(--preset-primary)}
 #envOverlay .env-back{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,#fffdf4,#f6eeda);border:1px solid #ddd2b8;border-radius:10px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
 #envOverlay .env-card{position:absolute;left:50%;top:10px;z-index:2;width:min(210px,66vw);height:260px;transform:translateX(-50%);background:linear-gradient(180deg,#fff8e7,#f3e4c2);border-radius:8px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.3);transition:transform .85s cubic-bezier(.22,1,.36,1)}
 #envOverlay.open .env-card,#envOverlay.zoom .env-card{transform:translateX(-50%) translateY(-200px);transition-delay:.25s}
 #envOverlay.zoomcard .env-card{transform:translateX(-50%) translateY(-200px) scale(5);transition-delay:0s;transition-duration:1.05s;z-index:10}
-#envOverlay .env-card-label{font-size:9px;letter-spacing:.35em;color:#8a7a5a;font-weight:700}
+#envOverlay .env-card-label{font-size:9px;letter-spacing:.35em;color:var(--preset-primary);font-weight:700}
 #envOverlay .env-card-date{display:flex;align-items:stretch;justify-content:center;gap:8px;color:#5a4632}
 #envOverlay .env-card-day,#envOverlay .env-card-month{display:flex;align-items:center;font-family:Georgia,serif;font-size:11px}
 #envOverlay .env-card-num{display:flex;flex-direction:column;align-items:center;border-left:1px solid rgba(180,160,120,.6);border-right:1px solid rgba(180,160,120,.6);padding:0 8px}
 #envOverlay .env-card-num b{font-size:22px;line-height:1;color:#3a2a1a}
-#envOverlay .env-card-num i{font-style:normal;font-size:8px;letter-spacing:.2em;color:#8a7a5a;margin-top:2px}
+#envOverlay .env-card-num i{font-style:normal;font-size:8px;letter-spacing:.2em;color:var(--preset-primary);margin-top:2px}
 #envOverlay .env-card-names{font-family:Georgia,serif;font-size:24px;font-weight:700;color:#6d421e;line-height:1.3}
-#envOverlay .env-card-div{width:44px;height:1px;background:#c9a45c}
-#envOverlay .env-card-mark{font-size:16px;color:#c9a45c}
+#envOverlay .env-card-div{width:44px;height:1px;background:var(--preset-secondary)}
+#envOverlay .env-card-mark{font-size:16px;color:var(--preset-secondary)}
 #envOverlay .env-front{position:absolute;left:2px;right:2px;bottom:2px;z-index:3;height:165px;background:linear-gradient(180deg,#fbf6e9,#efe5cb);clip-path:polygon(0 0,50% 52%,100% 0,100% 100%,0 100%);border-radius:0 0 8px 8px}
 #envOverlay .env-fold-l{position:absolute;left:2px;top:2px;bottom:2px;width:50%;z-index:3;background:linear-gradient(180deg,#f5eeda,#e9dfc6);clip-path:polygon(0 0,0 100%,100% 52%)}
 #envOverlay .env-fold-r{position:absolute;right:2px;top:2px;bottom:2px;width:50%;z-index:3;background:linear-gradient(180deg,#f5eeda,#e9dfc6);clip-path:polygon(100% 0,100% 100%,0 52%)}
@@ -363,7 +371,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
 @keyframes envFloat{0%,100%{top:10px}50%{top:-14px}}
 #envOverlay.floating .env-card{animation:envFloat 1.2s ease-in-out infinite}
 #envOverlay.open .env-open-btn,#envOverlay.open .env-hint,#envOverlay.flip .env-open-btn,#envOverlay.flip .env-hint{opacity:0}
-#envOverlay .env-open-btn{margin-top:26px;background:#8e1b12;color:#fff;border:2px solid #d9a31f;border-radius:999px;padding:13px 34px;font-size:14px;font-weight:700;letter-spacing:.15em;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:opacity .4s ease,transform .15s ease}
+#envOverlay .env-open-btn{margin-top:26px;background:#8e1b12;color:#fff;border:2px solid var(--preset-secondary);border-radius:999px;padding:13px 34px;font-size:14px;font-weight:700;letter-spacing:.15em;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:opacity .4s ease,transform .15s ease}
 #envOverlay .env-open-btn:active{transform:scale(.96)}
 #envOverlay .env-hint{margin-top:14px;font-size:12px;letter-spacing:.2em;color:#f4d58a;opacity:.75;transition:opacity .4s ease}
 #envOverlay .env-burst{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;z-index:5}
@@ -523,8 +531,8 @@ function withEnvelope(fn){
     <div class="janur-grow pointer-events-none absolute top-[1%] left-[-5%] w-[60%] z-[1]" data-origin="top left">{!! jwaJanur() !!}</div>
     <div class="janur-grow pointer-events-none absolute top-[1%] right-[-5%] w-[60%] z-[1]" data-origin="top right">{!! jwaJanur(true) !!}</div>
     <div id="hero-bg" class="orn pointer-events-none absolute inset-0 scale-110" data-speed="0.4" data-rot="0"
-      style="background:radial-gradient(120% 55% at 50% 0%, rgba(146,94,26,.28), transparent 62%), radial-gradient(110% 90% at 50% 45%, #251b13 0%, #16100c 58%, #0c0906 100%)"></div>
-    <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-jawa-bg/90 via-transparent to-[#16100c]"></div>
+      style="background:radial-gradient(120% 55% at 50% 0%, rgba(146,94,26,.28), transparent 62%), radial-gradient(110% 90% at 50% 45%, #251b13 0%, var(--preset-primary-container) 58%, #0c0906 100%)"></div>
+    <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-jawa-bg/90 via-transparent to-[var(--preset-primary-container)]"></div>
     
 
     {!! jwaCorners(0, 'hero-ornament z-10 opacity-0') !!}
@@ -547,7 +555,7 @@ function withEnvelope(fn){
   </section>
 
   <!-- ================= 4. QUOTES ================= -->
-  <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden" style="background-color:#1d140d;background-image:radial-gradient(100% 55% at 50% 0%,rgba(212,175,55,.10),transparent 65%)">
+  <section class="scroll-section relative min-h-[100dvh] py-24 px-6 flex flex-col items-center justify-center text-center overflow-hidden" style="background-color:var(--preset-primary);background-image:radial-gradient(100% 55% at 50% 0%,rgba(212,175,55,.10),transparent 65%)">
     {!! jwaCorners(1) !!}
 
     <div class="anim-scale relative z-10 w-full max-w-[340px] mx-auto card-dark px-6 pb-9 pt-7 mt-10">
@@ -628,7 +636,7 @@ function withEnvelope(fn){
 
   <!-- ================= 6. ACARA & COUNTDOWN ================= -->
 @if(jwaGet('quotes'))
-  <section id="sec-quotes" class="scroll-section relative py-16 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:#1d140d">
+  <section id="sec-quotes" class="scroll-section relative py-16 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:var(--preset-primary)">
     <p class="anim-down font-cinzel text-[11px] uppercase tracking-[0.4em] text-jawa-gold mb-3 relative z-10">Quotes</p>
     <p class="anim-zoom font-serif italic text-stone-200 text-lg leading-relaxed max-w-[330px] relative z-10">&ldquo;{{ jwaGet('quotes') }}&rdquo;</p>
   </section>
@@ -707,7 +715,7 @@ function withEnvelope(fn){
   if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
   $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
 @endphp
-    <div id="prewedBox" class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+    <div id="prewedBox" class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid var(--preset-secondary);box-shadow:0 18px 40px rgba(0,0,0,.3)">
 <div style="position:relative;padding-top:56.25%">
 @if($prewedFile)
 <video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
@@ -717,14 +725,14 @@ function withEnvelope(fn){
 <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
 </button>
 @elseif($prewedLink)
-<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
+<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:var(--preset-background);text-decoration:none">
 <span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
 <span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
 </a>
 @endif
 </div>
 </div>
-    @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
+    @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-primary);box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
     @endif
 @if(!empty($gallery) && count($gallery))
     <div class="relative z-10 w-full max-w-[340px] grid grid-cols-2 gap-3">
@@ -775,14 +783,14 @@ function withEnvelope(fn){
   @if(jwaGet('guest_qr_enabled') && !empty($guestQrCode))
   <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in" hidden><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
   <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
-    <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
-      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
-      <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
-      <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+    <div style="background:var(--preset-background);border:2px solid var(--preset-secondary);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:var(--preset-primary)">&times;</button>
+      <h2 style="font-family:serif;font-size:24px;color:var(--preset-primary);margin:0 0 6px">QR Check-In</h2>
+      <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:var(--preset-primary)">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
       <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
-      <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
-      <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
-      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+      <p style="margin:16px 0 0;font-weight:600;color:var(--preset-primary)">{{ $guestName }}</p>
+      <p style="margin:6px 0 0;font-size:13px;color:var(--preset-primary)">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
+      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:var(--preset-secondary);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
     </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -842,7 +850,7 @@ function withEnvelope(fn){
     @if(!empty($accounts))
     <div class="relative z-10 w-full max-w-[340px] space-y-4">
 @if($qrisEnabled)
-<div style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
+<div style="max-width:340px;margin:0 auto 18px;background:var(--preset-background);border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:var(--preset-primary);grid-column:1/-1">
 <div style="font-weight:800;letter-spacing:.18em;font-size:13px;color:#c0392b">QRIS</div>
 <p style="font-size:12px;opacity:.65;margin:4px 0 12px">Scan untuk kirim hadiah &mdash; semua e-wallet &amp; m-banking</p>
 <img src="{{ $qrisImage }}" alt="QRIS" style="width:210px;height:210px;object-fit:contain;margin:0 auto;display:block">
@@ -851,8 +859,8 @@ function withEnvelope(fn){
 </div>
 @endif
       @foreach($accounts as $i => $a)
-      <div class="anim-scale rounded-2xl p-[1.5px]" style="background:linear-gradient(135deg,#8a6a1f,#d4af37,#f6e27a,#d4af37,#8a6a1f)">
-        <div class="bg-[#100b08] rounded-2xl p-5 text-left">
+      <div class="anim-scale rounded-2xl p-[1.5px]" style="background:linear-gradient(135deg,var(--preset-secondary),var(--preset-secondary),var(--preset-secondary-container),var(--preset-secondary),var(--preset-secondary))">
+        <div class="bg-[var(--preset-primary-container)] rounded-2xl p-5 text-left">
           <div class="flex items-center justify-between mb-3">
             <p class="text-jawa-gold tracking-[0.25em] text-[11px] font-semibold">{{ $a['bank'] }}</p>
             @if(!empty($a['logo']))<img src="{{ $a['logo'] }}" alt="Logo bank" class="h-7 max-w-[100px] object-contain bg-jawa-cream rounded px-1" />@endif
@@ -900,7 +908,7 @@ if(window.prewedPauseMusic) window.prewedPauseMusic();
     <p class="anim-down text-[10px] uppercase tracking-[0.4em] text-jawa-gold mb-2 relative z-10">Live Streaming</p>
     <h2 class="anim-zoom font-cinzel text-[1.7rem] tracking-[0.18em] text-gold-gradient mb-3 relative z-10">SAKSIKAN LANGSUNG</h2>
     <p class="anim-fade font-serif italic text-stone-300 text-[15px] leading-relaxed mb-9 max-w-[320px] relative z-10">Bagi Bapak/Ibu/Saudara/i yang berhalangan hadir, silakan saksikan acara kami secara langsung melalui tayangan berikut.</p>
-    <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+    <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid var(--preset-secondary);box-shadow:0 18px 40px rgba(0,0,0,.3)">
 <div style="position:relative;padding-top:56.25%">
 @if($liveId)
 <button type="button" onclick="playLive(this, '{{ $liveId }}')" aria-label="Putar Live Streaming" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
@@ -912,7 +920,7 @@ if(window.prewedPauseMusic) window.prewedPauseMusic();
 @endif
 </div>
 </div>
-<a href="{{ $liveUrl }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA LIVE STREAMING</a>
+<a href="{{ $liveUrl }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-primary);box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA LIVE STREAMING</a>
   </section>
 @endif
 <script>

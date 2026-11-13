@@ -48,6 +48,13 @@ if (!function_exists('jklTime')) {
     return preg_match('/^\d{1,2}(:\d{2})?$/', $t) ? (strpos($t, ':') === false ? $t.':00' : $t) : '08:00';
   }
 }
+/* Preset warna admin (theme_primary dkk; fallback Classic Gold). */
+$presetPrimary = jklGet('theme_primary', '#361f1a');
+$presetSecondary = jklGet('theme_secondary', '#775a19');
+$presetBackground = jklGet('theme_background', '#fbf9f5');
+$presetPrimaryContainer = jklGet('theme_primary_container', '#4e342e');
+$presetSecondaryContainer = jklGet('theme_secondary_container', '#fed488');
+$presetSurfaceLow = jklGet('theme_surface_container_low', '#f5f3ef');
 $groomNick = jklGet('groom_nickname') ?: jklGet('groom_name', 'Mempelai Pria');
 $brideNick = jklGet('bride_nickname') ?: jklGet('bride_name', 'Mempelai Wanita');
 $groomFull = jklGet('groom_name', 'Mempelai Pria');
@@ -109,7 +116,7 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        puspa: { ink:'#2a2519', soft:'#57503e', gold:'#978045', deep:'#77603a', light:'#c2ab72', cream:'#fffdf7', paper:'#faf6ec' }
+        puspa: { ink:'{{ $presetPrimary }}', soft:'{{ $presetPrimary }}', gold:'{{ $presetSecondary }}', deep:'{{ $presetPrimaryContainer }}', light:'{{ $presetSecondaryContainer }}', cream:'{{ $presetBackground }}', paper:'{{ $presetSurfaceLow }}' }
       },
       fontFamily: {
         script: ['"Pinyon Script"','cursive'],
@@ -125,39 +132,40 @@ tailwind.config = {
 <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>/* Preset warna admin — 6 warna theme_preset (dibaca di preamble). */:root{--preset-primary:{{ $presetPrimary }};--preset-secondary:{{ $presetSecondary }};--preset-background:{{ $presetBackground }};--preset-primary-container:{{ $presetPrimaryContainer }};--preset-secondary-container:{{ $presetSecondaryContainer }};--preset-surface-low:{{ $presetSurfaceLow }}}</style>
 <style>
   html{scroll-behavior:smooth}
-  body{background:#e9e2d0;font-family:'Poppins',sans-serif}
-  .invitation-frame{max-width:430px;margin:0 auto;position:relative;background:#fffdf7;
+  body{background:var(--preset-background);font-family:'Poppins',sans-serif}
+  .invitation-frame{max-width:430px;margin:0 auto;position:relative;background:var(--preset-background);
     box-shadow:0 0 60px rgba(90,75,40,.35);overflow:hidden;min-height:100vh}
   body.is-locked{overflow:hidden}
-  .text-gold-grad{background:linear-gradient(105deg,#77603a 0%,#c2ab72 35%,#978045 55%,#d9c491 75%,#77603a 100%);
+  .text-gold-grad{background:linear-gradient(105deg,var(--preset-primary-container) 0%,var(--preset-secondary-container) 35%,var(--preset-secondary) 55%,var(--preset-secondary-container) 75%,var(--preset-primary-container) 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent}
   .kawung-bg{position:absolute;inset:0;pointer-events:none;background-size:340px;opacity:.08}
-  .card-putih{background:#ffffff;border:1px solid rgba(151,128,69,.45);border-radius:1.1rem;position:relative;
+  .card-putih{background:var(--preset-background);border:1px solid var(--preset-secondary);border-radius:1.1rem;position:relative;
     box-shadow:0 22px 44px -20px rgba(119,96,58,.35)}
-  .btn-gold{background:linear-gradient(105deg,#8a6f3c,#c2ab72 55%,#978045);color:#fffdf7;
-    box-shadow:0 10px 24px -8px rgba(151,128,69,.55);transition:transform .25s,box-shadow .25s}
+  .btn-gold{background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-background);
+    box-shadow:0 10px 24px -8px var(--preset-secondary);transition:transform .25s,box-shadow .25s}
   .btn-gold:hover{transform:translateY(-2px)}
-  .btn-outline{border:1px solid rgba(151,128,69,.75);color:#77603a;transition:all .25s;background:rgba(151,128,69,.05)}
-  .btn-outline:hover{background:rgba(151,128,69,.14)}
+  .btn-outline{border:1px solid var(--preset-secondary);color:var(--preset-primary-container);transition:all .25s;background:rgba(151,128,69,.05)}
+  .btn-outline:hover{background:var(--preset-secondary-container)}
   .hairline{height:1px;background:linear-gradient(90deg,transparent,rgba(151,128,69,.7),transparent)}
-  .field-puspa{width:100%;background:#fffdf7;border:1px solid rgba(151,128,69,.45);
-    border-radius:.8rem;color:#2a2519;padding:.8rem 1rem;font-size:.9rem;outline:none;transition:border-color .25s}
+  .field-puspa{width:100%;background:var(--preset-background);border:1px solid var(--preset-secondary);
+    border-radius:.8rem;color:var(--preset-primary);padding:.8rem 1rem;font-size:.9rem;outline:none;transition:border-color .25s}
   .field-puspa::placeholder{color:rgba(87,80,62,.4)}
-  .field-puspa:focus{border-color:#978045}
+  .field-puspa:focus{border-color:var(--preset-secondary)}
   #musicFloat{position:fixed;bottom:96px;right:max(14px,calc(50% - 215px + 14px));z-index:45;
     width:52px;height:52px;border-radius:50%;border:1px solid rgba(151,128,69,.7);
-    background:radial-gradient(circle at 32% 30%,#ffffff,#f3ecd9 70%);color:#77603a;
+    background:radial-gradient(circle at 32% 30%,var(--preset-background),var(--preset-surface-low) 70%);color:var(--preset-primary-container);
     display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(90,75,40,.35);cursor:pointer}
     #qrFloatBtn{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:188px;
       width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97)); color:#e6c887; cursor:pointer;
-      box-shadow:0 10px 24px rgba(90,70,20,.45); border:1px solid rgba(201,164,92,.8); }
+      background:linear-gradient(160deg,var(--preset-primary-container),var(--preset-primary)); color:var(--preset-secondary-container); cursor:pointer;
+      box-shadow:0 10px 24px rgba(90,70,20,.45); border:1px solid var(--preset-secondary); }
     #qrFloatBtn[hidden]{ display:none !important; }
     #qrFloatBtn.hidden{ display:none !important; }
   #musicFloat .bars{display:none;gap:2.5px;align-items:flex-end;height:16px}
-  #musicFloat .bars span{width:3px;background:#77603a;animation:eqB 0.9s ease-in-out infinite}
+  #musicFloat .bars span{width:3px;background:var(--preset-primary-container);animation:eqB 0.9s ease-in-out infinite}
   #musicFloat .bars span:nth-child(2){animation-delay:.25s}
   #musicFloat .bars span:nth-child(3){animation-delay:.5s}
   #musicFloat.playing .bars{display:flex}
@@ -166,11 +174,11 @@ tailwind.config = {
   #floatMenu{position:fixed;right:max(14px,calc(50% - 215px + 14px));bottom:168px;z-index:45;
     display:flex;flex-direction:column;gap:9px}
   #floatMenu a{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-    background:rgba(255,253,247,.92);border:1px solid rgba(151,128,69,.6);color:#77603a;
+    background:rgba(255,253,247,.92);border:1px solid rgba(151,128,69,.6);color:var(--preset-primary-container);
     box-shadow:0 10px 22px rgba(90,75,40,.3);backdrop-filter:blur(4px)}
   #floatMenu.hidden, #musicFloat.hidden, #qrFloatBtn.hidden{display:none !important}
   #toast{position:fixed;left:50%;bottom:110px;transform:translate(-50%,20px);z-index:90;
-    background:#2a2519;color:#fffdf7;border:1px solid #978045;border-radius:999px;
+    background:var(--preset-primary);color:var(--preset-background);border:1px solid var(--preset-secondary);border-radius:999px;
     padding:.65rem 1.2rem;font-size:.8rem;font-weight:600;opacity:0;pointer-events:none;transition:all .35s;
     box-shadow:0 14px 30px rgba(90,75,40,.4);max-width:88vw;text-align:center}
   #toast.show{opacity:1;transform:translate(-50%,0)}
@@ -184,20 +192,20 @@ tailwind.config = {
   }
 
 /* Standar menu klasik emas: bottom bar */
-#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px 0;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
+#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px 0;background:var(--preset-background);border:1px solid var(--preset-secondary);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
 #floatMenu::-webkit-scrollbar,#bottomNav::-webkit-scrollbar{display:none}
-#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;height:auto;padding:7px 0;border-radius:13px;color:#978045!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;height:auto;padding:7px 0;border-radius:13px;color:var(--preset-secondary)!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 #floatMenu a svg,#bottomNav a svg{width:21px;height:21px}
-#floatMenu a.active,#bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
+#floatMenu a.active,#bottomNav a.active{background:var(--preset-secondary-container)!important;box-shadow:inset 0 0 0 1.5px var(--preset-secondary)!important;color:var(--preset-secondary)!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
-#musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+#musicFloat{bottom:130px!important;background:linear-gradient(160deg,var(--preset-primary-container),var(--preset-primary))!important;border:1px solid var(--preset-secondary)!important;color:var(--preset-secondary-container)!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
 @media (max-width:400px){
   #bottomNav a,#floatMenu a{flex:1 1 18%;min-width:0;max-width:64px}
   #musicFloat{bottom:140px!important}
   #qrFloatBtn{bottom:198px!important}
   #toast{bottom:150px!important}
 }
-#musicFloat .bars span{background:#e6c887!important}
+#musicFloat .bars span{background:var(--preset-secondary-container)!important}
 #vinyl{bottom:96px!important}
 @media (prefers-reduced-motion:reduce){}
 </style>
@@ -242,12 +250,12 @@ tailwind.config = {
   </div>
 </div>
 <style>
-#envOverlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,#6b5a2e 0%,#332e1e 72%),repeating-linear-gradient(45deg,rgba(212,163,31,.05) 0 2px,transparent 2px 14px);transition:opacity .5s ease,visibility 0s linear .5s}
+#envOverlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,var(--preset-primary-container) 0%,var(--preset-primary) 72%),repeating-linear-gradient(45deg,rgba(212,163,31,.05) 0 2px,transparent 2px 14px);transition:opacity .5s ease,visibility 0s linear .5s}
 #envOverlay.gone{opacity:0;visibility:hidden}
 #envOverlay .env-scene{display:flex;flex-direction:column;align-items:center}
 #envOverlay .env-head{text-align:center;margin-bottom:22px;transition:opacity .4s ease}
-#envOverlay .env-head-label{font-size:11px;letter-spacing:.35em;color:#d9a31f;font-weight:700}
-#envOverlay .env-head-names{font-family:Georgia,serif;font-size:30px;font-weight:700;color:#fdf6dd;margin-top:8px}
+#envOverlay .env-head-label{font-size:11px;letter-spacing:.35em;color:var(--preset-secondary);font-weight:700}
+#envOverlay .env-head-names{font-family:Georgia,serif;font-size:30px;font-weight:700;color:var(--preset-background);margin-top:8px}
 #envOverlay .env-wrap{position:relative;width:min(320px,62vw);height:280px;perspective:900px;transform-style:preserve-3d;transition:transform .9s ease-in-out}
 #envOverlay .env-row{display:flex;align-items:flex-end;justify-content:center;width:100%}
 #envOverlay .env-wayang{height:min(260px,62vw);width:auto;flex:none;pointer-events:none;z-index:1}
@@ -261,28 +269,28 @@ tailwind.config = {
 #envOverlay .env-face-back{z-index:1;transform:rotateY(180deg)}
 #envOverlay .env-front-paper{position:absolute;inset:0;background:linear-gradient(180deg,#fffdf4,#f6eeda);border:1px solid #ddd2b8;border-radius:10px;box-shadow:0 24px 60px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
 #envOverlay .env-frame{position:absolute;inset:10px;border:1px solid rgba(180,160,120,.55);border-radius:6px;pointer-events:none}
-#envOverlay .env-sender{position:absolute;top:18px;left:18px;font-size:10px;letter-spacing:.12em;color:#8a7a5a;text-align:left;line-height:1.6}
+#envOverlay .env-sender{position:absolute;top:18px;left:18px;font-size:10px;letter-spacing:.12em;color:var(--preset-primary);text-align:left;line-height:1.6}
 #envOverlay .env-sender b{font-size:11px;color:#5a4632;letter-spacing:.02em}
 #envOverlay .env-rings{position:absolute;top:18px;right:14px;width:72px;height:60px}
-#envOverlay .env-ring{position:absolute;top:0;width:44px;height:44px;border-radius:50%;border:5px solid #d9a31f;box-shadow:0 0 0 1px #b8912a,inset 0 0 0 1px rgba(255,255,255,.5),0 4px 10px rgba(0,0,0,.25)}
+#envOverlay .env-ring{position:absolute;top:0;width:44px;height:44px;border-radius:50%;border:5px solid var(--preset-secondary);box-shadow:0 0 0 1px #b8912a,inset 0 0 0 1px rgba(255,255,255,.5),0 4px 10px rgba(0,0,0,.25)}
 #envOverlay .env-ring.r1{left:0}
 #envOverlay .env-ring.r2{right:0;top:8px}
 #envOverlay .env-recipient{position:relative;font-size:13px;color:#6b5a41;line-height:1.5}
 #envOverlay .env-recipient b{font-size:20px;color:#3a2a1a}
-#envOverlay .env-to-apology{display:block;margin-top:6px;font-size:11px;font-style:italic;line-height:1.45;color:#8a7a5a}
+#envOverlay .env-to-apology{display:block;margin-top:6px;font-size:11px;font-style:italic;line-height:1.45;color:var(--preset-primary)}
 #envOverlay .env-back{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,#fffdf4,#f6eeda);border:1px solid #ddd2b8;border-radius:10px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
 #envOverlay .env-card{position:absolute;left:50%;top:10px;z-index:2;width:min(210px,66vw);height:260px;transform:translateX(-50%);background:linear-gradient(180deg,#fff8e7,#f3e4c2);border-radius:8px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.3);transition:transform .85s cubic-bezier(.22,1,.36,1)}
 #envOverlay.open .env-card,#envOverlay.zoom .env-card{transform:translateX(-50%) translateY(-200px);transition-delay:.25s}
 #envOverlay.zoomcard .env-card{transform:translateX(-50%) translateY(-200px) scale(5);transition-delay:0s;transition-duration:1.05s;z-index:10}
-#envOverlay .env-card-label{font-size:9px;letter-spacing:.35em;color:#8a7a5a;font-weight:700}
+#envOverlay .env-card-label{font-size:9px;letter-spacing:.35em;color:var(--preset-primary);font-weight:700}
 #envOverlay .env-card-date{display:flex;align-items:stretch;justify-content:center;gap:8px;color:#5a4632}
 #envOverlay .env-card-day,#envOverlay .env-card-month{display:flex;align-items:center;font-family:Georgia,serif;font-size:11px}
 #envOverlay .env-card-num{display:flex;flex-direction:column;align-items:center;border-left:1px solid rgba(180,160,120,.6);border-right:1px solid rgba(180,160,120,.6);padding:0 8px}
 #envOverlay .env-card-num b{font-size:22px;line-height:1;color:#3a2a1a}
-#envOverlay .env-card-num i{font-style:normal;font-size:8px;letter-spacing:.2em;color:#8a7a5a;margin-top:2px}
+#envOverlay .env-card-num i{font-style:normal;font-size:8px;letter-spacing:.2em;color:var(--preset-primary);margin-top:2px}
 #envOverlay .env-card-names{font-family:Georgia,serif;font-size:24px;font-weight:700;color:#6d421e;line-height:1.3}
-#envOverlay .env-card-div{width:44px;height:1px;background:#c9a45c}
-#envOverlay .env-card-mark{font-size:16px;color:#c9a45c}
+#envOverlay .env-card-div{width:44px;height:1px;background:var(--preset-secondary)}
+#envOverlay .env-card-mark{font-size:16px;color:var(--preset-secondary)}
 #envOverlay .env-front{position:absolute;left:2px;right:2px;bottom:2px;z-index:3;height:165px;background:linear-gradient(180deg,#fbf6e9,#efe5cb);clip-path:polygon(0 0,50% 52%,100% 0,100% 100%,0 100%);border-radius:0 0 8px 8px}
 #envOverlay .env-fold-l{position:absolute;left:2px;top:2px;bottom:2px;width:50%;z-index:3;background:linear-gradient(180deg,#f5eeda,#e9dfc6);clip-path:polygon(0 0,0 100%,100% 52%)}
 #envOverlay .env-fold-r{position:absolute;right:2px;top:2px;bottom:2px;width:50%;z-index:3;background:linear-gradient(180deg,#f5eeda,#e9dfc6);clip-path:polygon(100% 0,100% 100%,0 52%)}
@@ -293,7 +301,7 @@ tailwind.config = {
 @keyframes envFloat{0%,100%{top:10px}50%{top:-14px}}
 #envOverlay.floating .env-card{animation:envFloat 1.2s ease-in-out infinite}
 #envOverlay.open .env-open-btn,#envOverlay.open .env-hint,#envOverlay.flip .env-open-btn,#envOverlay.flip .env-hint{opacity:0}
-#envOverlay .env-open-btn{margin-top:26px;background:#8e1b12;color:#fff;border:2px solid #d9a31f;border-radius:999px;padding:13px 34px;font-size:14px;font-weight:700;letter-spacing:.15em;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:opacity .4s ease,transform .15s ease}
+#envOverlay .env-open-btn{margin-top:26px;background:#8e1b12;color:#fff;border:2px solid var(--preset-secondary);border-radius:999px;padding:13px 34px;font-size:14px;font-weight:700;letter-spacing:.15em;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:opacity .4s ease,transform .15s ease}
 #envOverlay .env-open-btn:active{transform:scale(.96)}
 #envOverlay .env-hint{margin-top:14px;font-size:12px;letter-spacing:.2em;color:#f4d58a;opacity:.75;transition:opacity .4s ease}
 #envOverlay .env-burst{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;z-index:5}
@@ -401,7 +409,7 @@ function withEnvelope(fn){
     <p class="relative text-[10px] uppercase tracking-[0.4em] text-puspa-deep mb-2">Wedding Invitation</p>
     <h1 class="relative font-serif text-[1.7rem] tracking-[0.1em] text-puspa-ink">{{ strtoupper($groomNick) }} <span class="text-gold-grad">&amp;</span> {{ strtoupper($brideNick) }}</h1>
     <div class="relative w-40 h-[3px] bg-puspa-gold/15 rounded-full overflow-hidden mb-2 mt-6">
-      <div id="loader-bar" class="h-full w-0" style="background:linear-gradient(90deg,#77603a,#c2ab72)"></div>
+      <div id="loader-bar" class="h-full w-0" style="background:linear-gradient(90deg,var(--preset-primary-container),var(--preset-secondary-container))"></div>
     </div>
     <span id="loader-percent" class="relative text-[11px] font-mono tracking-[0.25em] text-puspa-deep">0%</span>
   </section>
@@ -444,7 +452,7 @@ function withEnvelope(fn){
       </svg>
       <div class="hero-stagger opacity-0 relative w-full max-w-[340px] flex justify-center my-1">
         <img src="{{ asset('images/jawa-puspa/sayap-gunungan.webp') }}" alt="" class="orn absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] max-w-none pointer-events-none" data-speed="0.5" />
-        <div class="relative w-44 h-60 mt-8" style="border-radius:999px 999px 14px 14px; overflow:hidden; border:2.5px solid #978045; box-shadow:0 18px 36px rgba(119,96,58,.35)">
+        <div class="relative w-44 h-60 mt-8" style="border-radius:999px 999px 14px 14px; overflow:hidden; border:2.5px solid var(--preset-secondary); box-shadow:0 18px 36px rgba(119,96,58,.35)">
           @if(!empty($gallery) && count($gallery))
           <img src="{{ $gallery[0] }}" class="w-full h-full object-cover" alt="Mempelai" />
           @elseif(jklGet('cover_image'))
@@ -468,7 +476,7 @@ function withEnvelope(fn){
   <section id="sec-quotes" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden bg-puspa-cream">
     <div class="anim-zoom relative z-10 w-full max-w-[340px]">
       <div class="mx-auto w-20 h-20 rounded-full flex items-center justify-center mb-5 bg-white"
-        style="border:1.5px solid rgba(151,128,69,.75); box-shadow:0 10px 24px -10px rgba(119,96,58,.4)">
+        style="border:1.5px solid var(--preset-secondary); box-shadow:0 10px 24px -10px rgba(119,96,58,.4)">
         <span class="font-serif text-2xl tracking-[0.12em] text-gold-grad font-semibold">{{ $monoBride }}{{ $monoGroom }}</span>
       </div>
       <p class="anim-fade font-serif text-[16.5px] leading-[1.9] text-puspa-soft italic">
@@ -488,10 +496,10 @@ function withEnvelope(fn){
     <p class="anim-fade-down text-[10px] uppercase tracking-[0.4em] text-puspa-deep mb-2 relative z-10">Menghitung Hari Bahagia</p>
     <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-8 relative z-10">Count The Date</h2>
     <div class="anim-zoom relative z-10 grid grid-cols-4 gap-2 w-full max-w-[340px]">
-      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(151,128,69,.5);box-shadow:0 12px 24px -12px rgba(119,96,58,.35)"><div class="font-serif text-[1.6rem] font-bold text-puspa-ink" id="cd-d">00</div><div class="text-[8px] tracking-[0.22em] text-puspa-soft mt-1 font-medium">HARI</div></div>
-      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(151,128,69,.5);box-shadow:0 12px 24px -12px rgba(119,96,58,.35)"><div class="font-serif text-[1.6rem] font-bold text-puspa-ink" id="cd-h">00</div><div class="text-[8px] tracking-[0.22em] text-puspa-soft mt-1 font-medium">JAM</div></div>
-      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(151,128,69,.5);box-shadow:0 12px 24px -12px rgba(119,96,58,.35)"><div class="font-serif text-[1.6rem] font-bold text-puspa-ink" id="cd-m">00</div><div class="text-[8px] tracking-[0.22em] text-puspa-soft mt-1 font-medium">MENIT</div></div>
-      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(151,128,69,.5);box-shadow:0 12px 24px -12px rgba(119,96,58,.35)"><div class="font-serif text-[1.6rem] font-bold text-puspa-ink" id="cd-s">00</div><div class="text-[8px] tracking-[0.22em] text-puspa-soft mt-1 font-medium">DETIK</div></div>
+      <div class="py-4 rounded-xl bg-white" style="border:1px solid var(--preset-secondary);box-shadow:0 12px 24px -12px rgba(119,96,58,.35)"><div class="font-serif text-[1.6rem] font-bold text-puspa-ink" id="cd-d">00</div><div class="text-[8px] tracking-[0.22em] text-puspa-soft mt-1 font-medium">HARI</div></div>
+      <div class="py-4 rounded-xl bg-white" style="border:1px solid var(--preset-secondary);box-shadow:0 12px 24px -12px rgba(119,96,58,.35)"><div class="font-serif text-[1.6rem] font-bold text-puspa-ink" id="cd-h">00</div><div class="text-[8px] tracking-[0.22em] text-puspa-soft mt-1 font-medium">JAM</div></div>
+      <div class="py-4 rounded-xl bg-white" style="border:1px solid var(--preset-secondary);box-shadow:0 12px 24px -12px rgba(119,96,58,.35)"><div class="font-serif text-[1.6rem] font-bold text-puspa-ink" id="cd-m">00</div><div class="text-[8px] tracking-[0.22em] text-puspa-soft mt-1 font-medium">MENIT</div></div>
+      <div class="py-4 rounded-xl bg-white" style="border:1px solid var(--preset-secondary);box-shadow:0 12px 24px -12px rgba(119,96,58,.35)"><div class="font-serif text-[1.6rem] font-bold text-puspa-ink" id="cd-s">00</div><div class="text-[8px] tracking-[0.22em] text-puspa-soft mt-1 font-medium">DETIK</div></div>
     </div>
     <a href="{{ $gcalUrl }}" target="_blank" rel="noopener" class="anim-fade btn-outline relative z-10 text-[10px] tracking-[0.25em] px-7 py-3 rounded-full mt-7 font-medium">+ SIMPAN KE GOOGLE CALENDAR</a>
   </section>
@@ -505,7 +513,7 @@ function withEnvelope(fn){
 
     <!-- Mempelai wanita -->
     <div class="anim-zoom relative z-10 w-full max-w-[320px] card-putih px-6 pt-8 pb-10 mb-2">
-      <div class="relative w-40 h-52 mx-auto mb-4" style="border-radius:999px 999px 14px 14px; overflow:hidden; border:2.5px solid #978045; box-shadow:0 14px 30px rgba(119,96,58,.3)">
+      <div class="relative w-40 h-52 mx-auto mb-4" style="border-radius:999px 999px 14px 14px; overflow:hidden; border:2.5px solid var(--preset-secondary); box-shadow:0 14px 30px rgba(119,96,58,.3)">
         @if(jklGet('bride_photo'))
         <img src="{{ jklGet('bride_photo') }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
         @else
@@ -524,7 +532,7 @@ function withEnvelope(fn){
 
     <!-- Mempelai pria -->
     <div class="anim-zoom relative z-10 w-full max-w-[320px] card-putih px-6 pt-8 pb-10 mt-2">
-      <div class="relative w-40 h-52 mx-auto mb-4" style="border-radius:999px 999px 14px 14px; overflow:hidden; border:2.5px solid #978045; box-shadow:0 14px 30px rgba(119,96,58,.3)">
+      <div class="relative w-40 h-52 mx-auto mb-4" style="border-radius:999px 999px 14px 14px; overflow:hidden; border:2.5px solid var(--preset-secondary); box-shadow:0 14px 30px rgba(119,96,58,.3)">
         @if(jklGet('groom_photo'))
         <img src="{{ jklGet('groom_photo') }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
         @else
@@ -598,11 +606,11 @@ function withEnvelope(fn){
     <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-2 relative z-10">Love Story</h2>
     <p class="anim-fade-down text-[11px] tracking-[0.3em] uppercase text-puspa-deep mb-10 relative z-10">Kisah Perjalanan Kami</p>
     <div class="relative z-10 w-full max-w-[320px] pl-8 text-left">
-      <div class="absolute left-[9px] top-2 bottom-2 w-0.5 rounded" style="background:linear-gradient(180deg,#c2ab72,#978045)"></div>
+      <div class="absolute left-[9px] top-2 bottom-2 w-0.5 rounded" style="background:linear-gradient(180deg,var(--preset-secondary-container),var(--preset-secondary))"></div>
       @foreach($stories as $story)
       <div class="anim-fade relative mb-9">
-        <div class="absolute -left-8 top-1.5 w-[19px] h-[19px] rounded-full bg-puspa-cream flex items-center justify-center" style="border:2.5px solid #978045">
-          <div class="w-1.5 h-1.5 rounded-full" style="background:#978045"></div>
+        <div class="absolute -left-8 top-1.5 w-[19px] h-[19px] rounded-full bg-puspa-cream flex items-center justify-center" style="border:2.5px solid var(--preset-secondary)">
+          <div class="w-1.5 h-1.5 rounded-full" style="background:var(--preset-secondary)"></div>
         </div>
         @if(!empty($story->tahun))<p class="font-script text-[1.7rem] leading-none text-gold-grad mb-1">{{ $story->tahun }}</p>@endif
         <h4 class="font-serif font-semibold text-puspa-ink tracking-wide mb-1">{{ $story->judul }}</h4>
@@ -626,7 +634,7 @@ function withEnvelope(fn){
   if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
   $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
 @endphp
-    <div id="prewedBox" class="anim-zoom relative z-10 w-full max-w-[340px] col-span-2" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+    <div id="prewedBox" class="anim-zoom relative z-10 w-full max-w-[340px] col-span-2" style="border-radius:16px;overflow:hidden;border:1px solid var(--preset-secondary);box-shadow:0 18px 40px rgba(0,0,0,.3)">
 <div style="position:relative;padding-top:56.25%">
 @if($prewedFile)
 <video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
@@ -636,24 +644,24 @@ function withEnvelope(fn){
 <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
 </button>
 @elseif($prewedLink)
-<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
+<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:var(--preset-background);text-decoration:none">
 <span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
 <span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
 </a>
 @endif
 </div>
 </div>
-    @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full col-span-2 justify-self-center" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
+    @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full col-span-2 justify-self-center" style="background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-primary);box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
     @endif
 @if(!empty($gallery) && count($gallery))
         @foreach(array_slice($gallery, 0, 8) as $i => $src)
-        <div class="gal-item anim-fade relative overflow-hidden rounded-xl cursor-pointer {{ $i === 0 ? 'col-span-2 aspect-[16/10]' : 'aspect-[4/5]' }}" data-full="{{ $src }}" style="border:1.5px solid rgba(151,128,69,.55); box-shadow:0 12px 26px -12px rgba(119,96,58,.4)">
+        <div class="gal-item anim-fade relative overflow-hidden rounded-xl cursor-pointer {{ $i === 0 ? 'col-span-2 aspect-[16/10]' : 'aspect-[4/5]' }}" data-full="{{ $src }}" style="border:1.5px solid var(--preset-secondary); box-shadow:0 12px 26px -12px rgba(119,96,58,.4)">
           <img src="{{ $src }}" class="w-full h-full object-cover" alt="Galeri {{ $i+1 }}" loading="lazy" />
         </div>
         @endforeach
       @else
         @foreach(range(1,5) as $i)
-        <div class="gal-item anim-fade relative overflow-hidden rounded-xl cursor-pointer {{ $i === 1 ? 'col-span-2 aspect-[16/10]' : 'aspect-[4/5]' }}" data-full="https://picsum.photos/seed/jpgal{{ $i }}/600/450" style="border:1.5px solid rgba(151,128,69,.55)">
+        <div class="gal-item anim-fade relative overflow-hidden rounded-xl cursor-pointer {{ $i === 1 ? 'col-span-2 aspect-[16/10]' : 'aspect-[4/5]' }}" data-full="https://picsum.photos/seed/jpgal{{ $i }}/600/450" style="border:1.5px solid var(--preset-secondary)">
           <img src="https://picsum.photos/seed/jpgal{{ $i }}/600/450" class="w-full h-full object-cover" alt="Galeri {{ $i }}" loading="lazy" />
         </div>
         @endforeach
@@ -704,14 +712,14 @@ function withEnvelope(fn){
     @if(jklGet('guest_qr_enabled') && !empty($guestQrCode))
   <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in" class="hidden"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
   <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
-    <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
-      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
-      <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
-      <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+    <div style="background:var(--preset-background);border:2px solid var(--preset-secondary);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:var(--preset-primary)">&times;</button>
+      <h2 style="font-family:serif;font-size:24px;color:var(--preset-primary);margin:0 0 6px">QR Check-In</h2>
+      <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:var(--preset-primary)">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
       <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
-      <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
-      <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
-      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+      <p style="margin:16px 0 0;font-weight:600;color:var(--preset-primary)">{{ $guestName }}</p>
+      <p style="margin:6px 0 0;font-size:13px;color:var(--preset-primary)">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
+      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:var(--preset-secondary);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
     </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -730,8 +738,8 @@ function withEnvelope(fn){
       <input type="text" id="rsvp-name" required class="field-puspa mb-4" placeholder="Nama Anda" value="{{ $toName !== 'Tamu Undangan' ? $toName : '' }}">
       <label class="block text-[10px] tracking-[0.25em] uppercase text-puspa-deep mb-1.5 font-medium">Konfirmasi Kehadiran</label>
       <div class="grid grid-cols-2 gap-2 mb-4" id="rsvp-status-group">
-        <button type="button" data-status="hadir" class="rsvp-status-btn py-3 rounded-lg text-[12px] font-semibold tracking-wider transition-all" style="border:1px solid rgba(151,128,69,.55);color:#77603a">Hadir</button>
-        <button type="button" data-status="tidak" class="rsvp-status-btn py-3 rounded-lg text-[12px] font-semibold tracking-wider transition-all" style="border:1px solid rgba(151,128,69,.55);color:#77603a">Berhalangan</button>
+        <button type="button" data-status="hadir" class="rsvp-status-btn py-3 rounded-lg text-[12px] font-semibold tracking-wider transition-all" style="border:1px solid var(--preset-secondary);color:var(--preset-primary-container)">Hadir</button>
+        <button type="button" data-status="tidak" class="rsvp-status-btn py-3 rounded-lg text-[12px] font-semibold tracking-wider transition-all" style="border:1px solid var(--preset-secondary);color:var(--preset-primary-container)">Berhalangan</button>
       </div>
       <div id="rsvp-alasan-wrap" class="hidden">
         <label class="block text-[10px] tracking-[0.25em] uppercase text-puspa-deep mb-1.5 font-medium">Alasan Berhalangan</label>
@@ -785,7 +793,7 @@ if(window.prewedPauseMusic) window.prewedPauseMusic();
     <p class="anim-fade-down text-[10px] uppercase tracking-[0.4em] text-puspa-deep mb-2 relative z-10">Live Streaming</p>
     <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-3 relative z-10">Saksikan Langsung</h2>
     <p class="anim-fade font-serif italic text-puspa-soft text-[15px] leading-relaxed mb-9 max-w-[320px] relative z-10">Bagi Bapak/Ibu/Saudara/i yang berhalangan hadir, silakan saksikan acara kami secara langsung melalui tayangan berikut.</p>
-    <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+    <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid var(--preset-secondary);box-shadow:0 18px 40px rgba(0,0,0,.3)">
 <div style="position:relative;padding-top:56.25%">
 @if($liveId)
 <button type="button" onclick="playLive(this, '{{ $liveId }}')" aria-label="Putar Live Streaming" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
@@ -797,7 +805,7 @@ if(window.prewedPauseMusic) window.prewedPauseMusic();
 @endif
 </div>
 </div>
-<a href="{{ $liveUrl }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA LIVE STREAMING</a>
+<a href="{{ $liveUrl }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-primary);box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA LIVE STREAMING</a>
   </section>
 @endif
 <script>
@@ -837,9 +845,9 @@ function playLive(btn, id){
   <!-- Lightbox -->
   <div id="lightbox" class="fixed inset-0 z-[80] hidden items-center justify-center p-4" style="background:rgba(30,25,12,.96)">
     <button id="lbClose" class="absolute top-4 right-4 z-10 text-white/80 hover:text-white text-4xl leading-none px-2" aria-label="Tutup">&times;</button>
-    <button id="lbPrev" class="absolute left-2 z-10 w-11 h-11 rounded-full text-[#e8d9ae] text-3xl flex items-center justify-center" style="background:rgba(151,128,69,.18);border:1px solid rgba(194,171,114,.6)" aria-label="Sebelumnya">&#8249;</button>
+    <button id="lbPrev" class="absolute left-2 z-10 w-11 h-11 rounded-full text-[var(--preset-secondary-container)] text-3xl flex items-center justify-center" style="background:rgba(151,128,69,.18);border:1px solid rgba(194,171,114,.6)" aria-label="Sebelumnya">&#8249;</button>
     <img id="lbImg" class="max-w-full max-h-[82vh] rounded-xl object-contain select-none" style="border:1px solid rgba(194,171,114,.55)" alt="Galeri" draggable="false" />
-    <button id="lbNext" class="absolute right-2 z-10 w-11 h-11 rounded-full text-[#e8d9ae] text-3xl flex items-center justify-center" style="background:rgba(151,128,69,.18);border:1px solid rgba(194,171,114,.6)" aria-label="Berikutnya">&#8250;</button>
+    <button id="lbNext" class="absolute right-2 z-10 w-11 h-11 rounded-full text-[var(--preset-secondary-container)] text-3xl flex items-center justify-center" style="background:rgba(151,128,69,.18);border:1px solid rgba(194,171,114,.6)" aria-label="Berikutnya">&#8250;</button>
     <div id="lbCount" class="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/70 text-sm tracking-[0.25em]"></div>
   </div>
 

@@ -34,6 +34,13 @@ if (!function_exists('jklDayNum')) {
   function jklMonthName($d) { $ts = strtotime($d); $m=['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']; return $ts ? $m[date('n',$ts)] : ''; }
   function jklYear($d) { $ts = strtotime($d); return $ts ? date('Y', $ts) : ''; }
 }
+/* Preset warna admin (theme_primary dkk; fallback Classic Gold). */
+$presetPrimary = jklGet('theme_primary', '#361f1a');
+$presetSecondary = jklGet('theme_secondary', '#775a19');
+$presetBackground = jklGet('theme_background', '#fbf9f5');
+$presetPrimaryContainer = jklGet('theme_primary_container', '#4e342e');
+$presetSecondaryContainer = jklGet('theme_secondary_container', '#fed488');
+$presetSurfaceLow = jklGet('theme_surface_container_low', '#f5f3ef');
 $groomNick = jklGet('groom_nickname') ?: jklGet('groom_name', 'Mempelai Pria');
 $brideNick = jklGet('bride_nickname') ?: jklGet('bride_name', 'Mempelai Wanita');
 $groomFull = jklGet('groom_name', 'Mempelai Pria');
@@ -102,34 +109,35 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
           sans: ['"Plus Jakarta Sans"','sans-serif'],
         },
         colors: { surga: {
-          sky:'#eaf4fb', cream:'#fffdf8', sage:'#7a9b76', deepsage:'#4e6e4b',
-          blush:'#e8a2b0', lavender:'#a78bda', gold:'#c9a227', ink:'#4a4458'
+          sky:'{{ $presetSecondaryContainer }}', cream:'{{ $presetBackground }}', sage:'{{ $presetSecondary }}', deepsage:'{{ $presetPrimaryContainer }}',
+          blush:'{{ $presetSecondary }}', lavender:'{{ $presetSecondary }}', gold:'{{ $presetSecondary }}', ink:'{{ $presetPrimary }}'
         } }
       }}
     }
   </script>
-  <style>
+  <style>/* Preset warna admin — 6 warna theme_preset (dibaca di preamble). */:root{--preset-primary:{{ $presetPrimary }};--preset-secondary:{{ $presetSecondary }};--preset-background:{{ $presetBackground }};--preset-primary-container:{{ $presetPrimaryContainer }};--preset-secondary-container:{{ $presetSecondaryContainer }};--preset-surface-low:{{ $presetSurfaceLow }}}</style>
+<style>
     *{ -webkit-tap-highlight-color:transparent; box-sizing:border-box; }
     html{ scroll-behavior:smooth; }
     body.is-locked{ overflow:hidden !important; height:100dvh !important; }
     body.is-locked main{ touch-action:none; }
     .invitation-frame{ width:100%; max-width:430px; margin:0 auto; position:relative;
-      overflow-x:hidden; background:linear-gradient(180deg,#dceefb 0%,#f2f8fd 30%,#fffdf8 70%,#fdf6ec 100%);
+      overflow-x:hidden; background:linear-gradient(180deg,var(--preset-secondary-container) 0%,var(--preset-background) 30%,var(--preset-background) 70%,var(--preset-background) 100%);
       box-shadow:0 0 80px rgba(120,150,180,.35); }
-    .text-gold-grad{ background:linear-gradient(135deg,#e3b93c 0%,#c9a227 55%,#9a7a14 100%);
+    .text-gold-grad{ background:linear-gradient(135deg,#e3b93c 0%,var(--preset-secondary) 55%,#9a7a14 100%);
       -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
     .card-surga{ background:rgba(255,255,255,.82); backdrop-filter:blur(8px);
       border:1px solid rgba(201,162,39,.4); border-radius:1.6rem; position:relative;
       box-shadow:0 20px 45px -20px rgba(90,120,100,.35), inset 0 0 0 5px rgba(255,255,255,.5); }
-    .btn-gold{ background:linear-gradient(135deg,#dcb33a 0%,#f4dd8f 50%,#b28c1a 100%);
-      box-shadow:0 8px 24px rgba(201,162,39,.4); transition:transform .2s, box-shadow .2s; color:#3d3413; }
+    .btn-gold{ background:linear-gradient(135deg,var(--preset-secondary) 0%,var(--preset-secondary-container) 50%,var(--preset-secondary) 100%);
+      box-shadow:0 8px 24px rgba(201,162,39,.4); transition:transform .2s, box-shadow .2s; color:var(--preset-primary); }
     .btn-gold:hover{ box-shadow:0 10px 30px rgba(201,162,39,.55); }
     .btn-gold:active{ transform:scale(.96); }
-    .btn-outline{ border:1.5px solid rgba(122,155,118,.65); color:#4e6e4b; transition:.25s; background:rgba(255,255,255,.6); }
+    .btn-outline{ border:1.5px solid rgba(122,155,118,.65); color:var(--preset-primary-container); transition:.25s; background:rgba(255,255,255,.6); }
     .btn-outline:hover{ background:rgba(122,155,118,.14); }
     .hairline{ height:1px; background:linear-gradient(90deg,transparent,rgba(201,162,39,.75),transparent); }
     .field-surga{ width:100%; background:rgba(255,255,255,.9); border:1.5px solid rgba(122,155,118,.4);
-      border-radius:1rem; padding:.8rem 1rem; color:#4a4458; font-size:.9rem; outline:none; transition:.25s; }
+      border-radius:1rem; padding:.8rem 1rem; color:var(--preset-primary); font-size:.9rem; outline:none; transition:.25s; }
     .field-surga::placeholder{ color:#a8a29a; }
     .field-surga:focus{ border-color:rgba(201,162,39,.8); box-shadow:0 0 0 3px rgba(201,162,39,.14); }
     select.field-surga option{ background:#fff; }
@@ -150,29 +158,29 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     /* musik + menu melayang */
     #musicFloat{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:24px;
       width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(135deg,#dcb33a,#b28c1a); color:#3d3413; cursor:pointer;
+      background:linear-gradient(135deg,var(--preset-secondary),var(--preset-secondary)); color:var(--preset-primary); cursor:pointer;
       box-shadow:0 8px 22px rgba(201,162,39,.45); border:1px solid rgba(255,255,255,.7); }
     #musicFloat[hidden]{ display:none !important; }
     #qrFloatBtn{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:188px;
       width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97)); color:#e6c887; cursor:pointer;
-      box-shadow:0 10px 24px rgba(90,70,20,.45); border:1px solid rgba(201,164,92,.8); }
+      background:linear-gradient(160deg,var(--preset-primary-container),var(--preset-primary)); color:var(--preset-secondary-container); cursor:pointer;
+      box-shadow:0 10px 24px rgba(90,70,20,.45); border:1px solid var(--preset-secondary); }
     #qrFloatBtn[hidden]{ display:none !important; }
     #musicFloat .bars{ display:none; align-items:flex-end; gap:2px; height:16px; }
     #musicFloat.playing .bars{ display:flex; }
     #musicFloat.playing .note{ display:none; }
-    #musicFloat .bars span{ width:3px; background:#3d3413; border-radius:2px; animation:eq 0.9s ease-in-out infinite; }
+    #musicFloat .bars span{ width:3px; background:var(--preset-primary); border-radius:2px; animation:eq 0.9s ease-in-out infinite; }
     #musicFloat .bars span:nth-child(2){ animation-delay:.2s; } #musicFloat .bars span:nth-child(3){ animation-delay:.45s; }
     @keyframes eq{ 0%,100%{height:6px;} 50%{height:16px;} }
     #floatMenu{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:84px;
       display:flex; flex-direction:column; gap:10px; }
     #floatMenu[hidden]{ display:none !important; }
     #floatMenu a{ width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
-      background:rgba(255,255,255,.9); backdrop-filter:blur(6px); color:#4e6e4b;
+      background:rgba(255,255,255,.9); backdrop-filter:blur(6px); color:var(--preset-primary-container);
       border:1.5px solid rgba(201,162,39,.5); box-shadow:0 8px 20px rgba(90,120,100,.25); transition:.25s; }
     #floatMenu a:active{ transform:scale(.92); }
     #toast{ position:fixed; left:50%; bottom:150px; transform:translate(-50%,16px); z-index:60;
-      background:#fffdf8; color:#4a4458; border:1.5px solid rgba(201,162,39,.55); border-radius:9999px;
+      background:var(--preset-background); color:var(--preset-primary); border:1.5px solid rgba(201,162,39,.55); border-radius:9999px;
       padding:.65rem 1.4rem; font-size:.8rem; letter-spacing:.05em; opacity:0; transition:.3s;
       pointer-events:none; max-width:86vw; text-align:center; white-space:nowrap;
       overflow:hidden; text-overflow:ellipsis; box-shadow:0 10px 30px rgba(90,120,100,.25); }
@@ -181,25 +189,25 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     .orn{ will-change:transform; }
   
 /* Standar menu klasik emas: bottom bar */
-#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px 0;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
+#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px 0;background:var(--preset-background);border:1px solid var(--preset-secondary);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
 #floatMenu::-webkit-scrollbar,#bottomNav::-webkit-scrollbar{display:none}
-#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;height:auto;padding:7px 0;border-radius:13px;color:#978045!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;height:auto;padding:7px 0;border-radius:13px;color:var(--preset-secondary)!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 #floatMenu a svg,#bottomNav a svg{width:21px;height:21px}
-#floatMenu a.active,#bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
+#floatMenu a.active,#bottomNav a.active{background:var(--preset-secondary-container)!important;box-shadow:inset 0 0 0 1.5px var(--preset-secondary)!important;color:var(--preset-secondary)!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
-#musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+#musicFloat{bottom:130px!important;background:linear-gradient(160deg,var(--preset-primary-container),var(--preset-primary))!important;border:1px solid var(--preset-secondary)!important;color:var(--preset-secondary-container)!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
 @media (max-width:400px){
   #bottomNav a,#floatMenu a{flex:1 1 18%;min-width:0;max-width:64px}
   #musicFloat{bottom:140px!important}
   #qrFloatBtn{bottom:198px!important}
   #toast{bottom:150px!important}
 }
-#musicFloat .bars span{background:#e6c887!important}
+#musicFloat .bars span{background:var(--preset-secondary-container)!important}
 #vinyl{bottom:96px!important}
 @media (prefers-reduced-motion:reduce){}
 </style>
 </head>
-<body class="is-locked bg-[#cfe3f2] text-surga-ink font-sans antialiased">
+<body class="is-locked bg-[var(--preset-secondary-container)] text-surga-ink font-sans antialiased">
 
 <!-- ======== DEFS SVG: bunga, kupu, awan, gapura ======== -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -266,19 +274,19 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
 
   <!-- ================= 1. PRELOADER ================= -->
   <section id="preloader" class="fixed inset-0 z-50 mx-auto max-w-[430px] flex flex-col items-center justify-center px-6 text-center"
-    style="background:linear-gradient(180deg,#dceefb,#fffdf8)">
+    style="background:linear-gradient(180deg,var(--preset-secondary-container),var(--preset-background))">
     <svg class="w-20 h-20 mb-5 sway-slow"><use href="#ts-flower"/></svg>
     <p class="text-[10px] uppercase tracking-[0.4em] text-surga-gold mb-2">Wedding Invitation</p>
     <h1 class="font-script text-4xl text-surga-ink mb-1">{{ $groomNick }} <span class="text-gold-grad">&amp;</span> {{ $brideNick }}</h1>
     <div class="w-40 h-[3px] bg-surga-sage/20 rounded-full overflow-hidden mb-2 mt-5">
-      <div id="loader-bar" class="h-full w-0" style="background:linear-gradient(90deg,#7a9b76,#c9a227)"></div>
+      <div id="loader-bar" class="h-full w-0" style="background:linear-gradient(90deg,var(--preset-secondary),var(--preset-secondary))"></div>
     </div>
     <span id="loader-percent" class="text-[11px] font-mono tracking-[0.25em] text-surga-deepsage">0%</span>
   </section>
 
   <!-- ================= 2. COVER ================= -->
   <section id="cover-gate" class="fixed inset-0 z-40 mx-auto max-w-[430px] h-[100dvh] flex flex-col justify-between py-10 px-6 text-center overflow-hidden"
-    style="background:linear-gradient(180deg,#cfe6f7 0%,#eef6fd 45%,#fffdf8 100%)">
+    style="background:linear-gradient(180deg,var(--preset-secondary-container) 0%,var(--preset-background) 45%,var(--preset-background) 100%)">
     <svg class="orn pointer-events-none absolute -top-6 -left-10 w-56 opacity-80 cloud"><use href="#ts-cloud"/></svg>
     <svg class="orn pointer-events-none absolute top-24 -right-12 w-64 opacity-70 cloud c2"><use href="#ts-cloud"/></svg>
     <svg class="butterfly pointer-events-none absolute top-[18%] left-[12%] w-10 z-10"><use href="#ts-butterfly"/></svg>
@@ -333,7 +341,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
 
   <!-- ================= 3. HERO ================= -->
   <section id="hero-section" class="relative h-[100dvh] min-h-[600px] w-full flex flex-col items-center justify-center text-center px-6 overflow-hidden"
-    style="background:linear-gradient(180deg,#cfe6f7 0%,#eef6fd 50%,#fffdf8 100%)">
+    style="background:linear-gradient(180deg,var(--preset-secondary-container) 0%,var(--preset-background) 50%,var(--preset-background) 100%)">
     <svg class="orn pointer-events-none absolute top-10 -left-10 w-52 opacity-80 cloud"><use href="#ts-cloud"/></svg>
     <svg class="orn pointer-events-none absolute top-40 -right-14 w-60 opacity-70 cloud c2"><use href="#ts-cloud"/></svg>
     <svg class="butterfly pointer-events-none absolute top-[16%] right-[14%] w-11 z-10"><use href="#ts-butterfly"/></svg>
@@ -421,7 +429,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
         @if(jklGet('groom_photo'))
         <img src="{{ jklGet('groom_photo') }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
         @else
-        <div class="w-full h-full flex items-center justify-center" style="background:linear-gradient(160deg,#dfeee0,#f2f8fd)">
+        <div class="w-full h-full flex items-center justify-center" style="background:linear-gradient(160deg,var(--preset-background),var(--preset-background))">
           <svg class="w-20 h-20 opacity-80"><use href="#ts-flower-white"/></svg>
         </div>
         @endif
@@ -518,7 +526,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
   if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
   $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
 @endphp
-    <div id="prewedBox" class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+    <div id="prewedBox" class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid var(--preset-secondary);box-shadow:0 18px 40px rgba(0,0,0,.3)">
 <div style="position:relative;padding-top:56.25%">
 @if($prewedFile)
 <video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
@@ -528,14 +536,14 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
 <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
 </button>
 @elseif($prewedLink)
-<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
+<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:var(--preset-background);text-decoration:none">
 <span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
 <span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
 </a>
 @endif
 </div>
 </div>
-    @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
+    @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-primary);box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
     @endif
 @if(!empty($gallery) && count($gallery))
     <div class="relative z-10 w-full max-w-[340px] grid grid-cols-2 gap-3">
@@ -558,11 +566,11 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     <p class="anim-fade-down text-[11px] tracking-[0.3em] uppercase text-surga-deepsage/80 mb-10 relative z-10">Perjalanan cinta kami</p>
     @if(!empty($stories) && count($stories))
     <div class="relative z-10 w-full max-w-[320px] pl-8 pb-10 text-left">
-      <div class="absolute left-[9px] top-2 bottom-2 w-0.5 rounded" style="background:linear-gradient(180deg,#c9a227,#7a9b76)"></div>
+      <div class="absolute left-[9px] top-2 bottom-2 w-0.5 rounded" style="background:linear-gradient(180deg,var(--preset-secondary),var(--preset-secondary))"></div>
       @foreach($stories as $st)
       <div class="anim-fade relative mb-8">
-        <div class="absolute -left-8 top-1 w-[19px] h-[19px] rounded-full bg-white flex items-center justify-center" style="border:2.5px solid #c9a227">
-          <div class="w-1.5 h-1.5 rounded-full" style="background:#c9a227"></div>
+        <div class="absolute -left-8 top-1 w-[19px] h-[19px] rounded-full bg-white flex items-center justify-center" style="border:2.5px solid var(--preset-secondary)">
+          <div class="w-1.5 h-1.5 rounded-full" style="background:var(--preset-secondary)"></div>
         </div>
         @if(!empty($st->tahun))
         <p class="font-script text-3xl text-gold-grad mb-1">{{ $st->tahun }}</p>
@@ -588,7 +596,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     @if(!empty($accounts))
     <div class="relative z-10 w-full max-w-[340px] space-y-4">
 @if($qrisEnabled)
-<div style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
+<div style="max-width:340px;margin:0 auto 18px;background:var(--preset-background);border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:var(--preset-primary);grid-column:1/-1">
 <div style="font-weight:800;letter-spacing:.18em;font-size:13px;color:#c0392b">QRIS</div>
 <p style="font-size:12px;opacity:.65;margin:4px 0 12px">Scan untuk kirim hadiah &mdash; semua e-wallet &amp; m-banking</p>
 <img src="{{ $qrisImage }}" alt="QRIS" style="width:210px;height:210px;object-fit:contain;margin:0 auto;display:block">
@@ -626,14 +634,14 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     @if(jklGet('guest_qr_enabled') && !empty($guestQrCode))
   <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in" hidden><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
   <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
-    <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
-      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
-      <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
-      <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+    <div style="background:var(--preset-background);border:2px solid var(--preset-secondary);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:var(--preset-primary)">&times;</button>
+      <h2 style="font-family:serif;font-size:24px;color:var(--preset-primary);margin:0 0 6px">QR Check-In</h2>
+      <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:var(--preset-primary)">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
       <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
-      <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
-      <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
-      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+      <p style="margin:16px 0 0;font-weight:600;color:var(--preset-primary)">{{ $guestName }}</p>
+      <p style="margin:6px 0 0;font-size:13px;color:var(--preset-primary)">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
+      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:var(--preset-secondary);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
     </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -690,7 +698,7 @@ if(window.prewedPauseMusic) window.prewedPauseMusic();
     <p class="anim-fade-down text-[10px] uppercase tracking-[0.4em] text-surga-deepsage mb-2 relative z-10">Live Streaming</p>
     <h2 class="anim-zoom font-script text-[2.6rem] text-surga-ink mb-3 relative z-10">Saksikan Langsung</h2>
     <p class="anim-fade font-serif italic text-surga-ink/65 text-[15px] leading-relaxed mb-9 max-w-[320px] relative z-10">Bagi Bapak/Ibu/Saudara/i yang berhalangan hadir, silakan saksikan acara kami secara langsung melalui tayangan berikut.</p>
-    <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+    <div class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid var(--preset-secondary);box-shadow:0 18px 40px rgba(0,0,0,.3)">
 <div style="position:relative;padding-top:56.25%">
 @if($liveId)
 <button type="button" onclick="playLive(this, '{{ $liveId }}')" aria-label="Putar Live Streaming" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
@@ -702,7 +710,7 @@ if(window.prewedPauseMusic) window.prewedPauseMusic();
 @endif
 </div>
 </div>
-<a href="{{ $liveUrl }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA LIVE STREAMING</a>
+<a href="{{ $liveUrl }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-primary);box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA LIVE STREAMING</a>
   </section>
 @endif
 <script>

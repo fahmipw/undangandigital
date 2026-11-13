@@ -306,11 +306,6 @@
                 id="btn-checkin">
                 <span class="material-symbols-outlined">qr_code_scanner</span> Check-in Tamu
             </button>
-            <button onclick="showTab('analytics')"
-                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
-                id="btn-analytics">
-                <span class="material-symbols-outlined">analytics</span> Analitik
-            </button>
             <button onclick="showTab('rsvp')"
                 class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
                 id="btn-rsvp">
@@ -705,67 +700,6 @@
                                 untuk link undangan.</p>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Analytics Tab -->
-            <div id="tab-analytics" class="tab-content hidden">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="font-display-lg text-3xl text-primary">Analitik Undangan</h2>
-                    <button onclick="exportGuestsExcel()"
-                        class="btn-theme px-6 py-3 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg flex items-center gap-2">
-                        <span class="material-symbols-outlined text-sm">download</span> Export Tamu (Excel)
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div class="data-card rounded-3xl p-5">
-                        <div class="text-3xl font-bold text-green-600" id="an-rsvp-hadir">0</div>
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">RSVP Hadir</div>
-                        <div class="text-[11px] opacity-60 mt-1" id="an-rsvp-hadir-tamu">0 tamu</div>
-                    </div>
-                    <div class="data-card rounded-3xl p-5">
-                        <div class="text-3xl font-bold text-red-500" id="an-rsvp-tidak">0</div>
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Berhalangan</div>
-                        <div class="text-[11px] opacity-60 mt-1" id="an-rsvp-total">dari 0 RSVP</div>
-                    </div>
-                    <div class="data-card rounded-3xl p-5">
-                        <div class="text-3xl font-bold text-primary" id="an-ucapan">0</div>
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Total Ucapan</div>
-                        <div class="text-[11px] opacity-60 mt-1">di buku tamu digital</div>
-                    </div>
-                    <div class="data-card rounded-3xl p-5">
-                        <div class="text-3xl font-bold text-primary" id="an-checkin">0</div>
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Sudah Check-in</div>
-                        <div class="text-[11px] opacity-60 mt-1" id="an-tamu">dari 0 tamu terdaftar</div>
-                    </div>
-                </div>
-
-                <div class="data-card p-8 rounded-3xl">
-                    <h3 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest mb-6">
-                        <span class="material-symbols-outlined">bar_chart</span> Grafik RSVP — Hadir vs Berhalangan
-                    </h3>
-                    <div class="space-y-5">
-                        <div>
-                            <div class="flex justify-between text-xs font-bold mb-2">
-                                <span class="text-green-700">HADIR</span>
-                                <span id="an-bar-hadir-label">0 (0%)</span>
-                            </div>
-                            <div class="w-full bg-gray-100 rounded-full h-5 overflow-hidden">
-                                <div id="an-bar-hadir" class="h-full rounded-full transition-all duration-700" style="width:0%;background:linear-gradient(90deg,#4ade80,#16a34a)"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-xs font-bold mb-2">
-                                <span class="text-red-500">BERHALANGAN</span>
-                                <span id="an-bar-tidak-label">0 (0%)</span>
-                            </div>
-                            <div class="w-full bg-gray-100 rounded-full h-5 overflow-hidden">
-                                <div id="an-bar-tidak" class="h-full rounded-full transition-all duration-700" style="width:0%;background:linear-gradient(90deg,#fca5a5,#ef4444)"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-[11px] opacity-50 italic mt-6">*Data untuk undangan yang sedang dipilih di sidebar. Ganti undangan untuk melihat analitik lainnya.</p>
                 </div>
             </div>
 
@@ -1815,50 +1749,6 @@
             showTab(activeTab);
         }
 
-        async function loadAnalytics() {
-            try {
-                const res = await fetch(`api/admin_api?action=get_analytics&inv_id=${currentInvId}`);
-                const data = await res.json();
-                if (!data.success) return;
-                const d = data.data;
-                document.getElementById('an-rsvp-hadir').textContent = d.rsvp_hadir;
-                document.getElementById('an-rsvp-hadir-tamu').textContent = d.rsvp_hadir_tamu + ' tamu';
-                document.getElementById('an-rsvp-tidak').textContent = d.rsvp_tidak;
-                document.getElementById('an-rsvp-total').textContent = 'dari ' + d.rsvp_total + ' RSVP';
-                document.getElementById('an-ucapan').textContent = d.ucapan_total;
-                document.getElementById('an-checkin').textContent = d.checkin_total;
-                document.getElementById('an-tamu').textContent = 'dari ' + d.tamu_total + ' tamu terdaftar';
-                const total = d.rsvp_total || 0;
-                const pHadir = total ? Math.round(d.rsvp_hadir / total * 100) : 0;
-                const pTidak = total ? Math.round(d.rsvp_tidak / total * 100) : 0;
-                document.getElementById('an-bar-hadir').style.width = pHadir + '%';
-                document.getElementById('an-bar-tidak').style.width = pTidak + '%';
-                document.getElementById('an-bar-hadir-label').textContent = d.rsvp_hadir + ' (' + pHadir + '%)';
-                document.getElementById('an-bar-tidak-label').textContent = d.rsvp_tidak + ' (' + pTidak + '%)';
-            } catch (e) { /* abaikan */ }
-        }
-
-        async function exportGuestsExcel() {
-            const res = await fetch(`api/admin_api?action=get_guests&inv_id=${currentInvId}`);
-            const data = await res.json();
-            if (!data.success || !data.data.length) {
-                alert('Belum ada tamu untuk diexport.');
-                return;
-            }
-            const escCsv = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
-            const rows = [['No', 'Nama', 'No HP', 'Kode QR', 'Status Check-in', 'Waktu Check-in']];
-            data.data.forEach((g, i) => {
-                rows.push([i + 1, g.nama, g.no_hp || '', g.qr_code || '', g.checked_in_at ? 'Sudah check-in' : 'Belum check-in', g.checked_in_at || '']);
-            });
-            const csv = '\uFEFF' + rows.map(r => r.map(escCsv).join(';')).join('\r\n');
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'daftar-tamu-' + (currentSlug || currentInvId) + '.csv';
-            a.click();
-            URL.revokeObjectURL(a.href);
-        }
-
         async function loadStats() {
             try {
                 const res = await fetch('api/admin_api?action=get_stats');
@@ -1984,6 +1874,7 @@
         }
 
         function showTab(tabId) {
+            if (!document.getElementById('tab-' + tabId)) tabId = 'settings';
             localStorage.setItem('activeTab', tabId);
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -2001,7 +1892,6 @@
             if (tabId === 'music') loadMusic();
             if (tabId === 'stories') loadStories();
             if (tabId === 'checkin') loadCheckin();
-            if (tabId === 'analytics') loadAnalytics();
 
             document.querySelector('.mobile-sidebar')?.classList.remove('is-open');
             document.querySelector('.admin-sidebar-backdrop')?.classList.remove('is-visible');
