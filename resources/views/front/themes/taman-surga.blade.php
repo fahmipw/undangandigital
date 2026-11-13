@@ -150,18 +150,18 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     /* musik + menu melayang */
     #musicFloat{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:24px;
       width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(135deg,#dcb33a,#b28c1a); color:#3d3413; cursor:pointer;
-      box-shadow:0 8px 22px rgba(201,162,39,.45); border:1px solid rgba(255,255,255,.7); }
+      background:linear-gradient(135deg,rgba(255,253,248,.95),rgba(246,238,218,.97)); color:#7a9b76; cursor:pointer;
+      box-shadow:0 8px 22px rgba(122,155,118,.25); border:1px solid rgba(122,155,118,.8); }
     #musicFloat[hidden]{ display:none !important; }
     #qrFloatBtn{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:188px;
       width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97)); color:#e6c887; cursor:pointer;
-      box-shadow:0 10px 24px rgba(90,70,20,.45); border:1px solid rgba(201,164,92,.8); }
+      background:linear-gradient(160deg,rgba(255,253,248,.95),rgba(246,238,218,.97)); color:#7a9b76; cursor:pointer;
+      box-shadow:0 10px 24px rgba(122,155,118,.25); border:1px solid rgba(122,155,118,.8); }
     #qrFloatBtn[hidden]{ display:none !important; }
     #musicFloat .bars{ display:none; align-items:flex-end; gap:2px; height:16px; }
     #musicFloat.playing .bars{ display:flex; }
     #musicFloat.playing .note{ display:none; }
-    #musicFloat .bars span{ width:3px; background:#3d3413; border-radius:2px; animation:eq 0.9s ease-in-out infinite; }
+    #musicFloat .bars span{ width:3px; background:#7a9b76; border-radius:2px; animation:eq 0.9s ease-in-out infinite; }
     #musicFloat .bars span:nth-child(2){ animation-delay:.2s; } #musicFloat .bars span:nth-child(3){ animation-delay:.45s; }
     @keyframes eq{ 0%,100%{height:6px;} 50%{height:16px;} }
     #floatMenu{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:84px;
@@ -189,7 +189,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
 #floatMenu a.active span,#bottomNav a.active span{max-width:90px;opacity:1;margin-left:6px}
 #floatMenu a.active,#bottomNav a.active{background:rgba(143,185,150,.18)!important;box-shadow:inset 0 0 0 1.5px #c9a227!important;color:#7a9b76!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
-#musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+#musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(255,253,248,.95),rgba(246,238,218,.97))!important;border:1px solid rgba(122,155,118,.8)!important;color:#7a9b76!important;box-shadow:0 10px 24px rgba(122,155,118,.25)!important}
 @media (max-width:400px){
   #bottomNav a,#floatMenu a{padding:7px 6px}
   #bottomNav a svg,#floatMenu a svg{width:20px;height:20px}
@@ -197,7 +197,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
   #qrFloatBtn{bottom:198px!important}
   #toast{bottom:150px!important}
 }
-#musicFloat .bars span{background:#e6c887!important}
+#musicFloat .bars span{background:#7a9b76!important}
 #vinyl{bottom:96px!important}
 @media (prefers-reduced-motion:reduce){}
 </style>
@@ -507,6 +507,21 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
   </section>
 
   <!-- ================= 7. GALERI ================= -->
+<style>
+/* galeri 3D melingkar: kolase foto di cincin, swipe memutar */
+#galGrid.gal3d-on{display:block!important;position:relative;width:100%!important;max-width:none!important;height:var(--galh,380px);perspective:1100px;overflow:visible;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+#galGrid.gal3d-on.drag{cursor:grabbing}
+.gal3d-ring{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,.8,.3,1)}
+.gal3d-ring.nodrag{transition:none}
+.gal3d-slide{position:absolute;left:50%;top:50%;width:var(--galw,260px);aspect-ratio:3/4;margin-left:calc(var(--galw,260px)/-2);margin-top:calc(var(--galw,260px)*-2/3);backface-visibility:hidden;opacity:.45;filter:brightness(.6) saturate(.85);transition:opacity .4s,filter .4s}
+.gal3d-slide.on{opacity:1;filter:none}
+.gal3d-slide .gal-item{width:100%!important;height:100%!important}
+.gal3d-slide .gal-item img{width:100%!important;height:100%!important;-webkit-user-drag:none;user-select:none}
+#gal3dNav button{width:40px;height:40px;border-radius:9999px;border:1px solid rgba(122,155,118,.6);background:rgba(30,19,11,.85);color:#f5ead9;font-size:22px;line-height:1;cursor:pointer}
+#galDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(245,234,217,.35);cursor:pointer}
+#galDots .gal-dot.on{background:#7a9b76}
+@media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
+</style>
   <section id="sec-galeri" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden"
     style="background:linear-gradient(180deg,transparent,rgba(167,139,218,.1),transparent)">
     <svg class="butterfly pointer-events-none absolute top-14 right-[8%] w-10 z-0" style="animation-delay:-1s"><use href="#ts-butterfly"/></svg>
@@ -541,13 +556,18 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
     @endif
 @if(!empty($gallery) && count($gallery))
-    <div class="relative z-10 w-full max-w-[340px] grid grid-cols-2 gap-3">
+    <div id="galGrid" class="relative z-10 w-full max-w-[340px] grid grid-cols-2 gap-3">
       @foreach(array_slice($gallery, 0, 8) as $i => $img)
       <div class="anim-zoom gal-item relative overflow-hidden cursor-pointer {{ $i % 3 === 0 ? 'row-span-2' : '' }}" data-full="{{ $img }}"
         style="border-radius:1.2rem; border:2px solid rgba(255,255,255,.9); box-shadow:0 12px 28px -12px rgba(90,120,100,.4)">
         <img src="{{ $img }}" alt="Galeri {{ $i+1 }}" loading="lazy" class="w-full {{ $i % 3 === 0 ? 'h-64' : 'h-[7.5rem]' }} object-cover transition-transform duration-700 hover:scale-110" />
       </div>
       @endforeach
+    </div>
+    <div id="gal3dNav" class="relative z-10 mt-4 flex items-center justify-center gap-4">
+      <button id="galPrev" type="button" aria-label="Sebelumnya">&#8249;</button>
+      <div id="galDots" class="flex items-center gap-2"></div>
+      <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
     </div>
     @else
     <p class="anim-fade font-serif italic text-surga-ink/55 relative z-10">Galeri kenangan akan segera hadir.</p>
@@ -1029,6 +1049,67 @@ document.querySelectorAll(".copy-btn").forEach(btn=>{
   img.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;},{passive:true});
   img.addEventListener("touchmove",e=>{ const dx=e.touches[0].clientX-sx;
     if(Math.abs(dx)>60){ show(idx+(dx<0?1:-1)); sx=e.touches[0].clientX; } },{passive:true});
+})();
+/* ---------- 11b. GALERI 3D ---------- */
+(function(){
+  const grid=document.getElementById("galGrid");
+  if(!grid) return;
+  const items=[...grid.querySelectorAll(".gal-item")];
+  const n=items.length;
+  if(n<3) return;
+  const prev=document.getElementById("galPrev"), next=document.getElementById("galNext"),
+    dotsBox=document.getElementById("galDots");
+  if(!dotsBox) return;
+  const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const step=360/n;
+  let idx=0, radius=0, slideW=260, dragX=null, dragged=false;
+  const ring=document.createElement("div"); ring.className="gal3d-ring";
+  grid.appendChild(ring);
+  const slides=items.map((it,i)=>{
+    const w=document.createElement("div"); w.className="gal3d-slide";
+    const _im=it.querySelector("img"); if(_im) _im.draggable=false;
+    it.parentNode.insertBefore(w,it); w.appendChild(it); ring.appendChild(w);
+    w.addEventListener("click",e=>{
+      if(dragged){ e.stopPropagation(); e.preventDefault(); dragged=false; return; }
+      if(i!==idx){ e.stopPropagation(); e.preventDefault(); galShow(i); }
+    },true);
+    return w;
+  });
+  const dots=items.map((_,i)=>{
+    const d=document.createElement("button"); d.type="button"; d.className="gal-dot"; d.setAttribute("aria-label","Foto "+(i+1));
+    d.addEventListener("click",()=>galShow(i)); dotsBox.appendChild(d); return d;
+  });
+  function layout(){
+    slideW=Math.min(Math.round(innerWidth*0.62),300);
+    ring.style.setProperty("--galw",slideW+"px");
+    grid.style.setProperty("--galh",(Math.round(slideW*4/3)+24)+"px");
+    radius=Math.round((slideW/2)/Math.tan(Math.PI/n));
+    slides.forEach((w,i)=>{ w.style.transform="rotateY("+(i*step)+"deg) translateZ("+radius+"px)"; });
+    place();
+  }
+  function place(angle){
+    const a=(angle===undefined)?-idx*step:angle;
+    ring.style.transform="translateZ("+(-radius)+"px) rotateY("+a+"deg)";
+  }
+  function galShow(i){
+    idx=(i+n)%n; place();
+    slides.forEach((w,k)=>w.classList.toggle("on",k===idx));
+    dots.forEach((d,k)=>d.classList.toggle("on",k===idx));
+  }
+  grid.classList.add("gal3d-on");
+  if(prev) prev.addEventListener("click",()=>galShow(idx-1));
+  if(next) next.addEventListener("click",()=>galShow(idx+1));
+  grid.addEventListener("pointerdown",e=>{ dragX=e.clientX; dragged=false; ring.classList.add("nodrag"); grid.classList.add("drag"); });
+  grid.addEventListener("pointermove",e=>{ if(dragX===null) return;
+    const dx=e.clientX-dragX; if(Math.abs(dx)>8) dragged=true;
+    if(!reduced) place(-idx*step+dx*0.28); });
+  function endDrag(e){ if(dragX===null) return; const dx=e.clientX-dragX; dragX=null;
+    ring.classList.remove("nodrag"); grid.classList.remove("drag");
+    if(Math.abs(dx)>60) galShow(idx+(dx<0?1:-1)); else place(); }
+  grid.addEventListener("pointerup",endDrag);
+  grid.addEventListener("pointercancel",()=>{ dragX=null; dragged=false; ring.classList.remove("nodrag"); grid.classList.remove("drag"); place(); });
+  addEventListener("resize",layout);
+  layout(); galShow(0);
 })();
 </script>
 

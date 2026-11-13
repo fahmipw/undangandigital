@@ -159,17 +159,17 @@ tailwind.config = {
   .field-pendopo::placeholder{color:rgba(87,80,62,.4)}
   .field-pendopo:focus{border-color:#978045}
   #musicFloat{position:fixed;bottom:96px;right:max(14px,calc(50% - 215px + 14px));z-index:45;
-    width:52px;height:52px;border-radius:50%;border:1px solid rgba(151,128,69,.7);
-    background:radial-gradient(circle at 32% 30%,#ffffff,#f3ecd9 70%);color:#77603a;
-    display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(90,75,40,.35);cursor:pointer}
+    width:52px;height:52px;border-radius:50%;border:1px solid rgba(194,171,114,.8);
+    background:radial-gradient(circle at 32% 30%,#77603a,#2a2519 70%);color:#c2ab72;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(90,70,20,.25);cursor:pointer}
     #qrFloatBtn{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:188px;
       width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97)); color:#e6c887; cursor:pointer;
-      box-shadow:0 10px 24px rgba(90,70,20,.45); border:1px solid rgba(201,164,92,.8); }
+      background:linear-gradient(160deg,rgba(119,96,58,.95),rgba(42,37,25,.97)); color:#c2ab72; cursor:pointer;
+      box-shadow:0 10px 24px rgba(90,70,20,.25); border:1px solid rgba(194,171,114,.8); }
     #qrFloatBtn[hidden]{ display:none !important; }
     #qrFloatBtn.hidden{ display:none !important; }
   #musicFloat .bars{display:none;gap:2.5px;align-items:flex-end;height:16px}
-  #musicFloat .bars span{width:3px;background:#77603a;animation:eqB 0.9s ease-in-out infinite}
+  #musicFloat .bars span{width:3px;background:#c2ab72;animation:eqB 0.9s ease-in-out infinite}
   #musicFloat .bars span:nth-child(2){animation-delay:.25s}
   #musicFloat .bars span:nth-child(3){animation-delay:.5s}
   #musicFloat.playing .bars{display:flex}
@@ -204,7 +204,7 @@ tailwind.config = {
 #floatMenu a.active span,#bottomNav a.active span{max-width:90px;opacity:1;margin-left:6px}
 #floatMenu a.active,#bottomNav a.active{background:rgba(119,96,58,.14)!important;box-shadow:inset 0 0 0 1.5px #c2ab72!important;color:#77603a!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
-#musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+#musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(119,96,58,.95),rgba(42,37,25,.97))!important;border:1px solid rgba(194,171,114,.8)!important;color:#c2ab72!important;box-shadow:0 10px 24px rgba(90,70,20,.25)!important}
 @media (max-width:400px){
   #bottomNav a,#floatMenu a{padding:7px 6px}
   #bottomNav a svg,#floatMenu a svg{width:20px;height:20px}
@@ -212,7 +212,7 @@ tailwind.config = {
   #qrFloatBtn{bottom:198px!important}
   #toast{bottom:150px!important}
 }
-#musicFloat .bars span{background:#e6c887!important}
+#musicFloat .bars span{background:#c2ab72!important}
 #vinyl{bottom:96px!important}
 @media (prefers-reduced-motion:reduce){}
 </style>
@@ -443,10 +443,24 @@ tailwind.config = {
   @endif
 
   <!-- ================= 9. GALERI ================= -->
+<style>
+/* galeri 3D melingkar: kolase foto di cincin, swipe memutar */
+#galGrid.gal3d-on{display:block!important;position:relative;width:100%!important;max-width:none!important;height:var(--galh,380px);perspective:1100px;overflow:visible;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+#galGrid.gal3d-on.drag{cursor:grabbing}
+.gal3d-ring{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,.8,.3,1)}
+.gal3d-ring.nodrag{transition:none}
+.gal3d-slide{position:absolute;left:50%;top:50%;width:var(--galw,260px);aspect-ratio:3/4;margin-left:calc(var(--galw,260px)/-2);margin-top:calc(var(--galw,260px)*-2/3);backface-visibility:hidden;opacity:.45;filter:brightness(.6) saturate(.85);transition:opacity .4s,filter .4s}
+.gal3d-slide.on{opacity:1;filter:none}
+.gal3d-slide .gal-item{width:100%!important;height:100%!important}
+.gal3d-slide .gal-item img{width:100%!important;height:100%!important;-webkit-user-drag:none;user-select:none}
+#gal3dNav button{width:40px;height:40px;border-radius:9999px;border:1px solid rgba(194,171,114,.6);background:rgba(30,19,11,.85);color:#f5ead9;font-size:22px;line-height:1;cursor:pointer}
+#galDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(245,234,217,.35);cursor:pointer}
+#galDots .gal-dot.on{background:#c2ab72}
+@media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
+</style>
   <section id="sec-galeri" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
     <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-2 relative z-10">Wedding Gallery</h2>
     <p class="anim-fade-down text-[11px] tracking-[0.3em] uppercase text-pendopo-deep mb-10 relative z-10">Momen Bahagia Kami</p>
-    <div class="relative z-10 grid grid-cols-2 gap-2.5 w-full max-w-[340px]">
           @if(jpnGet('prewedding_video_file') || jpnGet('prewedding_video_link'))
 @php
   $prewedFile = jpnGet('prewedding_video_file');
@@ -474,6 +488,7 @@ tailwind.config = {
 </div>
     @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full col-span-2 justify-self-center" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
     @endif
+    <div id="galGrid" class="relative z-10 grid grid-cols-2 gap-2.5 w-full max-w-[340px]">
 @if(!empty($gallery) && count($gallery))
         @foreach(array_slice($gallery, 0, 8) as $i => $src)
         <div class="gal-item anim-fade relative overflow-hidden rounded-xl cursor-pointer {{ $i === 0 ? 'col-span-2 aspect-[16/10]' : 'aspect-[4/5]' }}" data-full="{{ $src }}" style="border:1.5px solid rgba(151,128,69,.55); box-shadow:0 12px 26px -12px rgba(119,96,58,.4)">
@@ -487,6 +502,11 @@ tailwind.config = {
         </div>
         @endforeach
       @endif
+    </div>
+    <div id="gal3dNav" class="relative z-10 mt-4 flex items-center justify-center gap-4">
+      <button id="galPrev" type="button" aria-label="Sebelumnya">&#8249;</button>
+      <div id="galDots" class="flex items-center gap-2"></div>
+      <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
     </div>
   </section>
 
@@ -1072,6 +1092,67 @@ function fallbackCopy(text) {
   img.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;},{passive:true});
   img.addEventListener("touchmove",e=>{ const dx=e.touches[0].clientX-sx;
     if(Math.abs(dx)>60){ show(idx+(dx<0?1:-1)); sx=e.touches[0].clientX; } },{passive:true});
+})();
+/* ---------- 11b. GALERI 3D ---------- */
+(function(){
+  const grid=document.getElementById("galGrid");
+  if(!grid) return;
+  const items=[...grid.querySelectorAll(".gal-item")];
+  const n=items.length;
+  if(n<3) return;
+  const prev=document.getElementById("galPrev"), next=document.getElementById("galNext"),
+    dotsBox=document.getElementById("galDots");
+  if(!dotsBox) return;
+  const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const step=360/n;
+  let idx=0, radius=0, slideW=260, dragX=null, dragged=false;
+  const ring=document.createElement("div"); ring.className="gal3d-ring";
+  grid.appendChild(ring);
+  const slides=items.map((it,i)=>{
+    const w=document.createElement("div"); w.className="gal3d-slide";
+    const _im=it.querySelector("img"); if(_im) _im.draggable=false;
+    it.parentNode.insertBefore(w,it); w.appendChild(it); ring.appendChild(w);
+    w.addEventListener("click",e=>{
+      if(dragged){ e.stopPropagation(); e.preventDefault(); dragged=false; return; }
+      if(i!==idx){ e.stopPropagation(); e.preventDefault(); galShow(i); }
+    },true);
+    return w;
+  });
+  const dots=items.map((_,i)=>{
+    const d=document.createElement("button"); d.type="button"; d.className="gal-dot"; d.setAttribute("aria-label","Foto "+(i+1));
+    d.addEventListener("click",()=>galShow(i)); dotsBox.appendChild(d); return d;
+  });
+  function layout(){
+    slideW=Math.min(Math.round(innerWidth*0.62),300);
+    ring.style.setProperty("--galw",slideW+"px");
+    grid.style.setProperty("--galh",(Math.round(slideW*4/3)+24)+"px");
+    radius=Math.round((slideW/2)/Math.tan(Math.PI/n));
+    slides.forEach((w,i)=>{ w.style.transform="rotateY("+(i*step)+"deg) translateZ("+radius+"px)"; });
+    place();
+  }
+  function place(angle){
+    const a=(angle===undefined)?-idx*step:angle;
+    ring.style.transform="translateZ("+(-radius)+"px) rotateY("+a+"deg)";
+  }
+  function galShow(i){
+    idx=(i+n)%n; place();
+    slides.forEach((w,k)=>w.classList.toggle("on",k===idx));
+    dots.forEach((d,k)=>d.classList.toggle("on",k===idx));
+  }
+  grid.classList.add("gal3d-on");
+  if(prev) prev.addEventListener("click",()=>galShow(idx-1));
+  if(next) next.addEventListener("click",()=>galShow(idx+1));
+  grid.addEventListener("pointerdown",e=>{ dragX=e.clientX; dragged=false; ring.classList.add("nodrag"); grid.classList.add("drag"); });
+  grid.addEventListener("pointermove",e=>{ if(dragX===null) return;
+    const dx=e.clientX-dragX; if(Math.abs(dx)>8) dragged=true;
+    if(!reduced) place(-idx*step+dx*0.28); });
+  function endDrag(e){ if(dragX===null) return; const dx=e.clientX-dragX; dragX=null;
+    ring.classList.remove("nodrag"); grid.classList.remove("drag");
+    if(Math.abs(dx)>60) galShow(idx+(dx<0?1:-1)); else place(); }
+  grid.addEventListener("pointerup",endDrag);
+  grid.addEventListener("pointercancel",()=>{ dragX=null; dragged=false; ring.classList.remove("nodrag"); grid.classList.remove("drag"); place(); });
+  addEventListener("resize",layout);
+  layout(); galShow(0);
 })();
 </script>
 

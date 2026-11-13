@@ -551,7 +551,22 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 #bottomNav a{padding:7px 6px}
 #bottomNav a svg{width:20px;height:20px}
 }
-  </style>
+  /* galeri 3D melingkar: kolase foto di cincin, swipe memutar */
+#galGrid.gal3d-on{display:block!important;position:relative;width:100%!important;max-width:none!important;height:var(--galh,380px);perspective:1100px;overflow:visible;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+#galGrid.gal3d-on.drag{cursor:grabbing}
+.gal3d-ring{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,.8,.3,1)}
+.gal3d-ring.nodrag{transition:none}
+.gal3d-slide{position:absolute;left:50%;top:50%;width:var(--galw,260px);aspect-ratio:3/4;margin-left:calc(var(--galw,260px)/-2);margin-top:calc(var(--galw,260px)*-2/3);backface-visibility:hidden;opacity:.45;filter:brightness(.6) saturate(.85);transition:opacity .4s,filter .4s}
+.gal3d-slide.on{opacity:1;filter:none}
+.gal3d-slide .gallery-3d{width:100%!important;height:100%!important;aspect-ratio:auto!important}
+.gal3d-slide .gallery-3d img{-webkit-user-drag:none;user-select:none}
+.gal3dNav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:16px;position:relative;z-index:2}
+.gal3dNav button{width:40px;height:40px;border-radius:9999px;border:1px solid rgba(184,147,74,.65);background:rgba(30,19,11,.85);color:#f5ead9;font-size:22px;line-height:1;cursor:pointer;flex:none}
+.gal3dDots{display:flex;align-items:center;gap:8px}
+.gal3dDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(255,255,255,.35);cursor:pointer}
+.gal3dDots .gal-dot.on{background:#b8934a}
+@media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
+</style>
 </head>
 
 <body class="bg-background text-on-surface font-body-md no-scroll selection:bg-secondary-container">
@@ -874,7 +889,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         </div>
         <?php endif; ?>
         <?php endif; ?>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 reveal-stagger perspective-container">
+        <div id="galGrid" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 reveal-stagger perspective-container">
           <?php if (!empty($gallery)): ?>
           <?php  foreach ($gallery as $index => $img): ?>
           <?php
@@ -927,6 +942,11 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             </div>
           </div>
           <?php  endforeach; ?>
+    <div id="gal3dNav" class="gal3dNav">
+      <button id="galPrev" type="button" aria-label="Sebelumnya">&#8249;</button>
+      <div id="galDots" class="gal3dDots"></div>
+      <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
+    </div>
           <?php else: ?>
           <!-- Default Placeholders if empty -->
           <div
@@ -2162,7 +2182,72 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           },{rootMargin:'-40% 0px -50% 0px'});
           items.forEach(function(it){io.observe(it[1]);});
         })();
-
+/* ---------- GALERI 3D ---------- */
+(function(){
+function gal3dConvert(grid, prev, next, dotsBox, itemSel){
+  if(!grid || grid.classList.contains("gal3d-on")) return false;
+  var items=[...grid.querySelectorAll(itemSel)];
+  var n=items.length;
+  if(n<3) return false;
+  var reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var step=360/n;
+  var idx=0, radius=0, slideW=260, dragX=null, dragged=false;
+  var ring=document.createElement("div"); ring.className="gal3d-ring";
+  grid.appendChild(ring);
+  var slides=items.map(function(it,i){
+    var w=document.createElement("div"); w.className="gal3d-slide";
+    var _im=it.querySelector("img"); if(_im) _im.draggable=false;
+    it.parentNode.insertBefore(w,it); w.appendChild(it); ring.appendChild(w);
+    w.addEventListener("click",function(e){
+      if(dragged){ e.stopPropagation(); e.preventDefault(); dragged=false; return; }
+      if(i!==idx){ e.stopPropagation(); e.preventDefault(); galShow(i); }
+    },true);
+    return w;
+  });
+  var dots=items.map(function(_,i){
+    var d=document.createElement("button"); d.type="button"; d.className="gal-dot"; d.setAttribute("aria-label","Foto "+(i+1));
+    d.addEventListener("click",function(){ galShow(i); }); dotsBox.appendChild(d); return d;
+  });
+  function layout(){
+    slideW=Math.min(Math.round(innerWidth*0.62),300);
+    ring.style.setProperty("--galw",slideW+"px");
+    grid.style.setProperty("--galh",(Math.round(slideW*4/3)+24)+"px");
+    radius=Math.round((slideW/2)/Math.tan(Math.PI/n));
+    slides.forEach(function(w,i){ w.style.transform="rotateY("+(i*step)+"deg) translateZ("+radius+"px)"; });
+    place();
+  }
+  function place(angle){
+    var a=(angle===undefined)?-idx*step:angle;
+    ring.style.transform="translateZ("+(-radius)+"px) rotateY("+a+"deg)";
+  }
+  function galShow(i){
+    idx=(i+n)%n; place();
+    slides.forEach(function(w,k){ w.classList.toggle("on",k===idx); });
+    dots.forEach(function(d,k){ d.classList.toggle("on",k===idx); });
+  }
+  grid.classList.add("gal3d-on");
+  if(prev) prev.addEventListener("click",function(){ galShow(idx-1); });
+  if(next) next.addEventListener("click",function(){ galShow(idx+1); });
+  grid.addEventListener("pointerdown",function(e){ dragX=e.clientX; dragged=false; ring.classList.add("nodrag"); grid.classList.add("drag"); });
+  grid.addEventListener("pointermove",function(e){ if(dragX===null) return;
+    var dx=e.clientX-dragX; if(Math.abs(dx)>8) dragged=true;
+    if(!reduced) place(-idx*step+dx*0.28); });
+  function endDrag(e){ if(dragX===null) return; var dx=e.clientX-dragX; dragX=null;
+    ring.classList.remove("nodrag"); grid.classList.remove("drag");
+    if(Math.abs(dx)>60) galShow(idx+(dx<0?1:-1)); else place(); }
+  grid.addEventListener("pointerup",endDrag);
+  grid.addEventListener("pointercancel",function(){ dragX=null; dragged=false; ring.classList.remove("nodrag"); grid.classList.remove("drag"); place(); });
+  addEventListener("resize",layout);
+  layout(); galShow(0);
+  return true;
+}
+  var grid=document.getElementById("galGrid");
+  var dotsBox=document.getElementById("galDots");
+  if(!grid || !dotsBox) return;
+  if(!gal3dConvert(grid, document.getElementById("galPrev"), document.getElementById("galNext"), dotsBox, '[onclick*="openLightbox"]')){
+    var _nv=document.getElementById("gal3dNav"); if(_nv) _nv.style.display="none";
+  }
+})( );
        </script>
 </body>
 

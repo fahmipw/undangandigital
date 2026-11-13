@@ -615,6 +615,21 @@ function withEnvelope(fn){
   </section>
 
   <!-- ================= 8. GALERI ================= -->
+<style>
+/* galeri 3D melingkar: kolase foto di cincin, swipe memutar */
+#galGrid.gal3d-on{display:block!important;position:relative;width:100%!important;max-width:none!important;height:var(--galh,380px);perspective:1100px;overflow:visible;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+#galGrid.gal3d-on.drag{cursor:grabbing}
+.gal3d-ring{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,.8,.3,1)}
+.gal3d-ring.nodrag{transition:none}
+.gal3d-slide{position:absolute;left:50%;top:50%;width:var(--galw,260px);aspect-ratio:3/4;margin-left:calc(var(--galw,260px)/-2);margin-top:calc(var(--galw,260px)*-2/3);backface-visibility:hidden;opacity:.45;filter:brightness(.6) saturate(.85);transition:opacity .4s,filter .4s}
+.gal3d-slide.on{opacity:1;filter:none}
+.gal3d-slide .gal-item{width:100%!important;height:100%!important}
+.gal3d-slide .gal-item img{width:100%!important;height:100%!important;-webkit-user-drag:none;user-select:none}
+#gal3dNav button{width:40px;height:40px;border-radius:9999px;border:1px solid rgba(212,175,55,.6);background:rgba(30,19,11,.85);color:#f5ead9;font-size:22px;line-height:1;cursor:pointer}
+#galDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(245,234,217,.35);cursor:pointer}
+#galDots .gal-dot.on{background:#e6c887}
+@media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
+</style>
   <section id="sec-galeri" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden batik-bg" style="background-color:#2a1c11">
     <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-20">
       <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint orn w-[30vw] max-w-[128px] opacity-65 scale-x-[-1]" data-speed="1.3" alt="" />
@@ -654,12 +669,17 @@ function withEnvelope(fn){
     @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
     @endif
 @if(!empty($gallery) && count($gallery))
-    <div class="relative z-10 w-full max-w-[340px] grid grid-cols-2 gap-3">
+    <div id="galGrid" class="relative z-10 w-full max-w-[340px] grid grid-cols-2 gap-3">
       @foreach(array_slice($gallery, 0, 8) as $i => $img)
       <div class="anim-zoom gal-item relative overflow-hidden rounded-xl border border-klasik-gold/40 cursor-pointer {{ $i % 3 === 0 ? 'row-span-2' : '' }}" data-full="{{ $img }}" style="box-shadow:inset 0 0 0 3px rgba(212,175,55,.12)">
         <img src="{{ $img }}" alt="Galeri {{ $i+1 }}" loading="lazy" class="w-full {{ $i % 3 === 0 ? 'h-64' : 'h-[7.5rem]' }} object-cover transition-transform duration-700 hover:scale-110" />
       </div>
       @endforeach
+    </div>
+    <div id="gal3dNav" class="relative z-10 mt-4 flex items-center justify-center gap-4">
+      <button id="galPrev" type="button" aria-label="Sebelumnya">&#8249;</button>
+      <div id="galDots" class="flex items-center gap-2"></div>
+      <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
     </div>
     @else
     <p class="anim-fade font-serif italic text-klasik-cream/60 relative z-10">Galeri kenangan akan segera hadir.</p>
@@ -868,8 +888,8 @@ function playLive(btn, id){
 <!-- lightbox -->
 <div id="lightbox" class="fixed inset-0 z-[80] bg-black/95 hidden items-center justify-center p-4">
   <button id="lbClose" class="absolute top-4 right-4 text-klasik-cream text-3xl leading-none px-2" aria-label="Tutup">&times;</button>
-  <button id="lbPrev" class="absolute left-2 text-klasik-cream text-4xl px-2" aria-label="Sebelumnya">&#8249;</button>
   <img id="lbImg" class="max-w-full max-h-[80vh] rounded-xl border border-klasik-gold/40 object-contain" alt="Galeri" />
+  <button id="lbPrev" class="absolute left-2 text-klasik-cream text-4xl px-2" aria-label="Sebelumnya">&#8249;</button>
   <button id="lbNext" class="absolute right-2 text-klasik-cream text-4xl px-2" aria-label="Berikutnya">&#8250;</button>
   <div id="lbCount" class="absolute bottom-5 text-klasik-cream/80 text-sm tracking-widest"></div>
 </div>
@@ -1107,6 +1127,67 @@ document.querySelectorAll(".copy-btn").forEach(btn=>{
   img.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;},{passive:true});
   img.addEventListener("touchmove",e=>{ const dx=e.touches[0].clientX-sx;
     if(Math.abs(dx)>60){ show(idx+(dx<0?1:-1)); sx=e.touches[0].clientX; } },{passive:true});
+})();
+/* ---------- 11b. GALERI 3D ---------- */
+(function(){
+  const grid=document.getElementById("galGrid");
+  if(!grid) return;
+  const items=[...grid.querySelectorAll(".gal-item")];
+  const n=items.length;
+  if(n<3) return;
+  const prev=document.getElementById("galPrev"), next=document.getElementById("galNext"),
+    dotsBox=document.getElementById("galDots");
+  if(!dotsBox) return;
+  const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const step=360/n;
+  let idx=0, radius=0, slideW=260, dragX=null, dragged=false;
+  const ring=document.createElement("div"); ring.className="gal3d-ring";
+  grid.appendChild(ring);
+  const slides=items.map((it,i)=>{
+    const w=document.createElement("div"); w.className="gal3d-slide";
+    const _im=it.querySelector("img"); if(_im) _im.draggable=false;
+    it.parentNode.insertBefore(w,it); w.appendChild(it); ring.appendChild(w);
+    w.addEventListener("click",e=>{
+      if(dragged){ e.stopPropagation(); e.preventDefault(); dragged=false; return; }
+      if(i!==idx){ e.stopPropagation(); e.preventDefault(); galShow(i); }
+    },true);
+    return w;
+  });
+  const dots=items.map((_,i)=>{
+    const d=document.createElement("button"); d.type="button"; d.className="gal-dot"; d.setAttribute("aria-label","Foto "+(i+1));
+    d.addEventListener("click",()=>galShow(i)); dotsBox.appendChild(d); return d;
+  });
+  function layout(){
+    slideW=Math.min(Math.round(innerWidth*0.62),300);
+    ring.style.setProperty("--galw",slideW+"px");
+    grid.style.setProperty("--galh",(Math.round(slideW*4/3)+24)+"px");
+    radius=Math.round((slideW/2)/Math.tan(Math.PI/n));
+    slides.forEach((w,i)=>{ w.style.transform="rotateY("+(i*step)+"deg) translateZ("+radius+"px)"; });
+    place();
+  }
+  function place(angle){
+    const a=(angle===undefined)?-idx*step:angle;
+    ring.style.transform="translateZ("+(-radius)+"px) rotateY("+a+"deg)";
+  }
+  function galShow(i){
+    idx=(i+n)%n; place();
+    slides.forEach((w,k)=>w.classList.toggle("on",k===idx));
+    dots.forEach((d,k)=>d.classList.toggle("on",k===idx));
+  }
+  grid.classList.add("gal3d-on");
+  if(prev) prev.addEventListener("click",()=>galShow(idx-1));
+  if(next) next.addEventListener("click",()=>galShow(idx+1));
+  grid.addEventListener("pointerdown",e=>{ dragX=e.clientX; dragged=false; ring.classList.add("nodrag"); grid.classList.add("drag"); });
+  grid.addEventListener("pointermove",e=>{ if(dragX===null) return;
+    const dx=e.clientX-dragX; if(Math.abs(dx)>8) dragged=true;
+    if(!reduced) place(-idx*step+dx*0.28); });
+  function endDrag(e){ if(dragX===null) return; const dx=e.clientX-dragX; dragX=null;
+    ring.classList.remove("nodrag"); grid.classList.remove("drag");
+    if(Math.abs(dx)>60) galShow(idx+(dx<0?1:-1)); else place(); }
+  grid.addEventListener("pointerup",endDrag);
+  grid.addEventListener("pointercancel",()=>{ dragX=null; dragged=false; ring.classList.remove("nodrag"); grid.classList.remove("drag"); place(); });
+  addEventListener("resize",layout);
+  layout(); galShow(0);
 })();
 </script>
 

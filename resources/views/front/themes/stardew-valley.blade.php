@@ -106,8 +106,8 @@ section{position:relative;padding:56px 20px}
 /* ---------- progress & menu ---------- */
 .pbar{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--gold),#ffdf80);z-index:120;box-shadow:0 0 8px #e8b93c}
 body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn{display:none!important}
-#musBtn{position:fixed;top:14px;right:14px;z-index:110;width:46px;height:46px;border-radius:12px;border:3px solid var(--wood-d);background:var(--wood);color:#fff;font-size:20px;cursor:pointer;box-shadow:0 4px 0 var(--wood-d)}
-#qrFloatBtn{position:fixed;top:70px;right:14px;z-index:110;width:46px;height:46px;border-radius:12px;border:3px solid var(--wood-d);background:var(--wood);color:#fff;font-size:20px;cursor:pointer;box-shadow:0 4px 0 var(--wood-d);display:flex;align-items:center;justify-content:center}
+#musBtn{position:fixed;top:14px;right:14px;z-index:110;width:46px;height:46px;border-radius:12px;border:3px solid rgba(232,185,60,.8);background:rgba(58,42,24,.92);color:#e8b93c;font-size:20px;cursor:pointer;box-shadow:0 4px 0 rgba(58,42,24,.45)}
+#qrFloatBtn{position:fixed;top:70px;right:14px;z-index:110;width:46px;height:46px;border-radius:12px;border:3px solid rgba(232,185,60,.8);background:rgba(58,42,24,.92);color:#e8b93c;font-size:20px;cursor:pointer;box-shadow:0 4px 0 rgba(58,42,24,.45);display:flex;align-items:center;justify-content:center}
 #musBtn:active{transform:translateY(3px);box-shadow:none}
 #musBtn.off{opacity:.55}
 /* Menu bawah pill klasik emas */
@@ -171,6 +171,21 @@ body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn
 .g-frame{background:var(--wood);border:4px solid var(--wood-d);border-radius:8px;padding:8px;box-shadow:0 6px 0 rgba(93,58,26,.3);cursor:zoom-in;transition:transform .2s}
 .g-frame:hover{transform:translateY(-4px) rotate(-1deg)}
 .g-frame img{width:100%;height:170px;object-fit:cover;display:block;border-radius:3px;background:#cfe8d8}
+/* galeri 3D melingkar: kolase foto di cincin, swipe memutar */
+#galGrid.gal3d-on{display:block!important;position:relative;width:100%!important;max-width:none!important;height:var(--galh,380px);perspective:1100px;overflow:visible;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+#galGrid.gal3d-on.drag{cursor:grabbing}
+.gal3d-ring{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,.8,.3,1)}
+.gal3d-ring.nodrag{transition:none}
+.gal3d-slide{position:absolute;left:50%;top:50%;width:var(--galw,260px);aspect-ratio:3/4;margin-left:calc(var(--galw,260px)/-2);margin-top:calc(var(--galw,260px)*-2/3);backface-visibility:hidden;opacity:.45;filter:brightness(.6) saturate(.85);transition:opacity .4s,filter .4s}
+.gal3d-slide.on{opacity:1;filter:none}
+.gal3d-slide .g-frame{height:100%!important}
+.gal3d-slide .g-frame img{height:100%!important;-webkit-user-drag:none;user-select:none}
+.gal3dNav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:16px;position:relative;z-index:2}
+.gal3dNav button{width:40px;height:40px;border-radius:9999px;border:1px solid rgba(232,185,60,.65);background:rgba(43,28,12,.88);color:#e8b93c;font-size:22px;line-height:1;cursor:pointer;flex:none}
+.gal3dDots{display:flex;align-items:center;gap:8px}
+.gal3dDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(255,255,255,.35);cursor:pointer}
+.gal3dDots .gal-dot.on{background:#e8b93c}
+@media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
 /* kisah journal */
 .journal{background:var(--paper);border:4px solid var(--wood-d);border-radius:10px;box-shadow:0 8px 0 rgba(93,58,26,.25);padding:6px}
 .jpage{border:2px dashed rgba(139,90,43,.4);border-radius:6px;padding:20px 16px;margin:10px}
@@ -474,11 +489,16 @@ footer{padding:50px 20px 110px;text-align:center}
   @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div id="prewedBox" style="margin:12px auto 2px;max-width:330px;border:3px solid #7a4a21;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.25);overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@endif @endif
   @endif
 @if(!empty($gallery) && count($gallery))
-  <div class="g-grid rv">
+  <div id="galGrid" class="g-grid rv">
     @foreach(array_slice($gallery, 0, 8) as $img)
     <div class="g-frame"><img src="{{ $img }}" alt="Galeri" loading="lazy"></div>
     @endforeach
   </div>
+    <div id="gal3dNav" class="gal3dNav">
+      <button id="galPrev" type="button" aria-label="Sebelumnya">&#8249;</button>
+      <div id="galDots" class="gal3dDots"></div>
+      <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
+    </div>
   @endif
   <p class="rv" style="text-align:center;font-size:12px;color:var(--ink-soft);margin-top:14px">Klik foto untuk memperbesar • geser untuk lanjut</p>
 </section>
@@ -993,6 +1013,72 @@ if(chick){
     setTimeout(function(){ cl.classList.remove('show'); }, 1200);
   });
 }
+/* ---------- GALERI 3D ---------- */
+(function(){
+function gal3dConvert(grid, prev, next, dotsBox, itemSel){
+  if(!grid || grid.classList.contains("gal3d-on")) return false;
+  var items=[...grid.querySelectorAll(itemSel)];
+  var n=items.length;
+  if(n<3) return false;
+  var reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var step=360/n;
+  var idx=0, radius=0, slideW=260, dragX=null, dragged=false;
+  var ring=document.createElement("div"); ring.className="gal3d-ring";
+  grid.appendChild(ring);
+  var slides=items.map(function(it,i){
+    var w=document.createElement("div"); w.className="gal3d-slide";
+    var _im=it.querySelector("img"); if(_im) _im.draggable=false;
+    it.parentNode.insertBefore(w,it); w.appendChild(it); ring.appendChild(w);
+    w.addEventListener("click",function(e){
+      if(dragged){ e.stopPropagation(); e.preventDefault(); dragged=false; return; }
+      if(i!==idx){ e.stopPropagation(); e.preventDefault(); galShow(i); }
+    },true);
+    return w;
+  });
+  var dots=items.map(function(_,i){
+    var d=document.createElement("button"); d.type="button"; d.className="gal-dot"; d.setAttribute("aria-label","Foto "+(i+1));
+    d.addEventListener("click",function(){ galShow(i); }); dotsBox.appendChild(d); return d;
+  });
+  function layout(){
+    slideW=Math.min(Math.round(innerWidth*0.62),300);
+    ring.style.setProperty("--galw",slideW+"px");
+    grid.style.setProperty("--galh",(Math.round(slideW*4/3)+24)+"px");
+    radius=Math.round((slideW/2)/Math.tan(Math.PI/n));
+    slides.forEach(function(w,i){ w.style.transform="rotateY("+(i*step)+"deg) translateZ("+radius+"px)"; });
+    place();
+  }
+  function place(angle){
+    var a=(angle===undefined)?-idx*step:angle;
+    ring.style.transform="translateZ("+(-radius)+"px) rotateY("+a+"deg)";
+  }
+  function galShow(i){
+    idx=(i+n)%n; place();
+    slides.forEach(function(w,k){ w.classList.toggle("on",k===idx); });
+    dots.forEach(function(d,k){ d.classList.toggle("on",k===idx); });
+  }
+  grid.classList.add("gal3d-on");
+  if(prev) prev.addEventListener("click",function(){ galShow(idx-1); });
+  if(next) next.addEventListener("click",function(){ galShow(idx+1); });
+  grid.addEventListener("pointerdown",function(e){ dragX=e.clientX; dragged=false; ring.classList.add("nodrag"); grid.classList.add("drag"); });
+  grid.addEventListener("pointermove",function(e){ if(dragX===null) return;
+    var dx=e.clientX-dragX; if(Math.abs(dx)>8) dragged=true;
+    if(!reduced) place(-idx*step+dx*0.28); });
+  function endDrag(e){ if(dragX===null) return; var dx=e.clientX-dragX; dragX=null;
+    ring.classList.remove("nodrag"); grid.classList.remove("drag");
+    if(Math.abs(dx)>60) galShow(idx+(dx<0?1:-1)); else place(); }
+  grid.addEventListener("pointerup",endDrag);
+  grid.addEventListener("pointercancel",function(){ dragX=null; dragged=false; ring.classList.remove("nodrag"); grid.classList.remove("drag"); place(); });
+  addEventListener("resize",layout);
+  layout(); galShow(0);
+  return true;
+}
+  var grid=document.getElementById("galGrid");
+  var dotsBox=document.getElementById("galDots");
+  if(!grid || !dotsBox) return;
+  if(!gal3dConvert(grid, document.getElementById("galPrev"), document.getElementById("galNext"), dotsBox, '.g-frame')){
+    var _nv=document.getElementById("gal3dNav"); if(_nv) _nv.style.display="none";
+  }
+})( );
 </script>
 </body>
 </html>

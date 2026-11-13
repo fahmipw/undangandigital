@@ -161,6 +161,20 @@ section{padding:64px 26px;text-align:center;position:relative;perspective:1200px
 .event .time{letter-spacing:.22em;font-size:12px;color:var(--cyan);text-shadow:0 0 10px var(--cyan)}
 .event .loc{font-size:14px;color:var(--tinta-dim);margin:12px 0 18px;line-height:1.7}
 .g-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:24px}
+/* galeri 3D melingkar: kolase foto di cincin, swipe memutar */
+.g-grid.gal3d-on{display:block!important;position:relative;width:100%!important;max-width:none!important;height:var(--galh,380px);perspective:1100px;overflow:visible;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.g-grid.gal3d-on.drag{cursor:grabbing}
+.gal3d-ring{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,.8,.3,1)}
+.gal3d-ring.nodrag{transition:none}
+.gal3d-slide{position:absolute;left:50%;top:50%;width:var(--galw,260px);aspect-ratio:3/4;margin-left:calc(var(--galw,260px)/-2);margin-top:calc(var(--galw,260px)*-2/3);backface-visibility:hidden;opacity:.45;filter:brightness(.6) saturate(.85);transition:opacity .4s,filter .4s;overflow:hidden}
+.gal3d-slide.on{opacity:1;filter:none}
+.gal3d-slide img{width:100%!important;height:100%!important;-webkit-user-drag:none;user-select:none}
+#gal3dNav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:16px}
+#gal3dNav button{width:40px;height:40px;border-radius:9999px;border:1px solid #00e5ff;background:rgba(10,10,24,.92);color:#00e5ff;font-size:22px;line-height:1;cursor:pointer}
+#galDots{display:flex;align-items:center;gap:8px}
+#galDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(0,229,255,.35);cursor:pointer}
+#galDots .gal-dot.on{background:#00e5ff}
+@media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
 .g-grid img{width:100%;height:190px;object-fit:cover;border-radius:12px;border:2px solid rgba(0,229,255,.5);box-shadow:0 8px 22px rgba(0,0,0,.5);transition:.4s}
 .g-grid img:hover{transform:scale(1.04);box-shadow:0 0 26px rgba(0,229,255,.4)}
 .tl{max-width:400px;margin:26px auto 0;text-align:left}
@@ -187,7 +201,7 @@ section{padding:64px 26px;text-align:center;position:relative;perspective:1200px
 footer{padding:56px 26px 110px;text-align:center}
 footer .neon{font-size:34px;font-weight:700}
 #musBtn{position:fixed;bottom:22px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid var(--cyan);background:rgba(8,8,22,.9);color:var(--cyan);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;bottom:130px!important;box-shadow:0 0 22px rgba(0,229,255,.4);text-shadow:0 0 10px var(--cyan)}
-#qrFloatBtn{position:fixed;bottom:192px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid rgba(201,164,92,.85);background:linear-gradient(160deg,#3a2c17,#171106);color:#e6c887;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(90,70,20,.5)}
+#qrFloatBtn{position:fixed;bottom:192px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,229,255,.85);background:linear-gradient(160deg,#0a0a18,#05050c);color:#00e5ff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(10,10,24,.5)}
 
 /* === fitur bawaan default: lightbox, menu, progress, musik === */
 .pbar{position:fixed;top:0;left:0;right:0;height:3px;z-index:96;background:transparent}
@@ -230,7 +244,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 @media (prefers-reduced-motion:reduce){.flyer,.neon,.neon-p,.nheart{animation:none}}
 
 /* Standar menu klasik emas */
-#musBtn{background:linear-gradient(160deg,#3a2c17,#171106)!important;border:1px solid rgba(201,164,92,.85)!important;color:#e6c887!important;box-shadow:0 10px 26px rgba(90,70,20,.5)!important}
+#musBtn{background:linear-gradient(160deg,#0a0a18,#05050c)!important;border:1px solid rgba(0,229,255,.85)!important;color:#00e5ff!important;box-shadow:0 10px 26px rgba(10,10,24,.5)!important}
 </style>
 </head>
 <body>
@@ -406,9 +420,14 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 <div class="rv" style="margin-top:16px">@if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="display:inline-block;padding:11px 28px;border-radius:999px;background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;font-size:11px;font-weight:700;letter-spacing:.22em;text-decoration:none">BUKA VIDEO</a>@endif</div>
   @endif
 @if(!empty($gallery))
-  <div class="g-grid rv">
+  <div id="galGrid" class="g-grid rv">
 @foreach(array_slice($gallery, 0, 8) as $img)<img src="{{ $img }}" alt="Galeri {{ $brideNick }} & {{ $groomNick }}" loading="lazy">@endforeach
 </div>
+  <div id="gal3dNav">
+    <button id="galPrev" type="button" aria-label="Sebelumnya">&#8249;</button>
+    <div id="galDots"></div>
+    <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
+  </div>
   @endif
 </section>
 @endif
@@ -772,6 +791,67 @@ document.querySelectorAll('.g-grid img, .photo, .planet, .frame img, .arch img')
   im.style.cursor = 'zoom-in';
   im.addEventListener('click', function(){ openLb(im.src); });
 });
+/* ---------- GALERI 3D ---------- */
+(function(){
+  var grid=document.getElementById("galGrid");
+  if(!grid) return;
+  var items=[].slice.call(grid.querySelectorAll("img"));
+  var n=items.length;
+  if(n<3) return;
+  var prev=document.getElementById("galPrev"), next=document.getElementById("galNext"),
+    dotsBox=document.getElementById("galDots");
+  if(!dotsBox) return;
+  var reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var step=360/n;
+  var idx=0, radius=0, slideW=260, dragX=null, dragged=false;
+  var ring=document.createElement("div"); ring.className="gal3d-ring";
+  grid.appendChild(ring);
+  var slides=items.map(function(it,i){
+    var w=document.createElement("div"); w.className="gal3d-slide";
+    it.draggable=false;
+    it.parentNode.insertBefore(w,it); w.appendChild(it); ring.appendChild(w);
+    w.addEventListener("click",function(e){
+      if(dragged){ e.stopPropagation(); e.preventDefault(); dragged=false; return; }
+      if(i!==idx){ e.stopPropagation(); e.preventDefault(); galShow(i); }
+    },true);
+    return w;
+  });
+  var dots=items.map(function(_,i){
+    var d=document.createElement("button"); d.type="button"; d.className="gal-dot"; d.setAttribute("aria-label","Foto "+(i+1));
+    d.addEventListener("click",function(){ galShow(i); }); dotsBox.appendChild(d); return d;
+  });
+  function layout(){
+    slideW=Math.min(Math.round(innerWidth*0.62),300);
+    ring.style.setProperty("--galw",slideW+"px");
+    grid.style.setProperty("--galh",(Math.round(slideW*4/3)+24)+"px");
+    radius=Math.round((slideW/2)/Math.tan(Math.PI/n));
+    slides.forEach(function(w,i){ w.style.transform="rotateY("+(i*step)+"deg) translateZ("+radius+"px)"; });
+    place();
+  }
+  function place(angle){
+    var a=(angle===undefined)?-idx*step:angle;
+    ring.style.transform="translateZ("+(-radius)+"px) rotateY("+a+"deg)";
+  }
+  function galShow(i){
+    idx=(i+n)%n; place();
+    slides.forEach(function(w,k){ w.classList.toggle("on",k===idx); });
+    dots.forEach(function(d,k){ d.classList.toggle("on",k===idx); });
+  }
+  grid.classList.add("gal3d-on");
+  if(prev) prev.addEventListener("click",function(){ galShow(idx-1); });
+  if(next) next.addEventListener("click",function(){ galShow(idx+1); });
+  grid.addEventListener("pointerdown",function(e){ dragX=e.clientX; dragged=false; ring.classList.add("nodrag"); grid.classList.add("drag"); });
+  grid.addEventListener("pointermove",function(e){ if(dragX===null) return;
+    var dx=e.clientX-dragX; if(Math.abs(dx)>8) dragged=true;
+    if(!reduced) place(-idx*step+dx*0.28); });
+  function endDrag(e){ if(dragX===null) return; var dx=e.clientX-dragX; dragX=null;
+    ring.classList.remove("nodrag"); grid.classList.remove("drag");
+    if(Math.abs(dx)>60) galShow(idx+(dx<0?1:-1)); else place(); }
+  grid.addEventListener("pointerup",endDrag);
+  grid.addEventListener("pointercancel",function(){ dragX=null; dragged=false; ring.classList.remove("nodrag"); grid.classList.remove("drag"); place(); });
+  addEventListener("resize",layout);
+  layout(); galShow(0);
+})();
 document.getElementById('lb').addEventListener('click', function(e){ if(e.target === this) closeLb(); });
 document.addEventListener('keydown', function(e){
   if(!document.getElementById('lb').classList.contains('show')) return;

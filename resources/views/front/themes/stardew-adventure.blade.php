@@ -132,10 +132,10 @@ select.sd-input{appearance:none}
 .pip{width:26px;height:26px;border-radius:6px;background:#3a2a18;border:2px solid #6e4f2e;
   display:flex;align-items:center;justify-content:center;font-size:14px;filter:grayscale(1);opacity:.55}
 .pip.on{filter:none;opacity:1;background:#fff8e7;border-color:var(--gold)}
-#musicBtn{width:46px;height:46px;border-radius:10px;background:rgba(40,26,12,.85);border:3px solid #fff;
-  color:#fff;font-size:20px;cursor:pointer}
-#qrBtn{width:46px;height:46px;border-radius:10px;background:rgba(40,26,12,.85);border:3px solid #fff;
-  color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#musicBtn{width:46px;height:46px;border-radius:10px;background:rgba(58,36,16,.92);border:3px solid rgba(94,184,61,.8);
+  color:#5eb83d;font-size:20px;cursor:pointer}
+#qrBtn{width:46px;height:46px;border-radius:10px;background:rgba(58,36,16,.92);border:3px solid rgba(94,184,61,.8);
+  color:#5eb83d;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 #hint{position:absolute;left:50%;transform:translateX(-50%);bottom:118px;z-index:5;
   background:rgba(40,26,12,.88);color:#ffe9b0;border:3px solid var(--gold);border-radius:10px;
   padding:9px 16px;font-family:'Press Start 2P',monospace;font-size:10px;text-align:center;max-width:92vw}
@@ -189,6 +189,22 @@ select.sd-input{appearance:none}
 .frame2{background:#a9764a;border:3px solid var(--wood-d);border-radius:6px;padding:8px;text-align:center;cursor:pointer}
 .frame2 img{width:100%;height:150px;object-fit:cover;border-radius:4px;display:block;background:#dff3ff}
 .frame2 p{font-size:18px;color:#ffe9b0;margin-top:6px}
+/* galeri 3D melingkar: kolase foto di cincin, swipe memutar */
+.frames2.gal3d-on{display:block!important;position:relative;width:100%!important;max-width:none!important;height:var(--galh,380px);perspective:1100px;overflow:visible;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.frames2.gal3d-on.drag{cursor:grabbing}
+.gal3d-ring{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,.8,.3,1)}
+.gal3d-ring.nodrag{transition:none}
+.gal3d-slide{position:absolute;left:50%;top:50%;width:var(--galw,260px);aspect-ratio:3/4;margin-left:calc(var(--galw,260px)/-2);margin-top:calc(var(--galw,260px)*-2/3);backface-visibility:hidden;opacity:.45;filter:brightness(.6) saturate(.85);transition:opacity .4s,filter .4s}
+.gal3d-slide.on{opacity:1;filter:none}
+.gal3d-slide .frame2{height:100%!important}
+.gal3d-slide .frame2 img{height:100%!important;-webkit-user-drag:none;user-select:none}
+.gal3d-slide .frame2 p{display:none}
+.gal3dNav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:16px;position:relative;z-index:2}
+.gal3dNav button{width:40px;height:40px;border-radius:9999px;border:1px solid rgba(94,184,61,.65);background:rgba(43,28,12,.88);color:#5eb83d;font-size:22px;line-height:1;cursor:pointer;flex:none}
+.gal3dDots{display:flex;align-items:center;gap:8px}
+.gal3dDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(255,255,255,.35);cursor:pointer}
+.gal3dDots .gal-dot.on{background:#5eb83d}
+@media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
 .story{border-left:4px solid var(--leaf);padding:0 0 4px 16px;margin:0 0 18px 6px;position:relative}
 .story::before{content:"";position:absolute;left:-11px;top:2px;width:18px;height:18px;border-radius:50%;
   background:var(--gold);border:3px solid var(--wood-d)}
@@ -1008,6 +1024,82 @@ addEventListener("resize",()=>{if(started)sizeCanvas();});
 addEventListener("contextmenu",e=>{if(e.target.closest&&e.target.closest("#game"))e.preventDefault();});
 addEventListener("touchmove",e=>{if(started&&!(e.target.closest&&e.target.closest("#panelOverlay")))e.preventDefault();},{passive:false});
 requestAnimationFrame(loop);
+/* ---------- GALERI 3D (panel) ---------- */
+(function(){
+function gal3dConvert(grid, prev, next, dotsBox, itemSel){
+  if(!grid || grid.classList.contains("gal3d-on")) return false;
+  var items=[...grid.querySelectorAll(itemSel)];
+  var n=items.length;
+  if(n<3) return false;
+  var reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var step=360/n;
+  var idx=0, radius=0, slideW=260, dragX=null, dragged=false;
+  var ring=document.createElement("div"); ring.className="gal3d-ring";
+  grid.appendChild(ring);
+  var slides=items.map(function(it,i){
+    var w=document.createElement("div"); w.className="gal3d-slide";
+    var _im=it.querySelector("img"); if(_im) _im.draggable=false;
+    it.parentNode.insertBefore(w,it); w.appendChild(it); ring.appendChild(w);
+    w.addEventListener("click",function(e){
+      if(dragged){ e.stopPropagation(); e.preventDefault(); dragged=false; return; }
+      if(i!==idx){ e.stopPropagation(); e.preventDefault(); galShow(i); }
+    },true);
+    return w;
+  });
+  var dots=items.map(function(_,i){
+    var d=document.createElement("button"); d.type="button"; d.className="gal-dot"; d.setAttribute("aria-label","Foto "+(i+1));
+    d.addEventListener("click",function(){ galShow(i); }); dotsBox.appendChild(d); return d;
+  });
+  function layout(){
+    slideW=Math.min(Math.round(innerWidth*0.62),300);
+    ring.style.setProperty("--galw",slideW+"px");
+    grid.style.setProperty("--galh",(Math.round(slideW*4/3)+24)+"px");
+    radius=Math.round((slideW/2)/Math.tan(Math.PI/n));
+    slides.forEach(function(w,i){ w.style.transform="rotateY("+(i*step)+"deg) translateZ("+radius+"px)"; });
+    place();
+  }
+  function place(angle){
+    var a=(angle===undefined)?-idx*step:angle;
+    ring.style.transform="translateZ("+(-radius)+"px) rotateY("+a+"deg)";
+  }
+  function galShow(i){
+    idx=(i+n)%n; place();
+    slides.forEach(function(w,k){ w.classList.toggle("on",k===idx); });
+    dots.forEach(function(d,k){ d.classList.toggle("on",k===idx); });
+  }
+  grid.classList.add("gal3d-on");
+  if(prev) prev.addEventListener("click",function(){ galShow(idx-1); });
+  if(next) next.addEventListener("click",function(){ galShow(idx+1); });
+  grid.addEventListener("pointerdown",function(e){ dragX=e.clientX; dragged=false; ring.classList.add("nodrag"); grid.classList.add("drag"); });
+  grid.addEventListener("pointermove",function(e){ if(dragX===null) return;
+    var dx=e.clientX-dragX; if(Math.abs(dx)>8) dragged=true;
+    if(!reduced) place(-idx*step+dx*0.28); });
+  function endDrag(e){ if(dragX===null) return; var dx=e.clientX-dragX; dragX=null;
+    ring.classList.remove("nodrag"); grid.classList.remove("drag");
+    if(Math.abs(dx)>60) galShow(idx+(dx<0?1:-1)); else place(); }
+  grid.addEventListener("pointerup",endDrag);
+  grid.addEventListener("pointercancel",function(){ dragX=null; dragged=false; ring.classList.remove("nodrag"); grid.classList.remove("drag"); place(); });
+  addEventListener("resize",layout);
+  layout(); galShow(0);
+  return true;
+}
+  var panelBody=document.getElementById("panelBody");
+  if(!panelBody) return;
+  function convert(grid){
+    if(!grid || grid.classList.contains("gal3d-on")) return;
+    if(grid.querySelectorAll(".frame2").length<3) return;
+    var nav=document.createElement("div"); nav.className="gal3dNav";
+    var prev=document.createElement("button"); prev.type="button"; prev.setAttribute("aria-label","Sebelumnya"); prev.innerHTML="&#8249;";
+    var dotsBox=document.createElement("div"); dotsBox.className="gal3dDots";
+    var next=document.createElement("button"); next.type="button"; next.setAttribute("aria-label","Berikutnya"); next.innerHTML="&#8250;";
+    nav.appendChild(prev); nav.appendChild(dotsBox); nav.appendChild(next);
+    grid.parentNode.insertBefore(nav, grid.nextSibling);
+    gal3dConvert(grid, prev, next, dotsBox, ".frame2");
+  }
+  function scan(){ var g=panelBody.querySelector(".frames2"); if(g) convert(g); }
+  new MutationObserver(scan).observe(panelBody,{childList:true,subtree:true});
+  scan();
+})();
 </script>
 </body>
 </html>
