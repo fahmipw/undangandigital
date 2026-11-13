@@ -29,13 +29,6 @@ if (!function_exists('jwcTime')) {
     return preg_match('/^\d{1,2}(:\d{2})?$/', $t) ? (strpos($t, ':') === false ? $t.':00' : $t) : '08:00';
   }
 }
-/* Preset warna admin (theme_primary dkk; fallback Classic Gold). */
-$presetPrimary = jwcGet('theme_primary', '#361f1a');
-$presetSecondary = jwcGet('theme_secondary', '#775a19');
-$presetBackground = jwcGet('theme_background', '#fbf9f5');
-$presetPrimaryContainer = jwcGet('theme_primary_container', '#4e342e');
-$presetSecondaryContainer = jwcGet('theme_secondary_container', '#fed488');
-$presetSurfaceLow = jwcGet('theme_surface_container_low', '#f5f3ef');
 $groomNick = jwcGet('groom_nickname') ?: jwcGet('groom_name', 'Mempelai Pria');
 $brideNick = jwcGet('bride_nickname') ?: jwcGet('bride_name', 'Mempelai Wanita');
 $groomFull = jwcGet('groom_name', $invitation->groom_name ?? 'Mempelai Pria');
@@ -93,8 +86,8 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
 <script>
 tailwind.config = {
   theme: { extend: {
-    colors: { navy:'{{ $presetPrimaryContainer }}', ivory:'{{ $presetBackground }}', gold:'{{ $presetSecondary }}', golddim:'{{ $presetSecondary }}',
-      terracotta:'{{ $presetSecondary }}', mocha:'{{ $presetPrimary }}', mochadark:'{{ $presetPrimary }}', sand:'{{ $presetSurfaceLow }}' },
+    colors: { navy:'#0A192F', ivory:'#F8F5EE', gold:'#D4AF37', golddim:'#A8842A',
+      terracotta:'#C67B5C', mocha:'#4A3728', mochadark:'#2E2119', sand:'#EDE6D6' },
     fontFamily: {
       serif:['"Cormorant Garamond"','serif'],
       display:['"Playfair Display"','serif'],
@@ -110,30 +103,29 @@ tailwind.config = {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
-<style>/* Preset warna admin — 6 warna theme_preset (dibaca di preamble). */:root{--preset-primary:{{ $presetPrimary }};--preset-secondary:{{ $presetSecondary }};--preset-background:{{ $presetBackground }};--preset-primary-container:{{ $presetPrimaryContainer }};--preset-secondary-container:{{ $presetSecondaryContainer }};--preset-surface-low:{{ $presetSurfaceLow }}}</style>
 <style>
   html{scroll-behavior:auto}
-  body{background:var(--preset-primary-container);overflow-x:hidden}
+  body{background:#0A192F;overflow-x:hidden}
   body.locked{overflow:hidden;height:100vh}
   #webgl{position:fixed;inset:0;z-index:1;pointer-events:none}
   .content-z{position:relative;z-index:10}
-  .gold-text{background:linear-gradient(105deg,var(--preset-secondary) 0%,var(--preset-secondary) 25%,var(--preset-secondary-container) 50%,var(--preset-secondary) 75%,var(--preset-secondary) 100%);
+  .gold-text{background:linear-gradient(105deg,#8a6a1f 0%,#D4AF37 25%,#f6e27a 50%,#D4AF37 75%,#8a6a1f 100%);
     background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
     animation:sheen 6s linear infinite}
   @keyframes sheen{to{background-position:200% center}}
   .arch{border-radius:999px 999px 18px 18px}
   .arch-frame{border:1px solid rgba(212,175,55,.65);outline:1px solid rgba(212,175,55,.3);outline-offset:7px}
-  .hairline{height:1px;background:linear-gradient(90deg,transparent,var(--preset-secondary),transparent)}
-  .truntum{display:flex;justify-content:center;gap:10px;color:var(--preset-secondary);font-size:15px;letter-spacing:2px}
+  .hairline{height:1px;background:linear-gradient(90deg,transparent,#D4AF37,transparent)}
+  .truntum{display:flex;justify-content:center;gap:10px;color:#D4AF37;font-size:15px;letter-spacing:2px}
   .card-ivory{background:rgba(248,245,238,.94);backdrop-filter:blur(6px)}
-  .btn-gold{background:linear-gradient(135deg,#b8942a,var(--preset-secondary) 55%,#f0d878);color:var(--preset-primary-container);
+  .btn-gold{background:linear-gradient(135deg,#b8942a,#D4AF37 55%,#f0d878);color:#0A192F;
     box-shadow:0 8px 24px -8px rgba(212,175,55,.7);transition:transform .25s,box-shadow .25s}
   .btn-gold:hover{transform:translateY(-2px);box-shadow:0 14px 30px -8px rgba(212,175,55,.8)}
-  .btn-ghost{border:1px solid rgba(212,175,55,.7);color:var(--preset-secondary);transition:.25s}
+  .btn-ghost{border:1px solid rgba(212,175,55,.7);color:#D4AF37;transition:.25s}
   .btn-ghost:hover{background:rgba(212,175,55,.12)}
   /* vinyl */
   #vinyl{position:fixed;right:14px;bottom:14px;z-index:60;width:62px;height:62px;border-radius:50%;
-    background:radial-gradient(circle at 50% 50%,var(--preset-secondary) 0 9px,#111 10px,#1c1c1c 11px 30px);
+    background:radial-gradient(circle at 50% 50%,#D4AF37 0 9px,#111 10px,#1c1c1c 11px 30px);
     border:2px solid rgba(212,175,55,.8);box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer;
     display:flex;align-items:center;justify-content:center}
   #vinyl::before{content:"";position:absolute;inset:8px;border-radius:50%;
@@ -141,16 +133,16 @@ tailwind.config = {
   #vinyl.playing{animation:spin 3.2s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   #vinyl .eq{position:absolute;right:-4px;top:-4px;width:18px;height:18px;border-radius:50%;
-    background:var(--preset-secondary);color:var(--preset-primary-container);font-size:11px;display:none;align-items:center;justify-content:center}
+    background:#D4AF37;color:#0A192F;font-size:11px;display:none;align-items:center;justify-content:center}
   #vinyl.playing .eq{display:flex}
   /* toast */
   #toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);z-index:70;
-    background:var(--preset-primary-container);color:var(--preset-background);border:1px solid var(--preset-secondary);border-radius:999px;
+    background:#0A192F;color:#F8F5EE;border:1px solid #D4AF37;border-radius:999px;
     padding:10px 22px;font-size:14px;letter-spacing:.06em;opacity:0;transition:.3s;pointer-events:none;
     max-width:88vw;text-align:center}
   #toast.show{opacity:1;transform:translate(-50%,0)}
   .cd-cell{background:rgba(10,25,47,.55);border:1px solid rgba(212,175,55,.5);backdrop-filter:blur(4px)}
-  input,select,textarea{color:var(--preset-primary-container)}
+  input,select,textarea{color:#0A192F}
   input::placeholder,textarea::placeholder{color:#8a8578}
   .timeline-dot{box-shadow:0 0 0 5px rgba(212,175,55,.18)}
   #cover{transition:none}
@@ -161,14 +153,14 @@ tailwind.config = {
   }
 
 /* Standar menu klasik emas: bottom bar */
-#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px 0;background:var(--preset-background);border:1px solid var(--preset-secondary);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
+#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px 0;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
 #floatMenu::-webkit-scrollbar,#bottomNav::-webkit-scrollbar{display:none}
-#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;height:auto;padding:7px 0;border-radius:13px;color:var(--preset-secondary)!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;height:auto;padding:7px 0;border-radius:13px;color:#978045!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 #floatMenu a svg,#bottomNav a svg{width:21px;height:21px}
-#floatMenu a.active,#bottomNav a.active{background:var(--preset-secondary-container)!important;box-shadow:inset 0 0 0 1.5px var(--preset-secondary)!important;color:var(--preset-secondary)!important}
+#floatMenu a.active,#bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
 #vinyl[hidden]{display:none!important}
-#musicFloat{bottom:130px!important;background:linear-gradient(160deg,var(--preset-primary-container),var(--preset-primary))!important;border:1px solid var(--preset-secondary)!important;color:var(--preset-secondary-container)!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+#musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
 @media (max-width:400px){
   #bottomNav a,#floatMenu a{flex:1 1 18%;min-width:0;max-width:64px}
   #musicFloat{bottom:140px!important}
@@ -177,11 +169,11 @@ tailwind.config = {
 }
     #qrFloatBtn{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:168px;
       width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(160deg,var(--preset-primary-container),var(--preset-primary)); color:var(--preset-secondary-container); cursor:pointer;
-      box-shadow:0 10px 24px rgba(90,70,20,.45); border:1px solid var(--preset-secondary); }
+      background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97)); color:#e6c887; cursor:pointer;
+      box-shadow:0 10px 24px rgba(90,70,20,.45); border:1px solid rgba(201,164,92,.8); }
     #qrFloatBtn[hidden]{ display:none !important; }
     #qrFloatBtn.hidden{ display:none !important; }
-#musicFloat .bars span{background:var(--preset-secondary-container)!important}
+#musicFloat .bars span{background:#e6c887!important}
 #vinyl{bottom:96px!important}
 @media (prefers-reduced-motion:reduce){}
 </style>
@@ -226,12 +218,12 @@ tailwind.config = {
   </div>
 </div>
 <style>
-#envOverlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,var(--preset-primary-container) 0%,var(--preset-primary-container) 72%),repeating-linear-gradient(45deg,rgba(212,163,31,.05) 0 2px,transparent 2px 14px);transition:opacity .5s ease,visibility 0s linear .5s}
+#envOverlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,#1b2f4a 0%,#0A192F 72%),repeating-linear-gradient(45deg,rgba(212,163,31,.05) 0 2px,transparent 2px 14px);transition:opacity .5s ease,visibility 0s linear .5s}
 #envOverlay.gone{opacity:0;visibility:hidden}
 #envOverlay .env-scene{display:flex;flex-direction:column;align-items:center}
 #envOverlay .env-head{text-align:center;margin-bottom:22px;transition:opacity .4s ease}
-#envOverlay .env-head-label{font-size:11px;letter-spacing:.35em;color:var(--preset-secondary);font-weight:700}
-#envOverlay .env-head-names{font-family:Georgia,serif;font-size:30px;font-weight:700;color:var(--preset-background);margin-top:8px}
+#envOverlay .env-head-label{font-size:11px;letter-spacing:.35em;color:#d9a31f;font-weight:700}
+#envOverlay .env-head-names{font-family:Georgia,serif;font-size:30px;font-weight:700;color:#fdf6dd;margin-top:8px}
 #envOverlay .env-wrap{position:relative;width:min(320px,62vw);height:280px;perspective:900px;transform-style:preserve-3d;transition:transform .9s ease-in-out}
 #envOverlay .env-row{display:flex;align-items:flex-end;justify-content:center;width:100%}
 #envOverlay .env-wayang{height:min(260px,62vw);width:auto;flex:none;pointer-events:none;z-index:1}
@@ -245,28 +237,28 @@ tailwind.config = {
 #envOverlay .env-face-back{z-index:1;transform:rotateY(180deg)}
 #envOverlay .env-front-paper{position:absolute;inset:0;background:linear-gradient(180deg,#fffdf4,#f6eeda);border:1px solid #ddd2b8;border-radius:10px;box-shadow:0 24px 60px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
 #envOverlay .env-frame{position:absolute;inset:10px;border:1px solid rgba(180,160,120,.55);border-radius:6px;pointer-events:none}
-#envOverlay .env-sender{position:absolute;top:18px;left:18px;font-size:10px;letter-spacing:.12em;color:var(--preset-primary);text-align:left;line-height:1.6}
+#envOverlay .env-sender{position:absolute;top:18px;left:18px;font-size:10px;letter-spacing:.12em;color:#8a7a5a;text-align:left;line-height:1.6}
 #envOverlay .env-sender b{font-size:11px;color:#5a4632;letter-spacing:.02em}
 #envOverlay .env-rings{position:absolute;top:18px;right:14px;width:72px;height:60px}
-#envOverlay .env-ring{position:absolute;top:0;width:44px;height:44px;border-radius:50%;border:5px solid var(--preset-secondary);box-shadow:0 0 0 1px #b8912a,inset 0 0 0 1px rgba(255,255,255,.5),0 4px 10px rgba(0,0,0,.25)}
+#envOverlay .env-ring{position:absolute;top:0;width:44px;height:44px;border-radius:50%;border:5px solid #d9a31f;box-shadow:0 0 0 1px #b8912a,inset 0 0 0 1px rgba(255,255,255,.5),0 4px 10px rgba(0,0,0,.25)}
 #envOverlay .env-ring.r1{left:0}
 #envOverlay .env-ring.r2{right:0;top:8px}
 #envOverlay .env-recipient{position:relative;font-size:13px;color:#6b5a41;line-height:1.5}
 #envOverlay .env-recipient b{font-size:20px;color:#3a2a1a}
-#envOverlay .env-to-apology{display:block;margin-top:6px;font-size:11px;font-style:italic;line-height:1.45;color:var(--preset-primary)}
+#envOverlay .env-to-apology{display:block;margin-top:6px;font-size:11px;font-style:italic;line-height:1.45;color:#8a7a5a}
 #envOverlay .env-back{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,#fffdf4,#f6eeda);border:1px solid #ddd2b8;border-radius:10px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
 #envOverlay .env-card{position:absolute;left:50%;top:10px;z-index:2;width:min(210px,66vw);height:260px;transform:translateX(-50%);background:linear-gradient(180deg,#fff8e7,#f3e4c2);border-radius:8px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.3);transition:transform .85s cubic-bezier(.22,1,.36,1)}
 #envOverlay.open .env-card,#envOverlay.zoom .env-card{transform:translateX(-50%) translateY(-200px);transition-delay:.25s}
 #envOverlay.zoomcard .env-card{transform:translateX(-50%) translateY(-200px) scale(5);transition-delay:0s;transition-duration:1.05s;z-index:10}
-#envOverlay .env-card-label{font-size:9px;letter-spacing:.35em;color:var(--preset-primary);font-weight:700}
+#envOverlay .env-card-label{font-size:9px;letter-spacing:.35em;color:#8a7a5a;font-weight:700}
 #envOverlay .env-card-date{display:flex;align-items:stretch;justify-content:center;gap:8px;color:#5a4632}
 #envOverlay .env-card-day,#envOverlay .env-card-month{display:flex;align-items:center;font-family:Georgia,serif;font-size:11px}
 #envOverlay .env-card-num{display:flex;flex-direction:column;align-items:center;border-left:1px solid rgba(180,160,120,.6);border-right:1px solid rgba(180,160,120,.6);padding:0 8px}
 #envOverlay .env-card-num b{font-size:22px;line-height:1;color:#3a2a1a}
-#envOverlay .env-card-num i{font-style:normal;font-size:8px;letter-spacing:.2em;color:var(--preset-primary);margin-top:2px}
+#envOverlay .env-card-num i{font-style:normal;font-size:8px;letter-spacing:.2em;color:#8a7a5a;margin-top:2px}
 #envOverlay .env-card-names{font-family:Georgia,serif;font-size:24px;font-weight:700;color:#6d421e;line-height:1.3}
-#envOverlay .env-card-div{width:44px;height:1px;background:var(--preset-secondary)}
-#envOverlay .env-card-mark{font-size:16px;color:var(--preset-secondary)}
+#envOverlay .env-card-div{width:44px;height:1px;background:#c9a45c}
+#envOverlay .env-card-mark{font-size:16px;color:#c9a45c}
 #envOverlay .env-front{position:absolute;left:2px;right:2px;bottom:2px;z-index:3;height:165px;background:linear-gradient(180deg,#fbf6e9,#efe5cb);clip-path:polygon(0 0,50% 52%,100% 0,100% 100%,0 100%);border-radius:0 0 8px 8px}
 #envOverlay .env-fold-l{position:absolute;left:2px;top:2px;bottom:2px;width:50%;z-index:3;background:linear-gradient(180deg,#f5eeda,#e9dfc6);clip-path:polygon(0 0,0 100%,100% 52%)}
 #envOverlay .env-fold-r{position:absolute;right:2px;top:2px;bottom:2px;width:50%;z-index:3;background:linear-gradient(180deg,#f5eeda,#e9dfc6);clip-path:polygon(100% 0,100% 100%,0 52%)}
@@ -277,7 +269,7 @@ tailwind.config = {
 @keyframes envFloat{0%,100%{top:10px}50%{top:-14px}}
 #envOverlay.floating .env-card{animation:envFloat 1.2s ease-in-out infinite}
 #envOverlay.open .env-open-btn,#envOverlay.open .env-hint,#envOverlay.flip .env-open-btn,#envOverlay.flip .env-hint{opacity:0}
-#envOverlay .env-open-btn{margin-top:26px;background:#8e1b12;color:#fff;border:2px solid var(--preset-secondary);border-radius:999px;padding:13px 34px;font-size:14px;font-weight:700;letter-spacing:.15em;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:opacity .4s ease,transform .15s ease}
+#envOverlay .env-open-btn{margin-top:26px;background:#8e1b12;color:#fff;border:2px solid #d9a31f;border-radius:999px;padding:13px 34px;font-size:14px;font-weight:700;letter-spacing:.15em;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:opacity .4s ease,transform .15s ease}
 #envOverlay .env-open-btn:active{transform:scale(.96)}
 #envOverlay .env-hint{margin-top:14px;font-size:12px;letter-spacing:.2em;color:#f4d58a;opacity:.75;transition:opacity .4s ease}
 #envOverlay .env-burst{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;z-index:5}
@@ -379,7 +371,7 @@ function withEnvelope(fn){
 <canvas id="webgl"></canvas>
 
 <!-- ============ COVER ============ -->
-<div id="cover" class="fixed inset-0 z-50 flex items-center justify-center" style="background:radial-gradient(ellipse at 50% 35%,#12294d 0%,var(--preset-primary-container) 68%)">
+<div id="cover" class="fixed inset-0 z-50 flex items-center justify-center" style="background:radial-gradient(ellipse at 50% 35%,#12294d 0%,#0A192F 68%)">
   <div class="absolute top-0 left-0 w-40 h-40 opacity-70 pointer-events-none" data-cover-float>
     <svg viewBox="0 0 100 100" fill="none"><path d="M0 0 Q50 8 100 0 Q92 50 100 100 Q50 92 0 100 Q8 50 0 0Z" stroke="#D4AF37" stroke-width="1.4" opacity=".8"/><circle cx="50" cy="50" r="30" stroke="#D4AF37" stroke-width="1" opacity=".5"/><circle cx="50" cy="50" r="6" fill="#D4AF37" opacity=".8"/></svg>
   </div>
@@ -425,12 +417,12 @@ function withEnvelope(fn){
       <svg viewBox="0 0 100 120" fill="none"><g fill="#C67B5C" opacity=".5"><ellipse cx="50" cy="30" rx="10" ry="22"/><ellipse cx="50" cy="90" rx="10" ry="22"/><ellipse cx="28" cy="60" rx="22" ry="10"/><ellipse cx="72" cy="60" rx="22" ry="10"/><circle cx="50" cy="60" r="9"/></g></svg>
     </div>
     <div class="reveal card-ivory rounded-2xl border border-gold/50 shadow-[0_20px_60px_-20px_rgba(10,25,47,.35)] px-7 py-10 text-center relative overflow-hidden">
-      <div class="absolute inset-x-0 top-0 h-1.5" style="background:repeating-linear-gradient(90deg,var(--preset-secondary) 0 14px,transparent 14px 22px)"></div>
+      <div class="absolute inset-x-0 top-0 h-1.5" style="background:repeating-linear-gradient(90deg,#D4AF37 0 14px,transparent 14px 22px)"></div>
       <p class="truntum mb-4" aria-hidden="true">✦ ✦ ✦</p>
       <p class="reveal font-arabic text-[26px] leading-[2.1] text-mochadark mb-6" dir="rtl">وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً</p>
       <p class="reveal font-serif italic text-mochadark/90 text-lg leading-relaxed mb-4">"Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang."</p>
       <p class="reveal-down text-golddim tracking-[.3em] text-xs font-semibold">QS. AR-RŪM : 21</p>
-      <div class="absolute inset-x-0 bottom-0 h-1.5" style="background:repeating-linear-gradient(90deg,var(--preset-secondary) 0 14px,transparent 14px 22px)"></div>
+      <div class="absolute inset-x-0 bottom-0 h-1.5" style="background:repeating-linear-gradient(90deg,#D4AF37 0 14px,transparent 14px 22px)"></div>
     </div>
   </section>
 
@@ -477,7 +469,7 @@ function withEnvelope(fn){
 
   <!-- ============ ACARA & COUNTDOWN ============ -->
 @if(jwcGet('quotes'))
-  <section id="sec-quotes" class="relative py-16 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:var(--preset-surface-low)">
+  <section id="sec-quotes" class="relative py-16 px-6 flex flex-col items-center text-center overflow-hidden" style="background-color:#EDE6D6">
     <p class="reveal-down font-display text-sm uppercase tracking-[0.4em] text-golddark mb-3 relative z-10">Quotes</p>
     <p class="reveal font-serif italic text-mochadark text-lg leading-relaxed max-w-[330px] relative z-10">&ldquo;{{ jwcGet('quotes') }}&rdquo;</p>
   </section>
@@ -540,7 +532,7 @@ function withEnvelope(fn){
   if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
   $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
 @endphp
-    <div id="prewedBox" class="reveal relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid var(--preset-secondary);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+    <div id="prewedBox" class="reveal relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
 <div style="position:relative;padding-top:56.25%">
 @if($prewedFile)
 <video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
@@ -550,14 +542,14 @@ function withEnvelope(fn){
 <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
 </button>
 @elseif($prewedLink)
-<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:var(--preset-background);text-decoration:none">
+<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
 <span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
 <span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
 </a>
 @endif
 </div>
 </div>
-    @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="reveal relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-primary);box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
+    @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="reveal relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
     @endif
 @if(!empty($gallery) && count($gallery))
     <div class="grid grid-cols-2 gap-3">
@@ -600,14 +592,14 @@ function withEnvelope(fn){
   @if(jwcGet('guest_qr_enabled') && !empty($guestQrCode))
   <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in" hidden><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
   <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
-    <div style="background:var(--preset-background);border:2px solid var(--preset-secondary);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
-      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:var(--preset-primary)">&times;</button>
-      <h2 style="font-family:serif;font-size:24px;color:var(--preset-primary);margin:0 0 6px">QR Check-In</h2>
-      <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:var(--preset-primary)">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+    <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
+      <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
+      <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
       <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
-      <p style="margin:16px 0 0;font-weight:600;color:var(--preset-primary)">{{ $guestName }}</p>
-      <p style="margin:6px 0 0;font-size:13px;color:var(--preset-primary)">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
-      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:var(--preset-secondary);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+      <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
+      <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
+      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
     </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -664,7 +656,7 @@ function withEnvelope(fn){
     @if(!empty($accounts))
     <div class="space-y-4 max-w-sm mx-auto">
 @if($qrisEnabled)
-<div style="max-width:340px;margin:0 auto 18px;background:var(--preset-background);border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:var(--preset-primary);grid-column:1/-1">
+<div style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
 <div style="font-weight:800;letter-spacing:.18em;font-size:13px;color:#c0392b">QRIS</div>
 <p style="font-size:12px;opacity:.65;margin:4px 0 12px">Scan untuk kirim hadiah &mdash; semua e-wallet &amp; m-banking</p>
 <img src="{{ $qrisImage }}" alt="QRIS" style="width:210px;height:210px;object-fit:contain;margin:0 auto;display:block">
@@ -673,7 +665,7 @@ function withEnvelope(fn){
 </div>
 @endif
       @foreach($accounts as $i => $a)
-      <div class="reveal rounded-2xl p-[1.5px]" style="background:linear-gradient(135deg,var(--preset-secondary),var(--preset-secondary),var(--preset-secondary-container),var(--preset-secondary),var(--preset-secondary))">
+      <div class="reveal rounded-2xl p-[1.5px]" style="background:linear-gradient(135deg,#8a6a1f,#D4AF37,#f6e27a,#D4AF37,#8a6a1f)">
         <div class="bg-navy rounded-2xl p-6 text-left">
           <div class="flex items-center justify-between mb-4">
             <p class="text-gold tracking-[.25em] text-xs font-semibold">{{ $a['bank'] }}</p>
@@ -721,7 +713,7 @@ if(window.prewedPauseMusic) window.prewedPauseMusic();
     <p class="reveal-down text-[10px] uppercase tracking-[0.4em] text-golddim mb-2 relative z-10">Live Streaming</p>
     <h2 class="reveal font-display text-4xl mb-3 relative z-10"><span class="gold-text">Saksikan Langsung</span></h2>
     <p class="reveal text-ivory/70 font-serif italic text-[15px] leading-relaxed mb-9 max-w-[320px] relative z-10">Bagi Bapak/Ibu/Saudara/i yang berhalangan hadir, silakan saksikan acara kami secara langsung melalui tayangan berikut.</p>
-    <div class="reveal relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid var(--preset-secondary);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+    <div class="reveal relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
 <div style="position:relative;padding-top:56.25%">
 @if($liveId)
 <button type="button" onclick="playLive(this, '{{ $liveId }}')" aria-label="Putar Live Streaming" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
@@ -733,7 +725,7 @@ if(window.prewedPauseMusic) window.prewedPauseMusic();
 @endif
 </div>
 </div>
-<a href="{{ $liveUrl }}" target="_blank" rel="noopener" class="reveal relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-primary);box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA LIVE STREAMING</a>
+<a href="{{ $liveUrl }}" target="_blank" rel="noopener" class="reveal relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA LIVE STREAMING</a>
   </section>
 @endif
 <script>

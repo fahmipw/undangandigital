@@ -22,19 +22,6 @@ function formatIndoDate($dateStr)
   return $days[date('w', $timestamp)] . ', ' . date('j', $timestamp) . ' ' . $months[date('n', $timestamp)] . ' ' . date('Y', $timestamp);
 }
 
-function hexToRgb($hex)
-{
-  $hex = str_replace('#', '', $hex);
-  if (strlen($hex) === 3) $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
-  return hexdec(substr($hex, 0, 2)) . ', ' . hexdec(substr($hex, 2, 2)) . ', ' . hexdec(substr($hex, 4, 2));
-}
-
-$theme_primary = getSet('theme_primary', '#361f1a');
-$theme_secondary = getSet('theme_secondary', '#775a19');
-$theme_background = getSet('theme_background', '#fbf9f5');
-$theme_primary_container = getSet('theme_primary_container', '#4e342e');
-$theme_secondary_container = getSet('theme_secondary_container', '#fed488');
-$theme_surface_container_low = getSet('theme_surface_container_low', '#f5f3ef');
 $sameEventLocation = ($settings['event_location_mode'] ?? 'same') === 'same';
 $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((string) ($settings['reception_map_link'] ?? ''));
 ?>
@@ -90,16 +77,16 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           colors: {
             "on-error": "#ffffff", "surface-container-lowest": "#ffffff", "error-container": "#ffdad6",
             "primary-fixed": "#ffdad2", "on-tertiary": "#ffffff", "on-secondary-fixed": "#261900",
-            "on-tertiary-fixed": "#2b160f", "secondary": "<?php echo $theme_secondary; ?>", "on-tertiary-container": "#c09d91",
-            "primary-container": "<?php echo $theme_primary_container; ?>", "outline": "#827471", "on-secondary-container": "<?php echo $theme_secondary; ?>",
+            "on-tertiary-fixed": "#2b160f", "secondary": "#775a19", "on-tertiary-container": "#c09d91",
+            "primary-container": "#4e342e", "outline": "#827471", "on-secondary-container": "#775a19",
             "surface-container-high": "#eae8e4", "surface-variant": "#e4e2de", "inverse-primary": "#e5beb5",
-            "tertiary-container": "#4e352c", "surface": "<?php echo $theme_background; ?>", "background": "<?php echo $theme_background; ?>",
+            "tertiary-container": "#4e352c", "surface": "#fbf9f5", "background": "#fbf9f5",
             "on-primary-fixed-variant": "#5c403a", "on-background": "#1b1c1a",
             "on-primary-container": "#c19c94", "on-secondary": "#ffffff", "surface-container": "#efeeea",
-            "primary": "<?php echo $theme_primary; ?>", "on-error-container": "#93000a", "surface-container-highest": "#e4e2de",
+            "primary": "#361f1a", "on-error-container": "#93000a", "surface-container-highest": "#e4e2de",
             "on-primary": "#ffffff", "on-surface-variant": "#504442", "outline-variant": "#d4c3bf",
-            "surface-container-low": "<?php echo $theme_surface_container_low; ?>", "inverse-surface": "#30312e", "surface-bright": "<?php echo $theme_background; ?>",
-            "secondary-fixed": "#ffdea5", "secondary-container": "<?php echo $theme_secondary_container; ?>", "secondary-fixed-dim": "#e9c176",
+            "surface-container-low": "#f5f3ef", "inverse-surface": "#30312e", "surface-bright": "#fbf9f5",
+            "secondary-fixed": "#ffdea5", "secondary-container": "#fed488", "secondary-fixed-dim": "#e9c176",
             "on-secondary-fixed-variant": "#5d4201", "surface-dim": "#dbdad6", "surface-tint": "#755750",
             "inverse-on-surface": "#f2f0ed", "on-primary-fixed": "#2b1611", "tertiary-fixed-dim": "#e4beb2",
             "error": "#ba1a1a", "tertiary": "#352017", "on-tertiary-fixed-variant": "#5b4137",
@@ -125,26 +112,14 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
   <style>
     :root {
       --primary-color:
-        <?php echo $theme_primary; ?>
+        #361f1a
       ;
       --secondary-color:
-        <?php echo $theme_secondary; ?>
+        #775a19
       ;
       --bg-color:
-        <?php echo $theme_background; ?>
+        #fbf9f5
       ;
-      --preset-primary: <?php echo $theme_primary; ?>;
-      --preset-secondary: <?php echo $theme_secondary; ?>;
-      --preset-background: <?php echo $theme_background; ?>;
-      --preset-primary-container: <?php echo $theme_primary_container; ?>;
-      --preset-secondary-container: <?php echo $theme_secondary_container; ?>;
-      --preset-surface-low: <?php echo $theme_surface_container_low; ?>;
-      --preset-primary-rgb: <?php echo hexToRgb($theme_primary); ?>;
-      --preset-secondary-rgb: <?php echo hexToRgb($theme_secondary); ?>;
-      --preset-background-rgb: <?php echo hexToRgb($theme_background); ?>;
-      --preset-primary-container-rgb: <?php echo hexToRgb($theme_primary_container); ?>;
-      --preset-secondary-container-rgb: <?php echo hexToRgb($theme_secondary_container); ?>;
-      --preset-surface-low-rgb: <?php echo hexToRgb($theme_surface_container_low); ?>;
     }
 
     /* Override static stylesheet rules with user's theme colors */
@@ -158,7 +133,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
     }
 
     .dot-track {
-      border-color: rgba(<?php echo hexToRgb($theme_secondary); ?>, 0.15) !important;
+      border-color: rgba(119, 90, 25, 0.15) !important;
     }
 
     .header-menu a:hover,
@@ -188,7 +163,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 
     .attendance-btn.selected-hadir {
       background: var(--secondary-color) !important;
-      box-shadow: 0 4px 16px rgba(<?php echo hexToRgb($theme_secondary); ?>, 0.3) !important;
+      box-shadow: 0 4px 16px rgba(119, 90, 25, 0.3) !important;
     }
 
     .rsvp-field label {
@@ -203,7 +178,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
     }
 
     #scroll-progress {
-      background: linear-gradient(90deg, var(--secondary-color), var(--preset-secondary-container)) !important;
+      background: linear-gradient(90deg, var(--secondary-color), #D4AF37) !important;
     }
 
     #opening-overlay {
@@ -224,7 +199,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 
     #opening-overlay .opening-button {
       background: var(--secondary-color);
-      border-color: var(--preset-secondary-container);
+      border-color: #f4d58a;
     }
 
     #cover-gate {
@@ -288,8 +263,8 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       width: 2px;
       height: 100%;
       z-index: 3;
-      background: linear-gradient(180deg, transparent, var(--preset-secondary-container) 18%, var(--preset-background) 50%, var(--preset-secondary-container) 82%, transparent);
-      box-shadow: 0 0 10px var(--preset-secondary-container), 0 0 28px rgb(var(--preset-secondary-container-rgb) / .85);
+      background: linear-gradient(180deg, transparent, #f4d58a 18%, #fff1b8 50%, #f4d58a 82%, transparent);
+      box-shadow: 0 0 10px #f4d58a, 0 0 28px rgba(244, 213, 138, 0.85);
       transform: translateX(-50%);
       transition: opacity 0.35s ease;
     }
@@ -336,7 +311,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
     }
 
     .top-header {
-      border-bottom: 1px solid rgba(<?php echo hexToRgb($theme_secondary); ?>, 0.2) !important;
+      border-bottom: 1px solid rgba(119, 90, 25, 0.2) !important;
     }
 
     .top-header h1 {
@@ -427,16 +402,16 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
     }
 
     .attendance-btn.selected-hadir {
-      background: var(--preset-secondary);
+      background: #775a19;
       color: #fff;
-      box-shadow: 0 4px 16px rgb(var(--preset-secondary-rgb) / .3);
+      box-shadow: 0 4px 16px rgba(119, 90, 25, 0.3);
       transform: translateY(-2px);
     }
 
     .attendance-btn.selected-tidak {
-      background: var(--preset-primary-container);
+      background: #4e342e;
       color: #fff;
-      box-shadow: 0 4px 16px rgb(var(--preset-primary-container-rgb) / .3);
+      box-shadow: 0 4px 16px rgba(78, 52, 46, 0.3);
       transform: translateY(-2px);
     }
 
@@ -469,7 +444,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
     }
 
     .toast {
-      background: var(--preset-primary-container);
+      background: #4e342e;
       color: #fff;
       padding: 12px 20px;
       border-radius: 8px;
@@ -536,7 +511,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       font-weight: 600;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--preset-secondary);
+      color: #775a19;
       transition: all 0.2s;
       pointer-events: none;
     }
@@ -546,7 +521,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       width: 100%;
       background: transparent;
       border: 0;
-      border-bottom: 1px solid var(--preset-secondary-container);
+      border-bottom: 1px solid #d4c3bf;
       padding: 1.6rem 0 0.5rem;
       font-size: 1rem;
       outline: none;
@@ -565,10 +540,10 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       cursor: pointer;
     }
 /* Menu bawah pill klasik emas */
-#bottomNav{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:46;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:2px 0;row-gap:2px;background:rgb(var(--preset-background-rgb) / .94);border:1px solid rgb(var(--preset-secondary-rgb) / .4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgb(var(--preset-secondary-rgb) / .25);width:min(96vw,500px);max-width:96vw}
-#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:var(--preset-secondary)!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+#bottomNav{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:46;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:2px 0;row-gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw}
+#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:#978045!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 #bottomNav a svg{width:21px;height:21px}
-#bottomNav a.active{background:rgb(var(--preset-secondary-rgb) / .14)!important;box-shadow:inset 0 0 0 1.5px var(--preset-secondary)!important;color:var(--preset-secondary)!important}
+#bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
 #bottomNav[hidden]{display:none!important}
 @media (max-width:400px){
 #bottomNav a{flex:1 1 18%;min-width:0;max-width:64px}
@@ -694,7 +669,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
              Syarat tampil sama dengan section QR: QR diaktifkan + tamu punya QR. -->
         <button onclick="openQrModal()"
           aria-label="QR Check-in" title="QR Check-in"
-          style="width:2.25rem;height:2.25rem;border-radius:9999px;background:var(--preset-secondary);color:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(78,52,46,.2);cursor:pointer">
+          style="width:2.25rem;height:2.25rem;border-radius:9999px;background:#775a19;color:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(78,52,46,.2);cursor:pointer">
           <span class="material-symbols-outlined" style="font-size:1.25rem">qr_code</span>
         </button>
         <?php endif; ?>
@@ -766,7 +741,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
               </div>
 
               <!-- Outer Gold Border Layer with Clip-path -->
-              <div class="absolute inset-0 bg-gradient-to-br from-[var(--preset-secondary-container)] via-[var(--preset-secondary)] to-[var(--preset-secondary)]"
+              <div class="absolute inset-0 bg-gradient-to-br from-[#FDE047] via-[#D4AF37] to-[#997300]"
                 style="clip-path: ellipse(50% 50% at 50% 50%);"></div>
 
               <!-- Inner Photo Layer with Clip-path (Slightly smaller to create border) -->
@@ -778,7 +753,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
               </div>
 
               <!-- Ornamen Bawah (Gebyok style) -->
-              <div class="absolute -bottom-7 left-1/2 -translate-x-1/2 z-10 text-[var(--preset-secondary)] rotate-180">
+              <div class="absolute -bottom-7 left-1/2 -translate-x-1/2 z-10 text-[#D4AF37] rotate-180">
                 <svg viewBox="0 0 100 50" class="w-24 h-12 drop-shadow-md" fill="currentColor">
                   <path d="M50,0 C60,20 80,10 100,30 C70,35 60,50 50,50 C40,50 30,35 0,30 C20,10 40,20 50,0 Z"></path>
                 </svg>
@@ -817,7 +792,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
               </div>
 
               <!-- Outer Gold Border Layer with Clip-path -->
-              <div class="absolute inset-0 bg-gradient-to-br from-[var(--preset-secondary-container)] via-[var(--preset-secondary)] to-[var(--preset-secondary)]"
+              <div class="absolute inset-0 bg-gradient-to-br from-[#FDE047] via-[#D4AF37] to-[#997300]"
                 style="clip-path: ellipse(50% 50% at 50% 50%);"></div>
 
               <!-- Inner Photo Layer with Clip-path (Slightly smaller to create border) -->
@@ -829,7 +804,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
               </div>
 
               <!-- Ornamen Bawah (Gebyok style) -->
-              <div class="absolute -bottom-7 left-1/2 -translate-x-1/2 z-10 text-[var(--preset-secondary)] rotate-180">
+              <div class="absolute -bottom-7 left-1/2 -translate-x-1/2 z-10 text-[#D4AF37] rotate-180">
                 <svg viewBox="0 0 100 50" class="w-24 h-12 drop-shadow-md" fill="currentColor">
                   <path d="M50,0 C60,20 80,10 100,30 C70,35 60,50 50,50 C40,50 30,35 0,30 C20,10 40,20 50,0 Z"></path>
                 </svg>
@@ -880,7 +855,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
               <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
             </button>
             <?php elseif ($prewedLink): ?>
-            <a href="<?php echo $prewedLink; ?>" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:var(--preset-surface-low);text-decoration:none">
+            <a href="<?php echo $prewedLink; ?>" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
               <span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
               <span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
             </a>
@@ -904,33 +879,33 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
     $class = $isLarge ? "col-span-2 md:col-span-2 md:row-span-2 aspect-[4/5]" : "col-span-1 aspect-square";
               ?>
           <div
-            class="<?php    echo $class; ?> p-2 md:p-3 bg-gradient-to-br from-[var(--preset-primary-container)] to-[var(--preset-primary)] cursor-pointer group relative gallery-3d shadow-xl"
-            style="border-radius: 8px; border: 1px solid var(--preset-primary); box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 0 20px rgba(0,0,0,0.8);"
+            class="<?php    echo $class; ?> p-2 md:p-3 bg-gradient-to-br from-[#4a332a] to-[#2e1f19] cursor-pointer group relative gallery-3d shadow-xl"
+            style="border-radius: 8px; border: 1px solid #704b39; box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 0 20px rgba(0,0,0,0.8);"
             onclick="openLightbox('<?php    echo $img; ?>')">
 
             <!-- Ornamen Sudut Emas (Corner Ornaments) -->
-            <div class="absolute top-1.5 left-1.5 w-4 h-4 md:w-6 md:h-6 pointer-events-none text-[var(--preset-secondary)] opacity-90">
+            <div class="absolute top-1.5 left-1.5 w-4 h-4 md:w-6 md:h-6 pointer-events-none text-[#D4AF37] opacity-90">
               <svg viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg>
             </div>
             <div
-              class="absolute top-1.5 right-1.5 w-4 h-4 md:w-6 md:h-6 pointer-events-none text-[var(--preset-secondary)] rotate-90 opacity-90">
+              class="absolute top-1.5 right-1.5 w-4 h-4 md:w-6 md:h-6 pointer-events-none text-[#D4AF37] rotate-90 opacity-90">
               <svg viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg>
             </div>
             <div
-              class="absolute bottom-1.5 right-1.5 w-4 h-4 md:w-6 md:h-6 pointer-events-none text-[var(--preset-secondary)] rotate-180 opacity-90">
+              class="absolute bottom-1.5 right-1.5 w-4 h-4 md:w-6 md:h-6 pointer-events-none text-[#D4AF37] rotate-180 opacity-90">
               <svg viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg>
             </div>
             <div
-              class="absolute bottom-1.5 left-1.5 w-4 h-4 md:w-6 md:h-6 pointer-events-none text-[var(--preset-secondary)] -rotate-90 opacity-90">
+              class="absolute bottom-1.5 left-1.5 w-4 h-4 md:w-6 md:h-6 pointer-events-none text-[#D4AF37] -rotate-90 opacity-90">
               <svg viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
@@ -939,7 +914,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 
             <!-- Inner Frame List (List Emas) -->
             <div
-              class="w-full h-full relative overflow-hidden rounded-sm border-[2px] border-[rgb(var(--preset-secondary-rgb)_/_0.8)] shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]">
+              class="w-full h-full relative overflow-hidden rounded-sm border-[2px] border-[#D4AF37]/80 shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]">
               <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 alt="Gallery image" src="<?php    echo $img; ?>" />
               <div
@@ -952,86 +927,86 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           <?php else: ?>
           <!-- Default Placeholders if empty -->
           <div
-            class="col-span-2 md:col-span-2 md:row-span-2 aspect-[4/5] p-3 bg-gradient-to-br from-[var(--preset-primary-container)] to-[var(--preset-primary)] relative gallery-3d shadow-xl"
-            style="border-radius: 8px; border: 1px solid var(--preset-primary); box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 0 20px rgba(0,0,0,0.8);">
-            <div class="absolute top-1.5 left-1.5 w-6 h-6 pointer-events-none text-[var(--preset-secondary)] opacity-90"><svg
+            class="col-span-2 md:col-span-2 md:row-span-2 aspect-[4/5] p-3 bg-gradient-to-br from-[#4a332a] to-[#2e1f19] relative gallery-3d shadow-xl"
+            style="border-radius: 8px; border: 1px solid #704b39; box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 0 20px rgba(0,0,0,0.8);">
+            <div class="absolute top-1.5 left-1.5 w-6 h-6 pointer-events-none text-[#D4AF37] opacity-90"><svg
                 viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg></div>
-            <div class="absolute top-1.5 right-1.5 w-6 h-6 pointer-events-none text-[var(--preset-secondary)] rotate-90 opacity-90"><svg
+            <div class="absolute top-1.5 right-1.5 w-6 h-6 pointer-events-none text-[#D4AF37] rotate-90 opacity-90"><svg
                 viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg></div>
-            <div class="absolute bottom-1.5 right-1.5 w-6 h-6 pointer-events-none text-[var(--preset-secondary)] rotate-180 opacity-90">
+            <div class="absolute bottom-1.5 right-1.5 w-6 h-6 pointer-events-none text-[#D4AF37] rotate-180 opacity-90">
               <svg viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg></div>
-            <div class="absolute bottom-1.5 left-1.5 w-6 h-6 pointer-events-none text-[var(--preset-secondary)] -rotate-90 opacity-90">
+            <div class="absolute bottom-1.5 left-1.5 w-6 h-6 pointer-events-none text-[#D4AF37] -rotate-90 opacity-90">
               <svg viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg></div>
-            <div class="w-full h-full relative overflow-hidden rounded-sm border-[2px] border-[rgb(var(--preset-secondary-rgb)_/_0.8)]">
+            <div class="w-full h-full relative overflow-hidden rounded-sm border-[2px] border-[#D4AF37]/80">
               <img src="adat.jpeg" class="w-full h-full object-cover opacity-50 grayscale" alt="Placeholder">
             </div>
           </div>
 
           <div
-            class="col-span-1 aspect-square p-2 bg-gradient-to-br from-[var(--preset-primary-container)] to-[var(--preset-primary)] relative gallery-3d shadow-xl"
-            style="border-radius: 6px; border: 1px solid var(--preset-primary); box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 15px rgba(0,0,0,0.8);">
-            <div class="absolute top-1 left-1 w-4 h-4 pointer-events-none text-[var(--preset-secondary)] opacity-90"><svg
+            class="col-span-1 aspect-square p-2 bg-gradient-to-br from-[#4a332a] to-[#2e1f19] relative gallery-3d shadow-xl"
+            style="border-radius: 6px; border: 1px solid #704b39; box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 15px rgba(0,0,0,0.8);">
+            <div class="absolute top-1 left-1 w-4 h-4 pointer-events-none text-[#D4AF37] opacity-90"><svg
                 viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg></div>
-            <div class="absolute top-1 right-1 w-4 h-4 pointer-events-none text-[var(--preset-secondary)] rotate-90 opacity-90"><svg
+            <div class="absolute top-1 right-1 w-4 h-4 pointer-events-none text-[#D4AF37] rotate-90 opacity-90"><svg
                 viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg></div>
-            <div class="absolute bottom-1 right-1 w-4 h-4 pointer-events-none text-[var(--preset-secondary)] rotate-180 opacity-90"><svg
+            <div class="absolute bottom-1 right-1 w-4 h-4 pointer-events-none text-[#D4AF37] rotate-180 opacity-90"><svg
                 viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg></div>
-            <div class="absolute bottom-1 left-1 w-4 h-4 pointer-events-none text-[var(--preset-secondary)] -rotate-90 opacity-90"><svg
+            <div class="absolute bottom-1 left-1 w-4 h-4 pointer-events-none text-[#D4AF37] -rotate-90 opacity-90"><svg
                 viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg></div>
-            <div class="w-full h-full relative overflow-hidden rounded-sm border border-[rgb(var(--preset-secondary-rgb)_/_0.8)]">
+            <div class="w-full h-full relative overflow-hidden rounded-sm border border-[#D4AF37]/80">
               <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc"
                 class="w-full h-full object-cover opacity-50 grayscale" alt="Placeholder">
             </div>
           </div>
 
           <div
-            class="col-span-1 aspect-square p-2 bg-gradient-to-br from-[var(--preset-primary-container)] to-[var(--preset-primary)] relative gallery-3d shadow-xl"
-            style="border-radius: 6px; border: 1px solid var(--preset-primary); box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 15px rgba(0,0,0,0.8);">
-            <div class="absolute top-1 left-1 w-4 h-4 pointer-events-none text-[var(--preset-secondary)] opacity-90"><svg
+            class="col-span-1 aspect-square p-2 bg-gradient-to-br from-[#4a332a] to-[#2e1f19] relative gallery-3d shadow-xl"
+            style="border-radius: 6px; border: 1px solid #704b39; box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 15px rgba(0,0,0,0.8);">
+            <div class="absolute top-1 left-1 w-4 h-4 pointer-events-none text-[#D4AF37] opacity-90"><svg
                 viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg></div>
-            <div class="absolute top-1 right-1 w-4 h-4 pointer-events-none text-[var(--preset-secondary)] rotate-90 opacity-90"><svg
+            <div class="absolute top-1 right-1 w-4 h-4 pointer-events-none text-[#D4AF37] rotate-90 opacity-90"><svg
                 viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg></div>
-            <div class="absolute bottom-1 right-1 w-4 h-4 pointer-events-none text-[var(--preset-secondary)] rotate-180 opacity-90"><svg
+            <div class="absolute bottom-1 right-1 w-4 h-4 pointer-events-none text-[#D4AF37] rotate-180 opacity-90"><svg
                 viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg></div>
-            <div class="absolute bottom-1 left-1 w-4 h-4 pointer-events-none text-[var(--preset-secondary)] -rotate-90 opacity-90"><svg
+            <div class="absolute bottom-1 left-1 w-4 h-4 pointer-events-none text-[#D4AF37] -rotate-90 opacity-90"><svg
                 viewBox="0 0 40 40" fill="currentColor">
                 <path d="M0,0 L40,0 L40,4 C20,4 4,20 4,40 L0,40 Z" />
                 <circle cx="12" cy="12" r="4" />
               </svg></div>
-            <div class="w-full h-full relative overflow-hidden rounded-sm border border-[rgb(var(--preset-secondary-rgb)_/_0.8)]">
+            <div class="w-full h-full relative overflow-hidden rounded-sm border border-[#D4AF37]/80">
               <img src="https://images.unsplash.com/photo-1519741497674-611481863552"
                 class="w-full h-full object-cover opacity-50 grayscale" alt="Placeholder">
             </div>
@@ -1041,7 +1016,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       </section>
       <section class="px-margin-page mb-section-gap relative z-10 reveal" id="kisah">
 
-        <div class="bg-surface-container-low p-8 rounded-xl border border-[rgb(var(--preset-secondary-rgb)_/_0.2)] relative">
+        <div class="bg-surface-container-low p-8 rounded-xl border border-[#D4AF37]/20 relative">
 
           <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-4">
             <span class="material-symbols-outlined text-secondary text-3xl">auto_stories</span>
@@ -1095,7 +1070,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           <span class="font-label-caps text-label-caps text-secondary mb-2 block reveal-down">QUOTES</span>
         </div>
         <div class="mt-4 text-center">
-          <div class="inline-block p-6 border border-[rgb(var(--preset-secondary-rgb)_/_0.3)] rounded-xl bg-surface shadow-sm max-w-sm mx-auto">
+          <div class="inline-block p-6 border border-[#D4AF37]/30 rounded-xl bg-surface shadow-sm max-w-sm mx-auto">
             <p class="font-serif text-lg leading-relaxed text-secondary mb-3" dir="rtl" lang="ar">
               وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ
               بَيْنَكُم
@@ -1129,7 +1104,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         <div
           class="bg-surface-container-low rounded-xl p-8 border border-outline-variant/30 text-center relative overflow-hidden card-3d">
           <div class="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none"
-            style="background-image:radial-gradient(circle at 2px 2px,var(--preset-secondary) 1px,transparent 0);background-size:24px 24px;">
+            style="background-image:radial-gradient(circle at 2px 2px,#775a19 1px,transparent 0);background-size:24px 24px;">
           </div>
           <p class="font-label-caps text-label-caps text-secondary mb-6 tracking-[0.3em]">MENGHITUNG HARI</p>
           <div id="countdown" class="countdown-grid"></div>
@@ -1337,7 +1312,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         <!-- Card -->
         <div class="relative rounded-3xl overflow-hidden shadow-xl">
           <!-- Decorative top gradient band -->
-          <div class="h-2 bg-gradient-to-r from-secondary via-[var(--preset-secondary)] to-secondary"></div>
+          <div class="h-2 bg-gradient-to-r from-secondary via-[#D4AF37] to-secondary"></div>
 
           <!-- Background blurred ornament -->
           <div class="absolute -top-10 -right-10 opacity-[0.06] pointer-events-none">
@@ -1354,7 +1329,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
               <label>NAMA LENGKAP</label>
               <input id="rsvp-name" type="text" placeholder="Masukkan nama lengkap Anda" autocomplete="name" />
               <div
-                class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-secondary to-[var(--preset-secondary)] scale-x-0 origin-left transition-transform duration-300"
+                class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-secondary to-[#D4AF37] scale-x-0 origin-left transition-transform duration-300"
                 id="rsvp-name-line"></div>
             </div>
 
@@ -1421,14 +1396,14 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 
       <?php if (getSet('guest_qr_enabled') && !empty($guestQrCode)): ?>
       <div id="qrModal" style="position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
-        <div style="background:var(--preset-surface-low);border:2px solid var(--preset-secondary);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
-          <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:var(--preset-primary)">&times;</button>
-          <h2 style="font-family:serif;font-size:24px;color:var(--preset-primary);margin:0 0 6px">QR Check-In</h2>
-          <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:var(--preset-primary)">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+        <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+          <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
+          <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
+          <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
           <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
-          <p style="margin:16px 0 0;font-weight:600;color:var(--preset-primary)"><?php echo htmlspecialchars($guestName); ?></p>
-          <p style="margin:6px 0 0;font-size:13px;color:var(--preset-primary)">Kode manual: <b style="letter-spacing:.12em"><?php echo htmlspecialchars($guestQrCode); ?></b></p>
-          <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:var(--preset-secondary);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+          <p style="margin:16px 0 0;font-weight:600;color:#2b2118"><?php echo htmlspecialchars($guestName); ?></p>
+          <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em"><?php echo htmlspecialchars($guestQrCode); ?></b></p>
+          <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
         </div>
       </div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -2161,6 +2136,8 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
            window.URL.revokeObjectURL(url);
          }
 
+       </script>
+</body>
         /* ---------- menu bawah pill klasik emas ---------- */
         (function(){
           var nav=document.getElementById('bottomNav');if(!nav)return;

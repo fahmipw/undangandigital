@@ -30,13 +30,6 @@ if (!function_exists('mcTime')) {
     return preg_match('/^\d{1,2}(:\d{2})?$/', $t) ? (strpos($t, ':') === false ? $t.':00' : $t) : '08:00';
   }
 }
-/* Preset warna admin (theme_primary dkk; fallback Classic Gold). */
-$presetPrimary = mcGet('theme_primary', '#361f1a');
-$presetSecondary = mcGet('theme_secondary', '#775a19');
-$presetBackground = mcGet('theme_background', '#fbf9f5');
-$presetPrimaryContainer = mcGet('theme_primary_container', '#4e342e');
-$presetSecondaryContainer = mcGet('theme_secondary_container', '#fed488');
-$presetSurfaceLow = mcGet('theme_surface_container_low', '#f5f3ef');
 $groomNick = mcGet('groom_nickname') ?: mcGet('groom_name', 'Mempelai Pria');
 $brideNick = mcGet('bride_nickname') ?: mcGet('bride_name', 'Mempelai Wanita');
 $groomFull = mcGet('groom_name', 'Mempelai Pria');
@@ -89,16 +82,15 @@ $groomInitial = mb_substr($groomNick, 0, 1); $brideInitial = mb_substr($brideNic
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Pinyon+Script&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-<style>/* Preset warna admin — 6 warna theme_preset (dibaca di preamble). */:root{--preset-primary:{{ $presetPrimary }};--preset-secondary:{{ $presetSecondary }};--preset-background:{{ $presetBackground }};--preset-primary-container:{{ $presetPrimaryContainer }};--preset-secondary-container:{{ $presetSecondaryContainer }};--preset-surface-low:{{ $presetSurfaceLow }}}</style>
 <style>
-:root{--tinta:var(--preset-primary);--tinta-dim:rgba(51,66,74,.65);--kertas:rgba(255,255,255,.92);
---aksen:var(--preset-primary-container);--aksen-dk:var(--preset-primary-container);--emas:var(--preset-secondary)}
+:root{--tinta:#33424a;--tinta-dim:rgba(51,66,74,.65);--kertas:rgba(255,255,255,.92);
+--aksen:#5b7a8a;--aksen-dk:#3d5a6a;--emas:#c99b4a}
 body[data-scene="6"],body[data-scene="7"],body[data-scene="8"],body[data-scene="9"],body[data-scene="10"]{
---tinta:var(--preset-background);--tinta-dim:rgba(242,237,228,.7);--kertas:rgba(30,22,16,.5);
---aksen:var(--preset-secondary-container);--aksen-dk:var(--preset-secondary-container)}
+--tinta:#f2ede4;--tinta-dim:rgba(242,237,228,.7);--kertas:rgba(30,22,16,.5);
+--aksen:#a8c6d4;--aksen-dk:#d4e6ee}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
-body{font-family:'Jost',sans-serif;background:var(--preset-background);color:var(--tinta);overflow-x:hidden;font-weight:300;transition:color 1s}
+body{font-family:'Jost',sans-serif;background:#dfe9ec;color:var(--tinta);overflow-x:hidden;font-weight:300;transition:color 1s}
 /* ---------- background berganti saat scroll ---------- */
 #scene{position:fixed;inset:0;z-index:0;pointer-events:none}
 .sbg{position:absolute;inset:0;opacity:0;transition:opacity 1.4s ease}
@@ -177,7 +169,7 @@ section{padding:64px 26px;text-align:center;position:relative}
 .cd b{display:block;font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--aksen-dk)}
 .cd span{font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--tinta-dim)}
 .photo{width:150px;height:150px;border-radius:50%;object-fit:cover;margin:0 auto 16px;border:4px solid #fff;box-shadow:0 12px 30px rgba(60,80,95,.25);display:block}
-.photo-fallback{width:150px;height:150px;border-radius:50%;margin:0 auto 16px;background:linear-gradient(135deg,#8ba3b3,var(--preset-primary-container));border:4px solid #fff;box-shadow:0 12px 30px rgba(60,80,95,.25);display:flex;align-items:center;justify-content:center;font-family:'Pinyon Script',cursive;font-size:60px;color:#fff}
+.photo-fallback{width:150px;height:150px;border-radius:50%;margin:0 auto 16px;background:linear-gradient(135deg,#8ba3b3,#3d5a6a);border:4px solid #fff;box-shadow:0 12px 30px rgba(60,80,95,.25);display:flex;align-items:center;justify-content:center;font-family:'Pinyon Script',cursive;font-size:60px;color:#fff}
 .couple-card h3{font-family:'Pinyon Script',cursive;font-size:40px;color:var(--aksen-dk);font-weight:400}
 .couple-card .full{font-family:'Cormorant Garamond',serif;font-size:19px;margin:6px 0}
 .couple-card p{font-size:14px;color:var(--tinta-dim);line-height:1.7}
@@ -211,7 +203,7 @@ section{padding:64px 26px;text-align:center;position:relative}
 footer{padding:56px 26px 100px;text-align:center}
 footer .hand{font-size:42px;color:var(--aksen-dk)}
 #musBtn{position:fixed;bottom:22px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--aksen),var(--aksen-dk));color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;bottom:130px!important;box-shadow:0 10px 26px rgba(61,90,106,.4)}
-#qrFloatBtn{position:fixed;bottom:192px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid var(--preset-secondary);background:linear-gradient(160deg,var(--preset-primary-container),var(--preset-primary));color:var(--preset-secondary-container);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(90,70,20,.5)}
+#qrFloatBtn{position:fixed;bottom:192px;right:22px;z-index:90;width:52px;height:52px;border-radius:50%;border:1px solid rgba(201,164,92,.85);background:linear-gradient(160deg,#3a2c17,#171106);color:#e6c887;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(90,70,20,.5)}
 
 /* === fitur bawaan default: lightbox, menu, progress, musik === */
 .pbar{position:fixed;top:0;left:0;right:0;height:3px;z-index:96;background:transparent}
@@ -224,9 +216,9 @@ footer .hand{font-size:42px;color:var(--aksen-dk)}
 .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);font-size:32px;color:#fff;cursor:pointer;padding:16px 12px;z-index:201;user-select:none;opacity:.85;line-height:1}
 .lb-prev{left:6px}.lb-next{right:6px}.lb-prev:hover,.lb-next:hover{opacity:1}
 .lb-count{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:#fff;font-size:13px;letter-spacing:.15em;z-index:201;font-family:inherit}
-.fmenu{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:90;display:flex;gap:2px 0;background:var(--preset-background);border:1px solid var(--preset-secondary);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
+.fmenu{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:90;display:flex;gap:2px 0;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
 .fmenu::-webkit-scrollbar{display:none}
-.fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:var(--preset-secondary);text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:.25s}
+.fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:#978045;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:.25s}
 .fmenu a i{font-style:normal;line-height:0}
 .fmenu a svg{width:21px;height:21px}
 @media (max-width:400px){
@@ -234,7 +226,7 @@ footer .hand{font-size:42px;color:var(--aksen-dk)}
   #musBtn{bottom:140px!important}
   #qrFloatBtn{bottom:202px!important}
 }
-.fmenu a.active{background:var(--preset-secondary-container);box-shadow:inset 0 0 0 1.5px var(--preset-secondary);color:var(--preset-secondary)}
+.fmenu a.active{background:rgba(151,128,69,.14);box-shadow:inset 0 0 0 1.5px #b8934a;color:#7c652f}
 body::after{content:"";display:block;height:150px}
 #musBtn.playing{outline:2px solid var(--aksen-dk);outline-offset:2px}
 .att-toggle{display:flex;gap:10px}
@@ -250,7 +242,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 @media (prefers-reduced-motion:reduce){.rv,.rvd{opacity:1!important;transform:none!important;transition:none}}
 
 /* Standar menu klasik emas */
-#musBtn{background:linear-gradient(160deg,var(--preset-primary-container),var(--preset-primary))!important;border:1px solid var(--preset-secondary)!important;color:var(--preset-secondary-container)!important;box-shadow:0 10px 26px rgba(90,70,20,.5)!important}
+#musBtn{background:linear-gradient(160deg,#3a2c17,#171106)!important;border:1px solid rgba(201,164,92,.85)!important;color:#e6c887!important;box-shadow:0 10px 26px rgba(90,70,20,.5)!important}
 </style>
 </head>
 <body>
@@ -259,7 +251,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 <!-- ====== background 11 scene: pagi berkabut -> siang -> sore -> senja ====== -->
 <div id="scene">
   <div class="sbg" style="background:linear-gradient(180deg,#e8eef0,#f5f7f6)"></div>
-  <div class="sbg" style="background:linear-gradient(180deg,var(--preset-background),#f0f4f3)"></div>
+  <div class="sbg" style="background:linear-gradient(180deg,#dfe9ec,#f0f4f3)"></div>
   <div class="sbg" style="background:linear-gradient(180deg,#d8e4e8,#eef2f1)"></div>
   <div class="sbg" style="background:linear-gradient(180deg,#cfe0e8,#f0f4f2)"></div>
   <div class="sbg" style="background:linear-gradient(180deg,#c2d8e2,#e8f0ee)"></div>
@@ -408,7 +400,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
   if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
   $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
 @endphp
-<div id="prewedBox" class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid var(--preset-secondary);box-shadow:0 18px 40px rgba(0,0,0,.25)">
+<div id="prewedBox" class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.25)">
 <div style="position:relative;padding-top:56.25%">
 @if($prewedFile)
 <video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
@@ -418,14 +410,14 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
 </button>
 @elseif($prewedLink)
-<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:var(--preset-background);text-decoration:none">
+<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;color:#fdf6dd;text-decoration:none">
 <span style="width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
 <span style="font-size:11px;font-weight:700;letter-spacing:.22em">TONTON VIDEO PREWEDDING</span>
 </a>
 @endif
 </div>
 </div>
-<div class="rv" style="margin-top:16px">@if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="display:inline-block;padding:11px 28px;border-radius:999px;background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-primary);font-size:11px;font-weight:700;letter-spacing:.22em;text-decoration:none">BUKA VIDEO</a>@endif</div>
+<div class="rv" style="margin-top:16px">@if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" style="display:inline-block;padding:11px 28px;border-radius:999px;background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;font-size:11px;font-weight:700;letter-spacing:.22em;text-decoration:none">BUKA VIDEO</a>@endif</div>
   @endif
 @if(!empty($gallery))
   <div class="g-grid rv">
@@ -469,14 +461,14 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
 <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
 <div id="qrModal" style="position:fixed;inset:0;z-index:96;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
-  <div style="background:var(--preset-background);border:2px solid var(--preset-secondary);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
-    <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:var(--preset-primary)">&times;</button>
-    <h2 style="font-family:serif;font-size:24px;color:var(--preset-primary);margin:0 0 6px">QR Check-In</h2>
-    <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:var(--preset-primary)">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+  <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+    <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
+    <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
+    <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
     <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
-    <p style="margin:16px 0 0;font-weight:600;color:var(--preset-primary)">{{ $guestName }}</p>
-    <p style="margin:6px 0 0;font-size:13px;color:var(--preset-primary)">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
-    <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:var(--preset-secondary);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+    <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
+    <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
+    <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
   </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -501,7 +493,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 <section id="gift" data-scene="9">
   <div class="rvd"><div class="sec-kicker">Tanda Kasih</div><div class="sec-title serif">Hadiah</div></div>
 @if($qrisEnabled)
-<div style="max-width:340px;margin:0 auto 18px;background:var(--preset-background);border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:var(--preset-primary);grid-column:1/-1">
+<div style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
 <div style="font-weight:800;letter-spacing:.18em;font-size:13px;color:#c0392b">QRIS</div>
 <p style="font-size:12px;opacity:.65;margin:4px 0 12px">Scan untuk kirim hadiah &mdash; semua e-wallet &amp; m-banking</p>
 <img src="{{ $qrisImage }}" alt="QRIS" style="width:210px;height:210px;object-fit:contain;margin:0 auto;display:block">
@@ -541,7 +533,7 @@ if(window.prewedPauseMusic) window.prewedPauseMusic();
 @endphp
 <section id="live">
 <div class="rvd"><div class="sec-kicker">Live Streaming</div><div class="sec-title">Saksikan Langsung</div></div>
-<div class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid var(--preset-secondary);box-shadow:0 18px 40px rgba(0,0,0,.25)">
+<div class="rv" style="max-width:430px;margin:16px auto 0;border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.25)">
 <div style="position:relative;padding-top:56.25%">
 @if($liveId)
 <button type="button" onclick="playLive(this, '{{ $liveId }}')" aria-label="Putar Live Streaming" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
@@ -553,7 +545,7 @@ if(window.prewedPauseMusic) window.prewedPauseMusic();
 @endif
 </div>
 </div>
-<div class="rv" style="margin-top:16px"><a href="{{ $liveUrl }}" target="_blank" rel="noopener" style="display:inline-block;padding:11px 28px;border-radius:999px;background:linear-gradient(105deg,var(--preset-secondary),var(--preset-secondary-container) 55%,var(--preset-secondary));color:var(--preset-primary);font-size:11px;font-weight:700;letter-spacing:.22em;text-decoration:none">BUKA LIVE STREAMING</a></div>
+<div class="rv" style="margin-top:16px"><a href="{{ $liveUrl }}" target="_blank" rel="noopener" style="display:inline-block;padding:11px 28px;border-radius:999px;background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;font-size:11px;font-weight:700;letter-spacing:.22em;text-decoration:none">BUKA LIVE STREAMING</a></div>
 </section>
 @endif
 <script>

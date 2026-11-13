@@ -14,13 +14,6 @@ if (!function_exists('mcGet')) {
     return $s[$key];
   }
 }
-if (!function_exists('mcHexRgb')) {
-  function mcHexRgb($hex) {
-    $hex = ltrim((string)$hex, '#');
-    if (strlen($hex) === 3) $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
-    return hexdec(substr($hex, 0, 2)).', '.hexdec(substr($hex, 2, 2)).', '.hexdec(substr($hex, 4, 2));
-  }
-}
 if (!function_exists('mcDate')) {
   function mcDate($dateStr) {
     if (!$dateStr) return '';
@@ -69,19 +62,6 @@ $musicUrl = null;
 if (!empty($musicRecord)) { $musicUrl = $musicRecord->file_path ?? $musicRecord->url ?? null; }
 if (!$musicUrl) { $musicUrl = mcGet('music_url', ''); }
 $guestName = $guestName ?? 'Bapak/Ibu/Saudara/i';
-/* ---------- Preset Tema Desain (mode penuh: semua warna ikut preset) ---------- */
-$preset_primary = mcGet('theme_primary', '#361f1a');
-$preset_secondary = mcGet('theme_secondary', '#775a19');
-$preset_background = mcGet('theme_background', '#fbf9f5');
-$preset_primary_container = mcGet('theme_primary_container', '#4e342e');
-$preset_secondary_container = mcGet('theme_secondary_container', '#fed488');
-$preset_surface_low = mcGet('theme_surface_container_low', '#f5f3ef');
-$preset_primary_rgb = mcHexRgb($preset_primary);
-$preset_secondary_rgb = mcHexRgb($preset_secondary);
-$preset_background_rgb = mcHexRgb($preset_background);
-$preset_primary_container_rgb = mcHexRgb($preset_primary_container);
-$preset_secondary_container_rgb = mcHexRgb($preset_secondary_container);
-$preset_surface_low_rgb = mcHexRgb($preset_surface_low);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -99,15 +79,14 @@ $preset_surface_low_rgb = mcHexRgb($preset_surface_low);
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--preset-primary:<?php echo $preset_primary; ?>;--preset-secondary:<?php echo $preset_secondary; ?>;--preset-background:<?php echo $preset_background; ?>;--preset-primary-container:<?php echo $preset_primary_container; ?>;--preset-secondary-container:<?php echo $preset_secondary_container; ?>;--preset-surface-low:<?php echo $preset_surface_low; ?>;--preset-primary-rgb:<?php echo $preset_primary_rgb; ?>;--preset-secondary-rgb:<?php echo $preset_secondary_rgb; ?>;--preset-background-rgb:<?php echo $preset_background_rgb; ?>;--preset-primary-container-rgb:<?php echo $preset_primary_container_rgb; ?>;--preset-secondary-container-rgb:<?php echo $preset_secondary_container_rgb; ?>;--preset-surface-low-rgb:<?php echo $preset_surface_low_rgb; ?>}
 :root{
   --sky1:#6ec3f5; --sky2:#dff3ff;
   --grass:#79c25f; --grass-d:#5da244; --grass-dd:#4a8a38;
   --soil:#8a5a33; --soil-d:#6e4426;
-  --wood:var(--preset-primary-container); --wood-d:var(--preset-primary); --wood-l:var(--preset-primary-container);
-  --cream:var(--preset-surface-low); --paper:var(--preset-surface-low);
-  --ink:var(--preset-primary); --ink-soft:var(--preset-primary);
-  --gold:var(--preset-secondary); --gold-d:var(--preset-secondary);
+  --wood:#8b5a2b; --wood-d:#5d3a1a; --wood-l:#a9743d;
+  --cream:#fff8e7; --paper:#fdf6e3;
+  --ink:#3a2a18; --ink-soft:#6b543a;
+  --gold:#e8b93c; --gold-d:#b8892a;
   --pink:#ffb7c5; --red:#d94f3d;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -125,17 +104,17 @@ section{position:relative;padding:56px 20px}
 .rvd.on{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.rv,.rvd{opacity:1!important;transform:none!important;transition:none}}
 /* ---------- progress & menu ---------- */
-.pbar{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--preset-secondary),var(--preset-secondary-container));z-index:120;box-shadow:0 0 8px var(--preset-secondary)}
+.pbar{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--gold),#ffdf80);z-index:120;box-shadow:0 0 8px #e8b93c}
 body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn{display:none!important}
 #musBtn{position:fixed;top:14px;right:14px;z-index:110;width:46px;height:46px;border-radius:12px;border:3px solid var(--wood-d);background:var(--wood);color:#fff;font-size:20px;cursor:pointer;box-shadow:0 4px 0 var(--wood-d)}
 #qrFloatBtn{position:fixed;top:70px;right:14px;z-index:110;width:46px;height:46px;border-radius:12px;border:3px solid var(--wood-d);background:var(--wood);color:#fff;font-size:20px;cursor:pointer;box-shadow:0 4px 0 var(--wood-d);display:flex;align-items:center;justify-content:center}
 #musBtn:active{transform:translateY(3px);box-shadow:none}
 #musBtn.off{opacity:.55}
 /* Menu bawah pill klasik emas */
-#fmenu{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:46;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:2px 0;row-gap:2px;background:rgb(var(--preset-background-rgb) / .94);border:1px solid rgb(var(--preset-secondary-rgb) / .4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgb(var(--preset-secondary-rgb) / .25);width:min(96vw,500px);max-width:96vw}
-#fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:var(--preset-secondary);background:transparent;border:none;box-shadow:none;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+#fmenu{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:46;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:2px 0;row-gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw}
+#fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:#978045;background:transparent;border:none;box-shadow:none;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 #fmenu a svg{width:21px;height:21px}
-#fmenu a.active{background:rgb(var(--preset-secondary-rgb) / .14);box-shadow:inset 0 0 0 1.5px var(--preset-secondary);color:var(--preset-secondary)}
+#fmenu a.active{background:rgba(151,128,69,.14);box-shadow:inset 0 0 0 1.5px #b8934a;color:#7c652f}
 #fmenu[hidden]{display:none!important}
 @media (max-width:400px){
 #fmenu a{flex:1 1 18%;min-width:0;max-width:64px}
@@ -157,7 +136,7 @@ body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn
 @keyframes smokeUp{0%{transform:translateY(0) scale(1);opacity:.7}100%{transform:translateY(-46px) scale(1.8);opacity:0}}
 .petal{position:absolute;top:-20px;animation:fall linear infinite;pointer-events:none}
 @keyframes fall{to{transform:translateY(110vh) rotate(340deg)}}
-.sign{position:absolute;left:50%;transform:translateX(-50%);background:var(--wood);border:4px solid var(--wood-d);border-radius:6px;box-shadow:0 6px 0 rgba(0,0,0,.25);text-align:center;color:var(--preset-secondary-container)}
+.sign{position:absolute;left:50%;transform:translateX(-50%);background:var(--wood);border:4px solid var(--wood-d);border-radius:6px;box-shadow:0 6px 0 rgba(0,0,0,.25);text-align:center;color:#ffe9b8}
 .sign .rope{position:absolute;top:-34px;left:50%;transform:translateX(-50%);width:4px;height:34px;background:var(--wood-d)}
 .sign .rope:before,.sign .rope:after{content:'';position:absolute;top:0;width:4px;height:34px;background:var(--wood-d)}
 .sign .rope:before{left:-46px;transform:rotate(14deg);transform-origin:top}
@@ -168,7 +147,7 @@ body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn
 /* ---------- section decor ---------- */
 .sec-head{text-align:center;margin-bottom:30px}
 .sec-kicker{font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:.2em;color:var(--ink-soft);margin-bottom:12px}
-.sec-title{font-family:'Press Start 2P',monospace;font-size:20px;color:var(--ink);text-shadow:2px 2px 0 rgb(var(--preset-secondary-rgb) / .55)}
+.sec-title{font-family:'Press Start 2P',monospace;font-size:20px;color:var(--ink);text-shadow:2px 2px 0 rgba(232,185,60,.55)}
 .fence{height:26px;margin:18px auto 0;max-width:340px;background:
   repeating-linear-gradient(90deg,var(--wood) 0 10px,transparent 10px 26px),
   linear-gradient(var(--wood-l),var(--wood-l));
@@ -176,7 +155,7 @@ body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn
   border-radius:3px;position:relative}
 .fence:before{content:'';position:absolute;inset:14px 0 0;background:linear-gradient(var(--wood-l),var(--wood-l));background-size:100% 6px;background-repeat:no-repeat}
 /* ---------- cards ---------- */
-.npc{background:var(--paper);border:4px solid var(--wood-d);border-radius:10px;box-shadow:0 8px 0 rgb(var(--preset-primary-rgb) / .25);overflow:hidden}
+.npc{background:var(--paper);border:4px solid var(--wood-d);border-radius:10px;box-shadow:0 8px 0 rgba(93,58,26,.25);overflow:hidden}
 .npc .pframe{border-bottom:4px solid var(--wood-d);background:linear-gradient(180deg,#aee3f5,#dff3ff);position:relative}
 .npc .pframe img{width:100%;height:300px;object-fit:cover;object-position:top;display:block;filter:saturate(1.05) contrast(1.03)}
 .npc .pbody{padding:22px 18px;text-align:center}
@@ -185,52 +164,52 @@ body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn
 .npc p{font-size:14px;color:var(--ink-soft);line-height:1.7}
 /* galeri */
 .g-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.g-frame{background:var(--wood);border:4px solid var(--wood-d);border-radius:8px;padding:8px;box-shadow:0 6px 0 rgb(var(--preset-primary-rgb) / .3);cursor:zoom-in;transition:transform .2s}
+.g-frame{background:var(--wood);border:4px solid var(--wood-d);border-radius:8px;padding:8px;box-shadow:0 6px 0 rgba(93,58,26,.3);cursor:zoom-in;transition:transform .2s}
 .g-frame:hover{transform:translateY(-4px) rotate(-1deg)}
 .g-frame img{width:100%;height:170px;object-fit:cover;display:block;border-radius:3px;background:#cfe8d8}
 /* kisah journal */
-.journal{background:var(--paper);border:4px solid var(--wood-d);border-radius:10px;box-shadow:0 8px 0 rgb(var(--preset-primary-rgb) / .25);padding:6px}
-.jpage{border:2px dashed rgb(var(--preset-primary-rgb) / .4);border-radius:6px;padding:20px 16px;margin:10px}
-.jpage .yr{display:inline-block;font-family:'Press Start 2P',monospace;font-size:10px;background:var(--gold);color:var(--preset-primary);padding:7px 10px;border-radius:6px;border:2px solid var(--gold-d);margin-bottom:10px}
+.journal{background:var(--paper);border:4px solid var(--wood-d);border-radius:10px;box-shadow:0 8px 0 rgba(93,58,26,.25);padding:6px}
+.jpage{border:2px dashed rgba(139,90,43,.4);border-radius:6px;padding:20px 16px;margin:10px}
+.jpage .yr{display:inline-block;font-family:'Press Start 2P',monospace;font-size:10px;background:var(--gold);color:#3a2a18;padding:7px 10px;border-radius:6px;border:2px solid var(--gold-d);margin-bottom:10px}
 .jpage h4{font-family:'Press Start 2P',monospace;font-size:12px;margin-bottom:8px;line-height:1.6}
 .jpage p{font-size:14px;line-height:1.8;color:var(--ink-soft)}
 /* acara signpost */
-.post{background:linear-gradient(180deg,var(--wood-l),var(--wood));border:4px solid var(--wood-d);border-radius:10px;color:var(--preset-secondary-container);box-shadow:0 8px 0 rgb(var(--preset-primary-rgb) / .3);overflow:hidden}
+.post{background:linear-gradient(180deg,var(--wood-l),var(--wood));border:4px solid var(--wood-d);border-radius:10px;color:#ffe9b8;box-shadow:0 8px 0 rgba(93,58,26,.3);overflow:hidden}
 .post .phead{background:rgba(0,0,0,.18);padding:16px;text-align:center;border-bottom:3px solid var(--wood-d)}
 .post .phead h3{font-family:'Press Start 2P',monospace;font-size:14px}
 .post .pbody{padding:22px 18px;text-align:center}
-.post .pdate{font-family:'Press Start 2P',monospace;font-size:11px;line-height:2;color:var(--preset-secondary-container)}
+.post .pdate{font-family:'Press Start 2P',monospace;font-size:11px;line-height:2;color:#ffe9b8}
 .post .ptime{font-size:22px;font-weight:800;margin:10px 0}
 .post .pplace{font-size:14px;opacity:.9;line-height:1.7}
-.btn-gold{display:inline-block;font-family:'Press Start 2P',monospace;font-size:10px;color:var(--preset-primary);background:linear-gradient(180deg,var(--preset-secondary-container),var(--preset-secondary));border:3px solid var(--gold-d);border-radius:8px;padding:12px 18px;margin:6px 4px 0;text-decoration:none;box-shadow:0 4px 0 var(--gold-d);transition:transform .12s}
+.btn-gold{display:inline-block;font-family:'Press Start 2P',monospace;font-size:10px;color:#3a2a18;background:linear-gradient(180deg,#ffe27a,var(--gold));border:3px solid var(--gold-d);border-radius:8px;padding:12px 18px;margin:6px 4px 0;text-decoration:none;box-shadow:0 4px 0 var(--gold-d);transition:transform .12s}
 .btn-gold:active{transform:translateY(3px);box-shadow:none}
 /* forms */
 .field{margin-bottom:14px;text-align:left}
 .field label{display:block;font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:.1em;margin-bottom:8px;color:var(--ink-soft)}
 .field input,.field textarea,.field select{width:100%;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;color:var(--ink);background:#fff;border:3px solid var(--wood-d);border-radius:8px;padding:13px 14px;outline:none}
-.field input:focus,.field textarea:focus{border-color:var(--gold-d);box-shadow:0 0 0 3px rgb(var(--preset-secondary-rgb) / .35)}
+.field input:focus,.field textarea:focus{border-color:var(--gold-d);box-shadow:0 0 0 3px rgba(232,185,60,.35)}
 .att-row{display:flex;gap:10px}
 .att{flex:1;font-family:'Press Start 2P',monospace;font-size:10px;padding:14px 6px;border-radius:8px;border:3px solid var(--wood-d);background:#fff;color:var(--ink-soft);cursor:pointer;text-align:center}
-.att.sel-hadir{background:var(--preset-secondary-container);border-color:var(--preset-secondary);color:var(--preset-primary)}
+.att.sel-hadir{background:#d9f2c7;border-color:#4a8a38;color:#2c5c22}
 .att.sel-tidak{background:#fbd9d2;border-color:#b3402e;color:#8c2f22}
-.formbox{background:var(--paper);border:4px solid var(--wood-d);border-radius:12px;box-shadow:0 8px 0 rgb(var(--preset-primary-rgb) / .25);padding:24px 18px}
+.formbox{background:var(--paper);border:4px solid var(--wood-d);border-radius:12px;box-shadow:0 8px 0 rgba(93,58,26,.25);padding:24px 18px}
 /* wishes */
-.wish{background:#fff;border:3px solid rgb(var(--preset-primary-rgb) / .35);border-radius:10px;padding:14px 16px;margin:0 auto 12px;max-width:400px;box-shadow:3px 3px 0 rgb(var(--preset-primary-rgb) / .15)}
+.wish{background:#fff;border:3px solid rgba(139,90,43,.35);border-radius:10px;padding:14px 16px;margin:0 auto 12px;max-width:400px;box-shadow:3px 3px 0 rgba(139,90,43,.15)}
 .wish-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
 .wish-head b{font-size:14px}
 .wtime{font-size:11px;opacity:.55;white-space:nowrap}
 .wish p{font-size:14px;line-height:1.7;color:var(--ink-soft)}
 .wish-empty{text-align:center;opacity:.6;font-size:14px;padding:14px}
 /* gift */
-.bank{background:linear-gradient(135deg,var(--preset-primary-container),var(--preset-primary));border:4px solid var(--preset-primary);border-radius:12px;color:var(--preset-secondary-container);padding:20px 18px;margin:0 auto 14px;max-width:380px;box-shadow:0 8px 0 rgba(0,0,0,.25)}
+.bank{background:linear-gradient(135deg,#2f4a2e,#1e3320);border:4px solid #101d11;border-radius:12px;color:#ffe9b8;padding:20px 18px;margin:0 auto 14px;max-width:380px;box-shadow:0 8px 0 rgba(0,0,0,.25)}
 .bank .bname{font-family:'Press Start 2P',monospace;font-size:11px;color:var(--gold);margin-bottom:10px}
 .bank .bno{font-size:22px;font-weight:800;letter-spacing:.06em;margin-bottom:6px}
 .bank .ban{font-size:13px;opacity:.8}
 .bank img{height:34px;max-width:150px;object-fit:contain;margin:10px auto 0;display:block;background:#fff;border-radius:6px;padding:4px}
-.copybtn{font-family:'Press Start 2P',monospace;font-size:9px;background:var(--gold);color:var(--preset-primary);border:3px solid var(--gold-d);border-radius:8px;padding:10px 16px;margin-top:12px;cursor:pointer;box-shadow:0 4px 0 var(--gold-d)}
+.copybtn{font-family:'Press Start 2P',monospace;font-size:9px;background:var(--gold);color:#3a2a18;border:3px solid var(--gold-d);border-radius:8px;padding:10px 16px;margin-top:12px;cursor:pointer;box-shadow:0 4px 0 var(--gold-d)}
 .copybtn:active{transform:translateY(3px);box-shadow:none}
 /* lightbox */
-.lb{position:fixed;inset:0;z-index:200;background:rgb(var(--preset-primary-rgb) / .94);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.35s;padding:20px;touch-action:pan-y}
+.lb{position:fixed;inset:0;z-index:200;background:rgba(10,8,4,.94);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.35s;padding:20px;touch-action:pan-y}
 .lb.show{opacity:1;visibility:visible}
 #lbImg{max-width:100%;max-height:86vh;border-radius:8px;will-change:transform,opacity;border:4px solid var(--wood)}
 .lb-x{position:absolute;top:14px;right:20px;font-size:42px;color:#fff;cursor:pointer;line-height:1;z-index:201;font-family:'Nunito',sans-serif}
@@ -239,11 +218,11 @@ body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn
 .lb-count{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:#fff;font-size:13px;letter-spacing:.15em;z-index:201;font-family:'Press Start 2P',monospace}
 /* countdown */
 .cd{display:flex;gap:10px;justify-content:center;margin-top:22px}
-.cd .box{background:var(--preset-primary);border:3px solid var(--preset-primary);border-radius:10px;color:var(--preset-secondary-container);min-width:68px;padding:12px 6px;box-shadow:0 5px 0 rgba(0,0,0,.3)}
+.cd .box{background:#2b1d0e;border:3px solid #120b04;border-radius:10px;color:#ffe9b8;min-width:68px;padding:12px 6px;box-shadow:0 5px 0 rgba(0,0,0,.3)}
 .cd .num{font-family:'Press Start 2P',monospace;font-size:18px;color:var(--gold)}
 .cd .lbl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;opacity:.7;margin-top:6px}
 /* hud panen */
-#hud{position:fixed;top:14px;left:14px;z-index:110;background:rgb(var(--preset-primary-rgb) / .95);border:3px solid var(--preset-primary);border-radius:12px;color:var(--preset-secondary-container);font-family:'Press Start 2P',monospace;font-size:10px;padding:10px 12px;display:flex;align-items:center;gap:8px}
+#hud{position:fixed;top:14px;left:14px;z-index:110;background:#2b1d0ef2;border:3px solid #120b04;border-radius:12px;color:#ffe9b8;font-family:'Press Start 2P',monospace;font-size:10px;padding:10px 12px;display:flex;align-items:center;gap:8px}
 body.locked #hud{display:none!important}
 #hud .star{color:var(--gold);font-size:14px}
 .spark{position:absolute;font-size:18px;pointer-events:none;animation:sparkUp 1s ease-out forwards;z-index:50}
@@ -255,7 +234,7 @@ body.locked #hud{display:none!important}
 #cluck{position:absolute;background:#fff;border:3px solid var(--wood-d);border-radius:10px;padding:8px 12px;font-family:'Press Start 2P',monospace;font-size:10px;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}
 #cluck.show{opacity:1}
 footer{padding:50px 20px 110px;text-align:center}
-.qr-card{background:var(--paper);border:4px solid var(--wood-d);border-radius:12px;box-shadow:0 8px 0 rgb(var(--preset-primary-rgb) / .25);padding:26px 18px;max-width:360px;margin:0 auto;text-align:center}
+.qr-card{background:var(--paper);border:4px solid var(--wood-d);border-radius:12px;box-shadow:0 8px 0 rgba(93,58,26,.25);padding:26px 18px;max-width:360px;margin:0 auto;text-align:center}
 @media(max-width:380px){.sec-title{font-size:17px}}
 </style>
 </head>
@@ -384,9 +363,9 @@ footer{padding:50px 20px 110px;text-align:center}
 
   <div class="sign" style="top:120px;width:min(78%,330px);padding:22px 14px">
     <span class="rope"></span>
-    <div class="px" style="font-size:9px;letter-spacing:.25em;color:var(--preset-secondary);margin-bottom:10px">★ THE WEDDING OF ★</div>
-    <div class="px" style="font-size:17px;line-height:1.7;color:var(--preset-secondary-container)">{{ $groomNick }}<br>&amp;<br>{{ $brideNick }}</div>
-    <div class="px" style="font-size:9px;margin-top:12px;color:var(--preset-secondary-container)">{{ mcDate($wDate) }}</div>
+    <div class="px" style="font-size:9px;letter-spacing:.25em;color:#d9a94e;margin-bottom:10px">★ THE WEDDING OF ★</div>
+    <div class="px" style="font-size:17px;line-height:1.7;color:#ffe9b8">{{ $groomNick }}<br>&amp;<br>{{ $brideNick }}</div>
+    <div class="px" style="font-size:9px;margin-top:12px;color:#e8c87a">{{ mcDate($wDate) }}</div>
   </div>
 
   <div style="position:absolute;bottom:36px;left:0;right:0;text-align:center;padding:0 24px">
@@ -396,7 +375,7 @@ footer{padding:50px 20px 110px;text-align:center}
     </div>
     <br>
     <button class="btn-wood" onclick="openInv()">▶ BUKA UNDANGAN</button>
-    <div class="px" style="font-size:8px;color:#fff;margin-top:14px;text-shadow:1px 1px 0 var(--preset-primary);letter-spacing:.15em">KLIK AYAM &amp; PANEN TANAMAN YA!</div>
+    <div class="px" style="font-size:8px;color:#fff;margin-top:14px;text-shadow:1px 1px 0 #3a2a18;letter-spacing:.15em">KLIK AYAM &amp; PANEN TANAMAN YA!</div>
   </div>
 </div>
 <!-- ================= HERO ================= -->
@@ -409,7 +388,7 @@ footer{padding:50px 20px 110px;text-align:center}
     <div class="rv" style="margin-top:20px">
       <div class="px" style="font-size:12px">{{ mcDate($wDate) }}</div>
       @if(mcGet('quotes'))
-      <div class="rv" style="max-width:420px;margin:20px auto 0;padding:0 8px">
+      <div class="rv" id="quotes" style="max-width:420px;margin:20px auto 0;padding:0 8px">
         <p style="font-family:'Nunito',sans-serif;font-style:italic;font-size:16px;line-height:1.8;color:var(--ink-soft)">“{{ mcGet('quotes') }}”</p>
       </div>
       @endif
@@ -444,7 +423,7 @@ footer{padding:50px 20px 110px;text-align:center}
         <rect x="140" y="200" width="120" height="100" fill="#4a7ec2"/>
       </svg>
       @endif
-      <div class="px" style="position:absolute;bottom:10px;left:10px;background:var(--preset-primary);color:var(--preset-secondary-container);font-size:9px;padding:8px 10px;border-radius:6px">LVL ♥ PETANI</div>
+      <div class="px" style="position:absolute;bottom:10px;left:10px;background:#2b1d0e;color:#ffe9b8;font-size:9px;padding:8px 10px;border-radius:6px">LVL ♥ PETANI</div>
     </div>
     <div class="pbody">
       <h3>{{ $groomFull }}</h3>
@@ -468,7 +447,7 @@ footer{padding:50px 20px 110px;text-align:center}
         <rect x="140" y="200" width="120" height="100" fill="#d94f8a"/>
       </svg>
       @endif
-      <div class="px" style="position:absolute;bottom:10px;left:10px;background:var(--preset-primary);color:var(--preset-secondary-container);font-size:9px;padding:8px 10px;border-radius:6px">LVL ♥ PETANI</div>
+      <div class="px" style="position:absolute;bottom:10px;left:10px;background:#2b1d0e;color:#ffe9b8;font-size:9px;padding:8px 10px;border-radius:6px">LVL ♥ PETANI</div>
     </div>
     <div class="pbody">
       <h3>{{ $brideFull }}</h3>
@@ -488,7 +467,7 @@ footer{padding:50px 20px 110px;text-align:center}
     <div class="fence"></div>
   </div>
     @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))
-  @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div id="prewedBox" style="margin:12px auto 2px;max-width:330px;border:3px solid var(--preset-primary);border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.25);overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:var(--preset-surface-low);text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@endif @endif
+  @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div id="prewedBox" style="margin:12px auto 2px;max-width:330px;border:3px solid #7a4a21;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.25);overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@endif @endif
   @endif
 @if(!empty($gallery) && count($gallery))
   <div class="g-grid rv">
@@ -552,7 +531,7 @@ footer{padding:50px 20px 110px;text-align:center}
       @endif
       @if(mcGet('live_stream_link'))
       @php $lvE = mcGet('live_stream_link'); if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$lvE, $lm2)) { $lvE = 'https://www.youtube-nocookie.com/embed/'.$lm2[1]; } @endphp
-      <div style="margin:12px auto 6px;max-width:330px;border:3px solid var(--preset-primary);border-radius:10px;overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.25)"><div style="position:relative;padding-top:56.25%"><iframe src="{{ $lvE }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div>
+      <div style="margin:12px auto 6px;max-width:330px;border:3px solid #7a4a21;border-radius:10px;overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.25)"><div style="position:relative;padding-top:56.25%"><iframe src="{{ $lvE }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div>
       @endif
       @if(mcGet('live_stream_link'))
       <a class="btn-gold" target="_blank" href="{{ mcGet('live_stream_link') }}">LIVE STREAMING</a>
@@ -563,14 +542,14 @@ footer{padding:50px 20px 110px;text-align:center}
 
 @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
 <div id="qrModal" style="position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
-  <div style="background:var(--preset-surface-low);border:3px solid var(--wood);border-radius:14px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
-    <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:var(--preset-primary)">&times;</button>
-    <h2 style="font-size:22px;color:var(--preset-primary);margin:0 0 6px">QR Check-In</h2>
+  <div style="background:#fffdf4;border:3px solid var(--wood);border-radius:14px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+    <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#5b4636">&times;</button>
+    <h2 style="font-size:22px;color:#5b4636;margin:0 0 6px">QR Check-In</h2>
     <p style="font-size:13px;line-height:1.6;color:var(--ink-soft);margin:0 0 18px">Tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
     <div style="background:#fff;padding:14px;border-radius:12px;display:inline-block;box-shadow:0 8px 24px rgba(0,0,0,.12)"><div id="qrModalBox"></div></div>
-    <p style="margin:16px 0 0;font-weight:700;color:var(--preset-primary)">{{ $guestName }}</p>
-    <p style="margin:6px 0 0;font-size:13px;color:var(--preset-primary)">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
-    <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:var(--preset-secondary);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+    <p style="margin:16px 0 0;font-weight:700;color:#2b2118">{{ $guestName }}</p>
+    <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
+    <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
   </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -798,6 +777,7 @@ window.addEventListener('scroll', function(){
 (function(){
   var SECS = [
     ['hero','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 11.5 12 4l9 7.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5 10v10h14V10"/></svg>','Awal'],
+    ['quotes','<svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M6.6 5.5C4.9 6.7 4 8.6 4 10.9V18h6.4v-6.4H7.2c0-1.9.8-3.2 2.3-4.2l-3.1-1.8zm9 0c-1.7 1.2-2.6 3.1-2.6 5.4V18h6.4v-6.4h-3.2c0-1.9.8-3.2 2.3-4.2l-3.1-1.8z\"/></svg>','Quotes'],
     ['mempelai','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7.5-4.7-9.5-9C1 8.5 3 5 6.5 5c2 0 3.5 1 4.5 2.5C12 6 13.5 5 15.5 5 19 5 21 8.5 20.5 12c-2 4.3-8.5 9-8.5 9z"/></svg>','Mempelai'],
     ['galeri','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path stroke-linecap="round" stroke-linejoin="round" d="m5 19 5.5-5.5 3 3L19 11l2 2"/></svg>','Galeri'],
     ['kisah','<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.5C10 4.8 7 4.3 4.5 4.5v13c2.5-.2 5.5.3 7.5 2 2-1.7 5-2.2 7.5-2v-13C17 4.3 14 4.8 12 6.5z"/><path stroke-linecap="round" d="M12 6.5v13"/></svg>','Kisah'],

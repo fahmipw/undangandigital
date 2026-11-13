@@ -11,13 +11,6 @@ if (!function_exists('mcaGet')) {
     return $s[$key];
   }
 }
-if (!function_exists('mcaHexRgb')) {
-  function mcaHexRgb($hex) {
-    $hex = ltrim((string)$hex, '#');
-    if (strlen($hex) === 3) $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
-    return hexdec(substr($hex, 0, 2)).', '.hexdec(substr($hex, 2, 2)).', '.hexdec(substr($hex, 4, 2));
-  }
-}
 if (!function_exists('mcaDate')) {
   function mcaDate($dateStr) {
     if (!$dateStr) return '';
@@ -76,19 +69,6 @@ $prewedFile = mcaGet('prewedding_video_file','');
 $prewedEmbed = '';
 if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pqm)) { $prewedEmbed = 'https://www.youtube-nocookie.com/embed/'.$pqm[1].'?autoplay=1&enablejsapi=1'; }
 $prewedFileUrl = $prewedFile ? asset(ltrim($prewedFile,'/')) : '';
-/* ---------- Preset Tema Desain (mode penuh: semua warna ikut preset) ---------- */
-$preset_primary = mcaGet('theme_primary', '#361f1a');
-$preset_secondary = mcaGet('theme_secondary', '#775a19');
-$preset_background = mcaGet('theme_background', '#fbf9f5');
-$preset_primary_container = mcaGet('theme_primary_container', '#4e342e');
-$preset_secondary_container = mcaGet('theme_secondary_container', '#fed488');
-$preset_surface_low = mcaGet('theme_surface_container_low', '#f5f3ef');
-$preset_primary_rgb = mcaHexRgb($preset_primary);
-$preset_secondary_rgb = mcaHexRgb($preset_secondary);
-$preset_background_rgb = mcaHexRgb($preset_background);
-$preset_primary_container_rgb = mcaHexRgb($preset_primary_container);
-$preset_secondary_container_rgb = mcaHexRgb($preset_secondary_container);
-$preset_surface_low_rgb = mcaHexRgb($preset_surface_low);
 $invId = $inv_id ?? 0;
 ?>
 <!DOCTYPE html>
@@ -108,121 +88,120 @@ $invId = $inv_id ?? 0;
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
-:root{--preset-primary:<?php echo $preset_primary; ?>;--preset-secondary:<?php echo $preset_secondary; ?>;--preset-background:<?php echo $preset_background; ?>;--preset-primary-container:<?php echo $preset_primary_container; ?>;--preset-secondary-container:<?php echo $preset_secondary_container; ?>;--preset-surface-low:<?php echo $preset_surface_low; ?>;--preset-primary-rgb:<?php echo $preset_primary_rgb; ?>;--preset-secondary-rgb:<?php echo $preset_secondary_rgb; ?>;--preset-background-rgb:<?php echo $preset_background_rgb; ?>;--preset-primary-container-rgb:<?php echo $preset_primary_container_rgb; ?>;--preset-secondary-container-rgb:<?php echo $preset_secondary_container_rgb; ?>;--preset-surface-low-rgb:<?php echo $preset_surface_low_rgb; ?>}
-:root{--panel:var(--preset-surface-low);--gold:var(--preset-secondary);--green:var(--preset-secondary)}
+:root{--panel:#c6c6c6;--gold:#fcee5e;--green:#7bff5e}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:var(--preset-primary-container)}
-body{font-family:'VT323',monospace;font-size:20px;color:var(--preset-background)}
+html,body{height:100%;overflow:hidden;background:#0d1420}
+body{font-family:'VT323',monospace;font-size:20px;color:#f2f2f2}
 canvas{image-rendering:pixelated;image-rendering:crisp-edges}
-.mc-panel{background:var(--panel);border:3px solid var(--preset-primary);color:var(--preset-primary);
+.mc-panel{background:var(--panel);border:3px solid #141414;color:#1c1c1c;
   box-shadow:inset 3px 3px 0 rgba(255,255,255,.6),inset -3px -3px 0 rgba(0,0,0,.35)}
-.mc-btn{font-family:'Press Start 2P',monospace;font-size:12px;color:#fff;text-shadow:2px 2px 0 var(--preset-primary);
-  background:linear-gradient(var(--preset-primary-container),var(--preset-primary));border:2px solid #0a0a0a;cursor:pointer;
+.mc-btn{font-family:'Press Start 2P',monospace;font-size:12px;color:#fff;text-shadow:2px 2px 0 #3a3a3a;
+  background:linear-gradient(#a3a3a3,#7f7f7f);border:2px solid #0a0a0a;cursor:pointer;
   box-shadow:inset 2px 2px 0 rgba(255,255,255,.5),inset -2px -2px 0 rgba(0,0,0,.5);
   padding:14px 20px;letter-spacing:1px}
 .mc-btn:active{transform:translateY(2px)}
-.mc-btn.green{background:linear-gradient(var(--preset-secondary-container),var(--preset-secondary))}
-.mc-btn.gold{background:linear-gradient(var(--preset-secondary-container),var(--preset-secondary));text-shadow:2px 2px 0 var(--preset-primary)}
-.mc-input{width:100%;background:var(--preset-primary);color:#fff;border:2px solid #9a9a9a;font-family:'VT323',monospace;
+.mc-btn.green{background:linear-gradient(#79d154,#4e9a26)}
+.mc-btn.gold{background:linear-gradient(#ffe36e,#d9a821);text-shadow:2px 2px 0 #6e4d05}
+.mc-input{width:100%;background:#0f0f0f;color:#fff;border:2px solid #9a9a9a;font-family:'VT323',monospace;
   font-size:21px;padding:11px 12px;box-shadow:inset 2px 2px 0 rgba(0,0,0,.7);outline:none}
 .mc-input:focus{border-color:#fff}
 select.mc-input{appearance:none}
-.lbl{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--preset-primary);display:block;margin:14px 0 7px;letter-spacing:1px}
+.lbl{font-family:'Press Start 2P',monospace;font-size:10px;color:#3a3a3a;display:block;margin:14px 0 7px;letter-spacing:1px}
 #start{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
-  background:radial-gradient(ellipse at 50% 30%,var(--preset-primary) 0%,var(--preset-primary-container) 70%);padding:20px;overflow-y:auto}
+  background:radial-gradient(ellipse at 50% 30%,#1b2f4a 0%,#0d1420 70%);padding:20px;overflow-y:auto}
 .start-card{max-width:600px;width:100%;padding:30px 26px;text-align:center;max-height:94vh;overflow-y:auto}
-.start-card h1{font-family:'Press Start 2P',monospace;font-size:clamp(16px,5vw,24px);color:var(--preset-primary);
+.start-card h1{font-family:'Press Start 2P',monospace;font-size:clamp(16px,5vw,24px);color:#2b2b2b;
   line-height:1.6;margin-bottom:6px;text-shadow:2px 2px 0 rgba(255,255,255,.5)}
-.start-card .sub{font-size:22px;color:var(--preset-primary);margin-bottom:18px}
+.start-card .sub{font-size:22px;color:#4a4a4a;margin-bottom:18px}
 .char-row{display:flex;gap:14px;justify-content:center;margin-bottom:8px;flex-wrap:wrap}
-.char-opt{background:var(--preset-surface-low);border:3px solid var(--preset-primary);cursor:pointer;padding:12px 14px;text-align:center;
+.char-opt{background:#8b8b8b;border:3px solid #141414;cursor:pointer;padding:12px 14px;text-align:center;
   box-shadow:inset 2px 2px 0 rgba(255,255,255,.4)}
-.char-opt.sel{background:var(--preset-surface-low);outline:3px solid var(--gold)}
+.char-opt.sel{background:#e8e8e8;outline:3px solid var(--gold)}
 .char-opt canvas{width:58px;height:80px;background:#79b8f2;display:block;margin-bottom:8px}
-.char-opt span{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--preset-primary)}
-.controls-help{font-size:20px;color:var(--preset-primary);margin:14px 0 20px;line-height:1.6}
-.controls-help b{color:var(--preset-primary)}
+.char-opt span{font-family:'Press Start 2P',monospace;font-size:9px;color:#1c1c1c}
+.controls-help{font-size:20px;color:#4a4a4a;margin:14px 0 20px;line-height:1.6}
+.controls-help b{color:#1c1c1c}
 #game{position:fixed;inset:0}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 #hud{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;
   padding:10px 12px;pointer-events:none;z-index:5}
 #hud>*{pointer-events:auto}
-.progress{background:rgb(var(--preset-primary-rgb) / .78);border:2px solid #fff;box-shadow:0 0 0 2px #000;
+.progress{background:rgba(10,10,10,.78);border:2px solid #fff;box-shadow:0 0 0 2px #000;
   padding:8px 12px;display:flex;align-items:center;gap:8px}
 .progress .px{font-family:'Press Start 2P',monospace;font-size:10px;color:#fff}
 .pips{display:flex;gap:6px}
-.pip{width:22px;height:22px;background:var(--preset-primary-container);border:2px solid #555;display:flex;align-items:center;justify-content:center;
+.pip{width:22px;height:22px;background:#2a2a2a;border:2px solid #555;display:flex;align-items:center;justify-content:center;
   font-size:13px;filter:grayscale(1);opacity:.5}
 .pip.on{filter:none;opacity:1;border-color:var(--gold);box-shadow:0 0 6px var(--gold)}
 .hud-btns{display:flex;gap:8px}
 .hud-btns .mc-btn{font-size:14px;padding:10px 12px}
 #hint{position:absolute;left:50%;bottom:118px;transform:translateX(-50%);z-index:5;
-  background:rgb(var(--preset-primary-rgb) / .85);border:2px solid var(--gold);box-shadow:0 0 0 2px #000;
+  background:rgba(10,10,10,.85);border:2px solid var(--gold);box-shadow:0 0 0 2px #000;
   color:#fff;font-family:'Press Start 2P',monospace;font-size:10px;padding:12px 16px;text-align:center;
   line-height:1.8;max-width:92vw;animation:hintpulse 1.2s ease-in-out infinite}
 @keyframes hintpulse{50%{transform:translateX(-50%) scale(1.04)}}
 #dpad{position:absolute;left:14px;bottom:14px;z-index:5;display:none;
   grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,58px);gap:4px;opacity:.92}
 #dpad.show{display:grid}
-.dbtn{background:rgb(var(--preset-primary-rgb) / .72);border:2px solid #fff;color:#fff;font-size:20px;
+.dbtn{background:rgba(20,20,20,.72);border:2px solid #fff;color:#fff;font-size:20px;
   display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none}
-.dbtn:active{background:rgb(var(--preset-secondary-rgb) / .8)}
+.dbtn:active{background:rgba(120,120,120,.8)}
 #actBtn{position:absolute;right:16px;bottom:22px;z-index:5;display:none;width:84px;height:84px;border-radius:50%;
   font-size:11px;padding:0}
 #actBtn.show{display:block}
 #actBtn.ready{animation:actpulse .8s ease-in-out infinite;border-color:var(--gold)}
 @keyframes actpulse{50%{transform:scale(1.1);box-shadow:0 0 14px var(--gold)}}
-#panelOverlay{position:fixed;inset:0;z-index:40;background:rgb(var(--preset-primary-rgb) / .78);
+#panelOverlay{position:fixed;inset:0;z-index:40;background:rgba(5,8,14,.78);
   display:flex;align-items:center;justify-content:center;padding:16px}
 #panelOverlay[hidden]{display:none}
 .sheet{width:min(680px,96vw);max-height:92vh;overflow-y:auto;padding:26px 24px;position:relative;
   animation:sheetin .25s ease-out}
 @keyframes sheetin{from{transform:scale(.92) translateY(16px);opacity:0}}
 #panelClose{position:absolute;top:10px;right:10px;font-size:11px;padding:10px 12px;z-index:2}
-.sheet h2.ptitle{font-family:'Press Start 2P',monospace;font-size:15px;color:var(--preset-primary);margin:6px 0 4px;
+.sheet h2.ptitle{font-family:'Press Start 2P',monospace;font-size:15px;color:#2b2b2b;margin:6px 0 4px;
   text-align:center;line-height:1.7}
-.sheet .psub{text-align:center;color:var(--preset-primary);font-size:21px;margin-bottom:18px}
+.sheet .psub{text-align:center;color:#5a5a5a;font-size:21px;margin-bottom:18px}
 .player-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .qr-card{margin-top:14px;text-align:center}
 .qr-card #qrBox img,.qr-card #qrBox canvas{margin:0 auto}
 @media(max-width:520px){.player-grid{grid-template-columns:1fr}}
-.pcard{background:var(--preset-surface-low);border:3px solid var(--preset-primary);padding:18px 14px;text-align:center;
+.pcard{background:#a8a8a8;border:3px solid #141414;padding:18px 14px;text-align:center;
   box-shadow:inset 2px 2px 0 rgba(255,255,255,.4)}
-.pcard canvas{width:96px;height:96px;background:#8ab6e0;border:3px solid var(--preset-primary);margin-bottom:10px}
+.pcard canvas{width:96px;height:96px;background:#8ab6e0;border:3px solid #141414;margin-bottom:10px}
 .pcard h3{font-family:'Press Start 2P',monospace;font-size:12px;line-height:1.6;margin-bottom:8px}
-.ptag{display:inline-block;font-family:'Press Start 2P',monospace;font-size:8px;background:var(--preset-primary);color:var(--gold);
+.ptag{display:inline-block;font-family:'Press Start 2P',monospace;font-size:8px;background:#2b2b2b;color:var(--gold);
   padding:6px 8px;margin-bottom:10px}
-.pcard p{font-size:20px;color:var(--preset-primary)}
+.pcard p{font-size:20px;color:#2e2e2e}
 .hud2{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:6px 0}
-.hud2 .slot{background:var(--preset-primary);border:3px solid #000;box-shadow:0 0 0 2px var(--preset-primary);padding:14px 4px;text-align:center}
+.hud2 .slot{background:#101010;border:3px solid #000;box-shadow:0 0 0 2px #3a3a3a;padding:14px 4px;text-align:center}
 .hud2 .num{font-family:'Press Start 2P',monospace;font-size:20px;color:var(--green);display:block;margin-bottom:6px}
-.hud2 .unit{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--preset-secondary-container)}
-.adv{background:var(--preset-primary);border:2px solid #000;display:flex;gap:14px;padding:16px;margin-bottom:12px;color:var(--preset-surface-low)}
+.hud2 .unit{font-family:'Press Start 2P',monospace;font-size:8px;color:#9fb3c8}
+.adv{background:#1b1b1b;border:2px solid #000;display:flex;gap:14px;padding:16px;margin-bottom:12px;color:#e8e8e8}
 .adv .ic{flex:none;width:52px;height:52px;background:var(--panel);border:3px solid #000;display:flex;align-items:center;justify-content:center}
 .adv .ic canvas{width:34px;height:34px}
 .adv h3{font-family:'Press Start 2P',monospace;font-size:11px;color:var(--gold);margin-bottom:6px}
-.adv p{font-size:20px;color:var(--preset-background)}
+.adv p{font-size:20px;color:#cfcfcf}
 .adv .tm{color:var(--green);font-size:21px}
 .frames2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.frame2{background:var(--preset-primary-container);border:3px solid var(--preset-primary);padding:8px;box-shadow:inset 2px 2px 0 rgba(255,255,255,.25)}
+.frame2{background:#5d4126;border:3px solid #141414;padding:8px;box-shadow:inset 2px 2px 0 rgba(255,255,255,.25)}
 .frame2 img{width:100%;display:block;aspect-ratio:1;object-fit:cover;background:#000}
-.frame2 p{text-align:center;color:var(--preset-secondary-container);font-size:19px;margin-top:6px}
-.scoreboard{margin-top:16px;background:var(--preset-primary);border:3px solid #000;padding:4px 0}
-.scoreboard h4{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--gold);padding:10px 14px;border-bottom:2px solid var(--preset-primary-container)}
-.srow{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #222;font-size:20px;color:var(--preset-surface-low)}
+.frame2 p{text-align:center;color:#ffe9b8;font-size:19px;margin-top:6px}
+.scoreboard{margin-top:16px;background:#101010;border:3px solid #000;padding:4px 0}
+.scoreboard h4{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--gold);padding:10px 14px;border-bottom:2px solid #2a2a2a}
+.srow{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #222;font-size:20px;color:#e8e8e8}
 .srow:last-child{border:none}
 .msg-row{padding:10px 14px;border-bottom:1px solid #222}
 .msg-row:last-child{border:none}
 .msg-row .nm{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--gold);margin-bottom:5px}
-.msg-row .ps{font-size:20px;color:var(--preset-surface-low)}
+.msg-row .ps{font-size:20px;color:#e8e8e8}
 .msg-row .tm{font-size:16px;color:#777;margin-top:3px}
 .chest-zone{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 0}
 .chest{width:120px;height:96px;position:relative;cursor:pointer;perspective:400px}
-.chest .base{position:absolute;left:0;right:0;bottom:0;height:60px;background:linear-gradient(#a9743f,#7d5327);border:3px solid var(--preset-primary)}
+.chest .base{position:absolute;left:0;right:0;bottom:0;height:60px;background:linear-gradient(#a9743f,#7d5327);border:3px solid #141414}
 .chest .base::after{content:"";position:absolute;left:50%;top:6px;transform:translateX(-50%);width:14px;height:20px;
-  background:linear-gradient(#d8d8d8,#8a8a8a);border:2px solid var(--preset-primary)}
+  background:linear-gradient(#d8d8d8,#8a8a8a);border:2px solid #141414}
 .chest .lid{position:absolute;left:0;right:0;top:0;height:40px;background:linear-gradient(#b9834b,#8a5e2e);
-  border:3px solid var(--preset-primary);transform-origin:top center;transition:transform .45s;z-index:2}
+  border:3px solid #141414;transform-origin:top center;transition:transform .45s;z-index:2}
 .chest.open .lid{transform:rotateX(-105deg)}
 .chest .glow{position:absolute;left:8%;right:8%;top:30px;height:40px;z-index:1;opacity:0;transition:opacity .5s;
   background:radial-gradient(ellipse at center,#ffe9a3 0%,rgba(255,220,120,.55) 45%,transparent 75%)}
@@ -230,15 +209,15 @@ select.mc-input{appearance:none}
 .gift-grid[hidden]{display:none}
 .gift-grid{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-top:14px}
 @media(max-width:520px){.gift-grid{grid-template-columns:1fr}}
-.acct{background:var(--preset-surface-low);border:3px solid var(--preset-primary);padding:14px}
+.acct{background:#a8a8a8;border:3px solid #141414;padding:14px}
 .acct .bank{font-family:'Press Start 2P',monospace;font-size:11px;margin-bottom:6px}
-.acct .no{font-family:'Press Start 2P',monospace;font-size:13px;color:var(--preset-primary);word-break:break-all;margin-bottom:4px}
+.acct .no{font-family:'Press Start 2P',monospace;font-size:13px;color:#123f12;word-break:break-all;margin-bottom:4px}
 .acct .an{font-size:19px;color:#333;margin-bottom:10px}
 .complete{text-align:center;padding:10px 4px}
-.complete h2{font-family:'Press Start 2P',monospace;font-size:19px;color:var(--preset-secondary);line-height:1.7;margin-bottom:14px}
-.complete p{font-size:22px;color:var(--preset-primary);margin-bottom:10px}
+.complete h2{font-family:'Press Start 2P',monospace;font-size:19px;color:#2b6b1c;line-height:1.7;margin-bottom:14px}
+.complete p{font-size:22px;color:#3d3d3d;margin-bottom:10px}
 #toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(16px);z-index:60;
-  background:var(--preset-primary);color:#fff;border:2px solid #fff;box-shadow:0 0 0 2px #000;
+  background:#101010;color:#fff;border:2px solid #fff;box-shadow:0 0 0 2px #000;
   font-family:'Press Start 2P',monospace;font-size:10px;padding:13px 18px;opacity:0;pointer-events:none;
   transition:opacity .3s,transform .3s;max-width:90vw;text-align:center;line-height:1.8}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -250,10 +229,10 @@ select.mc-input{appearance:none}
 #panelBody.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){#panelBody{opacity:1!important;transform:none!important;transition:none}#panelBody }
 /* Menu bawah pill klasik emas */
-#bottomNav{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:46;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:2px 0;row-gap:2px;background:rgb(var(--preset-background-rgb) / .94);border:1px solid rgb(var(--preset-secondary-rgb) / .4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgb(var(--preset-secondary-rgb) / .25);width:min(96vw,500px);max-width:96vw}
-#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:var(--preset-secondary);background:transparent;border:none;box-shadow:none;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+#bottomNav{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:46;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:2px 0;row-gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw}
+#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:#978045;background:transparent;border:none;box-shadow:none;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 #bottomNav a svg{width:21px;height:21px}
-#bottomNav a.active{background:rgb(var(--preset-secondary-rgb) / .14);box-shadow:inset 0 0 0 1.5px var(--preset-secondary);color:var(--preset-secondary)}
+#bottomNav a.active{background:rgba(151,128,69,.14);box-shadow:inset 0 0 0 1.5px #b8934a;color:#7c652f}
 #bottomNav[hidden]{display:none!important}
 @media (max-width:400px){
 #bottomNav a{flex:1 1 18%;min-width:0;max-width:64px}
@@ -274,9 +253,9 @@ select.mc-input{appearance:none}
     <h1>MISI:<br>UNDANGAN PERNIKAHAN</h1>
     <p class="sub">{{ $brideNick }} &amp; {{ $groomNick }} &mdash; {{ mcaDate($wDate) }}</p>
     @if(!empty($guestName) && $guestName !== 'Bapak/Ibu/Saudara/i')
-    <p class="px" style="font-family:'Press Start 2P',monospace;font-size:10px;color:var(--preset-secondary);margin-bottom:12px">PEMAIN: {{ $guestName }}</p>
+    <p class="px" style="font-family:'Press Start 2P',monospace;font-size:10px;color:#2b6b1c;margin-bottom:12px">PEMAIN: {{ $guestName }}</p>
     @endif
-    <p class="px" style="font-family:'Press Start 2P',monospace;font-size:10px;color:var(--preset-primary);margin-bottom:12px">PILIH KARAKTERMU</p>
+    <p class="px" style="font-family:'Press Start 2P',monospace;font-size:10px;color:#2b2b2b;margin-bottom:12px">PILIH KARAKTERMU</p>
     <div class="char-row" id="charRow"></div>
     <p class="controls-help" id="controlsHelp">
       <b>WASD / Panah</b> untuk jalan &mdash; <b>E / Spasi</b> untuk masuk lokasi<br>
@@ -307,6 +286,7 @@ select.mc-input{appearance:none}
   <button class="mc-btn gold" id="actBtn">AKSI</button>
 <nav id="bottomNav" aria-label="Menu undangan">
   <a href="#" onclick="event.preventDefault();openPanel('couple')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7.5-4.7-9.5-9C1 8.5 3 5 6.5 5c2 0 3.5 1 4.5 2.5C12 6 13.5 5 15.5 5 19 5 21 8.5 20.5 12c-2 4.3-8.5 9-8.5 9z"/></svg><span>Mempelai</span></a>
+  @if(mcaGet('quotes'))<a href="#" onclick="event.preventDefault();openPanel('quotes')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 5.5C4.9 6.7 4 8.6 4 10.9V18h6.4v-6.4H7.2c0-1.9.8-3.2 2.3-4.2l-3.1-1.8zm9 0c-1.7 1.2-2.6 3.1-2.6 5.4V18h6.4v-6.4h-3.2c0-1.9.8-3.2 2.3-4.2l-3.1-1.8z"/></svg><span>Quotes</span></a>@endif
   <a href="#" onclick="event.preventDefault();openPanel('event')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path stroke-linecap="round" d="M8 3v4M16 3v4M3 10h18"/></svg><span>Acara</span></a>
   <a href="#" onclick="event.preventDefault();openPanel('gallery')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path stroke-linecap="round" stroke-linejoin="round" d="m5 19 5.5-5.5 3 3L19 11l2 2"/></svg><span>Galeri</span></a>
   <a href="#" onclick="event.preventDefault();openPanel('gift')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8v13H3V8M1 3h22v5H1zM12 8v13M12 8H7.5a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8zm0 0h4.5a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8z"/></svg><span>Gift</span></a>
@@ -632,9 +612,11 @@ function renderPips(){
   $("#progText").textContent=visited.size+"/6";
 }
 function markVisited(id){
-  if(visited.has(id))return;visited.add(id);renderPips();levelUp();
-  heartFx(player.x-camX,player.y-camY-30,10);
+  if(visited.has(id))return;
   const L=LOCS.find(l=>l.id===id);
+  if(!L)return;
+  visited.add(id);renderPips();levelUp();
+  heartFx(player.x-camX,player.y-camY-30,10);
   toast(`LOKASI DITEMUKAN: ${L.name} (${visited.size}/6)`);
 }
 const TPL={
@@ -647,6 +629,8 @@ couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2>
 <h3>{{ $groomFull }}</h3><span class="ptag">MEMPELAI PRIA</span><p>{{ mcaGet('groom_parents', mcaGet('groom_child_of','')) }}</p>@if(mcaGet('groom_instagram'))<a href="https://instagram.com/{{ ltrim(mcaGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="mc-btn" style="font-size:9px;margin-top:8px;display:inline-flex;align-items:center;gap:5px;text-decoration:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(mcaGet('groom_instagram'),'@') }}</span></a>@endif</div>
 </div>
 `,
+quotes:()=>`<h2 class="ptitle">KUTIPAN</h2>
+@if(mcaGet('quotes'))<p class="psub" style="font-style:italic;font-size:15px;line-height:1.8">&ldquo;{{ mcaGet('quotes') }}&rdquo;</p>@else<p class="psub">Belum ada kutipan.</p>@endif`,
 qr:()=>`<h2 class="ptitle">KARTU TAMU</h2><p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p><div class="qr-card"><div id="qrBox" style="display:flex;justify-content:center"></div><p class="psub" style="margin-top:10px">Nama: <b>${esc(MC.guestName)}</b></p><p class="psub" style="margin-top:6px">Kode manual: <b>${esc(MC.guestQr)}</b></p></div>`,
 count:()=>`<h2 class="ptitle">MENARA JAM</h2><p class="psub">${MC.dateText} &mdash; quest dimulai dalam:</p>
 <div class="hud2">
@@ -661,9 +645,9 @@ event:()=>`<h2 class="ptitle">BALAI QUEST</h2><p class="psub">Dua misi utama men
 ${MC.akad.maps?`<a class="mc-btn" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.akad.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}</div></div>
 <div class="adv"><div class="ic"><canvas class="ev-ic" data-ic="heart" width="16" height="16"></canvas></div>
 <div><h3>RESEPSI</h3><p>${MC.resepsi.date}</p><p class="tm">${MC.resepsi.time}</p><p>${esc(MC.resepsi.venue)}</p>
-${MC.resepsi.maps?`<a class="mc-btn" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.resepsi.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}${MC.liveStream?`<div style="margin-top:10px;border:3px solid #222;box-shadow:inset 0 0 0 2px var(--preset-primary);border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%"><iframe src="${esc(MC.liveEmbed)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div><a class="mc-btn" style="font-size:10px;margin-top:8px;display:inline-block;text-decoration:none" href="${esc(MC.liveStream)}" target="_blank" rel="noopener">LIVE STREAMING</a>`:""}</div></div>`,
+${MC.resepsi.maps?`<a class="mc-btn" style="font-size:10px;margin-top:10px;display:inline-block;text-decoration:none" href="${esc(MC.resepsi.maps)}" target="_blank" rel="noopener">&#9673; BUKA PETA</a>`:""}${MC.liveStream?`<div style="margin-top:10px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%"><iframe src="${esc(MC.liveEmbed)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe></div></div><a class="mc-btn" style="font-size:10px;margin-top:8px;display:inline-block;text-decoration:none" href="${esc(MC.liveStream)}" target="_blank" rel="noopener">LIVE STREAMING</a>`:""}</div></div>`,
 gallery:()=>`<h2 class="ptitle">GALERI</h2><p class="psub">Balok-balok kenangan.</p>
-${(MC.prewedFile||MC.prewedLink)?'<div style="margin-top:10px;border:3px solid #222;box-shadow:inset 0 0 0 2px var(--preset-primary);border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%">' + (MC.prewedFile?'<video controls preload="metadata" playsinline src="'+esc(MC.prewedFile)+'" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>':MC.prewedEmbed?'<iframe src="'+esc(MC.prewedEmbed)+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>':'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:var(--preset-surface-low);text-decoration:none;font-size:9px;font-weight:700;letter-spacing:.15em">&#9654; TONTON VIDEO PREWEDDING</a>') + '</div></div>' : ""}
+${(MC.prewedFile||MC.prewedLink)?'<div style="margin-top:10px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%">' + (MC.prewedFile?'<video controls preload="metadata" playsinline src="'+esc(MC.prewedFile)+'" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>':MC.prewedEmbed?'<iframe src="'+esc(MC.prewedEmbed)+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>':'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:9px;font-weight:700;letter-spacing:.15em">&#9654; TONTON VIDEO PREWEDDING</a>') + '</div></div>' : ""}
 <div class="frames2">
 @foreach(array_slice($gallery, 0, 6) as $i => $img)
 <div class="frame2"><img src="{{ $img }}" alt="Galeri {{ $i+1 }}" loading="lazy"><p>Kenangan {{ $i+1 }}</p></div>
@@ -687,7 +671,7 @@ rsvp:()=>`<h2 class="ptitle">POS RSVP</h2><p class="psub">Apakah kamu bergabung 
 <div id="ul2"></div></div>`,
 gift:()=>`<h2 class="ptitle">PETI HARTA</h2><p class="psub">Klik petinya untuk membuka.</p>
 <div class="chest-zone"><div class="chest" id="ch2"><div class="glow"></div><div class="lid"></div><div class="base"></div></div>
-<div class="px" style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--preset-primary)" id="chL2">PETI TERKUNCI</div></div>
+<div class="px" style="font-family:'Press Start 2P',monospace;font-size:9px;color:#5a5a5a" id="chL2">PETI TERKUNCI</div></div>
 <div class="gift-grid" id="ga2" hidden>
 @if($qrisEnabled)
 <div style="max-width:340px;margin:0 auto 18px;background:#ffffff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);color:#222222;grid-column:1/-1">
@@ -838,7 +822,7 @@ function openComplete(){
 <h2>&#9733; QUEST COMPLETE! &#9733;</h2>
 <p>Terima kasih telah menyelesaikan petualangan ini! Kehadiran dan doa restumu adalah hadiah terbaik bagi kami.</p>
 <p>Kami yang berbahagia,</p>
-<p style="font-family:'Press Start 2P',monospace;font-size:13px;color:var(--preset-secondary)">${esc(MC.brideNick)} &amp; ${esc(MC.groomNick)}</p>
+<p style="font-family:'Press Start 2P',monospace;font-size:13px;color:#2b6b1c">${esc(MC.brideNick)} &amp; ${esc(MC.groomNick)}</p>
 <p style="font-family:'Press Start 2P',monospace;font-size:9px;color:#777;margin-top:14px">${esc(MC.dateText)}</p></div>`;
   $("#panelOverlay").hidden=false;
   panelAnimate();
