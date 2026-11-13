@@ -161,6 +161,12 @@ tailwind.config = {
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
 #vinyl[hidden]{display:none!important}
 #musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+@media (max-width:400px){
+  #bottomNav a,#floatMenu a{flex:1 1 18%;min-width:0;max-width:none}
+  #musicFloat{bottom:140px!important}
+  #qrFloatBtn{bottom:198px!important}
+  #toast{bottom:150px!important}
+}
     #qrFloatBtn{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:168px;
       width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
       background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97)); color:#e6c887; cursor:pointer;
@@ -212,7 +218,7 @@ tailwind.config = {
   </div>
 </div>
 <style>
-#envOverlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,#5a2c1a 0%,#2b1410 72%),repeating-linear-gradient(45deg,rgba(212,163,31,.05) 0 2px,transparent 2px 14px);transition:opacity .5s ease,visibility 0s linear .5s}
+#envOverlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,#1b2f4a 0%,#0A192F 72%),repeating-linear-gradient(45deg,rgba(212,163,31,.05) 0 2px,transparent 2px 14px);transition:opacity .5s ease,visibility 0s linear .5s}
 #envOverlay.gone{opacity:0;visibility:hidden}
 #envOverlay .env-scene{display:flex;flex-direction:column;align-items:center}
 #envOverlay .env-head{text-align:center;margin-bottom:22px;transition:opacity .4s ease}
@@ -592,6 +598,7 @@ function withEnvelope(fn){
       <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
       <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
       <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
+      <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
       <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
     </div>
   </div>
@@ -613,6 +620,10 @@ function withEnvelope(fn){
       <div class="grid grid-cols-2 gap-3 mb-4" id="attendWrap">
         <button type="button" data-val="hadir" class="attend-btn border rounded-xl py-3 text-sm tracking-widest font-semibold transition border-gold bg-gold/15 text-mochadark">HADIR</button>
         <button type="button" data-val="tidak" class="attend-btn border rounded-xl py-3 text-sm tracking-widest font-semibold transition border-mocha/25 text-mochadark/60">BERHALANGAN</button>
+      </div>
+      <div id="alasanWrap" style="display:none">
+        <label class="block text-[11px] tracking-[.25em] text-golddim font-semibold mb-2">ALASAN BERHALANGAN</label>
+        <textarea id="rsvpAlasan" rows="2" placeholder="Tulis alasan berhalangan..." class="w-full bg-white/70 border border-mocha/25 rounded-xl px-4 py-3 mb-4 outline-none focus:border-gold"></textarea>
       </div>
       <label class="block text-[11px] tracking-[.25em] text-golddim font-semibold mb-2">JUMLAH TAMU</label>
       <select id="rsvpJumlah" class="w-full bg-white/70 border border-mocha/25 rounded-xl px-4 py-3 mb-6 outline-none focus:border-gold">
@@ -988,16 +999,19 @@ document.querySelectorAll(".attend-btn").forEach(b=>b.addEventListener("click",(
     x.classList.toggle("border-gold",on);x.classList.toggle("bg-gold/15",on);
     x.classList.toggle("text-mochadark",on);x.classList.toggle("border-mocha/25",!on);
     x.classList.toggle("text-mochadark/60",!on);
+  var aw=document.getElementById("alasanWrap"); aw.style.display=(attendVal==="tidak")?"block":"none";
+  document.getElementById("rsvpAlasan").required=(attendVal==="tidak");
   });
 }));
 document.getElementById("rsvpForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const nama=document.getElementById("rsvpNama").value.trim();
   if(!nama){toast("Mohon isi nama Anda");return;}
+  if(attendVal==="tidak"&&!document.getElementById("rsvpAlasan").value.trim()){toast("Mohon isi alasan berhalangan.");return;}
   const btn=document.getElementById("rsvpBtn");btn.disabled=true;btn.textContent="MENGIRIM...";
   try{
     const r=await fetch("/api/rsvp",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({invitation_id:JC.invId,nama,jumlah_tamu:parseInt(document.getElementById("rsvpJumlah").value)||1,status:attendVal,alasan:""})});
+      body:JSON.stringify({invitation_id:JC.invId,nama,jumlah_tamu:parseInt(document.getElementById("rsvpJumlah").value)||1,status:attendVal,alasan:attendVal==="tidak"?document.getElementById("rsvpAlasan").value.trim():""})});
     const j=await r.json();if(!j.success)throw new Error(j.message||"Gagal");
     e.target.reset();toast("Matur nuwun! Konfirmasi terkirim.");
   }catch(err){toast("Gagal: "+err.message);}

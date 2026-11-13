@@ -221,6 +221,11 @@ footer .hand{font-size:42px;color:var(--aksen-dk)}
 .fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:#978045;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:.25s}
 .fmenu a i{font-style:normal;line-height:0}
 .fmenu a svg{width:21px;height:21px}
+@media (max-width:400px){
+  .fmenu a{flex:1 1 18%;min-width:0;max-width:none}
+  #musBtn{bottom:140px!important}
+  #qrFloatBtn{bottom:202px!important}
+}
 .fmenu a.active{background:rgba(151,128,69,.14);box-shadow:inset 0 0 0 1.5px #b8934a;color:#7c652f}
 body::after{content:"";display:block;height:150px}
 #musBtn.playing{outline:2px solid var(--aksen-dk);outline-offset:2px}
@@ -462,6 +467,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
     <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
     <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
     <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
+    <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
     <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
   </div>
 </div>
@@ -793,6 +799,7 @@ function setAtt(v){
     b.classList.toggle('on', b.dataset.att === v);
   });
   document.getElementById('alasanWrap').style.display = (v === 'tidak') ? 'block' : 'none';
+  document.getElementById('rsvpAlasan').required = (v === 'tidak');
 }
 async function sendRSVP(e){
   e.preventDefault();
@@ -801,6 +808,7 @@ async function sendRSVP(e){
   var alasan = (__att === 'tidak') ? document.getElementById('rsvpAlasan').value.trim() : '';
   if(!nama){ alert('Mohon isi nama terlebih dahulu.'); return false; }
   if(!__att){ alert('Mohon pilih status kehadiran.'); return false; }
+  if(__att === 'tidak' && !alasan){ alert('Mohon isi alasan berhalangan.'); return false; }
   var btn = document.getElementById('rsvpBtn'); btn.disabled = true;
   try{
     var r = await fetch('/api/rsvp', { method:'POST', headers:{'Content-Type':'application/json'},

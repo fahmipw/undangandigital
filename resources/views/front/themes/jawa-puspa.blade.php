@@ -148,14 +148,14 @@ tailwind.config = {
   .field-puspa:focus{border-color:#978045}
   #musicFloat{position:fixed;bottom:96px;right:max(14px,calc(50% - 215px + 14px));z-index:45;
     width:52px;height:52px;border-radius:50%;border:1px solid rgba(151,128,69,.7);
-
+    background:radial-gradient(circle at 32% 30%,#ffffff,#f3ecd9 70%);color:#77603a;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(90,75,40,.35);cursor:pointer}
     #qrFloatBtn{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:188px;
       width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
       background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97)); color:#e6c887; cursor:pointer;
       box-shadow:0 10px 24px rgba(90,70,20,.45); border:1px solid rgba(201,164,92,.8); }
     #qrFloatBtn[hidden]{ display:none !important; }
-    #qrFloatBtn.hidden{ display:none !important; }    background:radial-gradient(circle at 32% 30%,#ffffff,#f3ecd9 70%);color:#77603a;
-    display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(90,75,40,.35);cursor:pointer}
+    #qrFloatBtn.hidden{ display:none !important; }
   #musicFloat .bars{display:none;gap:2.5px;align-items:flex-end;height:16px}
   #musicFloat .bars span{width:3px;background:#77603a;animation:eqB 0.9s ease-in-out infinite}
   #musicFloat .bars span:nth-child(2){animation-delay:.25s}
@@ -191,6 +191,12 @@ tailwind.config = {
 #floatMenu a.active,#bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
 #musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+@media (max-width:400px){
+  #bottomNav a,#floatMenu a{flex:1 1 18%;min-width:0;max-width:none}
+  #musicFloat{bottom:140px!important}
+  #qrFloatBtn{bottom:198px!important}
+  #toast{bottom:150px!important}
+}
 #musicFloat .bars span{background:#e6c887!important}
 #vinyl{bottom:96px!important}
 @media (prefers-reduced-motion:reduce){}
@@ -236,7 +242,7 @@ tailwind.config = {
   </div>
 </div>
 <style>
-#envOverlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,#5a2c1a 0%,#2b1410 72%),repeating-linear-gradient(45deg,rgba(212,163,31,.05) 0 2px,transparent 2px 14px);transition:opacity .5s ease,visibility 0s linear .5s}
+#envOverlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,#6b5a2e 0%,#332e1e 72%),repeating-linear-gradient(45deg,rgba(212,163,31,.05) 0 2px,transparent 2px 14px);transition:opacity .5s ease,visibility 0s linear .5s}
 #envOverlay.gone{opacity:0;visibility:hidden}
 #envOverlay .env-scene{display:flex;flex-direction:column;align-items:center}
 #envOverlay .env-head{text-align:center;margin-bottom:22px;transition:opacity .4s ease}
@@ -704,6 +710,7 @@ function withEnvelope(fn){
       <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
       <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
       <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
+      <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
       <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
     </div>
   </div>
@@ -725,6 +732,10 @@ function withEnvelope(fn){
       <div class="grid grid-cols-2 gap-2 mb-4" id="rsvp-status-group">
         <button type="button" data-status="hadir" class="rsvp-status-btn py-3 rounded-lg text-[12px] font-semibold tracking-wider transition-all" style="border:1px solid rgba(151,128,69,.55);color:#77603a">Hadir</button>
         <button type="button" data-status="tidak" class="rsvp-status-btn py-3 rounded-lg text-[12px] font-semibold tracking-wider transition-all" style="border:1px solid rgba(151,128,69,.55);color:#77603a">Berhalangan</button>
+      </div>
+      <div id="rsvp-alasan-wrap" class="hidden">
+        <label class="block text-[10px] tracking-[0.25em] uppercase text-puspa-deep mb-1.5 font-medium">Alasan Berhalangan</label>
+        <textarea id="rsvp-alasan" rows="2" placeholder="Tulis alasan berhalangan..." class="field-puspa mb-4"></textarea>
       </div>
       <div id="rsvp-count-wrap" class="hidden">
         <label class="block text-[10px] tracking-[0.25em] uppercase text-puspa-deep mb-1.5 font-medium">Jumlah Tamu</label>
@@ -1062,6 +1073,10 @@ window.prewedPauseMusic=prewedPauseMusic;
       b.style.color = on ? '#fffdf7' : '#77603a';
     });
     if (countWrap) countWrap.classList.toggle('hidden', rsvpStatus !== 'hadir');
+    var aw = document.getElementById('rsvp-alasan-wrap');
+    if (aw) aw.classList.toggle('hidden', rsvpStatus !== 'tidak');
+    var ta = document.getElementById('rsvp-alasan');
+    if (ta) ta.required = (rsvpStatus === 'tidak');
   }
   statusBtns.forEach(b => b.addEventListener('click', () => { rsvpStatus = b.dataset.status; paintStatus(); }));
   paintStatus();
@@ -1070,9 +1085,11 @@ window.prewedPauseMusic=prewedPauseMusic;
     e.preventDefault();
     const name = document.getElementById('rsvp-name').value.trim();
     if (!name) return showToast('Mohon isi nama Anda');
+    const alasan = rsvpStatus === 'tidak' ? document.getElementById('rsvp-alasan').value.trim() : '';
+    if (rsvpStatus === 'tidak' && !alasan) return showToast('Mohon isi alasan berhalangan.');
     const btn = document.getElementById('rsvp-submit');
     btn.disabled = true; btn.textContent = 'MENGIRIM...';
-    const payload = { invitation_id: INV_ID, nama: name, status: rsvpStatus, konfirmasi: rsvpStatus, kehadiran: rsvpStatus, hadir: rsvpStatus === 'hadir', jumlah_tamu: rsvpStatus === 'hadir' ? parseInt(document.getElementById('rsvp-count').value || '1') : 0 };
+    const payload = { invitation_id: INV_ID, nama: name, status: rsvpStatus, konfirmasi: rsvpStatus, kehadiran: rsvpStatus, hadir: rsvpStatus === 'hadir', jumlah_tamu: rsvpStatus === 'hadir' ? parseInt(document.getElementById('rsvp-count').value || '1') : 1, alasan: alasan };
     try {
       const res = await fetch('/api/rsvp', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error('rsvp failed');

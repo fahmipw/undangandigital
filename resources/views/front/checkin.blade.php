@@ -14,6 +14,7 @@
   .stats{display:flex;gap:10px;margin:16px 0}
   .stat{flex:1;background:#fff;border-radius:14px;padding:14px 8px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.05)}
   .stat b{font-size:24px;display:block}
+  .stat svg{display:block;margin:0 auto 6px;width:26px;height:26px}
   .stat span{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#8a7a5f}
   .card{background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
   .card h3{font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:#775a19;margin-bottom:12px}
@@ -52,9 +53,9 @@
 </div>
 <div class="wrap">
   <div class="stats">
-    <div class="stat"><b id="st-total">–</b><span>Total Tamu</span></div>
-    <div class="stat"><b id="st-in" style="color:#15803d">–</b><span>Hadir</span></div>
-    <div class="stat"><b id="st-out" style="color:#b45309">–</b><span>Belum</span></div>
+    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#775a19"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><b id="st-total">–</b><span>Total Tamu</span></div>
+    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#15803d"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><b id="st-in" style="color:#15803d">–</b><span>Hadir</span></div>
+    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#b45309"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><b id="st-out" style="color:#b45309">–</b><span>Belum</span></div>
   </div>
 
   <div id="result"><div class="big" id="res-title"></div><div class="sub" id="res-sub"></div></div>
@@ -239,8 +240,8 @@ async function refreshStats(){
     document.getElementById('st-in').textContent = d.checked_in;
     document.getElementById('st-out').textContent = d.total - d.checked_in;
     document.getElementById('recent').innerHTML = d.recent.length
-      ? d.recent.map(function(r){
-          return '<div class="recent-item"><span>' + esc(r.nama) + '</span><small>' + esc(formatEventTime(r.checked_in_at)) + '</small></div>';
+      ? d.recent.map(function(r,i){
+          return '<div class="recent-item"><span><b style="color:#775a19;margin-right:6px">' + (i+1) + '.</b>' + esc(r.nama) + '</span><small>' + esc(formatEventTime(r.checked_in_at)) + '</small></div>';
         }).join('')
       : '<div class="empty">Belum ada check-in.</div>';
   }catch(e){}

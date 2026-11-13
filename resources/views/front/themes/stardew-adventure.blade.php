@@ -659,7 +659,7 @@ couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2>
 <h3>{{ $groomFull }}</h3><span class="ptag">MEMPELAI PRIA</span><p>{{ sdaGet('groom_parents', sdaGet('groom_child_of','')) }}</p>@if(sdaGet('groom_instagram'))<a href="https://instagram.com/{{ ltrim(sdaGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="sd-btn" style="font-size:9px;margin-top:8px;display:inline-flex;align-items:center;gap:5px;text-decoration:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(sdaGet('groom_instagram'),'@') }}</span></a>@endif</div>
 </div>
 `,
-qr:()=>`<h2 class="ptitle">KARTU TAMU</h2><p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p><div class="qr-card"><div id="qrBox" style="display:flex;justify-content:center"></div><p class="psub" style="margin-top:10px">Nama: <b>${esc(MC.guestName)}</b></p></div>`,
+qr:()=>`<h2 class="ptitle">KARTU TAMU</h2><p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p><div class="qr-card"><div id="qrBox" style="display:flex;justify-content:center"></div><p class="psub" style="margin-top:10px">Nama: <b>${esc(MC.guestName)}</b></p><p class="psub" style="margin-top:6px">Kode manual: <b>${esc(MC.guestQr)}</b></p></div>`,
 count:()=>`<h2 class="ptitle">MENARA JAM</h2><p class="psub">${MC.dateText} &mdash; musim panen dimulai dalam:</p>
 <div class="hud2">
 <div class="slot"><span class="num" id="cD">00</span><span class="unit">HARI</span></div>
@@ -694,7 +694,7 @@ ${(MC.prewedFile||MC.prewedLink)?'<div style="margin-top:10px;border:3px solid #
 rsvp:()=>`<h2 class="ptitle">KANTOR POS</h2><p class="psub">Kirim surat konfirmasimu lewat pos kebun.</p>
 <form id="rf2">
 <label class="lbl">NAMA LENGKAP</label><input class="sd-input" id="rn2" required maxlength="40" placeholder="Tulis namamu...">
-<label class="lbl">KEHADIRAN</label><select class="sd-input" id="rh2"><option value="hadir">Hadir, siap panen!</option><option value="tidak">Tidak bisa ikut</option></select>
+<label class="lbl">KEHADIRAN</label><select class="sd-input" id="rh2"><option value="hadir">Hadir, siap panen!</option><option value="tidak">Tidak bisa ikut</option></select><div id="raWrap" style="display:none"><label class="lbl">ALASAN BERHALANGAN</label><textarea class="sd-input" id="ra2" rows="2" placeholder="Tulis alasan berhalangan..."></textarea></div>
 <label class="lbl">JUMLAH TAMU</label><select class="sd-input" id="rj2"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
 <div style="margin-top:14px"><button class="sd-btn green" type="submit" style="font-size:11px">KIRIM RSVP</button></div>
 </form>
@@ -805,13 +805,15 @@ function wireRsvp(){
     ).join(""):'<div class="srow"><span style="color:#777">Belum ada yang mendaftar.</span></div>';
   }catch(e){box.innerHTML='<div class="srow"><span style="color:#777">Gagal memuat.</span></div>';}};
   load();
+  $("#rh2").addEventListener("change",function(){ var show=this.value==="tidak"; var w=$("#raWrap"); w.style.display=show?"block":"none"; $("#ra2").required=show; });
   $("#rf2").onsubmit=async e=>{e.preventDefault();
     const nama=$("#rn2").value.trim();if(!nama){toast("Isi dulu namanya!");return;}
+    const alasan=$("#rh2").value==="tidak"?$("#ra2").value.trim():"";if($("#rh2").value==="tidak"&&!alasan){toast("Mohon isi alasan berhalangan!");return;}
     const btn=e.target.querySelector("[type=submit]");btn.disabled=true;
     try{
       const r=await fetch("/api/rsvp",{method:"POST",headers:{"Content-Type":"application/json"},
         body:JSON.stringify({invitation_id:MC.invId,nama,
-          jumlah_tamu:parseInt($("#rj2").value)||1,status:$("#rh2").value,alasan:""})});
+          jumlah_tamu:parseInt($("#rj2").value)||1,status:$("#rh2").value,alasan:alasan})});
       const j=await r.json();if(!j.success)throw new Error(j.message||"Gagal");
       e.target.reset();levelUp();toast("RSVP TERSIMPAN!");load();
     }catch(err){toast("Gagal: "+err.message);}

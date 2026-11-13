@@ -185,6 +185,12 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 #floatMenu a.active,#bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
 #musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
+@media (max-width:400px){
+  #bottomNav a,#floatMenu a{flex:1 1 18%;min-width:0;max-width:none}
+  #musicFloat{bottom:140px!important}
+  #qrFloatBtn{bottom:198px!important}
+  #toast{bottom:150px!important}
+}
 #musicFloat .bars span{background:#e6c887!important}
 #vinyl{bottom:96px!important}
 @media (prefers-reduced-motion:reduce){}
@@ -746,6 +752,7 @@ function withEnvelope(fn){
       <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
       <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
       <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
+      <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
       <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
     </div>
   </div>
@@ -768,6 +775,7 @@ function withEnvelope(fn){
         <option value="Hadir">Hadir, Insya Allah</option>
         <option value="Tidak Hadir">Berhalangan</option>
       </select>
+      <textarea name="alasan" id="rsvpAlasan" rows="2" placeholder="Alasan berhalangan..." class="field-klasik" style="display:none"></textarea>
       <input type="number" name="jumlah" min="1" max="10" value="1" class="field-klasik" />
       <button type="submit" class="btn-gold w-full text-[11px] font-semibold tracking-[0.25em] py-3.5 rounded-xl">KIRIM RSVP</button>
     </form>
@@ -1015,17 +1023,25 @@ window.prewedPauseVideo=prewedPauseVideo;
 window.prewedPauseMusic=prewedPauseMusic;
 
 /* ---------- 8. RSVP ---------- */
+document.querySelector('#rsvpForm select[name="kehadiran"]').addEventListener("change",function(){
+  var show=this.value==="Tidak Hadir";
+  var ta=document.getElementById("rsvpAlasan"); ta.style.display=show?"block":"none"; ta.required=show;
+});
 document.getElementById("rsvpForm").addEventListener("submit", async function(e){
   e.preventDefault();
   const fd=new FormData(this);
-  const payload={ nama:fd.get("nama"), kehadiran:fd.get("kehadiran"),
-    jumlah:fd.get("jumlah"), inv_id:JWA.invId };
+  const status=fd.get("kehadiran")==="Tidak Hadir"?"tidak":"hadir";
+  const alasan=status==="tidak"?(fd.get("alasan")||"").trim():"";
+  if(status==="tidak"&&!alasan){ toast("Mohon isi alasan berhalangan."); return; }
+  const payload={ invitation_id:JWA.invId, nama:fd.get("nama"),
+    jumlah_tamu:parseInt(fd.get("jumlah"))||1, status, alasan };
   try{
     const r=await fetch("/api/rsvp",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify(payload)});
     const j=await r.json();
     toast(j&&j.message?j.message:"Terima kasih atas konfirmasinya!");
     this.reset();
+    var ta=document.getElementById("rsvpAlasan"); ta.style.display="none"; ta.required=false;
   }catch(err){ toast("Gagal mengirim. Coba lagi."); }
 });
 

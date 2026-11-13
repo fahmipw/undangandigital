@@ -916,7 +916,7 @@ function openPanel(id){
     drawFace($("#faceGroom"),{skin:"#c98d5f",hair:"#2b2b2b",shirt:"#3f8fd1"});
   }
   else if(id==="qr"){
-    body.innerHTML=`<div class="ptitle">KARTU TAMU</div><div class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</div><div class="qr-card"><div id="qrBox" style="display:flex;justify-content:center"></div><p class="psub" style="margin-top:10px">Nama: <b>${esc(MC.guestName)}</b></p></div>`;
+    body.innerHTML=`<div class="ptitle">KARTU TAMU</div><div class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</div><div class="qr-card"><div id="qrBox" style="display:flex;justify-content:center"></div><p class="psub" style="margin-top:10px">Nama: <b>${esc(MC.guestName)}</b></p><p class="psub" style="margin-top:6px">Kode manual: <b>${esc(MC.guestQr)}</b></p></div>`;
     if(window.QRCode&&MC.guestQrOn&&MC.guestQr){
       new QRCode($("#qrBox"),{text:MC.guestQr,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});
       var qb=document.getElementById('qrBox');if(qb){if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}
@@ -964,10 +964,12 @@ function openPanel(id){
         <option value="">Konfirmasi kehadiran</option>
         <option value="Hadir">Hadir, Insya Allah</option>
         <option value="Tidak Hadir">Berhalangan</option></select>
+      <label class="lbl">ALASAN BERHALANGAN</label><textarea class="pq-input" name="alasan" id="rsvpAlasan" rows="2" placeholder="Tulis alasan berhalangan..." style="display:none"></textarea>
       <label class="lbl">JUMLAH TAMU</label><input class="pq-input" type="number" name="jumlah" min="1" max="10" value="1">
       <button type="submit" class="pq-btn green" style="width:100%;margin-top:18px">KIRIM RSVP</button>
     </form>`;
     $("#rsvpForm").addEventListener("submit",submitRsvp);
+    $("#rsvpForm select[name=kehadiran]").addEventListener("change",function(){ var show=this.value==="Tidak Hadir"; var ta=document.getElementById("rsvpAlasan"); ta.style.display=show?"block":"none"; ta.required=show; });
   }
   else if(id==="ucapan"){
     body.innerHTML=`<div class="ptitle">PAPAN UCAPAN</div><div class="psub">Tuliskan doa restu</div>
@@ -1090,9 +1092,12 @@ function tickCountdown(dId,hId,mId,sId){
 async function submitRsvp(e){
   e.preventDefault();
   const fd=new FormData(e.target);
+  const status=fd.get("kehadiran")==="Tidak Hadir"?"tidak":"hadir";
+  const alasan=status==="tidak"?(fd.get("alasan")||"").trim():"";
+  if(status==="tidak"&&!alasan){ toast("MOHON ISI ALASAN BERHALANGAN."); return; }
   try{
     const r=await fetch("/api/rsvp",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({nama:fd.get("nama"),kehadiran:fd.get("kehadiran"),jumlah:fd.get("jumlah"),inv_id:MC.invId})});
+      body:JSON.stringify({invitation_id:MC.invId,nama:fd.get("nama"),jumlah_tamu:parseInt(fd.get("jumlah"))||1,status,alasan})});
     const j=await r.json();
     toast(j&&j.message?j.message:"RSVP TERKIRIM!");
     rsvpDone=true; updateQuestUI(); e.target.reset();

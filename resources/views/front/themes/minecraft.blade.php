@@ -371,6 +371,10 @@ body:not(.gate-open) .float-btns{display:none!important}
           <option value="hadir">Hadir, siap berpetualang!</option>
           <option value="tidak">Tidak bisa ikut quest</option>
         </select>
+        <div id="alasanWrap" style="display:none">
+        <label class="lbl" for="fAlasan">ALASAN BERHALANGAN</label>
+        <textarea class="mc-input" id="fAlasan" rows="2" placeholder="Tulis alasan berhalangan..."></textarea>
+        </div>
         <label class="lbl" for="fJumlah">JUMLAH ROMBONGAN</label>
         <select class="mc-input" id="fJumlah">
           <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
@@ -409,6 +413,7 @@ body:not(.gate-open) .float-btns{display:none!important}
     <p style="font-size:11px;line-height:1.7;color:#c8d2dc;margin:0 0 16px">Tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
     <div style="background:#fff;padding:12px;display:inline-block;border:3px solid #5b5b5b"><div id="qrModalBox"></div></div>
     <p style="margin:14px 0 0;font-size:12px;font-weight:700;color:#fdf6dd">{{ $guestName }}</p>
+    <p style="margin:6px 0 0;font-size:12px;color:#fdf6dd">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
     <button id="qrModalDownloadBtn" type="button" class="mc-btn gold" style="display:block;width:100%;margin-top:14px;padding:12px;font-size:11px">UNDUH QR</button>
   </div>
 </div>
@@ -777,15 +782,17 @@ async function loadRsvp(){
     ).join(""):'<div class="score-empty">Belum ada yang mendaftar. Jadilah yang pertama!</div>';
   }catch(e){box.innerHTML='<div class="score-empty">Gagal memuat daftar.</div>';}
 }
+  $("#fHadir").addEventListener("change",function(){ var show=this.value==="tidak"; var w=$("#alasanWrap"); w.style.display=show?"block":"none"; $("#fAlasan").required=show; });
 $("#rsvpForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const nama=$("#fNama").value.trim();
   if(!nama){toast("Isi dulu nama pemainnya!");return;}
+  if($("#fHadir").value==="tidak"&&!$("#fAlasan").value.trim()){toast("Mohon isi alasan berhalangan!");return;}
   const btn=e.target.querySelector("[type=submit]");btn.disabled=true;
   try{
     const r=await fetch("/api/rsvp",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({invitation_id:MC.invId,nama,jumlah_tamu:parseInt($("#fJumlah").value)||1,
-        status:$("#fHadir").value,alasan:""})});
+        status:$("#fHadir").value,alasan:$("#fHadir").value==="tidak"?$("#fAlasan").value.trim():""})});
     const j=await r.json();
     if(!j.success)throw new Error(j.message||"Gagal");
     e.target.reset();levelUp();toast("RSVP TERSIMPAN!");loadRsvp();

@@ -1394,6 +1394,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
           <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
           <p style="margin:16px 0 0;font-weight:600;color:#2b2118"><?php echo htmlspecialchars($guestName); ?></p>
+          <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em"><?php echo htmlspecialchars($guestQrCode); ?></b></p>
           <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
         </div>
       </div>
@@ -1728,6 +1729,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             alasanBox.style.maxHeight = "0";
             alasanBox.style.opacity = "0";
           }
+          document.getElementById("rsvp-alasan").required = (val === "tidak");
         }
 
         /* ---- RSVP → API + WhatsApp ---- */
@@ -1737,6 +1739,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           var alasan = attendance === "tidak" ? document.getElementById("rsvp-alasan").value.trim() : "";
           if (!name) { alert("Mohon isi nama terlebih dahulu."); return; }
           if (!attendance) { alert("Mohon pilih status kehadiran."); return; }
+          if (attendance === "tidak" && !alasan) { alert("Mohon isi alasan berhalangan."); return; }
 
           var btn = document.getElementById("btn-kirim-rsvp");
           btn.disabled = true;

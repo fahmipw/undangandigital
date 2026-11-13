@@ -544,6 +544,7 @@ footer{padding:50px 20px 110px;text-align:center}
     <p style="font-size:13px;line-height:1.6;color:var(--ink-soft);margin:0 0 18px">Tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
     <div style="background:#fff;padding:14px;border-radius:12px;display:inline-block;box-shadow:0 8px 24px rgba(0,0,0,.12)"><div id="qrModalBox"></div></div>
     <p style="margin:16px 0 0;font-weight:700;color:#2b2118">{{ $guestName }}</p>
+    <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
     <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
   </div>
 </div>
@@ -879,6 +880,7 @@ function setAtt(el){
   $$('.att').forEach(function(b){ b.classList.remove('sel-hadir','sel-tidak'); });
   el.classList.add(__att === 'hadir' ? 'sel-hadir' : 'sel-tidak');
   document.getElementById('alasanBox').style.display = __att === 'hadir' ? 'none' : 'block';
+  document.getElementById('rsvpAlasan').required = (__att === 'tidak');
 }
 async function sendRSVP(e){
   e.preventDefault();
@@ -886,6 +888,7 @@ async function sendRSVP(e){
   var jumlah = document.getElementById('rsvpJumlah').value;
   var alasan = document.getElementById('rsvpAlasan').value.trim();
   if(!nama){ alert('Mohon isi nama.'); return false; }
+  if(__att === 'tidak' && !alasan){ alert('Mohon isi alasan berhalangan.'); return false; }
   try{
     var r = await fetch('/api/rsvp', { method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ invitation_id: INV_ID, nama: nama, jumlah_tamu: jumlah, status: __att, alasan: alasan }) });
