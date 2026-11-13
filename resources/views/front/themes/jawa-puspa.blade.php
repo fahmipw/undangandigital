@@ -184,15 +184,18 @@ tailwind.config = {
   }
 
 /* Standar menu klasik emas: bottom bar */
-#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px 0;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw;flex-wrap:wrap;justify-content:center;overflow:visible;row-gap:2px}
+#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(119,96,58,.45);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:auto;max-width:96vw;flex-wrap:nowrap;justify-content:center;overflow:visible}
 #floatMenu::-webkit-scrollbar,#bottomNav::-webkit-scrollbar{display:none}
-#floatMenu a,#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;height:auto;padding:7px 0;border-radius:13px;color:#978045!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-#floatMenu a svg,#bottomNav a svg{width:21px;height:21px}
-#floatMenu a.active,#bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
+#floatMenu a,#bottomNav a{display:flex;flex-direction:row;align-items:center;gap:0;flex:0 0 auto;width:auto;height:auto;min-width:0;max-width:none;padding:7px 9px;border-radius:13px;color:#77603a!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:background .3s ease,box-shadow .3s ease,color .3s ease}
+#floatMenu a svg,#bottomNav a svg{width:21px;height:21px;flex:none}
+#floatMenu a span,#bottomNav a span{display:inline-block;flex:none;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .35s ease,opacity .3s ease,margin-left .35s ease}
+#floatMenu a.active span,#bottomNav a.active span{max-width:90px;opacity:1;margin-left:6px}
+#floatMenu a.active,#bottomNav a.active{background:rgba(119,96,58,.14)!important;box-shadow:inset 0 0 0 1.5px #c2ab72!important;color:#77603a!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
 #musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
 @media (max-width:400px){
-  #bottomNav a,#floatMenu a{flex:1 1 18%;min-width:0;max-width:64px}
+  #bottomNav a,#floatMenu a{padding:7px 6px}
+  #bottomNav a svg,#floatMenu a svg{width:20px;height:20px}
   #musicFloat{bottom:140px!important}
   #qrFloatBtn{bottom:198px!important}
   #toast{bottom:150px!important}

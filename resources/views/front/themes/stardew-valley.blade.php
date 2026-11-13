@@ -111,13 +111,17 @@ body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn
 #musBtn:active{transform:translateY(3px);box-shadow:none}
 #musBtn.off{opacity:.55}
 /* Menu bawah pill klasik emas */
-#fmenu{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:46;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:2px 0;row-gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw}
-#fmenu a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:#978045;background:transparent;border:none;box-shadow:none;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-#fmenu a svg{width:21px;height:21px}
-#fmenu a.active{background:rgba(151,128,69,.14);box-shadow:inset 0 0 0 1.5px #b8934a;color:#7c652f}
+#fmenu{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:46;display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:center;gap:2px;background:rgba(58,42,24,.92);border:1px solid rgba(232,185,60,.45);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(58,42,24,.45);width:auto;max-width:96vw}
+#fmenu a{display:flex;flex-direction:row;align-items:center;gap:0;flex:0 0 auto;width:auto;height:auto;min-width:0;max-width:none;padding:7px 9px;border-radius:13px;color:#e8b93c!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:background .3s ease,box-shadow .3s ease,color .3s ease}
+#fmenu a svg{width:21px;height:21px;flex:none}
+#fmenu a span.ic{flex:none}
+#fmenu a span:last-child{display:inline-block;flex:none;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .35s ease,opacity .3s ease,margin-left .35s ease}
+#fmenu a.active span:last-child{max-width:90px;opacity:1;margin-left:6px}
+#fmenu a.active{background:rgba(232,185,60,.18)!important;box-shadow:inset 0 0 0 1.5px #e8b93c!important;color:#ffe9b8!important}
 #fmenu[hidden]{display:none!important}
 @media (max-width:400px){
-#fmenu a{flex:1 1 18%;min-width:0;max-width:64px}
+#fmenu a{padding:7px 6px}
+#fmenu a svg{width:20px;height:20px}
 }
 /* ---------- cover ---------- */
 #cover{position:fixed;inset:0;z-index:200;overflow:hidden;transition:transform .9s ease,opacity .9s ease}

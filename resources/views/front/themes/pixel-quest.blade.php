@@ -258,13 +258,16 @@ select.pq-input{appearance:none}
 #panelBody.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){#panelBody{opacity:1!important;transform:none!important;transition:none}#panelBody }
 /* Menu bawah pill klasik emas */
-#bottomNav{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:46;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:2px 0;row-gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(151,128,69,.4);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:min(96vw,500px);max-width:96vw}
-#bottomNav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1 1 0;min-width:36px;max-width:54px;padding:7px 0;border-radius:13px;color:#978045;background:transparent;border:none;box-shadow:none;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-#bottomNav a svg{width:21px;height:21px}
-#bottomNav a.active{background:rgba(151,128,69,.14);box-shadow:inset 0 0 0 1.5px #b8934a;color:#7c652f}
+#bottomNav{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:46;display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:center;gap:2px;background:rgba(20,20,20,.92);border:1px solid rgba(255,217,59,.45);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(20,20,20,.45);width:auto;max-width:96vw}
+#bottomNav a{display:flex;flex-direction:row;align-items:center;gap:0;flex:0 0 auto;width:auto;height:auto;min-width:0;max-width:none;padding:7px 9px;border-radius:13px;color:#ffd93b!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:background .3s ease,box-shadow .3s ease,color .3s ease}
+#bottomNav a svg{width:21px;height:21px;flex:none}
+#bottomNav a span{display:inline-block;flex:none;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .35s ease,opacity .3s ease,margin-left .35s ease}
+#bottomNav a.active span{max-width:90px;opacity:1;margin-left:6px}
+#bottomNav a.active{background:rgba(255,217,59,.18)!important;box-shadow:inset 0 0 0 1.5px #ffd93b!important;color:#fff8e7!important}
 #bottomNav[hidden]{display:none!important}
 @media (max-width:400px){
-#bottomNav a{flex:1 1 18%;min-width:0;max-width:64px}
+#bottomNav a{padding:7px 6px}
+#bottomNav a svg{width:20px;height:20px}
   #dpad.show{bottom:132px}
   #actBtn.show{bottom:132px}
 }
