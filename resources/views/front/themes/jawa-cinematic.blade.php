@@ -162,7 +162,7 @@ tailwind.config = {
 #vinyl[hidden]{display:none!important}
 #musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(43,33,24,.95),rgba(23,18,8,.97))!important;border:1px solid rgba(201,164,92,.8)!important;color:#e6c887!important;box-shadow:0 10px 24px rgba(90,70,20,.45)!important}
 @media (max-width:400px){
-  #bottomNav a,#floatMenu a{flex:1 1 18%;min-width:0;max-width:none}
+  #bottomNav a,#floatMenu a{flex:1 1 18%;min-width:0;max-width:64px}
   #musicFloat{bottom:140px!important}
   #qrFloatBtn{bottom:198px!important}
   #toast{bottom:150px!important}

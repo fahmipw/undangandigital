@@ -223,7 +223,7 @@ footer .hand{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:
 .fmenu a i{font-style:normal;line-height:0}
 .fmenu a svg{width:21px;height:21px}
 @media (max-width:400px){
-  .fmenu a{flex:1 1 18%;min-width:0;max-width:none}
+  .fmenu a{flex:1 1 18%;min-width:0;max-width:64px}
   #musBtn{bottom:140px!important}
   #qrFloatBtn{bottom:202px!important}
 }

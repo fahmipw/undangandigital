@@ -246,7 +246,7 @@ background:linear-gradient(135deg,#3a6ea5,#5aa8c8);bottom:130px!important;box-sh
 .fmenu a i{font-style:normal;line-height:0}
 .fmenu a svg{width:21px;height:21px}
 @media (max-width:400px){
-  .fmenu a{flex:1 1 18%;min-width:0;max-width:none}
+  .fmenu a{flex:1 1 18%;min-width:0;max-width:64px}
   #musBtn{bottom:140px!important}
   #qrFloatBtn{bottom:202px!important}
 }

@@ -220,7 +220,7 @@ footer .dekor{font-size:36px;color:#fff;text-shadow:0 0 24px rgba(177,140,255,.5
 .fmenu a i{font-style:normal;line-height:0}
 .fmenu a svg{width:21px;height:21px}
 @media (max-width:400px){
-  .fmenu a{flex:1 1 18%;min-width:0;max-width:none}
+  .fmenu a{flex:1 1 18%;min-width:0;max-width:64px}
   #musBtn{bottom:140px!important}
   #qrFloatBtn{bottom:202px!important}
 }
