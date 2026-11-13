@@ -679,7 +679,7 @@ function withEnvelope(fn){
   if (!$prewedFile && $prewedLink && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$prewedLink, $pm)) { $prewedYtId = $pm[1]; }
   $prewedThumb = $prewedYtId ? 'https://i.ytimg.com/vi/' . $prewedYtId . '/hqdefault.jpg' : '';
 @endphp
-    <div id="prewedBox" class="anim-zoom relative z-10 w-full max-w-[340px]" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
+    <div id="prewedBox" class="anim-zoom relative z-10 w-full max-w-[340px] col-span-2" style="border-radius:16px;overflow:hidden;border:1px solid rgba(201,164,92,.55);box-shadow:0 18px 40px rgba(0,0,0,.3)">
 <div style="position:relative;padding-top:56.25%">
 @if($prewedFile)
 <video controls preload="metadata" playsinline src="{{ asset($prewedFile) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>
@@ -696,7 +696,7 @@ function withEnvelope(fn){
 @endif
 </div>
 </div>
-    @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
+    @if($prewedLink)<a href="{{ $prewedLink }}" target="_blank" rel="noopener" class="anim-fade relative z-10 inline-block mt-5 text-[11px] font-bold tracking-[0.22em] px-8 py-3 rounded-full col-span-2 justify-self-center" style="background:linear-gradient(105deg,#b8934a,#e6c887 55%,#c9a45c);color:#241a08;box-shadow:0 10px 24px rgba(90,70,20,.35)">BUKA VIDEO</a>@endif
     @endif
 @if(!empty($gallery) && count($gallery))
         @foreach(array_slice($gallery, 0, 8) as $i => $src)
