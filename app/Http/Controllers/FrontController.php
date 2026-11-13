@@ -89,6 +89,7 @@ class FrontController extends Controller
             'jawa-cinematic'        => 'front.themes.jawa-cinematic',
             'jawa-arunika'          => 'front.themes.jawa-arunika',
             'jawa-klasik'           => 'front.themes.jawa-klasik',
+            'jawa-pendopo'          => 'front.themes.jawa-pendopo',
             'taman-surga'           => 'front.themes.taman-surga',
             'jawa-biru'             => 'front.themes.jawa-biru',
             'jawa-puspa'            => 'front.themes.jawa-puspa',

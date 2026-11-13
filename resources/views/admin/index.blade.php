@@ -1102,6 +1102,7 @@
                             <option value="jawa-cinematic">Premium — Jawa Cinematic (Mewah)</option>
                             <option value="jawa-arunika">Premium — Jawa Arunika</option>
                             <option value="jawa-klasik">Premium — Jawa Klasik</option>
+                            <option value="jawa-pendopo">Premium — Jawa Pendopo (Video Opening)</option>
                             <option value="taman-surga">Premium — Taman Surga (Garden Heaven)</option>
                             <option value="jawa-biru">Premium — Jawa Biru (Blue Java)</option>
                             <option value="jawa-puspa">Premium — Jawa Puspa (Klasik Terang)</option>

@@ -524,7 +524,7 @@ function withEnvelope(fn){
   </section>
 
   <!-- ================= 4. QUOTES ================= -->
-  <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
+  <section id="sec-quotes" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
     <div class="anim-zoom relative z-10 w-full max-w-[340px]">
       <div class="mx-auto w-20 h-20 rounded-full flex items-center justify-center mb-5"
         style="border:1.5px solid rgba(201,164,92,.75);background:rgba(201,164,92,.07)">
@@ -537,7 +537,7 @@ function withEnvelope(fn){
       <svg class="w-48 h-5 mx-auto my-4" viewBox="0 0 300 24"><use href="#jb-divider"/></svg>
       <p class="anim-fade-down text-[11px] font-semibold tracking-[0.25em] uppercase text-emas">QS. Az-Zariyat : 49</p>
       @if(jklGet('quotes'))
-      <p class="anim-fade font-serif italic text-jbiru-100/70 text-[15px] leading-relaxed mt-6" id="sec-quotes">&ldquo;{{ jklGet('quotes') }}&rdquo;</p>
+      <p class="anim-fade font-serif italic text-jbiru-100/70 text-[15px] leading-relaxed mt-6">&ldquo;{{ jklGet('quotes') }}&rdquo;</p>
       @endif
     </div>
   </section>
@@ -980,7 +980,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) { /* abaikan */ }
     if (!audioEl.src && MUSIC_URL) { audioEl.src = MUSIC_URL; audioEl.load(); }
     if (audioEl.src && gateOpened) { musicFloat.classList.remove('hidden'); if (MUS_AUTO && !audioStarted) playMusic(); }
-    var qf=document.getElementById("qrFloatBtn");if(qf)qf.classList.remove('hidden');
+    /* QR ditampilkan di handler btn-open, bukan di sini (jangan muncul sebelum Buka) */
   }
   initAudio();
 
@@ -1050,6 +1050,7 @@ window.prewedPauseMusic=prewedPauseMusic;
           if (fm) fm.classList.remove('hidden');
           gateOpened = true;
           if (musicFloat) musicFloat.classList.remove('hidden');
+          var qf=document.getElementById("qrFloatBtn");if(qf)qf.classList.remove('hidden');
           animateHero();
           ScrollTrigger.refresh();
         }

@@ -465,7 +465,7 @@ function withEnvelope(fn){
   </section>
 
   <!-- ================= 4. QUOTES ================= -->
-  <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden bg-puspa-cream">
+  <section id="sec-quotes" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden bg-puspa-cream">
     <div class="anim-zoom relative z-10 w-full max-w-[340px]">
       <div class="mx-auto w-20 h-20 rounded-full flex items-center justify-center mb-5 bg-white"
         style="border:1.5px solid rgba(151,128,69,.75); box-shadow:0 10px 24px -10px rgba(119,96,58,.4)">
@@ -477,7 +477,7 @@ function withEnvelope(fn){
       <div class="hairline w-40 mx-auto my-5"></div>
       <p class="anim-fade-down text-[11px] font-semibold tracking-[0.25em] uppercase text-puspa-deep">QS. Ar-Rum : 21</p>
       @if(jklGet('quotes'))
-      <p class="anim-fade font-serif italic text-puspa-soft/85 text-[15px] leading-relaxed mt-6" id="sec-quotes">&ldquo;{{ jklGet('quotes') }}&rdquo;</p>
+      <p class="anim-fade font-serif italic text-puspa-soft/85 text-[15px] leading-relaxed mt-6">&ldquo;{{ jklGet('quotes') }}&rdquo;</p>
       @endif
       <img src="{{ asset('images/jawa-puspa/gunungan-divider.webp') }}" alt="" class="anim-zoom w-24 mx-auto mt-8 opacity-90" />
     </div>
@@ -899,7 +899,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) { /* abaikan */ }
     if (!audioEl.src && MUSIC_URL) { audioEl.src = MUSIC_URL; audioEl.load(); }
     if (audioEl.src && gateOpened) { musicFloat.classList.remove('hidden'); if (MUS_AUTO && !audioStarted) playMusic(); }
-    var qf=document.getElementById("qrFloatBtn");if(qf)qf.classList.remove('hidden');
+    /* QR ditampilkan di handler btn-open, bukan di sini (jangan muncul sebelum Buka) */
   }
   initAudio();
 
@@ -969,6 +969,7 @@ window.prewedPauseMusic=prewedPauseMusic;
           if (fm) fm.classList.remove('hidden');
           gateOpened = true;
           if (musicFloat) musicFloat.classList.remove('hidden');
+          var qf=document.getElementById("qrFloatBtn");if(qf)qf.classList.remove('hidden');
           animateHero();
           ScrollTrigger.refresh();
         }
