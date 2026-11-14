@@ -468,6 +468,17 @@ class LegacyApiController extends Controller
         }
 
         if ($image !== false) {
+            $maxSide = 1600;
+            $width = imagesx($image);
+            $height = imagesy($image);
+            if ($width > $maxSide || $height > $maxSide) {
+                $scale = $maxSide / max($width, $height);
+                $resized = imagescale($image, (int) round($width * $scale), (int) round($height * $scale));
+                if ($resized !== false) {
+                    imagedestroy($image);
+                    $image = $resized;
+                }
+            }
             if ($extension === 'png' || $extension === 'gif') {
                 imagepalettetotruecolor($image);
                 imagealphablending($image, true);
