@@ -268,6 +268,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 /* Standar menu klasik emas */
 #musBtn{background:linear-gradient(160deg,#f7f2e8,#eee2cc)!important;border:1px solid rgba(232,106,138,.85)!important;color:#e86a8a!important;box-shadow:0 10px 26px rgba(74,63,53,.5)!important}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <div class="pbar"><i id="pbarFill"></i></div>
@@ -641,7 +642,8 @@ async function sendWish(e){e.preventDefault();const f=e.target;
   const r=await fetch('/api/ucapan?inv_id='+INV_ID,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:f.name.value,message:f.message.value})});
   if(r.ok){f.reset();loadWishes();}else alert('Gagal mengirim ucapan.');return false;}
 loadWishes();
-function copyNo(t){navigator.clipboard.writeText(t).then(()=>alert('rekening berhasil disalin'));}
+function swalCopy(m){if(typeof Swal!=='undefined')Swal.fire({text:m,icon:'success',confirmButtonColor:'#d15f7c',confirmButtonText:'OK',customClass:{popup:'rounded-2xl',confirmButton:'px-6 py-2 rounded-xl text-sm tracking-wider font-bold uppercase'}});}
+function copyNo(t){navigator.clipboard.writeText(t).then(()=>swalCopy('rekening berhasil disalin'));}
 function toggleMus(){const m=document.getElementById('mus');if(m.paused){m.play();musBtn.style.opacity=1}else{m.pause();musBtn.style.opacity=.5}}
 </script>
 <script>
@@ -940,11 +942,11 @@ async function sendRSVP(e){
       body: JSON.stringify({ invitation_id: INV_ID, nama: nama, jumlah_tamu: jumlah, status: __att, alasan: alasan }) });
     var j = await r.json();
     if(!j.success) throw new Error(j.message || 'Gagal menyimpan');
-    var msg = 'Halo, saya *' + nama + '* ingin mengkonfirmasi kehadiran.' + NL + NL
-      + 'Status : ' + (__att === 'hadir' ? 'HADIR' : 'TIDAK HADIR')
+    var msg = 'Halo, saya *' + nama + '* ingin mengkonfirmasi kehadiran saya.' + NL + NL
+      + 'Status : ' + (__att === 'hadir' ? 'HADIR ✅' : 'TIDAK HADIR ❌')
       + (__att === 'hadir' ? NL + 'Jumlah Tamu : ' + jumlah + ' orang' : '')
       + (alasan ? NL + 'Alasan : ' + alasan : '')
-      + NL + NL + 'Terima kasih atas undangannya';
+      + NL + NL + 'Terima kasih atas undangannya 🙏🏻';
     var waNumber = "{{ mcGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g, '');
     window.open('https://wa.me/' + waNumber + '?text=' + encodeURIComponent(msg), '_blank');
     document.getElementById('rsvpNama').value = '';

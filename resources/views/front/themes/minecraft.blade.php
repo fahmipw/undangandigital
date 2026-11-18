@@ -268,6 +268,7 @@ body:not(.gate-open) .float-btns{display:none!important}
 }
 body:not(.gate-open) #bottomNav{display:none!important}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -872,6 +873,12 @@ $("#rsvpForm").addEventListener("submit",async e=>{
         status:$("#fHadir").value,alasan:$("#fHadir").value==="tidak"?$("#fAlasan").value.trim():""})});
     const j=await r.json();
     if(!j.success)throw new Error(j.message||"Gagal");
+    var waMsg='Halo, saya *'+nama+'* ingin mengkonfirmasi kehadiran saya.\n\nStatus : '+($("#fHadir").value==='hadir'?'HADIR ✅':'TIDAK HADIR ❌');
+    if($("#fHadir").value==='hadir')waMsg+='\nJumlah Tamu : '+(parseInt($("#fJumlah").value)||1)+' orang';
+    if($("#fHadir").value==="tidak"?$("#fAlasan").value.trim():"")waMsg+='\nAlasan : '+($("#fHadir").value==="tidak"?$("#fAlasan").value.trim():"");
+    waMsg+='\n\nTerima kasih atas undangannya 🙏🏻';
+    var waNumber="{{ mcGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
+    window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
     e.target.reset();levelUp();toast("RSVP TERSIMPAN!");loadRsvp();
     const rc=$("#rsvpSec").getBoundingClientRect();
     burst(rc.left+rc.width/2,rc.top+120,["#7bff5e","#fcee5e","#e03131"],22,340);
@@ -923,13 +930,14 @@ if(chest){
   chest.addEventListener("click",e=>{e.stopPropagation();toggle();});
   chest.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle();}});
 }
+function swalCopy(m){if(typeof Swal!=='undefined')Swal.fire({text:m,icon:'success',confirmButtonColor:'#7bff5e',confirmButtonText:'OK',customClass:{popup:'rounded-2xl',confirmButton:'px-6 py-2 rounded-xl text-sm tracking-wider font-bold uppercase'}});}
 $$(".copy-btn").forEach(b=>b.addEventListener("click",async e=>{
   e.stopPropagation();
   const t=$("#"+b.dataset.acc).textContent.replace(/\s/g,"");
   try{await navigator.clipboard.writeText(t);}catch(err){
     const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);
     ta.select();document.execCommand("copy");ta.remove();}
-  blip(880,0.08,0.05);toast("rekening berhasil disalin");
+  blip(880,0.08,0.05);swalCopy("rekening berhasil disalin");
 }));
 
 /* ---------- lain-lain ---------- */

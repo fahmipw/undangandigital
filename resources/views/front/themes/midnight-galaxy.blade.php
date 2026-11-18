@@ -217,6 +217,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 /* Standar menu klasik emas */
 #musBtn{background:linear-gradient(160deg,#140e2c,#050510)!important;border:1px solid rgba(167,139,250,.85)!important;color:#a78bfa!important;box-shadow:0 10px 26px rgba(5,5,16,.5)!important}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <div class="pbar"><i id="pbarFill"></i></div>
@@ -556,7 +557,8 @@ async function sendWish(e){e.preventDefault();const f=e.target;
   const r=await fetch('/api/ucapan?inv_id='+INV_ID,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:f.name.value,message:f.message.value})});
   if(r.ok){f.reset();loadWishes();}else alert('Gagal mengirim.');return false;}
 loadWishes();
-function copyNo(t){navigator.clipboard.writeText(t).then(()=>alert('rekening berhasil disalin'));}
+function swalCopy(m){if(typeof Swal!=='undefined')Swal.fire({text:m,icon:'success',confirmButtonColor:'#a78bfa',confirmButtonText:'OK',customClass:{popup:'rounded-2xl',confirmButton:'px-6 py-2 rounded-xl text-sm tracking-wider font-bold uppercase'}});}
+function copyNo(t){navigator.clipboard.writeText(t).then(()=>swalCopy('rekening berhasil disalin'));}
 function toggleMus(){const m=document.getElementById('mus');if(m.paused){m.play();musBtn.style.opacity=1}else{m.pause();musBtn.style.opacity=.5}}
 </script>
 
@@ -816,7 +818,7 @@ async function sendRSVP(e){
       body: JSON.stringify({ invitation_id: INV_ID, nama: nama, jumlah_tamu: jumlah, status: __att, alasan: alasan }) });
     var j = await r.json();
     if(!j.success) throw new Error(j.message || 'Gagal menyimpan');
-    var msg = 'Halo, saya *' + nama + '* ingin mengkonfirmasi kehadiran.\n\n'
+    var msg = 'Halo, saya *' + nama + '* ingin mengkonfirmasi kehadiran saya.\n\n'
       + 'Status : ' + (__att === 'hadir' ? 'HADIR \u2705' : 'TIDAK HADIR \u274C')
       + (__att === 'hadir' ? '\nJumlah Tamu : ' + jumlah + ' orang' : '')
       + (alasan ? '\nAlasan : ' + alasan : '')

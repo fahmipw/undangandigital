@@ -296,6 +296,7 @@ select.pq-input{appearance:none}
 #actBtn.show{bottom:78px}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <div id="start">
@@ -1029,7 +1030,7 @@ function openPanel(id){
       <button type="submit" class="pq-btn green" style="width:100%;margin-top:14px">KIRIM UCAPAN</button>
     </form>
     <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
-    <div id="wishList" style="margin-top:16px"></div>`;
+    <div id="wishList"></div>`;
     $("#wishForm").addEventListener("submit",submitWish);
     loadWishes();
   }
@@ -1091,7 +1092,7 @@ function renderShop(tab){
     : `<p style="font-size:20px;color:#7a6a4a">Informasi hadiah akan segera hadir.</p>`);
     $$("#shopBody .wicon").forEach(c=>drawWeaponIcon(c,c.dataset.kind));
     $$("#shopBody .copybtn").forEach(b=>b.addEventListener("click",()=>{
-      copyText(b.dataset.no); toast("rekening berhasil disalin");
+      copyText(b.dataset.no); swalCopy("rekening berhasil disalin");
     }));
   }
   else if(tab==="armor"){
@@ -1110,6 +1111,7 @@ function renderShop(tab){
     </div>`;
   }
 }
+function swalCopy(m){if(typeof Swal!=='undefined')Swal.fire({text:m,icon:'success',confirmButtonColor:'#ffd93b',confirmButtonText:'OK',customClass:{popup:'rounded-2xl',confirmButton:'px-6 py-2 rounded-xl text-sm tracking-wider font-bold uppercase'}});}
 function copyText(t){
   if(navigator.clipboard){ navigator.clipboard.writeText(t).catch(()=>{}); }
   else{ const ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta);
@@ -1164,6 +1166,14 @@ async function submitRsvp(e){
       body:JSON.stringify({invitation_id:MC.invId,nama:fd.get("nama"),jumlah_tamu:parseInt(fd.get("jumlah"))||1,status,alasan})});
     const j=await r.json();
     toast(j&&j.message?j.message:"RSVP TERKIRIM!");
+    if(j&&j.success){
+        var waMsg='Halo, saya *'+fd.get("nama")+'* ingin mengkonfirmasi kehadiran saya.\n\nStatus : '+(status==='hadir'?'HADIR ✅':'TIDAK HADIR ❌');
+        if(status==='hadir')waMsg+='\nJumlah Tamu : '+(parseInt(fd.get("jumlah"))||1)+' orang';
+        if(alasan)waMsg+='\nAlasan : '+(alasan);
+        waMsg+='\n\nTerima kasih atas undangannya 🙏🏻';
+        var waNumber="{{ jklGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
+        window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
+    }
     rsvpDone=true; updateQuestUI(); e.target.reset();
   }catch(err){ toast("GAGAL MENGIRIM. COBA LAGI."); }
 }

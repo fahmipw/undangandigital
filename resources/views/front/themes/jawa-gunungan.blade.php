@@ -229,6 +229,7 @@ tailwind.config = {
 #vinyl{bottom:96px!important}
 @media (prefers-reduced-motion:reduce){}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="is-locked antialiased">
 <main class="invitation-frame min-h-screen">
@@ -693,9 +694,9 @@ tailwind.config = {
       <button type="submit" id="wish-submit" class="btn-gold w-full py-3.5 rounded-full text-[12px] font-semibold tracking-[0.25em]">KIRIM UCAPAN</button>
     </form>
 
-    <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
+    <div style="text-align:center;margin:20px 0 10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
 
-    <div id="wish-list" class="relative z-10 w-full max-w-[340px] mt-8 flex flex-col gap-3 text-left"></div>
+    <div id="wish-list" class="relative z-10 w-full max-w-[340px] flex flex-col gap-3 text-left"></div>
   </section>
 
   <!-- ================= 12. FOOTER ================= -->
@@ -1057,6 +1058,12 @@ window.prewedPauseMusic=prewedPauseMusic;
       document.getElementById('rsvp-msg').classList.remove('hidden');
       btn.textContent = 'TERKIRIM ✓';
       showToast('Konfirmasi kehadiran terkirim');
+      var waMsg='Halo, saya *'+name+'* ingin mengkonfirmasi kehadiran saya.\n\nStatus : '+(rsvpStatus==='hadir'?'HADIR ✅':'TIDAK HADIR ❌');
+      if(rsvpStatus==='hadir')waMsg+='\nJumlah Tamu : '+(parseInt(document.getElementById('rsvp-count').value || '1'))+' orang';
+      if(alasan)waMsg+='\nAlasan : '+(alasan);
+      waMsg+='\n\nTerima kasih atas undangannya 🙏🏻';
+      var waNumber="{{ jgnGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
+      window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
     } catch (err) {
       btn.disabled = false; btn.textContent = 'KONFIRMASI KEHADIRAN';
       showToast('Gagal mengirim. Coba lagi ya.');
@@ -1142,16 +1149,17 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
 }
+function swalCopy(m){if(typeof Swal!=='undefined')Swal.fire({text:m,icon:'success',confirmButtonColor:'#5A3620',confirmButtonText:'OK',customClass:{popup:'rounded-2xl',confirmButton:'px-6 py-2 rounded-xl text-sm tracking-wider font-bold uppercase'}});}
 function copyText(text, msg) {
   if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text).then(() => showToast(msg || 'Berhasil disalin')).catch(() => fallbackCopy(text, msg));
+    navigator.clipboard.writeText(text).then(() => swalCopy(msg || 'Berhasil disalin')).catch(() => fallbackCopy(text, msg));
   } else { fallbackCopy(text, msg); }
 }
 function fallbackCopy(text, msg) {
   const ta = document.createElement('textarea');
   ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
   document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); showToast(msg || 'Berhasil disalin'); }
+  try { document.execCommand('copy'); swalCopy(msg || 'Berhasil disalin'); }
   catch (e) { showToast('Gagal menyalin'); }
   document.body.removeChild(ta);
 }

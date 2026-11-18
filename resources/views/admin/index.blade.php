@@ -324,7 +324,7 @@
             <button onclick="showTab('stories')"
                 class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
                 id="btn-stories">
-                Kisah Kasih
+                <span class="material-symbols-outlined">auto_stories</span> Kisah Kasih
             </button>
             <button onclick="showTab('theme')"
                 class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
@@ -926,22 +926,6 @@
                                 <input type="text" id="new-story-tahun"
                                     placeholder="Contoh: 2025, 2026, atau Pertemuan">
                             </div>
-                            <div class="rsvp-field">
-                                <label>PILIH ICON</label>
-                                <select id="new-story-icon"
-                                    class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm">
-                                    <option value="favorite">❤️ favorite (Hati)</option>
-                                    <option value="diamond">💎 diamond (Berlian)</option>
-                                    <option value="star">⭐ star (Bintang)</option>
-                                    <option value="auto_awesome">✨ auto_awesome (Bersinar)</option>
-                                    <option value="volunteer_activism">🤝 volunteer_activism (Tangan)</option>
-                                    <option value="sentiment_satisfied">😊 sentiment_satisfied (Senyum)</option>
-                                    <option value="local_florist">🌸 local_florist (Bunga)</option>
-                                    <option value="favorite_border">🤍 favorite_border (Hati Putih)</option>
-                                    <option value="bookmark">📌 bookmark (Tanda Buku)</option>
-                                    <option value="event">📅 event (Acara)</option>
-                                </select>
-                            </div>
                         </div>
                         <div class="rsvp-field">
                             <label>JUDUL KISAH</label>
@@ -1189,22 +1173,6 @@
                 <input type="hidden" id="edit-story-id">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="rsvp-field"><label>TAHUN / LABEL</label><input type="text" id="edit-story-tahun"></div>
-                    <div class="rsvp-field">
-                        <label>PILIH ICON</label>
-                        <select id="edit-story-icon"
-                            class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm">
-                            <option value="favorite">❤️ favorite (Hati)</option>
-                            <option value="diamond">💎 diamond (Berlian)</option>
-                            <option value="star">⭐ star (Bintang)</option>
-                            <option value="auto_awesome">✨ auto_awesome (Bersinar)</option>
-                            <option value="volunteer_activism">🤝 volunteer_activism (Tangan)</option>
-                            <option value="sentiment_satisfied">😊 sentiment_satisfied (Senyum)</option>
-                            <option value="local_florist">🌸 local_florist (Bunga)</option>
-                            <option value="favorite_border">🤍 favorite_border (Hati Putih)</option>
-                            <option value="bookmark">📌 bookmark (Tanda Buku)</option>
-                            <option value="event">📅 event (Acara)</option>
-                        </select>
-                    </div>
                 </div>
                 <div class="rsvp-field"><label>JUDUL KISAH</label><input type="text" id="edit-story-judul"></div>
                 <div class="pt-2">
@@ -2443,7 +2411,7 @@
 
         async function addStory() {
             const tahun = document.getElementById('new-story-tahun').value.trim();
-            const icon = document.getElementById('new-story-icon').value;
+            const icon = 'favorite';
             const judul = document.getElementById('new-story-judul').value.trim();
             const isi = document.getElementById('new-story-isi').value.trim();
 
@@ -2460,7 +2428,6 @@
             const data = await res.json();
             if (data.success) {
                 document.getElementById('new-story-tahun').value = '';
-                document.getElementById('new-story-icon').value = 'favorite';
                 document.getElementById('new-story-judul').value = '';
                 document.getElementById('new-story-isi').value = '';
                 loadStories();
@@ -2473,7 +2440,6 @@
         function openEditStory(story) {
             document.getElementById('edit-story-id').value = story.id;
             document.getElementById('edit-story-tahun').value = story.tahun;
-            document.getElementById('edit-story-icon').value = story.icon || 'favorite';
             document.getElementById('edit-story-judul').value = story.judul;
             document.getElementById('edit-story-isi').value = story.isi;
             document.getElementById('modal-story').classList.remove('hidden');
@@ -2482,7 +2448,7 @@
         async function updateStory() {
             const id = document.getElementById('edit-story-id').value;
             const tahun = document.getElementById('edit-story-tahun').value.trim();
-            const icon = document.getElementById('edit-story-icon').value;
+            const icon = 'favorite';
             const judul = document.getElementById('edit-story-judul').value.trim();
             const isi = document.getElementById('edit-story-isi').value.trim();
 

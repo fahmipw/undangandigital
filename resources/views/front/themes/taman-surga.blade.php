@@ -201,6 +201,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
 #vinyl{bottom:96px!important}
 @media (prefers-reduced-motion:reduce){}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="is-locked bg-[#cfe3f2] text-surga-ink font-sans antialiased">
 
@@ -1047,6 +1048,14 @@ document.getElementById("rsvpForm").addEventListener("submit", async function(e)
       body:JSON.stringify(payload)});
     const j=await r.json();
     toast(j&&j.message?j.message:"Terima kasih atas konfirmasinya!");
+    if(j&&j.success){
+        var waMsg='Halo, saya *'+payload.nama+'* ingin mengkonfirmasi kehadiran saya.\n\nStatus : '+(payload.status==='hadir'?'HADIR ✅':'TIDAK HADIR ❌');
+        if(payload.status==='hadir')waMsg+='\nJumlah Tamu : '+(payload.jumlah_tamu)+' orang';
+        if(payload.alasan)waMsg+='\nAlasan : '+(payload.alasan);
+        waMsg+='\n\nTerima kasih atas undangannya 🙏🏻';
+        var waNumber="{{ jklGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
+        window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
+    }
     this.reset();
     var ta=document.getElementById("rsvpAlasan"); ta.style.display="none"; ta.required=false;
   }catch(err){ toast("Gagal mengirim. Coba lagi."); }
@@ -1081,13 +1090,14 @@ document.getElementById("wishForm").addEventListener("submit", async function(e)
 loadWishes();
 
 /* ---------- 9. SALIN REKENING ---------- */
+function swalCopy(m){if(typeof Swal!=='undefined')Swal.fire({text:m,icon:'success',confirmButtonColor:'#7a9b76',confirmButtonText:'OK',customClass:{popup:'rounded-2xl',confirmButton:'px-6 py-2 rounded-xl text-sm tracking-wider font-bold uppercase'}});}
 document.querySelectorAll(".copy-btn").forEach(btn=>{
   btn.addEventListener("click",()=>{
     const i=btn.dataset.i, el=document.getElementById("accNo"+i);
     const txt=el?el.textContent.trim():"";
-    if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(()=>toast("rekening berhasil disalin")); }
+    if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(()=>swalCopy("rekening berhasil disalin")); }
     else{ const ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta);
-      ta.select(); try{document.execCommand("copy"); toast("rekening berhasil disalin");}catch(e){}
+      ta.select(); try{document.execCommand("copy"); swalCopy("rekening berhasil disalin");}catch(e){}
       ta.remove(); }
   });
 });

@@ -274,6 +274,7 @@ $GLOBALS['jwa_asset_base'] = $ASSET;
 #vinyl{bottom:96px!important}
 @media (prefers-reduced-motion:reduce){}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="is-locked bg-[#080605] text-jawa-cream font-sans antialiased">
 <!-- Amplop pembuka Jawa: depan tertutup rapat (sisi alamat), dibuka dari belakang -->
@@ -1278,6 +1279,12 @@ document.getElementById("rsvpForm").addEventListener("submit", async e=>{
       body:JSON.stringify({ invitation_id:JWA.invId, nama,
         jumlah_tamu:parseInt(document.getElementById("rsvpJumlah").value)||1, status:attendVal, alasan:attendVal==="tidak"?document.getElementById("rsvpAlasan").value.trim():"" }) });
     const j=await r.json(); if(!j.success) throw new Error(j.message||"Gagal");
+    var waMsg='Halo, saya *'+nama+'* ingin mengkonfirmasi kehadiran saya.\n\nStatus : '+(attendVal==='hadir'?'HADIR ✅':'TIDAK HADIR ❌');
+    if(attendVal==='hadir')waMsg+='\nJumlah Tamu : '+(parseInt(document.getElementById("rsvpJumlah").value)||1)+' orang';
+    if(attendVal==="tidak"?document.getElementById("rsvpAlasan").value.trim():"")waMsg+='\nAlasan : '+(attendVal==="tidak"?document.getElementById("rsvpAlasan").value.trim():"");
+    waMsg+='\n\nTerima kasih atas undangannya 🙏🏻';
+    var waNumber="{{ jwaGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
+    window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
     e.target.reset(); toast("Matur nuwun! Konfirmasi terkirim.");
   }catch(err){ toast("Gagal: "+err.message); }
   btn.disabled=false; btn.textContent="KIRIM KONFIRMASI";
@@ -1315,12 +1322,13 @@ document.getElementById("wishForm").addEventListener("submit", async e=>{
 });
 
 /* ---------- 10. SALIN REKENING ---------- */
+function swalCopy(m){if(typeof Swal!=='undefined')Swal.fire({text:m,icon:'success',confirmButtonColor:'#7c4a18',confirmButtonText:'OK',customClass:{popup:'rounded-2xl',confirmButton:'px-6 py-2 rounded-xl text-sm tracking-wider font-bold uppercase'}});}
 document.querySelectorAll(".copy-btn").forEach(b=>b.addEventListener("click", async ()=>{
   const t=document.getElementById("accNo"+b.dataset.i).textContent.replace(/\s/g,"");
   try{ await navigator.clipboard.writeText(t); }
   catch(e){ const ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta);
     ta.select(); document.execCommand("copy"); ta.remove(); }
-  toast("rekening berhasil disalin");
+  swalCopy("rekening berhasil disalin");
 }));
 
 /* ---------- 11. LIGHTBOX ---------- */

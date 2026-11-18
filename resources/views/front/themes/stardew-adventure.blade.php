@@ -283,6 +283,7 @@ select.sd-input{appearance:none}
 .story-node.on{color:#4a9a32;transform:scale(1.18);filter:drop-shadow(0 0 6px rgba(74,154,50,0.8)) drop-shadow(0 0 14px rgba(74,154,50,0.4))}
 @media (prefers-reduced-motion:reduce){.story-rope{transform:none}.story-node{transition:none}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <div id="start">
@@ -914,6 +915,12 @@ function wireRsvp(){
         body:JSON.stringify({invitation_id:MC.invId,nama,
           jumlah_tamu:parseInt($("#rj2").value)||1,status:$("#rh2").value,alasan:alasan})});
       const j=await r.json();if(!j.success)throw new Error(j.message||"Gagal");
+      var waMsg='Halo, saya *'+nama+'* ingin mengkonfirmasi kehadiran saya.\n\nStatus : '+($("#rh2").value==='hadir'?'HADIR ✅':'TIDAK HADIR ❌');
+      if($("#rh2").value==='hadir')waMsg+='\nJumlah Tamu : '+(parseInt($("#rj2").value)||1)+' orang';
+      if(alasan)waMsg+='\nAlasan : '+(alasan);
+      waMsg+='\n\nTerima kasih atas undangannya 🙏🏻';
+      var waNumber="{{ sdaGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
+      window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
       e.target.reset();levelUp();toast("RSVP TERSIMPAN!");load();
     }catch(err){toast("Gagal: "+err.message);}
     btn.disabled=false;};
@@ -952,12 +959,13 @@ function wireChest(){
     $("#chL2").textContent=open?"PETI TERBUKA!":"PETI TERKUNCI";
     const ga=$("#ga2");if(ga)ga.hidden=!open;
     if(open){levelUp();toast("Harta karun ditemukan!");}else blip(300,0.08,0.05);});
-  $$("#ga2 [data-g]").forEach(b=>b.addEventListener("click",async e=>{e.stopPropagation();
+  function swalCopy(m){if(typeof Swal!=='undefined')Swal.fire({text:m,icon:'success',confirmButtonColor:'#4a9a32',confirmButtonText:'OK',customClass:{popup:'rounded-2xl',confirmButton:'px-6 py-2 rounded-xl text-sm tracking-wider font-bold uppercase'}});}
+$$("#ga2 [data-g]").forEach(b=>b.addEventListener("click",async e=>{e.stopPropagation();
     const t=$("#gno"+b.dataset.g).textContent.replace(/\s/g,"");
     try{await navigator.clipboard.writeText(t);}catch(err){
       const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);
       ta.select();document.execCommand("copy");ta.remove();}
-    blip(880,0.08,0.05);toast("rekening berhasil disalin");}));
+    blip(880,0.08,0.05);swalCopy("rekening berhasil disalin");}));
 }
 function openComplete(){
   var _bn=document.getElementById("bottomNav");if(_bn)_bn.hidden=true;

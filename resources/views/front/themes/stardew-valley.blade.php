@@ -262,6 +262,7 @@ footer{padding:50px 20px 110px;text-align:center}
 .qr-card{background:var(--paper);border:4px solid var(--wood-d);border-radius:12px;box-shadow:0 8px 0 rgba(93,58,26,.25);padding:26px 18px;max-width:360px;margin:0 auto;text-align:center}
 @media(max-width:380px){.sec-title{font-size:17px}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="locked">
 <div class="pbar" id="pbar"></div>
@@ -1013,9 +1014,11 @@ async function sendRSVP(e){
     var j = await r.json();
     if(!j.success) throw new Error(j.message || 'Gagal mengirim');
     var waNumber = "{{ mcGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g, '');
-    var msg = 'Halo! Saya ' + nama + ' (' + jumlah + ' orang) — ' +
-      (__att === 'hadir' ? 'INSYA ALLAH HADIR' : 'BERHALANGAN') +
-      (alasan ? '. Catatan: ' + alasan : '');
+    var msg = 'Halo, saya *' + nama + '* ingin mengkonfirmasi kehadiran saya.\n\n'
+      + 'Status : ' + (__att === 'hadir' ? 'HADIR ✅' : 'TIDAK HADIR ❌')
+      + (__att === 'hadir' ? '\nJumlah Tamu : ' + jumlah + ' orang' : '')
+      + (alasan ? '\nAlasan : ' + alasan : '')
+      + '\n\nTerima kasih atas undangannya 🙏🏻';
     window.open('https://wa.me/' + waNumber + '?text=' + encodeURIComponent(msg), '_blank');
     document.getElementById('rsvpForm').reset();
     alert('RSVP terkirim! 🌱');
@@ -1062,8 +1065,9 @@ async function sendWish(e){
 loadWishes();
 
 /* ---------- gift copy ---------- */
+function swalCopy(m){if(typeof Swal!=='undefined')Swal.fire({text:m,icon:'success',confirmButtonColor:'#8b5a2b',confirmButtonText:'OK',customClass:{popup:'rounded-2xl',confirmButton:'px-6 py-2 rounded-xl text-sm tracking-wider font-bold uppercase'}});}
 function copyText(t, btn){
-  function done(){ var o = btn.textContent; btn.textContent = 'rekening berhasil disalin'; setTimeout(function(){ btn.textContent = o; }, 1600); }
+  function done(){ var o = btn.textContent; btn.textContent = 'rekening berhasil disalin'; swalCopy('rekening berhasil disalin'); setTimeout(function(){ btn.textContent = o; }, 1600); }
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(t).then(done).catch(function(){ fallback(); });
   } else fallback();
