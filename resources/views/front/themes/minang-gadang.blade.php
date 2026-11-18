@@ -64,6 +64,8 @@ if (!empty($musicRecord) && !empty($musicRecord->file_path)) {
 }
 $invId = $inv_id ?? 0;
 $groomPhoto = mcGet('groom_photo'); $bridePhoto = mcGet('bride_photo');
+if ($bridePhoto && !str_starts_with($bridePhoto,'http') && !str_starts_with($bridePhoto,'/')) $bridePhoto = asset(ltrim($bridePhoto,'/'));
+if ($groomPhoto && !str_starts_with($groomPhoto,'http') && !str_starts_with($groomPhoto,'/')) $groomPhoto = asset(ltrim($groomPhoto,'/'));
 $groomInitial = mb_substr($groomNick, 0, 1); $brideInitial = mb_substr($brideNick, 0, 1);
 ?>
 <!DOCTYPE html>

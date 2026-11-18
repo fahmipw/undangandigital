@@ -349,7 +349,7 @@ tailwind.config = {
       <div class="relative w-40 h-52 mx-auto mb-4 frame-gapura">
         <div class="frame-gapura-in">
         @if(jgbGet('bride_photo'))
-        <img src="{{ jgbGet('bride_photo') }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
+        <img src="{{ (substr(jgbGet('bride_photo'),0,4)=='http' || substr(jgbGet('bride_photo'),0,1)=='/') ? jgbGet('bride_photo') : asset(ltrim(jgbGet('bride_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
         @else
         <img src="{{ asset('images/jawa-gerbang/background.jpg') }}" class="w-full h-full object-cover" style="object-position:center 85%" alt="{{ $brideFull }}" />
         @endif
@@ -370,7 +370,7 @@ tailwind.config = {
       <div class="relative w-40 h-52 mx-auto mb-4 frame-gapura">
         <div class="frame-gapura-in">
         @if(jgbGet('groom_photo'))
-        <img src="{{ jgbGet('groom_photo') }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
+        <img src="{{ (substr(jgbGet('groom_photo'),0,4)=='http' || substr(jgbGet('groom_photo'),0,1)=='/') ? jgbGet('groom_photo') : asset(ltrim(jgbGet('groom_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
         @else
         <img src="{{ asset('images/jawa-gerbang/background.jpg') }}" class="w-full h-full object-cover" style="object-position:center 85%" alt="{{ $groomFull }}" />
         @endif

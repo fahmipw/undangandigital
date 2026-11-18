@@ -345,7 +345,7 @@ tailwind.config = {
     <div class="anim-zoom relative z-10 w-full max-w-[320px] card-putih px-6 pt-8 pb-10 mb-2">
       <div class="relative w-40 h-52 mx-auto mb-4" style="border-radius:999px 999px 14px 14px; overflow:hidden; border:2.5px solid #978045; box-shadow:0 14px 30px rgba(119,96,58,.3)">
         @if(jpnGet('bride_photo'))
-        <img src="{{ jpnGet('bride_photo') }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
+        <img src="{{ (substr(jpnGet('bride_photo'),0,4)=='http' || substr(jpnGet('bride_photo'),0,1)=='/') ? jpnGet('bride_photo') : asset(ltrim(jpnGet('bride_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
         @else
         <img src="{{ asset('images/jawa-pendopo/background.jpg') }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
         @endif
@@ -364,7 +364,7 @@ tailwind.config = {
     <div class="anim-zoom relative z-10 w-full max-w-[320px] card-putih px-6 pt-8 pb-10 mt-2">
       <div class="relative w-40 h-52 mx-auto mb-4" style="border-radius:999px 999px 14px 14px; overflow:hidden; border:2.5px solid #978045; box-shadow:0 14px 30px rgba(119,96,58,.3)">
         @if(jpnGet('groom_photo'))
-        <img src="{{ jpnGet('groom_photo') }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
+        <img src="{{ (substr(jpnGet('groom_photo'),0,4)=='http' || substr(jpnGet('groom_photo'),0,1)=='/') ? jpnGet('groom_photo') : asset(ltrim(jpnGet('groom_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
         @else
         <img src="{{ asset('images/jawa-pendopo/background.jpg') }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
         @endif

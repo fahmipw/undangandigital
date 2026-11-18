@@ -439,7 +439,7 @@ function withEnvelope(fn){
     <div class="reveal mt-8 text-center">
       <div class="arch arch-frame overflow-hidden w-56 h-72 mx-auto bg-navy/40">
         @if(jwcGet('bride_photo'))
-        <img src="{{ jwcGet('bride_photo') }}" alt="{{ $brideFull }}" class="w-full h-full object-cover">
+        <img src="{{ (substr(jwcGet('bride_photo'),0,4)=='http' || substr(jwcGet('bride_photo'),0,1)=='/') ? jwcGet('bride_photo') : asset(ltrim(jwcGet('bride_photo'),'/')) }}" alt="{{ $brideFull }}" class="w-full h-full object-cover">
         @else
         <div class="w-full h-full flex items-center justify-center"><span class="font-display text-gold text-6xl">{{ mb_substr($brideNick,0,1) }}</span></div>
         @endif
@@ -457,7 +457,7 @@ function withEnvelope(fn){
     <div class="reveal text-center">
       <div class="arch arch-frame overflow-hidden w-56 h-72 mx-auto bg-navy/40">
         @if(jwcGet('groom_photo'))
-        <img src="{{ jwcGet('groom_photo') }}" alt="{{ $groomFull }}" class="w-full h-full object-cover">
+        <img src="{{ (substr(jwcGet('groom_photo'),0,4)=='http' || substr(jwcGet('groom_photo'),0,1)=='/') ? jwcGet('groom_photo') : asset(ltrim(jwcGet('groom_photo'),'/')) }}" alt="{{ $groomFull }}" class="w-full h-full object-cover">
         @else
         <div class="w-full h-full flex items-center justify-center"><span class="font-display text-gold text-6xl">{{ mb_substr($groomNick,0,1) }}</span></div>
         @endif

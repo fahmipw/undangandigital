@@ -390,7 +390,7 @@ tailwind.config = {
       <div class="relative w-40 h-52 mx-auto mb-4 frame-oval">
         <div class="frame-oval-in">
         @if(btwGet('bride_photo'))
-        <img src="{{ btwGet('bride_photo') }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
+        <img src="{{ (substr(btwGet('bride_photo'),0,4)=='http' || substr(btwGet('bride_photo'),0,1)=='/') ? btwGet('bride_photo') : asset(ltrim(btwGet('bride_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
         @else
         <img src="{{ asset('images/betawi/background.jpg') }}" class="w-full h-full object-cover" style="object-position:center 85%" alt="{{ $brideFull }}" />
         @endif
@@ -411,7 +411,7 @@ tailwind.config = {
       <div class="relative w-40 h-52 mx-auto mb-4 frame-oval">
         <div class="frame-oval-in">
         @if(btwGet('groom_photo'))
-        <img src="{{ btwGet('groom_photo') }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
+        <img src="{{ (substr(btwGet('groom_photo'),0,4)=='http' || substr(btwGet('groom_photo'),0,1)=='/') ? btwGet('groom_photo') : asset(ltrim(btwGet('groom_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
         @else
         <img src="{{ asset('images/betawi/background.jpg') }}" class="w-full h-full object-cover" style="object-position:center 85%" alt="{{ $groomFull }}" />
         @endif

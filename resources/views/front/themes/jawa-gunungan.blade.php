@@ -346,7 +346,7 @@ tailwind.config = {
       <div class="relative w-40 h-52 mx-auto mb-4 frame-oval">
         <div class="frame-oval-in">
         @if(jgnGet('bride_photo'))
-        <img src="{{ jgnGet('bride_photo') }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
+        <img src="{{ (substr(jgnGet('bride_photo'),0,4)=='http' || substr(jgnGet('bride_photo'),0,1)=='/') ? jgnGet('bride_photo') : asset(ltrim(jgnGet('bride_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
         @else
         <img src="{{ asset('images/jawa-gunungan/background.jpg') }}" class="w-full h-full object-cover" style="object-position:center 85%" alt="{{ $brideFull }}" />
         @endif
@@ -367,7 +367,7 @@ tailwind.config = {
       <div class="relative w-40 h-52 mx-auto mb-4 frame-oval">
         <div class="frame-oval-in">
         @if(jgnGet('groom_photo'))
-        <img src="{{ jgnGet('groom_photo') }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
+        <img src="{{ (substr(jgnGet('groom_photo'),0,4)=='http' || substr(jgnGet('groom_photo'),0,1)=='/') ? jgnGet('groom_photo') : asset(ltrim(jgnGet('groom_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
         @else
         <img src="{{ asset('images/jawa-gunungan/background.jpg') }}" class="w-full h-full object-cover" style="object-position:center 85%" alt="{{ $groomFull }}" />
         @endif

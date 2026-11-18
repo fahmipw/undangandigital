@@ -503,7 +503,7 @@ function withEnvelope(fn){
     <div class="anim-zoom relative z-10 w-full max-w-[300px] card-klasik px-6 pt-8 pb-7 mb-8">
       <div class="relative w-40 h-52 mx-auto mb-5" style="border-radius:9999px 9999px 1rem 1rem; overflow:hidden; border:2px solid rgba(212,175,55,.6)">
         @if(jklGet('bride_photo'))
-        <img src="{{ jklGet('bride_photo') }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
+        <img src="{{ (substr(jklGet('bride_photo'),0,4)=='http' || substr(jklGet('bride_photo'),0,1)=='/') ? jklGet('bride_photo') : asset(ltrim(jklGet('bride_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
         @else
         <div class="w-full h-full flex items-center justify-center" style="background:linear-gradient(160deg,#4a3018,#2c1f13)">
           <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="gold-tint w-20 h-auto opacity-70" alt="Mempelai Wanita" />
@@ -525,7 +525,7 @@ function withEnvelope(fn){
     <div class="anim-zoom relative z-10 w-full max-w-[300px] card-klasik px-6 pt-8 pb-7 mt-8">
       <div class="relative w-40 h-52 mx-auto mb-5" style="border-radius:9999px 9999px 1rem 1rem; overflow:hidden; border:2px solid rgba(212,175,55,.6)">
         @if(jklGet('groom_photo'))
-        <img src="{{ jklGet('groom_photo') }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
+        <img src="{{ (substr(jklGet('groom_photo'),0,4)=='http' || substr(jklGet('groom_photo'),0,1)=='/') ? jklGet('groom_photo') : asset(ltrim(jklGet('groom_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
         @else
         <div class="w-full h-full flex items-center justify-center" style="background:linear-gradient(160deg,#4a3018,#2c1f13)">
           <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG-1.png" class="gold-tint w-20 h-auto opacity-70" alt="Mempelai Pria" />

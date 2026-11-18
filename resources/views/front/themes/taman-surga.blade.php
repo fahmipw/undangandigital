@@ -401,7 +401,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     <div class="anim-zoom relative z-10 w-full max-w-[300px] card-surga px-6 pt-9 pb-7 mb-8">
       <div class="relative w-40 h-48 mx-auto mb-4" style="border-radius:50%; overflow:hidden; border:3px solid rgba(201,162,39,.55); box-shadow:0 12px 30px rgba(122,155,118,.3)">
         @if(jklGet('bride_photo'))
-        <img src="{{ jklGet('bride_photo') }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
+        <img src="{{ (substr(jklGet('bride_photo'),0,4)=='http' || substr(jklGet('bride_photo'),0,1)=='/') ? jklGet('bride_photo') : asset(ltrim(jklGet('bride_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
         @else
         <div class="w-full h-full flex items-center justify-center" style="background:linear-gradient(160deg,#fbdce3,#fdf3f5)">
           <svg class="w-20 h-20 opacity-80"><use href="#ts-flower"/></svg>
@@ -423,7 +423,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     <div class="anim-zoom relative z-10 w-full max-w-[300px] card-surga px-6 pt-9 pb-7 mt-8">
       <div class="relative w-40 h-48 mx-auto mb-4" style="border-radius:50%; overflow:hidden; border:3px solid rgba(201,162,39,.55); box-shadow:0 12px 30px rgba(122,155,118,.3)">
         @if(jklGet('groom_photo'))
-        <img src="{{ jklGet('groom_photo') }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
+        <img src="{{ (substr(jklGet('groom_photo'),0,4)=='http' || substr(jklGet('groom_photo'),0,1)=='/') ? jklGet('groom_photo') : asset(ltrim(jklGet('groom_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
         @else
         <div class="w-full h-full flex items-center justify-center" style="background:linear-gradient(160deg,#dfeee0,#f2f8fd)">
           <svg class="w-20 h-20 opacity-80"><use href="#ts-flower-white"/></svg>

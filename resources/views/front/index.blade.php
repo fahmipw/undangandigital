@@ -772,7 +772,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
                 style="clip-path: ellipse(50% 50% at 50% 50%);">
                 <img alt="Bride Portrait"
                   class="w-full h-full object-cover gallery-3d transition-transform duration-700 group-hover:scale-105"
-                  src="<?php echo getSet('bride_photo', 'cewek.jpeg'); ?>" />
+                  src="<?php echo ($__pv = getSet('bride_photo', 'cewek.jpeg')) ? ((str_starts_with($__pv,'http') || str_starts_with($__pv,'/')) ? $__pv : asset(ltrim($__pv,'/'))) : ''; ?>" />
               </div>
 
               <!-- Ornamen Bawah (Gebyok style) -->
@@ -823,7 +823,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
                 style="clip-path: ellipse(50% 50% at 50% 50%);">
                 <img alt="Groom Portrait"
                   class="w-full h-full object-cover gallery-3d transition-transform duration-700 group-hover:scale-105"
-                  src="<?php echo getSet('groom_photo', 'cowok.jpeg'); ?>" />
+                  src="<?php echo ($__pv = getSet('groom_photo', 'cowok.jpeg')) ? ((str_starts_with($__pv,'http') || str_starts_with($__pv,'/')) ? $__pv : asset(ltrim($__pv,'/'))) : ''; ?>" />
               </div>
 
               <!-- Ornamen Bawah (Gebyok style) -->

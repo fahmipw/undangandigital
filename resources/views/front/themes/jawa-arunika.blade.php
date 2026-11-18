@@ -595,7 +595,7 @@ function withEnvelope(fn){
     <div class="anim-scale relative z-10 w-full max-w-[310px] card-dark p-6">
       <div class="relative w-32 h-44 mx-auto mb-5 rounded-t-full overflow-hidden border-2 border-jawa-gold/80 bg-black/60 flex items-center justify-center">
         @if(jwaGet('bride_photo'))
-        <img src="{{ jwaGet('bride_photo') }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
+        <img src="{{ (substr(jwaGet('bride_photo'),0,4)=='http' || substr(jwaGet('bride_photo'),0,1)=='/') ? jwaGet('bride_photo') : asset(ltrim(jwaGet('bride_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $brideFull }}" />
         @else
         <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG.png" class="w-24 h-auto object-contain mt-4 opacity-90" alt="Mempelai Wanita" />
         @endif
@@ -614,7 +614,7 @@ function withEnvelope(fn){
     <div class="anim-scale relative z-10 w-full max-w-[310px] card-dark p-6 mb-12">
       <div class="relative w-32 h-44 mx-auto mb-5 rounded-t-full overflow-hidden border-2 border-jawa-gold/80 bg-black/60 flex items-center justify-center">
         @if(jwaGet('groom_photo'))
-        <img src="{{ jwaGet('groom_photo') }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
+        <img src="{{ (substr(jwaGet('groom_photo'),0,4)=='http' || substr(jwaGet('groom_photo'),0,1)=='/') ? jwaGet('groom_photo') : asset(ltrim(jwaGet('groom_photo'),'/')) }}" class="w-full h-full object-cover" alt="{{ $groomFull }}" />
         @else
         <img src="{{ $ASSET }}1225-ASSET-JAWA-WAYANG-1.png" class="w-24 h-auto object-contain mt-4 opacity-90" alt="Mempelai Pria" />
         @endif

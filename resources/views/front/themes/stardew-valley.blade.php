@@ -438,7 +438,7 @@ footer{padding:50px 20px 110px;text-align:center}
   <div class="rv npc" style="margin-bottom:22px">
     <div class="pframe">
       @if(mcGet('groom_photo'))
-      <img src="{{ mcGet('groom_photo') }}" alt="{{ $groomNick }}">
+      <img src="{{ (substr(mcGet('groom_photo'),0,4)=='http' || substr(mcGet('groom_photo'),0,1)=='/') ? mcGet('groom_photo') : asset(ltrim(mcGet('groom_photo'),'/')) }}" alt="{{ $groomNick }}">
       @else
       <svg viewBox="0 0 400 300" class="pxc" style="width:100%;height:300px;display:block">
         <rect width="400" height="300" fill="#aee3f5"/>
@@ -461,7 +461,7 @@ footer{padding:50px 20px 110px;text-align:center}
   <div class="rv npc">
     <div class="pframe">
       @if(mcGet('bride_photo'))
-      <img src="{{ mcGet('bride_photo') }}" alt="{{ $brideNick }}">
+      <img src="{{ (substr(mcGet('bride_photo'),0,4)=='http' || substr(mcGet('bride_photo'),0,1)=='/') ? mcGet('bride_photo') : asset(ltrim(mcGet('bride_photo'),'/')) }}" alt="{{ $brideNick }}">
       @else
       <svg viewBox="0 0 400 300" class="pxc" style="width:100%;height:300px;display:block">
         <rect width="400" height="300" fill="#ffd9e8"/>
