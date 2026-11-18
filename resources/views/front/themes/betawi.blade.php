@@ -2,21 +2,26 @@
 /* ============================================================
    TEMA: BETAWI — gerbang Betawi terbuka ke rumah kebaya, video opening
    Dipilih via settings: theme = betawi
-   Video opening: public/videos/betawi-opening.mp4 (20,1 dtk, 480x864, ada audio)
-     klip 1 (10 dtk): gerbang emas Betawi tertutup -> terbuka ke taman + rumah kebaya
-     klip 2 (10 dtk): bingkai oval emas turun dari atas, diam di tengah atas
-   Poster cover: public/images/betawi/poster.jpg (gerbang tertutup, frame t=0)
-   Background: public/images/betawi/background.jpg (watercolor batik Betawi +
-     rumah kebaya + mawar, digenerate 1152x2048)
-   Divider: public/images/betawi/betawi-divider.jpg (batik Betawi merah-emas).
+   Video opening: public/videos/betawi-opening.mp4 (20,0 dtk, 480x864, TANPA audio)
+     VIDEO ASLI Fahmi (ganti video generate v1/v2): dedaunan hijau gelap ->
+     danau + rumah kebaya kuning atap terakota -> bingkai emas stepped turun
+     ~14-15 dtk -> nama + tanggal muncul di bingkai -> selesai.
+   Poster cover: public/images/betawi/poster.jpg (dedaunan hijau gelap, frame t=0)
+   Background: public/images/betawi/background.jpg (watercolor v3: kanopi dedaunan
+     hijau hutan + tengah mint pucat + rumah kebaya samar + bunga bawah, digenerate)
+   Divider: public/images/betawi/betawi-divider.jpg (batik v3: hijau hutan + emas
+     + kuning + terakota + bunga pink, digenerate).
    Ondel-ondel: public/images/betawi/ondel-ondel.jpg (sepasang, di Mempelai).
    TANPA amplop — gerbangnya video opening: cover DIAM (poster gerbang tertutup)
-   sampai klik BUKA -> video jalan -> nama + tanggal muncul di bingkai oval
-   (~15 dtk, 5 dtk klip kedua) -> selesai -> undangan terbuka + musik.
-   Video TIDAK autoplay/loop; ada audio (gamelan) selama video jalan.
+   sampai klik BUKA -> video jalan -> nama + tanggal muncul di bingkai emas
+   (~15 dtk, bingkai stepped selesai turun) -> selesai -> undangan terbuka + musik.
+   Video TIDAK autoplay/loop; TANPA audio selama video jalan; musik latar mulai
+   setelah undangan terbuka.
    v2 (2026-11-16): gaya minimotion-11 — video opening TETAP; palet sage/hijau
    tua/emas, font Alex Brush + Plus Jakarta Sans, mahkota + rumah kebaya,
    kupu-kupu, kartu mempelai lengkung, Save The Date hijau tua, tanpa parallax.
+   v3 (2026-11-18): video ASLI Fahmi + palet mengikuti video — hijau hutan
+   #1E4D33, mint pucat #E4EDE1, krem gading #FAF9F4; background + divider baru.
    ============================================================ */
 $GLOBALS['btw_settings'] = $settings ?? [];
 if (!function_exists('btwGet')) {
@@ -122,7 +127,7 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        betawi: { ink:'#1F2A24', soft:'#5F7161', gold:'#C9A227', deep:'#2E5A3E', light:'#D4AF6A', cream:'#F7F3EC', paper:'#F7F3EC' }
+        betawi: { ink:'#1F2A24', soft:'#4F7457', gold:'#C9A227', deep:'#1E4D33', light:'#D4AF6A', cream:'#FAF9F4', paper:'#FAF9F4' }
       },
       fontFamily: {
         script: ['"Alex Brush"','cursive'],
@@ -140,9 +145,9 @@ tailwind.config = {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <style>
   html{scroll-behavior:smooth}
-  body{background:#DDE3DC;font-family:'Plus Jakarta Sans',sans-serif}
+  body{background:#E4EDE1;font-family:'Plus Jakarta Sans',sans-serif}
   .bg-garden{position:fixed;top:0;left:0;right:0;margin:0 auto;width:min(430px,100vw);height:100dvh;z-index:0;pointer-events:none;background-image:url('{{ asset('images/betawi/background.jpg') }}');background-size:cover;background-position:center top;background-repeat:no-repeat}
-  .bg-veil{position:fixed;top:0;left:0;right:0;margin:0 auto;width:min(430px,100vw);height:100dvh;z-index:0;pointer-events:none;background:rgba(221,227,220,.32)}
+  .bg-veil{position:fixed;top:0;left:0;right:0;margin:0 auto;width:min(430px,100vw);height:100dvh;z-index:0;pointer-events:none;background:rgba(228,237,225,.32)}
   /* minimotion-11: bingkai emas stepped hero, kupu-kupu, kartu lengkung mempelai, strip batik */
   .btw-frame{position:absolute;inset:12px;border:1.5px solid rgba(201,162,39,.75);border-radius:26px;pointer-events:none;z-index:6}
   .btw-frame::after{content:"";position:absolute;inset:6px;border:1px solid rgba(201,162,39,.45);border-radius:20px}
@@ -153,44 +158,44 @@ tailwind.config = {
   @keyframes bfly-move2{0%{left:92%;top:38%}25%{left:58%;top:28%}50%{left:26%;top:40%}75%{left:55%;top:20%}100%{left:6%;top:30%}}
   @keyframes bfly-flap{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.55)}}
   @media (prefers-reduced-motion:reduce){.bfly{display:none}}
-  .btw-arch{position:absolute;left:50%;transform:translateX(-50%);top:14px;bottom:14px;width:min(360px,calc(100% - 24px));background:#F7F3EC;border:1.5px solid rgba(201,162,39,.8);border-radius:220px 220px 28px 28px;box-shadow:0 18px 40px -18px rgba(46,90,62,.35);z-index:0}
+  .btw-arch{position:absolute;left:50%;transform:translateX(-50%);top:14px;bottom:14px;width:min(360px,calc(100% - 24px));background:#FAF9F4;border:1.5px solid rgba(201,162,39,.8);border-radius:220px 220px 28px 28px;box-shadow:0 18px 40px -18px rgba(30,77,51,.35);z-index:0}
   .btw-arch::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;border-radius:0 0 27px 27px;background:url('{{ asset('images/betawi/betawi-divider.jpg') }}') center/cover no-repeat}
   .btw-strip{position:absolute;left:0;right:0;height:12px;background:url('{{ asset('images/betawi/betawi-divider.jpg') }}') center/cover no-repeat;z-index:0}
   main .scroll-section,main footer{position:relative;z-index:1}
   #hero-section{background:transparent}
-  #hero-section .hero-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(247,243,236,.35) 0%,rgba(247,243,236,.10) 45%,rgba(247,243,236,.55) 100%)}
+  #hero-section .hero-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(250,249,244,.35) 0%,rgba(250,249,244,.10) 45%,rgba(250,249,244,.55) 100%)}
   #coverNames{position:absolute;left:0;right:0;top:29%;transform:translateY(-50%);z-index:5;text-align:center;padding:0 24px;opacity:0;pointer-events:none;transition:opacity 1.2s ease}
   #coverNames.show{opacity:1}
   #coverNames .cn-label{font-size:10px;letter-spacing:.4em;color:#e6c887;font-weight:700;text-shadow:0 2px 10px rgba(0,0,0,.6)}
   #coverNames .cn-names{font-family:'Alex Brush',cursive;font-size:2.3rem;line-height:1.15;color:#fdf6dd;margin-top:6px;text-shadow:0 3px 16px rgba(0,0,0,.65)}
   #coverNames .cn-names span{color:#e6c887}
   #coverNames .cn-date{font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:.18em;color:#f4e8c8;margin-top:8px;text-shadow:0 2px 10px rgba(0,0,0,.6)}
-  .frame-oval{position:relative;background:linear-gradient(160deg,#b8934a,#e6c887 45%,#c9a45c 70%,#C9A227);padding:3px;border-radius:50%;filter:drop-shadow(0 16px 28px rgba(46,90,62,.35))}
+  .frame-oval{position:relative;background:linear-gradient(160deg,#b8934a,#e6c887 45%,#c9a45c 70%,#C9A227);padding:3px;border-radius:50%;filter:drop-shadow(0 16px 28px rgba(30,77,51,.35))}
   .frame-oval-in{border-radius:50%;overflow:hidden;width:100%;height:100%}
-  .invitation-frame{max-width:430px;margin:0 auto;position:relative;background:#F7F3EC;
-    box-shadow:0 0 60px rgba(46,90,62,.35);overflow:hidden;min-height:100vh}
+  .invitation-frame{max-width:430px;margin:0 auto;position:relative;background:#FAF9F4;
+    box-shadow:0 0 60px rgba(30,77,51,.35);overflow:hidden;min-height:100vh}
   body.is-locked{overflow:hidden}
   .text-gold-grad{background:linear-gradient(105deg,#C9A227 0%,#D4AF6A 35%,#C9A227 55%,#e6c887 75%,#C9A227 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent}
   .card-putih{background:#ffffff;border:1px solid rgba(201,162,39,.45);border-radius:1.1rem;position:relative;
-    box-shadow:0 22px 44px -20px rgba(46,90,62,.35)}
-  .btn-gold{background:linear-gradient(105deg,#C9A227,#D4AF6A 55%,#C9A227);color:#F7F3EC;
+    box-shadow:0 22px 44px -20px rgba(30,77,51,.35)}
+  .btn-gold{background:linear-gradient(105deg,#C9A227,#D4AF6A 55%,#C9A227);color:#FAF9F4;
     box-shadow:0 10px 24px -8px rgba(201,162,39,.55);transition:transform .25s,box-shadow .25s}
   .btn-gold:hover{transform:translateY(-2px)}
-  .btn-outline{border:1px solid rgba(201,162,39,.75);color:#2E5A3E;transition:all .25s;background:rgba(201,162,39,.05)}
+  .btn-outline{border:1px solid rgba(201,162,39,.75);color:#1E4D33;transition:all .25s;background:rgba(201,162,39,.05)}
   .btn-outline:hover{background:rgba(201,162,39,.14)}
   .hairline{height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,39,.7),transparent)}
-  .field-betawi{width:100%;background:#F7F3EC;border:1px solid rgba(201,162,39,.45);
+  .field-betawi{width:100%;background:#FAF9F4;border:1px solid rgba(201,162,39,.45);
     border-radius:.8rem;color:#1F2A24;padding:.8rem 1rem;font-size:.9rem;outline:none;transition:border-color .25s}
-  .field-betawi::placeholder{color:rgba(95,113,97,.4)}
+  .field-betawi::placeholder{color:rgba(79,116,87,.4)}
   .field-betawi:focus{border-color:#C9A227}
   #musicFloat{position:fixed;bottom:96px;right:max(14px,calc(50% - 215px + 14px));z-index:45;
     width:52px;height:52px;border-radius:50%;border:1px solid rgba(194,171,114,.8);
-    background:radial-gradient(circle at 32% 30%,#2E5A3E,#1F2A24 70%);color:#D4AF6A;
+    background:radial-gradient(circle at 32% 30%,#1E4D33,#1F2A24 70%);color:#D4AF6A;
     display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(90,70,20,.25);cursor:pointer}
     #qrFloatBtn{ position:fixed; z-index:45; right:max(14px,calc(50% - 215px + 14px)); bottom:188px;
       width:48px; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(160deg,rgba(46,90,62,.95),rgba(42,37,25,.97)); color:#D4AF6A; cursor:pointer;
+      background:linear-gradient(160deg,rgba(30,77,51,.95),rgba(42,37,25,.97)); color:#D4AF6A; cursor:pointer;
       box-shadow:0 10px 24px rgba(90,70,20,.25); border:1px solid rgba(194,171,114,.8); }
     #qrFloatBtn[hidden]{ display:none !important; }
     #qrFloatBtn.hidden{ display:none !important; }
@@ -204,13 +209,13 @@ tailwind.config = {
   #floatMenu{position:fixed;right:max(14px,calc(50% - 215px + 14px));bottom:168px;z-index:45;
     display:flex;flex-direction:column;gap:9px}
   #floatMenu a{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-    background:rgba(255,253,247,.92);border:1px solid rgba(201,162,39,.6);color:#2E5A3E;
-    box-shadow:0 10px 22px rgba(46,90,62,.3);backdrop-filter:blur(4px)}
+    background:rgba(255,253,247,.92);border:1px solid rgba(201,162,39,.6);color:#1E4D33;
+    box-shadow:0 10px 22px rgba(30,77,51,.3);backdrop-filter:blur(4px)}
   #floatMenu.hidden, #musicFloat.hidden, #qrFloatBtn.hidden{display:none !important}
   #toast{position:fixed;left:50%;bottom:110px;transform:translate(-50%,20px);z-index:90;
-    background:#1F2A24;color:#F7F3EC;border:1px solid #C9A227;border-radius:999px;
+    background:#1F2A24;color:#FAF9F4;border:1px solid #C9A227;border-radius:999px;
     padding:.65rem 1.2rem;font-size:.8rem;font-weight:600;opacity:0;pointer-events:none;transition:all .35s;
-    box-shadow:0 14px 30px rgba(46,90,62,.4);max-width:88vw;text-align:center}
+    box-shadow:0 14px 30px rgba(30,77,51,.4);max-width:88vw;text-align:center}
   #toast.show{opacity:1;transform:translate(-50%,0)}
   #petalCanvas{position:fixed;top:0;left:50%;transform:translateX(-50%);width:min(430px,100vw);
     height:100dvh;z-index:44;pointer-events:none}
@@ -222,15 +227,15 @@ tailwind.config = {
   }
 
 /* Standar menu klasik emas: bottom bar */
-#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(46,90,62,.45);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:auto;max-width:96vw;flex-wrap:nowrap;justify-content:center;overflow:visible}
+#floatMenu,#bottomNav{position:fixed;left:50%;transform:translateX(-50%);right:auto;bottom:10px;z-index:46;display:flex;flex-direction:row;gap:2px;background:rgba(255,253,247,.94);border:1px solid rgba(30,77,51,.45);border-radius:26px;padding:7px 8px;backdrop-filter:blur(10px);box-shadow:0 14px 34px rgba(90,70,20,.25);width:auto;max-width:96vw;flex-wrap:nowrap;justify-content:center;overflow:visible}
 #floatMenu::-webkit-scrollbar,#bottomNav::-webkit-scrollbar{display:none}
-#floatMenu a,#bottomNav a{display:flex;flex-direction:row;align-items:center;gap:0;flex:0 0 auto;width:auto;height:auto;min-width:0;max-width:none;padding:7px 9px;border-radius:13px;color:#2E5A3E!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:background .3s ease,box-shadow .3s ease,color .3s ease}
+#floatMenu a,#bottomNav a{display:flex;flex-direction:row;align-items:center;gap:0;flex:0 0 auto;width:auto;height:auto;min-width:0;max-width:none;padding:7px 9px;border-radius:13px;color:#1E4D33!important;background:transparent!important;border:none!important;box-shadow:none!important;text-decoration:none;font-size:7.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:background .3s ease,box-shadow .3s ease,color .3s ease}
 #floatMenu a svg,#bottomNav a svg{width:21px;height:21px;flex:none}
 #floatMenu a span,#bottomNav a span{display:inline-block;flex:none;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .35s ease,opacity .3s ease,margin-left .35s ease}
 #floatMenu a.active span,#bottomNav a.active span{max-width:90px;opacity:1;margin-left:6px}
-#floatMenu a.active,#bottomNav a.active{background:rgba(46,90,62,.14)!important;box-shadow:inset 0 0 0 1.5px #D4AF6A!important;color:#2E5A3E!important}
+#floatMenu a.active,#bottomNav a.active{background:rgba(30,77,51,.14)!important;box-shadow:inset 0 0 0 1.5px #D4AF6A!important;color:#1E4D33!important}
 #floatMenu.hidden,#bottomNav[hidden]{display:none!important}
-#musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(46,90,62,.95),rgba(42,37,25,.97))!important;border:1px solid rgba(194,171,114,.8)!important;color:#D4AF6A!important;box-shadow:0 10px 24px rgba(90,70,20,.25)!important}
+#musicFloat{bottom:130px!important;background:linear-gradient(160deg,rgba(30,77,51,.95),rgba(42,37,25,.97))!important;border:1px solid rgba(194,171,114,.8)!important;color:#D4AF6A!important;box-shadow:0 10px 24px rgba(90,70,20,.25)!important}
 @media (max-width:400px){
   #bottomNav a,#floatMenu a{padding:7px 6px}
   #bottomNav a svg,#floatMenu a svg{width:20px;height:20px}
@@ -255,7 +260,7 @@ tailwind.config = {
     <p class="relative text-[10px] uppercase tracking-[0.4em] text-betawi-deep mb-2">Wedding Invitation</p>
     <h1 class="relative font-serif text-[1.7rem] tracking-[0.1em] text-betawi-ink">{{ strtoupper($groomNick) }} <span class="text-gold-grad">&amp;</span> {{ strtoupper($brideNick) }}</h1>
     <div class="relative w-40 h-[3px] bg-betawi-gold/15 rounded-full overflow-hidden mb-2 mt-6">
-      <div id="loader-bar" class="h-full w-0" style="background:linear-gradient(90deg,#2E5A3E,#D4AF6A)"></div>
+      <div id="loader-bar" class="h-full w-0" style="background:linear-gradient(90deg,#1E4D33,#D4AF6A)"></div>
     </div>
     <span id="loader-percent" class="relative text-[11px] font-mono tracking-[0.25em] text-betawi-deep">0%</span>
   </section>
@@ -293,13 +298,13 @@ tailwind.config = {
   <section id="hero-section" class="relative min-h-[100dvh] w-full flex flex-col items-center justify-center text-center px-6 py-14 overflow-hidden">
     <div class="hero-veil" aria-hidden="true"></div>
     <div class="btw-frame" aria-hidden="true"></div>
-    <span class="bfly bfly-1" aria-hidden="true"><svg viewBox="0 0 40 30"><path d="M20 15C12 2 2 4 5 13c2 6 9 5 15 2z" fill="#2E5A3E"/><path d="M20 15c8-13 18-11 15-2-2 6-9 5-15 2z" fill="#2E5A3E"/><path d="M20 12c-2 6-2 12 0 16 2-4 2-10 0-16z" fill="#1F2A24"/></svg></span>
-    <span class="bfly bfly-2" aria-hidden="true"><svg viewBox="0 0 40 30"><path d="M20 15C12 2 2 4 5 13c2 6 9 5 15 2z" fill="#2E5A3E"/><path d="M20 15c8-13 18-11 15-2-2 6-9 5-15 2z" fill="#2E5A3E"/><path d="M20 12c-2 6-2 12 0 16 2-4 2-10 0-16z" fill="#1F2A24"/></svg></span>
+    <span class="bfly bfly-1" aria-hidden="true"><svg viewBox="0 0 40 30"><path d="M20 15C12 2 2 4 5 13c2 6 9 5 15 2z" fill="#1F2A24"/><path d="M20 15c8-13 18-11 15-2-2 6-9 5-15 2z" fill="#1F2A24"/><path d="M20 12c-2 6-2 12 0 16 2-4 2-10 0-16z" fill="#1F2A24"/></svg></span>
+    <span class="bfly bfly-2" aria-hidden="true"><svg viewBox="0 0 40 30"><path d="M20 15C12 2 2 4 5 13c2 6 9 5 15 2z" fill="#1F2A24"/><path d="M20 15c8-13 18-11 15-2-2 6-9 5-15 2z" fill="#1F2A24"/><path d="M20 12c-2 6-2 12 0 16 2-4 2-10 0-16z" fill="#1F2A24"/></svg></span>
     <div class="hero-content relative z-10 flex flex-col items-center w-full pt-6">
       <img src="{{ asset('images/betawi/mahkota.png') }}" alt="Mahkota pengantin Betawi" class="hero-stagger opacity-0 w-20 mb-1 relative z-10" />
       <svg class="hero-stagger opacity-0 w-72 h-16 mb-1" viewBox="0 0 300 60" aria-hidden="true">
         <defs><path id="arcPath" d="M 15 58 A 260 260 0 0 1 285 58" /></defs>
-        <text style="font-family:'Cormorant Garamond',serif;letter-spacing:0.42em" font-size="16.5" fill="#2E5A3E">
+        <text style="font-family:'Cormorant Garamond',serif;letter-spacing:0.42em" font-size="16.5" fill="#1E4D33">
           <textPath href="#arcPath" startOffset="50%" text-anchor="middle">THE WEDDING OF</textPath>
         </text>
       </svg>
@@ -335,7 +340,7 @@ tailwind.config = {
     <div class="anim-zoom relative z-10 w-full max-w-[340px]">
       <img src="{{ asset('images/betawi/mahkota.png') }}" alt="Mahkota pengantin Betawi" class="anim-zoom w-16 mx-auto mb-4" />
       <div class="mx-auto w-20 h-20 rounded-full flex items-center justify-center mb-5 bg-white"
-        style="border:1.5px solid rgba(201,162,39,.75); box-shadow:0 10px 24px -10px rgba(46,90,62,.4)">
+        style="border:1.5px solid rgba(201,162,39,.75); box-shadow:0 10px 24px -10px rgba(30,77,51,.4)">
         <span class="font-serif text-2xl tracking-[0.12em] text-gold-grad font-semibold">{{ $monoBride }}{{ $monoGroom }}</span>
       </div>
       <p class="anim-fade font-serif text-[16.5px] leading-[1.9] text-betawi-soft italic">
@@ -351,14 +356,14 @@ tailwind.config = {
   </section>
 
   <!-- ================= 5. COUNTDOWN ================= -->
-  <section class="scroll-section relative py-16 px-6 flex flex-col items-center text-center overflow-hidden" style="background:#2E5A3E">
+  <section class="scroll-section relative py-16 px-6 flex flex-col items-center text-center overflow-hidden" style="background:#1E4D33">
     <p class="anim-fade-down text-[10px] uppercase tracking-[0.4em] text-[#D4AF6A] mb-2 relative z-10">Menghitung Hari Bahagia</p>
     <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-8 relative z-10">Save The Date</h2>
     <div class="anim-zoom relative z-10 grid grid-cols-4 gap-2 w-full max-w-[340px]">
-      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(201,162,39,.5);box-shadow:0 12px 24px -12px rgba(46,90,62,.35)"><div class="font-serif text-[1.6rem] font-bold text-betawi-ink" id="cd-d">00</div><div class="text-[8px] tracking-[0.22em] text-betawi-soft mt-1 font-medium">HARI</div></div>
-      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(201,162,39,.5);box-shadow:0 12px 24px -12px rgba(46,90,62,.35)"><div class="font-serif text-[1.6rem] font-bold text-betawi-ink" id="cd-h">00</div><div class="text-[8px] tracking-[0.22em] text-betawi-soft mt-1 font-medium">JAM</div></div>
-      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(201,162,39,.5);box-shadow:0 12px 24px -12px rgba(46,90,62,.35)"><div class="font-serif text-[1.6rem] font-bold text-betawi-ink" id="cd-m">00</div><div class="text-[8px] tracking-[0.22em] text-betawi-soft mt-1 font-medium">MENIT</div></div>
-      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(201,162,39,.5);box-shadow:0 12px 24px -12px rgba(46,90,62,.35)"><div class="font-serif text-[1.6rem] font-bold text-betawi-ink" id="cd-s">00</div><div class="text-[8px] tracking-[0.22em] text-betawi-soft mt-1 font-medium">DETIK</div></div>
+      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(201,162,39,.5);box-shadow:0 12px 24px -12px rgba(30,77,51,.35)"><div class="font-serif text-[1.6rem] font-bold text-betawi-ink" id="cd-d">00</div><div class="text-[8px] tracking-[0.22em] text-betawi-soft mt-1 font-medium">HARI</div></div>
+      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(201,162,39,.5);box-shadow:0 12px 24px -12px rgba(30,77,51,.35)"><div class="font-serif text-[1.6rem] font-bold text-betawi-ink" id="cd-h">00</div><div class="text-[8px] tracking-[0.22em] text-betawi-soft mt-1 font-medium">JAM</div></div>
+      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(201,162,39,.5);box-shadow:0 12px 24px -12px rgba(30,77,51,.35)"><div class="font-serif text-[1.6rem] font-bold text-betawi-ink" id="cd-m">00</div><div class="text-[8px] tracking-[0.22em] text-betawi-soft mt-1 font-medium">MENIT</div></div>
+      <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(201,162,39,.5);box-shadow:0 12px 24px -12px rgba(30,77,51,.35)"><div class="font-serif text-[1.6rem] font-bold text-betawi-ink" id="cd-s">00</div><div class="text-[8px] tracking-[0.22em] text-betawi-soft mt-1 font-medium">DETIK</div></div>
     </div>
     <a href="{{ $gcalUrl }}" target="_blank" rel="noopener" class="anim-fade btn-outline relative z-10 text-[10px] tracking-[0.25em] px-7 py-3 rounded-full mt-7 font-medium">+ SIMPAN KE GOOGLE CALENDAR</a>
   </section>
@@ -370,7 +375,7 @@ tailwind.config = {
     <img src="{{ asset('images/betawi/mahkota.png') }}" alt="Mahkota pengantin Betawi" class="anim-zoom relative z-10 w-16 mx-auto mb-4" />
     <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-3 relative z-10">Bride &amp; Groom</h2>
     <p class="anim-fade font-serif italic text-betawi-soft text-[15px] leading-relaxed mb-10 max-w-[300px] relative z-10">Dengan memohon rahmat dan ridha Allah SWT, kami bermaksud menyelenggarakan pernikahan kami.</p>
-    <img src="{{ asset('images/betawi/ondel-ondel.jpg') }}" alt="Ondel-ondel Betawi" class="anim-zoom relative z-10 w-28 mb-8 rounded-2xl" style="border:2px solid #c9a45c;box-shadow:0 14px 30px rgba(46,90,62,.25)" />
+    <img src="{{ asset('images/betawi/ondel-ondel.jpg') }}" alt="Ondel-ondel Betawi" class="anim-zoom relative z-10 w-28 mb-8 rounded-2xl" style="border:2px solid #c9a45c;box-shadow:0 14px 30px rgba(30,77,51,.25)" />
 
     <!-- Mempelai wanita -->
     <div class="anim-zoom relative z-10 w-full max-w-[320px] card-putih px-6 pt-8 pb-10 mb-2">
@@ -534,7 +539,7 @@ tailwind.config = {
     <div id="galGrid" class="relative z-10 grid grid-cols-2 gap-2.5 w-full max-w-[340px]">
 @if(!empty($gallery) && count($gallery))
         @foreach(array_slice($gallery, 0, 8) as $i => $src)
-        <div class="gal-item anim-fade relative overflow-hidden rounded-xl cursor-pointer {{ $i === 0 ? 'col-span-2 aspect-[16/10]' : 'aspect-[4/5]' }}" data-full="{{ $src }}" style="border:1.5px solid rgba(201,162,39,.55); box-shadow:0 12px 26px -12px rgba(46,90,62,.4)">
+        <div class="gal-item anim-fade relative overflow-hidden rounded-xl cursor-pointer {{ $i === 0 ? 'col-span-2 aspect-[16/10]' : 'aspect-[4/5]' }}" data-full="{{ $src }}" style="border:1.5px solid rgba(201,162,39,.55); box-shadow:0 12px 26px -12px rgba(30,77,51,.4)">
           <img src="{{ $src }}" class="w-full h-full object-cover" alt="Galeri {{ $i+1 }}" loading="lazy" />
         </div>
         @endforeach
@@ -596,13 +601,13 @@ tailwind.config = {
   <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in" class="hidden"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
   <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
     <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
-      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#2E5A3E">&times;</button>
-      <h2 style="font-family:serif;font-size:24px;color:#2E5A3E;margin:0 0 6px">QR Check-In</h2>
+      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#1E4D33">&times;</button>
+      <h2 style="font-family:serif;font-size:24px;color:#1E4D33;margin:0 0 6px">QR Check-In</h2>
       <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
       <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
       <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
-      <p style="margin:6px 0 0;font-size:13px;color:#2E5A3E">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
-      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#2E5A3E;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+      <p style="margin:6px 0 0;font-size:13px;color:#1E4D33">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
+      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#1E4D33;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
     </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -622,8 +627,8 @@ tailwind.config = {
       <input type="text" id="rsvp-name" required class="field-betawi mb-4" placeholder="Nama Anda" value="{{ $toName !== 'Tamu Undangan' ? $toName : '' }}">
       <label class="block text-[10px] tracking-[0.25em] uppercase text-betawi-deep mb-1.5 font-medium">Konfirmasi Kehadiran</label>
       <div class="grid grid-cols-2 gap-2 mb-4" id="rsvp-status-group">
-        <button type="button" data-status="hadir" class="rsvp-status-btn py-3 rounded-lg text-[12px] font-semibold tracking-wider transition-all" style="border:1px solid rgba(201,162,39,.55);color:#2E5A3E">Hadir</button>
-        <button type="button" data-status="tidak" class="rsvp-status-btn py-3 rounded-lg text-[12px] font-semibold tracking-wider transition-all" style="border:1px solid rgba(201,162,39,.55);color:#2E5A3E">Berhalangan</button>
+        <button type="button" data-status="hadir" class="rsvp-status-btn py-3 rounded-lg text-[12px] font-semibold tracking-wider transition-all" style="border:1px solid rgba(201,162,39,.55);color:#1E4D33">Hadir</button>
+        <button type="button" data-status="tidak" class="rsvp-status-btn py-3 rounded-lg text-[12px] font-semibold tracking-wider transition-all" style="border:1px solid rgba(201,162,39,.55);color:#1E4D33">Berhalangan</button>
       </div>
       <div id="rsvp-alasan-wrap" class="hidden">
         <label class="block text-[10px] tracking-[0.25em] uppercase text-betawi-deep mb-1.5 font-medium">Alasan Berhalangan</label>
@@ -882,7 +887,7 @@ window.prewedPauseMusic=prewedPauseMusic;
       const finish = () => { if (!opened) { opened = true; openInvitation(); } };
       cv.addEventListener('ended', () => { setTimeout(finish, 1200); }, { once: true });
       cv.addEventListener('timeupdate', () => {
-        // Bingkai oval selesai turun ~15 dtk -> nama mempelai muncul di dalamnya
+        // Bingkai emas stepped selesai turun ~15 dtk -> nama mempelai muncul di dalamnya
         if (cv.currentTime >= 15) {
           const cn = document.getElementById('coverNames');
           if (cn) cn.classList.add('show');
@@ -994,7 +999,7 @@ window.prewedPauseMusic=prewedPauseMusic;
     statusBtns.forEach(b => {
       const on = b.dataset.status === rsvpStatus;
       b.style.background = on ? 'linear-gradient(105deg,#C9A227,#D4AF6A 55%,#C9A227)' : 'transparent';
-      b.style.color = on ? '#F7F3EC' : '#2E5A3E';
+      b.style.color = on ? '#FAF9F4' : '#1E4D33';
     });
     if (countWrap) countWrap.classList.toggle('hidden', rsvpStatus !== 'hadir');
     var aw = document.getElementById('rsvp-alasan-wrap');
