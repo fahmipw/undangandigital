@@ -2,14 +2,14 @@
 /* ============================================================
    TEMA: JAWA GERBANG — gerbang emas terbuka ke pendopo, video opening
    Dipilih via settings: theme = jawa-gerbang
-   Video opening: public/videos/jawa-gerbang-opening.mp4 (15,8 dtk, 480x864, ada audio)
+   Video opening: public/videos/jawa-gerbang-opening.mp4 (15,8 dtk, 480x864, audio TIDAK dipakai — video di-mute)
    Poster cover: public/images/jawa-gerbang/poster.jpg (gerbang tertutup, frame t=0)
    Background: public/images/jawa-gerbang/background.jpg (gambar watercolor Fahmi: batik + pendopo + mawar, 1536x2752)
    Divider gunungan memakai aset public/images/jawa-puspa/gunungan-divider.webp.
    TANPA amplop — gerbangnya video opening: cover DIAM (poster gerbang tertutup)
    sampai klik BUKA -> video jalan (gerbang terbuka, bingkai emas turun ~7 dtk,
    nama + tanggal muncul di bingkai) -> selesai -> undangan terbuka + musik.
-   Video TIDAK autoplay/loop; ada audio (musik opening) selama video jalan.
+   Video TIDAK autoplay/loop; musik = musik latar (mulai saat BUKA), bukan audio video.
    Keterbacaan cover (2026-11-18, diwarisi dari Pendopo): scrim + shadow teks
    header diperkuat + kartu nama tamu solid + teks permohonan maaf berpil gelap.
    ============================================================ */
@@ -244,7 +244,7 @@ tailwind.config = {
 
   <!-- ================= 2. COVER (VIDEO OPENING) ================= -->
   <section id="cover-gate" class="fixed inset-0 z-40 mx-auto max-w-[430px] h-[100dvh] overflow-hidden bg-[#2a1f14] text-center">
-    <video id="coverVideo" class="absolute inset-0 w-full h-full object-cover" playsinline preload="auto" poster="{{ asset('images/jawa-gerbang/poster.jpg') }}" src="{{ asset('videos/jawa-gerbang-opening.mp4') }}"></video>
+    <video id="coverVideo" class="absolute inset-0 w-full h-full object-cover" playsinline muted preload="auto" poster="{{ asset('images/jawa-gerbang/poster.jpg') }}" src="{{ asset('videos/jawa-gerbang-opening.mp4') }}"></video>
     <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(20,14,8,.62) 0%,rgba(20,14,8,.30) 26%,rgba(20,14,8,0) 45%,rgba(20,14,8,0) 58%,rgba(20,14,8,.55) 84%,rgba(20,14,8,.72) 100%)"></div>
     <div id="coverNames" aria-hidden="true">
       <p class="cn-label">THE WEDDING OF</p>
@@ -864,7 +864,7 @@ window.prewedPauseMusic=prewedPauseMusic;
         if (!cv.paused && cv.currentTime > 0) { clearInterval(watchdog); return; }
         if (Date.now() - t0 > 2500) { clearInterval(watchdog); finish(); }
       }, 250);
-      try { cv.currentTime = 0; const pr = cv.play(); if (pr && pr.catch) pr.catch(finish); }
+      try { cv.currentTime = 0; cv.muted = true; const pr = cv.play(); if (pr && pr.catch) pr.catch(finish); if (MUS_AUTO) playMusic(); }
       catch (e) { finish(); }
     });
   }

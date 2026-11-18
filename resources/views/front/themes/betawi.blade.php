@@ -2,12 +2,13 @@
 /* ============================================================
    TEMA: BETAWI — gerbang Betawi terbuka ke rumah kebaya, video opening
    Dipilih via settings: theme = betawi
-   Video opening: public/videos/betawi-opening.mp4 (20,0 dtk, 480x864, ADA audio gamelan)
+   Video opening: public/videos/betawi-opening.mp4 (20,0 dtk, 480x864, audio TIDAK dipakai — video di-mute)
      VIDEO ASLI Fahmi (ganti video generate v1/v2): dedaunan hijau gelap ->
      danau + rumah kebaya kuning atap terakota -> bingkai emas stepped turun
      ~14-15 dtk -> nama + tanggal muncul di bingkai -> selesai.
-     Audio: gamelan hasil generate v1 ditempel ke video Fahmi (trim 20,03 dtk
-     + fade-out 1,5 dtk akhir); video asli tanpa audio disimpan di .qa-libs/betawi-v3/fahmi-silent.mp4.
+     Audio gamelan v1 ditempel ke video Fahmi (trim 20,03 dtk + fade-out 1,5 dtk
+     akhir) — TIDAK terdengar: video di-mute, musik = musik latar (revisi Fahmi
+     2026-11-18); video asli tanpa audio di .qa-libs/betawi-v3/fahmi-silent.mp4.
    Poster cover: public/images/betawi/poster.jpg (dedaunan hijau gelap, frame t=0)
    Background: public/images/betawi/background.jpg (watercolor v3: kanopi dedaunan
      hijau hutan + tengah mint pucat + rumah kebaya samar + bunga bawah, digenerate)
@@ -17,8 +18,7 @@
    TANPA amplop — gerbangnya video opening: cover DIAM (poster gerbang tertutup)
    sampai klik BUKA -> video jalan -> nama + tanggal muncul di bingkai emas
    (~15 dtk, bingkai stepped selesai turun) -> selesai -> undangan terbuka + musik.
-   Video TIDAK autoplay/loop; ADA audio (gamelan) selama video jalan; musik latar mulai
-   setelah undangan terbuka.
+   Video TIDAK autoplay/loop; musik = musik latar (mulai saat BUKA), bukan audio video.
    v2 (2026-11-16): gaya minimotion-11 — video opening TETAP; palet sage/hijau
    tua/emas, font Alex Brush + Plus Jakarta Sans, mahkota + rumah kebaya,
    kupu-kupu, kartu mempelai lengkung, Save The Date hijau tua, tanpa parallax.
@@ -26,6 +26,7 @@
    #1E4D33, mint pucat #E4EDE1, krem gading #FAF9F4; background + divider baru.
    v4 (2026-11-18): musik gamelan di dalam video (audio generate v1 ditempel
    ke video Fahmi); video berbunyi saat Buka diklik.
+   v6 (2026-11-18, revisi Fahmi): video di-mute — musik = musik latar sejak Buka diklik.
    Keterbacaan cover (2026-11-18, diwarisi dari Pendopo): scrim + shadow teks
    header diperkuat + kartu nama tamu solid + teks permohonan maaf berpil gelap.
    ============================================================ */
@@ -273,7 +274,7 @@ tailwind.config = {
 
   <!-- ================= 2. COVER (VIDEO OPENING) ================= -->
   <section id="cover-gate" class="fixed inset-0 z-40 mx-auto max-w-[430px] h-[100dvh] overflow-hidden bg-[#2a1f14] text-center">
-    <video id="coverVideo" class="absolute inset-0 w-full h-full object-cover" playsinline preload="auto" poster="{{ asset('images/betawi/poster.jpg') }}" src="{{ asset('videos/betawi-opening.mp4') }}"></video>
+    <video id="coverVideo" class="absolute inset-0 w-full h-full object-cover" playsinline muted preload="auto" poster="{{ asset('images/betawi/poster.jpg') }}" src="{{ asset('videos/betawi-opening.mp4') }}"></video>
     <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(20,14,8,.62) 0%,rgba(20,14,8,.30) 26%,rgba(20,14,8,0) 45%,rgba(20,14,8,0) 58%,rgba(20,14,8,.55) 84%,rgba(20,14,8,.72) 100%)"></div>
     <div id="coverNames" aria-hidden="true">
       <p class="cn-label">THE WEDDING OF</p>
@@ -905,7 +906,7 @@ window.prewedPauseMusic=prewedPauseMusic;
         if (!cv.paused && cv.currentTime > 0) { clearInterval(watchdog); return; }
         if (Date.now() - t0 > 2500) { clearInterval(watchdog); finish(); }
       }, 250);
-      try { cv.currentTime = 0; const pr = cv.play(); if (pr && pr.catch) pr.catch(finish); }
+      try { cv.currentTime = 0; cv.muted = true; const pr = cv.play(); if (pr && pr.catch) pr.catch(finish); if (MUS_AUTO) playMusic(); }
       catch (e) { finish(); }
     });
   }

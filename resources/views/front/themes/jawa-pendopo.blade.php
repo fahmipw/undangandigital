@@ -3,12 +3,13 @@
    TEMA: JAWA PENDOPO — taman Jawa dengan video opening (minimotion)
    Dipilih via settings: theme = jawa-pendopo
    Video opening: public/videos/jawa-pendopo-opening.mp4 (20 dtk, 606x1080)
-   Audio: gamelan hasil generate v1 ditempel (2026-11-18, seperti Betawi v4);
-   video asli tanpa audio disimpan di .qa-libs/pendopo/pendopo-silent.mp4.
+   Musik: musik latar (dari pengaturan musik), BUKAN audio video — video di-mute;
+   audio gamelan di file video tidak terdengar (revisi Fahmi 2026-11-18).
    Background taman: public/images/jawa-pendopo/background.jpg (899x1599)
    Divider gunungan memakai aset public/images/jawa-puspa/gunungan-divider.webp.
    TANPA amplop — gerbangnya video opening: cover DIAM (poster taman) sampai
-   klik BUKA -> video jalan + audio -> selesai -> undangan terbuka + musik.
+   klik BUKA -> video jalan (mute) + musik latar mulai -> selesai ->
+   undangan terbuka, musik latar lanjut.
    Keterbacaan cover (2026-11-18): scrim atas/bawah diperkuat + shadow teks
    header diperkuat + kartu nama tamu dibuat solid (#fdf6dd) + teks permohonan
    maaf diberi pil gelap — teks cover tetap terbaca di atas poster ramai.
@@ -242,7 +243,7 @@ tailwind.config = {
 
   <!-- ================= 2. COVER (VIDEO OPENING) ================= -->
   <section id="cover-gate" class="fixed inset-0 z-40 mx-auto max-w-[430px] h-[100dvh] overflow-hidden bg-[#2a1f14] text-center">
-    <video id="coverVideo" class="absolute inset-0 w-full h-full object-cover" playsinline preload="auto" poster="{{ asset('images/jawa-pendopo/background.jpg') }}" src="{{ asset('videos/jawa-pendopo-opening.mp4') }}"></video>
+    <video id="coverVideo" class="absolute inset-0 w-full h-full object-cover" playsinline muted preload="auto" poster="{{ asset('images/jawa-pendopo/background.jpg') }}" src="{{ asset('videos/jawa-pendopo-opening.mp4') }}"></video>
     <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(20,14,8,.62) 0%,rgba(20,14,8,.30) 26%,rgba(20,14,8,0) 45%,rgba(20,14,8,0) 58%,rgba(20,14,8,.55) 84%,rgba(20,14,8,.72) 100%)"></div>
     <div id="coverNames" aria-hidden="true">
       <p class="cn-label">THE WEDDING OF</p>
@@ -856,7 +857,7 @@ window.prewedPauseMusic=prewedPauseMusic;
         if (!cv.paused && cv.currentTime > 0) { clearInterval(watchdog); return; }
         if (Date.now() - t0 > 2500) { clearInterval(watchdog); finish(); }
       }, 250);
-      try { cv.currentTime = 0; const pr = cv.play(); if (pr && pr.catch) pr.catch(finish); }
+      try { cv.currentTime = 0; cv.muted = true; const pr = cv.play(); if (pr && pr.catch) pr.catch(finish); if (MUS_AUTO) playMusic(); }
       catch (e) { finish(); }
     });
   }
