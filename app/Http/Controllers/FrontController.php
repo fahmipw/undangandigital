@@ -92,6 +92,7 @@ class FrontController extends Controller
             'jawa-pendopo'          => 'front.themes.jawa-pendopo',
             'jawa-gerbang'         => 'front.themes.jawa-gerbang',
             'betawi'                => 'front.themes.betawi',
+            'jawa-gunungan'         => 'front.themes.jawa-gunungan',
             'taman-surga'           => 'front.themes.taman-surga',
             'jawa-biru'             => 'front.themes.jawa-biru',
             'jawa-puspa'            => 'front.themes.jawa-puspa',
