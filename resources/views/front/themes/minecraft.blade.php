@@ -927,7 +927,29 @@ requestAnimationFrame(loop);
   Array.prototype.forEach.call(nav.querySelectorAll('a[data-sec]'),function(a){
     var el=document.getElementById(a.getAttribute('data-sec'));
     if(!el){a.remove();return;}
-    a.addEventListener('click',function(e){e.preventDefault();el.scrollIntoView({behavior:'instant'});});
+    function smoothScrollTo(el){
+      if(!el)return;
+      var y=el.getBoundingClientRect().top+window.scrollY;
+      if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){window.scrollTo({top:y,behavior:'instant'});return;}
+      if(smoothScrollTo._c)smoothScrollTo._c();
+      var start=window.scrollY,dur=800,t0=null,cancelled=false;
+      function cancel(){cancelled=true;window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
+      smoothScrollTo._c=cancel;
+      window.addEventListener('wheel',cancel,{passive:true});
+      window.addEventListener('touchmove',cancel,{passive:true});
+      function step(ts){
+        if(cancelled)return;
+        if(t0===null)t0=ts;
+        var p=Math.min((ts-t0)/dur,1);
+        var e=p<0.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+        window.scrollTo({top:start+(y-start)*e,behavior:'instant'});
+        if(p<1){requestAnimationFrame(step);}
+        else{window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
+      }
+      requestAnimationFrame(step);
+      setTimeout(function(){if(!cancelled&&Math.abs(window.scrollY-y)>2){window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);window.scrollTo({top:y,behavior:'instant'});}},dur+500);
+    }
+    a.addEventListener('click',function(e){e.preventDefault();smoothScrollTo(el);});
     items.push([a,el]);
   });
   if(!items.length){nav.style.display='none';return;}
@@ -1024,10 +1046,6 @@ if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded
 <div id="qrModal" style="position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7;padding:20px" onclick="if(event.target===this)closeQrModal()">
   <div style="background:#101010;border:3px solid #000;box-shadow:inset 2px 2px 0 rgba(255,255,255,.12),0 0 0 2px #3a3a3a,0 24px 60px rgba(0,0,0,.5);padding:22px 18px;max-width:360px;width:100%;text-align:center;position:relative">
     <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:6px;right:10px;border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:#fff">&times;</button>
-    <div style="display:flex;justify-content:center;gap:10px;margin:2px 0 10px">
-      @if(mcGet('bride_photo'))<img src="{{ mcGet('bride_photo') }}" alt="{{ $brideFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:0;border:2px solid #5b5b5b;flex:none">@else<div style="width:56px;height:56px;border-radius:0;border:2px solid #5b5b5b;background:#2b2b2b;color:#fcee5e;display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:20px;">{{ mb_substr($brideNick, 0, 1) }}</div>@endif
-      @if(mcGet('groom_photo'))<img src="{{ mcGet('groom_photo') }}" alt="{{ $groomFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:0;border:2px solid #5b5b5b;flex:none">@else<div style="width:56px;height:56px;border-radius:0;border:2px solid #5b5b5b;background:#2b2b2b;color:#fcee5e;display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:20px;">{{ mb_substr($groomNick, 0, 1) }}</div>@endif
-    </div>
     <div style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:.18em;color:#7bff5e">THE WEDDING OF</div>
     <div style="font-family:'Press Start 2P',monospace;font-size:11px;line-height:1.6;color:#7bff5e;margin:8px 0 0">{{ $brideNick }} &amp; {{ $groomNick }}</div>
     <div style="font-size:11px;color:#c8d2dc;margin-top:8px">{{ mcDate($wDate) }}, {{ str_replace(':', '.', $wTime) }}&ndash;{{ str_replace(':', '.', $wTimeE) }} {{ mcGet('wedding_timezone','WIB') }}</div>

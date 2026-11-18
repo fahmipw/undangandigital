@@ -376,7 +376,6 @@ const MC = {
   musVol: @json($musVol),
   musAuto: @json($musAuto),
   brideNick: @json($brideNick), groomNick: @json($groomNick),
-  bridePhoto: @json(jklGet('bride_photo')), groomPhoto: @json(jklGet('groom_photo')),
   brideFull: @json($brideFull), groomFull: @json($groomFull),
   guestName: @json($toName),
   dateText: @json(jklDate($rDate)),
@@ -945,7 +944,6 @@ function checkQuestComplete(){
 /* ================= PANEL ================= */
 /* Panel: Fade In Up */
 function panelAnimate(){requestAnimationFrame(function(){var pb=document.querySelector('#panelBody');if(pb)pb.classList.add('in');});}
-function qrPhoto(u,n){return u?'<img src="'+esc(u)+'" style="width:56px;height:56px;object-fit:cover;border-radius:0;border:3px solid #2b2b2b;flex:none">':'<div style="width:56px;height:56px;border-radius:0;border:3px solid #2b2b2b;background:#2b2b2b;color:#ffd93b;display:flex;align-items:center;justify-content:center;font-family:\'Press Start 2P\',monospace;font-size:20px;">'+esc((n||'?').charAt(0))+'</div>';}
 function openPanel(id){
   var _bn=document.getElementById("bottomNav");if(_bn)_bn.hidden=true;
   const body=$("#panelBody");
@@ -968,7 +966,7 @@ function openPanel(id){
     body.innerHTML=`<div class="ptitle">KUTIPAN</div>${MC.quotes?`<p style="font-style:italic;text-align:center;margin:6px 0;font-size:14px;line-height:1.8">&ldquo;${esc(MC.quotes)}&rdquo;</p>`:`<p class="psub">Belum ada kutipan.</p>`}`;
   }
   else if(id==="qr"){
-    body.innerHTML=`<h2 class="ptitle">KARTU TAMU</h2><div style="display:flex;justify-content:center;gap:10px;margin:6px 0 10px">${qrPhoto(MC.bridePhoto,MC.brideNick)}${qrPhoto(MC.groomPhoto,MC.groomNick)}</div><p style="text-align:center;font-size:11px;letter-spacing:.2em;color:#5a5a5a;margin:0">THE WEDDING OF</p><p style="text-align:center;font-family:'Press Start 2P',monospace;font-size:11px;color:#2b2b2b;margin:6px 0 2px">${esc(MC.brideNick)} &amp; ${esc(MC.groomNick)}</p><p class="psub" style="margin-bottom:10px">${esc(MC.dateText)} &middot; ${esc(MC.akadTime.replace(/:/g,'.'))}</p><div class="qr-card"><div style="display:flex;gap:14px;align-items:center;text-align:left"><div style="flex:1;min-width:0"><p class="psub" style="margin:0;text-align:left;font-size:13px">Kepada Yth:<br>Bpk/Ibu/Saudara/i</p><p style="font-weight:700;margin:4px 0;font-size:18px;color:#2b2b2b">${esc(MC.guestName)}</p><p class="psub" style="margin:0;text-align:left;font-size:13px">di Tempat</p></div><div id="qrBox" style="background:#fff;padding:8px;flex:none"></div></div><p class="psub" style="margin-top:10px">Kode manual: <b>${esc(MC.guestQr)}</b></p></div><p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p>`;
+    body.innerHTML=`<h2 class="ptitle">KARTU TAMU</h2><p style="text-align:center;font-size:11px;letter-spacing:.2em;color:#5a5a5a;margin:0">THE WEDDING OF</p><p style="text-align:center;font-family:'Press Start 2P',monospace;font-size:11px;color:#2b2b2b;margin:6px 0 2px">${esc(MC.brideNick)} &amp; ${esc(MC.groomNick)}</p><p class="psub" style="margin-bottom:10px">${esc(MC.dateText)} &middot; ${esc(MC.akadTime.replace(/:/g,'.'))}</p><div class="qr-card"><div style="display:flex;gap:14px;align-items:center;text-align:left"><div style="flex:1;min-width:0"><p class="psub" style="margin:0;text-align:left;font-size:13px">Kepada Yth:<br>Bpk/Ibu/Saudara/i</p><p style="font-weight:700;margin:4px 0;font-size:18px;color:#2b2b2b">${esc(MC.guestName)}</p><p class="psub" style="margin:0;text-align:left;font-size:13px">di Tempat</p></div><div id="qrBox" style="background:#fff;padding:8px;flex:none"></div></div><p class="psub" style="margin-top:10px">Kode manual: <b>${esc(MC.guestQr)}</b></p></div><p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p>`;
     if(window.QRCode&&MC.guestQrOn&&MC.guestQr){
       new QRCode($("#qrBox"),{text:MC.guestQr,width:150,height:150,correctLevel:QRCode.CorrectLevel.M});
       var qb=document.getElementById('qrBox');if(qb){if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#ffd93b;color:#1c1c1c;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}

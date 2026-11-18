@@ -345,7 +345,6 @@ const MC = {
   prewedLink: @json($prewedLink),
   prewedEmbed: @json($prewedEmbed),
   brideNick: @json($brideNick), groomNick: @json($groomNick),
-  bridePhoto: @json(mcaGet('bride_photo')), groomPhoto: @json(mcaGet('groom_photo')),
   brideFull: @json($brideFull), groomFull: @json($groomFull),
   guestName: @json($guestName),
   dateText: @json(mcaDate($wDate)),
@@ -646,7 +645,6 @@ function markVisited(id){
   heartFx(player.x-camX,player.y-camY-30,10);
   toast(`LOKASI DITEMUKAN: ${L.name} (${visited.size}/6)`);
 }
-function qrPhoto(u,n){return u?'<img src="'+esc(u)+'" style="width:56px;height:56px;object-fit:cover;border-radius:0;border:3px solid #2b2b2b;flex:none">':'<div style="width:56px;height:56px;border-radius:0;border:3px solid #2b2b2b;background:#2b2b2b;color:#fcee5e;display:flex;align-items:center;justify-content:center;font-family:\'Press Start 2P\',monospace;font-size:20px;">'+esc((n||'?').charAt(0))+'</div>';}
 const TPL={
 couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2>
 @if(mcaGet('quotes'))<p class="psub" style="font-style:italic">&ldquo;{{ mcaGet('quotes') }}&rdquo;</p>@endif<p class="psub">Dua pemain. Satu tim. Selamanya.</p>
@@ -659,7 +657,7 @@ couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2>
 `,
 quotes:()=>`<h2 class="ptitle">KUTIPAN</h2>
 @if(mcaGet('quotes'))<p class="psub" style="font-style:italic;font-size:15px;line-height:1.8">&ldquo;{{ mcaGet('quotes') }}&rdquo;</p>@else<p class="psub">Belum ada kutipan.</p>@endif`,
-qr:()=>`<h2 class="ptitle">KARTU TAMU</h2><div style="display:flex;justify-content:center;gap:10px;margin:6px 0 10px">${qrPhoto(MC.bridePhoto,MC.brideNick)}${qrPhoto(MC.groomPhoto,MC.groomNick)}</div><p style="text-align:center;font-size:11px;letter-spacing:.2em;color:#5a5a5a;margin:0">THE WEDDING OF</p><p style="text-align:center;font-family:'Press Start 2P',monospace;font-size:11px;color:#2b2b2b;margin:6px 0 2px">${esc(MC.brideNick)} &amp; ${esc(MC.groomNick)}</p><p class="psub" style="margin-bottom:10px">${esc(MC.dateText)} &middot; ${esc(MC.akad.time.replace(/:/g,'.'))}</p><div class="qr-card"><div style="display:flex;gap:14px;align-items:center;text-align:left"><div style="flex:1;min-width:0"><p class="psub" style="margin:0;text-align:left;font-size:13px">Kepada Yth:<br>Bpk/Ibu/Saudara/i</p><p style="font-weight:700;margin:4px 0;font-size:18px;color:#2b2b2b">${esc(MC.guestName)}</p><p class="psub" style="margin:0;text-align:left;font-size:13px">di Tempat</p></div><div id="qrBox" style="background:#fff;padding:8px;flex:none"></div></div><p class="psub" style="margin-top:10px">Kode manual: <b>${esc(MC.guestQr)}</b></p></div><p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p>`,
+qr:()=>`<h2 class="ptitle">KARTU TAMU</h2><p style="text-align:center;font-size:11px;letter-spacing:.2em;color:#5a5a5a;margin:0">THE WEDDING OF</p><p style="text-align:center;font-family:'Press Start 2P',monospace;font-size:11px;color:#2b2b2b;margin:6px 0 2px">${esc(MC.brideNick)} &amp; ${esc(MC.groomNick)}</p><p class="psub" style="margin-bottom:10px">${esc(MC.dateText)} &middot; ${esc(MC.akad.time.replace(/:/g,'.'))}</p><div class="qr-card"><div style="display:flex;gap:14px;align-items:center;text-align:left"><div style="flex:1;min-width:0"><p class="psub" style="margin:0;text-align:left;font-size:13px">Kepada Yth:<br>Bpk/Ibu/Saudara/i</p><p style="font-weight:700;margin:4px 0;font-size:18px;color:#2b2b2b">${esc(MC.guestName)}</p><p class="psub" style="margin:0;text-align:left;font-size:13px">di Tempat</p></div><div id="qrBox" style="background:#fff;padding:8px;flex:none"></div></div><p class="psub" style="margin-top:10px">Kode manual: <b>${esc(MC.guestQr)}</b></p></div><p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p>`,
 count:()=>`<h2 class="ptitle">MENARA JAM</h2><p class="psub">${MC.dateText} &mdash; quest dimulai dalam:</p>
 <div class="hud2">
 <div class="slot"><span class="num" id="cD">00</span><span class="unit">HARI</span></div>

@@ -5,11 +5,67 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Guest Link Generator - {{ $bride }} & {{ $groom }}</title>
+@php
+// Palet Link Generator per tema (diturunkan dari palet tema undangan).
+// Kunci: $theme dari FrontController::generator; tak dikenal -> 'default'.
+$genPalettes = [
+    'default' => ['accent' => '#775a19', 'accentDark' => '#5d4201', 'bg' => '#f5f3ef', 'ink' => '#1b1c1a', 'inkSoft' => '#4b5563', 'muted' => '#6b7280', 'card' => '#ffffff', 'soft' => '#f9fafb', 'border' => '#e5e7eb', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'arabian-nights' => ['accent' => '#d4af37', 'accentDark' => '#997e28', 'bg' => '#120a20', 'ink' => '#f3eefc', 'inkSoft' => '#b0aaba', 'muted' => '#777183', 'card' => '#1a0f2e', 'soft' => '#160c27', 'border' => '#2d253a', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'bawah-laut' => ['accent' => '#16617f', 'accentDark' => '#10465b', 'bg' => '#dff2f7', 'ink' => '#0e2f3d', 'inkSoft' => '#4d6a75', 'muted' => '#819aa3', 'card' => '#f2fbfe', 'soft' => '#e8f6fa', 'border' => '#c6dbe1', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'betawi' => ['accent' => '#1E4D33', 'accentDark' => '#163725', 'bg' => '#E4EDE1', 'ink' => '#1F2A24', 'inkSoft' => '#5a645d', 'muted' => '#8b958c', 'card' => '#FAF9F4', 'soft' => '#eff3ea', 'border' => '#ccd6ca', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'empat-musim' => ['accent' => '#3e7d44', 'accentDark' => '#2d5a31', 'bg' => '#f0f4ea', 'ink' => '#1e2b1e', 'inkSoft' => '#5d675b', 'muted' => '#929a8e', 'card' => '#fffdf7', 'soft' => '#f8f8f0', 'border' => '#d7dcd2', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'galaksi-cinta' => ['accent' => '#b18cff', 'accentDark' => '#7f65b8', 'bg' => '#0f0f28', 'ink' => '#efecff', 'inkSoft' => '#acaabe', 'muted' => '#747289', 'card' => '#16163a', 'soft' => '#121231', 'border' => '#2a2a42', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'gunung-berkabut' => ['accent' => '#5b7a8a', 'accentDark' => '#425863', 'bg' => '#eef2f4', 'ink' => '#1f2a30', 'inkSoft' => '#5d666b', 'muted' => '#91989c', 'card' => '#ffffff', 'soft' => '#f6f8fa', 'border' => '#d5dadc', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'islamic-elegance' => ['accent' => '#c9a24b', 'accentDark' => '#917536', 'bg' => '#072a25', 'ink' => '#eef7f2', 'inkSoft' => '#a9b9b4', 'muted' => '#6f8681', 'card' => '#0a3a32', 'soft' => '#08322c', 'border' => '#23433e', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'jawa-arunika' => ['accent' => '#7c4a18', 'accentDark' => '#593511', 'bg' => '#f3e7d6', 'ink' => '#2b2118', 'inkSoft' => '#675c51', 'muted' => '#998e80', 'card' => '#f7efe6', 'soft' => '#f5ebde', 'border' => '#dbcfbf', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'jawa-biru' => ['accent' => '#e6c887', 'accentDark' => '#a69061', 'bg' => '#071224', 'ink' => '#eef2f7', 'inkSoft' => '#a9afb8', 'muted' => '#6f7783', 'card' => '#0a1b30', 'soft' => '#08162a', 'border' => '#232d3d', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'jawa-cinematic' => ['accent' => '#D4AF37', 'accentDark' => '#997e28', 'bg' => '#071223', 'ink' => '#f2ead8', 'inkSoft' => '#aba9a2', 'muted' => '#717374', 'card' => '#0A192F', 'soft' => '#081629', 'border' => '#232c39', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'jawa-gerbang' => ['accent' => '#77603a', 'accentDark' => '#56452a', 'bg' => '#f5f0e1', 'ink' => '#2b2118', 'inkSoft' => '#685f54', 'muted' => '#9a9387', 'card' => '#fffdf7', 'soft' => '#faf6ec', 'border' => '#ddd7c9', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'jawa-gunungan' => ['accent' => '#5A3620', 'accentDark' => '#412717', 'bg' => '#EAD9C8', 'ink' => '#3E2618', 'inkSoft' => '#725c4d', 'muted' => '#9d8879', 'card' => '#F5EAD9', 'soft' => '#f0e2d0', 'border' => '#d5c4b3', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'jawa-klasik' => ['accent' => '#d4af37', 'accentDark' => '#997e28', 'bg' => '#1e150c', 'ink' => '#f5ead9', 'inkSoft' => '#b4aa9b', 'muted' => '#7f7568', 'card' => '#2a1c11', 'soft' => '#24180e', 'border' => '#382f25', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'jawa-pendopo' => ['accent' => '#77603a', 'accentDark' => '#56452a', 'bg' => '#f5f0e1', 'ink' => '#2b2118', 'inkSoft' => '#685f54', 'muted' => '#9a9387', 'card' => '#fffdf7', 'soft' => '#faf6ec', 'border' => '#ddd7c9', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'jawa-premium' => ['accent' => '#d4af37', 'accentDark' => '#997e28', 'bg' => '#2a140a', 'ink' => '#f5ead9', 'inkSoft' => '#b8aa9b', 'muted' => '#857467', 'card' => '#3a1c0e', 'soft' => '#32180c', 'border' => '#422e23', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'jawa-puspa' => ['accent' => '#77603a', 'accentDark' => '#56452a', 'bg' => '#f5f0e1', 'ink' => '#2b2118', 'inkSoft' => '#685f54', 'muted' => '#9a9387', 'card' => '#fffdf7', 'soft' => '#faf6ec', 'border' => '#ddd7c9', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'midnight-galaxy' => ['accent' => '#a78bfa', 'accentDark' => '#7864b4', 'bg' => '#0d0920', 'ink' => '#efecff', 'inkSoft' => '#aba8bc', 'muted' => '#736f84', 'card' => '#140e2c', 'soft' => '#100c26', 'border' => '#28243b', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'minang-gadang' => ['accent' => '#d4af37', 'accentDark' => '#997e28', 'bg' => '#0c3a22', 'ink' => '#f2f7ee', 'inkSoft' => '#adbeb1', 'muted' => '#748f7e', 'card' => '#12502f', 'soft' => '#0f4528', 'border' => '#28513a', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'minecraft' => ['accent' => '#7bff5e', 'accentDark' => '#59b844', 'bg' => '#0b0f1a', 'ink' => '#e8f5e9', 'inkSoft' => '#a6b0ab', 'muted' => '#6e7677', 'card' => '#101010', 'soft' => '#0e1015', 'border' => '#262b33', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'minecraft-adventure' => ['accent' => '#fcee5e', 'accentDark' => '#b5ab44', 'bg' => '#0d1420', 'ink' => '#f5f5f5', 'inkSoft' => '#afb2b5', 'muted' => '#757980', 'card' => '#1a2333', 'soft' => '#141c2a', 'border' => '#292f3a', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'neon-metropolis' => ['accent' => '#00e5ff', 'accentDark' => '#00a5b8', 'bg' => '#0a0a1e', 'ink' => '#e8fbff', 'inkSoft' => '#a5b3bc', 'muted' => '#6e7683', 'card' => '#12122b', 'soft' => '#0e0e24', 'border' => '#252739', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'origami-dreams' => ['accent' => '#d15f7c', 'accentDark' => '#964459', 'bg' => '#fbeef2', 'ink' => '#2b1e22', 'inkSoft' => '#695c60', 'muted' => '#9d9094', 'card' => '#fdfaf2', 'soft' => '#fcf4f2', 'border' => '#e2d5d9', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#1b1c1a'],
+    'pixel-quest' => ['accent' => '#ffd93b', 'accentDark' => '#b89c2a', 'bg' => '#101010', 'ink' => '#f5f5f5', 'inkSoft' => '#b0b0b0', 'muted' => '#777777', 'card' => '#1e1e1e', 'soft' => '#171717', 'border' => '#2b2b2b', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'rimba-watercolor' => ['accent' => '#2f4a3a', 'accentDark' => '#22352a', 'bg' => '#eef0e6', 'ink' => '#1e2a22', 'inkSoft' => '#5c655d', 'muted' => '#90978e', 'card' => '#fbf9f2', 'soft' => '#f4f4ec', 'border' => '#d5d8ce', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'royal-emerald' => ['accent' => '#c9a24b', 'accentDark' => '#917536', 'bg' => '#082a20', 'ink' => '#eef7f2', 'inkSoft' => '#a9b9b3', 'muted' => '#70867e', 'card' => '#0b3a2c', 'soft' => '#0a3226', 'border' => '#244339', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'ruang-jawa' => ['accent' => '#8e1b12', 'accentDark' => '#66130d', 'bg' => '#efe6d0', 'ink' => '#2b2118', 'inkSoft' => '#665c4f', 'muted' => '#978d7d', 'card' => '#fdf6dd', 'soft' => '#f6eed6', 'border' => '#d7ceba', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'rustic-boho' => ['accent' => '#b4653a', 'accentDark' => '#82492a', 'bg' => '#f5ecdc', 'ink' => '#2b2118', 'inkSoft' => '#685e53', 'muted' => '#9a9184', 'card' => '#efe4d0', 'soft' => '#f2e8d6', 'border' => '#ddd4c4', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'sakura-dream' => ['accent' => '#bc7182', 'accentDark' => '#87515e', 'bg' => '#fdf0f3', 'ink' => '#2b1e22', 'inkSoft' => '#6a5d61', 'muted' => '#9e9295', 'card' => '#ffffff', 'soft' => '#fef8f9', 'border' => '#e4d7da', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#1b1c1a'],
+    'senja-pesisir' => ['accent' => '#d16843', 'accentDark' => '#964b30', 'bg' => '#fdf0e8', 'ink' => '#2b2118', 'inkSoft' => '#6a5f56', 'muted' => '#9e938a', 'card' => '#fffdf7', 'soft' => '#fef6f0', 'border' => '#e4d7cf', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#1b1c1a'],
+    'sogan-parallax' => ['accent' => '#d4af37', 'accentDark' => '#997e28', 'bg' => '#1e1008', 'ink' => '#f5ead9', 'inkSoft' => '#b4a99a', 'muted' => '#7f7266', 'card' => '#2b180d', 'soft' => '#24140a', 'border' => '#382a21', 'hover' => 'rgba(255,255,255,.08)', 'onAccent' => '#1b1c1a'],
+    'stardew-adventure' => ['accent' => '#4a9a32', 'accentDark' => '#356f24', 'bg' => '#dfe8d2', 'ink' => '#1e2a1e', 'inkSoft' => '#586354', 'muted' => '#889281', 'card' => '#fffdf4', 'soft' => '#eff2e3', 'border' => '#c8d1bc', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#1b1c1a'],
+    'stardew-valley' => ['accent' => '#8b5a2b', 'accentDark' => '#64411f', 'bg' => '#f5ecd7', 'ink' => '#2b2118', 'inkSoft' => '#685e51', 'muted' => '#9a9181', 'card' => '#fffdf4', 'soft' => '#faf4e6', 'border' => '#ddd4c0', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'taman-janur' => ['accent' => '#3e7d44', 'accentDark' => '#2d5a31', 'bg' => '#f8f6e8', 'ink' => '#1e2b1e', 'inkSoft' => '#5f685b', 'muted' => '#969b8d', 'card' => '#fffdf7', 'soft' => '#fcfaf0', 'border' => '#deded0', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    'taman-surga' => ['accent' => '#7a9b76', 'accentDark' => '#587055', 'bg' => '#f0f4ec', 'ink' => '#1e2b1e', 'inkSoft' => '#5d675c', 'muted' => '#929a8f', 'card' => '#fffdf8', 'soft' => '#f8f8f2', 'border' => '#d7dcd3', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#1b1c1a'],
+    'winter-aurora' => ['accent' => '#3a6ea5', 'accentDark' => '#2a4f77', 'bg' => '#eef4f9', 'ink' => '#1e2a33', 'inkSoft' => '#5c676e', 'muted' => '#9099a0', 'card' => '#ffffff', 'soft' => '#f6fafc', 'border' => '#d5dce1', 'hover' => 'rgba(0,0,0,.06)', 'onAccent' => '#ffffff'],
+    ];
+$gen = $genPalettes[$theme ?? 'default'] ?? $genPalettes['default'];
+@endphp
     <style>
+        :root{
+            --gen-accent:{{ $gen['accent'] }};
+            --gen-accent-dark:{{ $gen['accentDark'] }};
+            --gen-bg:{{ $gen['bg'] }};
+            --gen-ink:{{ $gen['ink'] }};
+            --gen-ink-soft:{{ $gen['inkSoft'] }};
+            --gen-muted:{{ $gen['muted'] }};
+            --gen-card:{{ $gen['card'] }};
+            --gen-soft:{{ $gen['soft'] }};
+            --gen-border:{{ $gen['border'] }};
+            --gen-hover:{{ $gen['hover'] }};
+            --gen-on-accent:{{ $gen['onAccent'] }};
+        }
         body {
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f5f3ef;
-            color: #1b1c1a;
+            background-color: var(--gen-bg);
+            color: var(--gen-ink);
         }
 
         h1,
@@ -19,24 +75,24 @@
         }
 
         .btn-primary {
-            background: #775a19;
-            color: white;
+            background: var(--gen-accent);
+            color: var(--gen-on-accent);
             transition: all 0.2s;
         }
 
         .btn-primary:hover {
-            background: #5d4201;
+            background: var(--gen-accent-dark);
         }
 
         .btn-outline {
-            border: 1px solid #775a19;
-            color: #775a19;
+            border: 1px solid var(--gen-accent);
+            color: var(--gen-accent);
             transition: all 0.2s;
         }
 
         .btn-outline:hover {
-            background: #775a19;
-            color: white;
+            background: var(--gen-accent);
+            color: var(--gen-on-accent);
         }
 
         /* Notifikasi toast (salin & hapus) */
@@ -94,7 +150,7 @@
             }
 
             .responsive-table tr {
-                border: 1px solid #e5e7eb;
+                border: 1px solid var(--gen-border);
                 border-radius: .75rem;
                 margin-bottom: .75rem;
                 padding: .5rem .75rem;
@@ -115,7 +171,7 @@
                 font-weight: 700;
                 text-transform: uppercase;
                 letter-spacing: .05em;
-                color: #6b7280;
+                color: var(--gen-muted);
                 flex-shrink: 0;
             }
 
@@ -173,7 +229,7 @@
         [class~="align-middle"] { vertical-align:middle }
         [class~="transition-all"] { transition:all .2s }
         [class~="bg-transparent"] { background-color:transparent }
-        [class~="accent-[#775a19]"] { accent-color:#775a19 }
+        [class~="accent-[#775a19]"] { accent-color:var(--gen-accent) }
         [class~="text-xs"] { font-size:.75rem }
         [class~="text-sm"] { font-size:.875rem }
         [class~="text-base"] { font-size:1rem }
@@ -282,32 +338,32 @@
         [class~="gap-6"] { gap:1.5rem }
         [class~="gap-8"] { gap:2rem }
         [class~="gap-10"] { gap:2.5rem }
-        [class~="bg-white"] { background-color:#fff }
-        [class~="text-white"] { color:#fff }
+        [class~="bg-white"] { background-color:var(--gen-card) }
+        [class~="text-white"] { color:var(--gen-on-accent) }
         [class~="border-white"] { border-color:#fff }
-        [class~="bg-gray-50"] { background-color:#f9fafb }
+        [class~="bg-gray-50"] { background-color:var(--gen-soft) }
         [class~="text-gray-50"] { color:#f9fafb }
         [class~="border-gray-50"] { border-color:#f9fafb }
-        [class~="bg-gray-100"] { background-color:#f3f4f6 }
+        [class~="bg-gray-100"] { background-color:var(--gen-soft) }
         [class~="text-gray-100"] { color:#f3f4f6 }
-        [class~="border-gray-100"] { border-color:#f3f4f6 }
-        [class~="bg-gray-200"] { background-color:#e5e7eb }
+        [class~="border-gray-100"] { border-color:var(--gen-border) }
+        [class~="bg-gray-200"] { background-color:var(--gen-soft) }
         [class~="text-gray-200"] { color:#e5e7eb }
-        [class~="border-gray-200"] { border-color:#e5e7eb }
+        [class~="border-gray-200"] { border-color:var(--gen-border) }
         [class~="bg-gray-300"] { background-color:#d1d5db }
         [class~="text-gray-300"] { color:#d1d5db }
-        [class~="border-gray-300"] { border-color:#d1d5db }
+        [class~="border-gray-300"] { border-color:var(--gen-border) }
         [class~="bg-gray-400"] { background-color:#9ca3af }
         [class~="text-gray-400"] { color:#9ca3af }
         [class~="border-gray-400"] { border-color:#9ca3af }
         [class~="bg-gray-500"] { background-color:#6b7280 }
-        [class~="text-gray-500"] { color:#6b7280 }
+        [class~="text-gray-500"] { color:var(--gen-muted) }
         [class~="border-gray-500"] { border-color:#6b7280 }
         [class~="bg-gray-600"] { background-color:#4b5563 }
-        [class~="text-gray-600"] { color:#4b5563 }
+        [class~="text-gray-600"] { color:var(--gen-ink-soft) }
         [class~="border-gray-600"] { border-color:#4b5563 }
         [class~="bg-gray-700"] { background-color:#374151 }
-        [class~="text-gray-700"] { color:#374151 }
+        [class~="text-gray-700"] { color:var(--gen-ink) }
         [class~="border-gray-700"] { border-color:#374151 }
         [class~="bg-green-500"] { background-color:#22c55e }
         [class~="text-green-500"] { color:#22c55e }
@@ -330,24 +386,24 @@
         [class~="bg-amber-800"] { background-color:#92400e }
         [class~="text-amber-800"] { color:#92400e }
         [class~="border-amber-800"] { border-color:#92400e }
-        [class~="bg-#775a19"] { background-color:#775a19 }
-        [class~="text-#775a19"] { color:#775a19 }
-        [class~="border-#775a19"] { border-color:#775a19 }
+        [class~="bg-#775a19"] { background-color:var(--gen-accent) }
+        [class~="text-#775a19"] { color:var(--gen-accent) }
+        [class~="border-#775a19"] { border-color:var(--gen-accent) }
         [class~="opacity-50"] { opacity:.50 }
         [class~="opacity-60"] { opacity:.60 }
         [class~="opacity-75"] { opacity:.75 }
         [class~="opacity-80"] { opacity:.80 }
-        [class~="hover:bg-gray-50"]:hover { background-color:#f9fafb }
-        [class~="hover:bg-gray-100"]:hover { background-color:#f3f4f6 }
-        [class~="hover:bg-gray-200"]:hover { background-color:#e5e7eb }
+        [class~="hover:bg-gray-50"]:hover { background-color:var(--gen-hover) }
+        [class~="hover:bg-gray-100"]:hover { background-color:var(--gen-hover) }
+        [class~="hover:bg-gray-200"]:hover { background-color:var(--gen-hover) }
         [class~="focus:outline-none"]:focus { outline:none }
-        [class~="focus:border-[#775a19]"]:focus { border-color:#775a19 }
-        [class~="focus:ring-1"]:focus { box-shadow:0 0 0 1px #775a19 }
-        [class~="focus:ring-[#775a19]"]:focus { box-shadow:0 0 0 1px #775a19 }
-        [class~="disabled:bg-gray-100"]:disabled { background-color:#f3f4f6 }
-        [class~="disabled:text-gray-400"]:disabled { color:#9ca3af }
-        [class~="bg-[#775a19]"] { background-color:#775a19 }
-        [class~="text-[#775a19]"] { color:#775a19 }
+        [class~="focus:border-[#775a19]"]:focus { border-color:var(--gen-accent) }
+        [class~="focus:ring-1"]:focus { box-shadow:0 0 0 1px var(--gen-accent) }
+        [class~="focus:ring-[#775a19]"]:focus { box-shadow:0 0 0 1px var(--gen-accent) }
+        [class~="disabled:bg-gray-100"]:disabled { background-color:var(--gen-soft) }
+        [class~="disabled:text-gray-400"]:disabled { color:var(--gen-muted) }
+        [class~="bg-[#775a19]"] { background-color:var(--gen-accent) }
+        [class~="text-[#775a19]"] { color:var(--gen-accent) }
     </style>
 </head>
 
@@ -503,7 +559,7 @@
                 <input type="text" id="generator-guest-search" placeholder="Cari nama tamu..." autocomplete="off"
                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] transition-all text-sm mb-4">
                 <p class="text-sm text-gray-600 mb-4"><span id="generator-guest-count">0</span> tamu. Tanda <span class="font-semibold text-green-600">Sudah dikirim</span> muncul saat tombol Kirim WA diklik, atau saat ditandai manual — pengiriman di dalam aplikasi WhatsApp sendiri tidak bisa dilacak dari sini.</p>
-                <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4 text-sm">
+                <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-4 text-sm">
                     <p class="font-bold text-[#775a19] mb-2">Keterangan ikon di kolom Aksi:</p>
                     <ul class="space-y-1.5 text-gray-700">
                         <li class="flex items-start gap-2"><span class="text-[#775a19] mt-0.5"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></span><span><span class="font-semibold">Salin link</span> — menyalin tautan undangan tamu tersebut.</span></li>

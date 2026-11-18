@@ -575,10 +575,6 @@ footer{padding:50px 20px 110px;text-align:center}
 <div id="qrModal" style="position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65;padding:20px" onclick="if(event.target===this)closeQrModal()">
   <div style="background:#fffdf4;border:3px solid #8b5a2b;border-radius:14px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
     <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#5b4636">&times;</button>
-    <div style="display:flex;justify-content:center;gap:10px;margin:2px 0 10px">
-      @if(mcGet('bride_photo'))<img src="{{ mcGet('bride_photo') }}" alt="{{ $brideFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #8b5a2b;flex:none">@else<div style="width:56px;height:56px;border-radius:50%;border:2px solid #8b5a2b;background:#8b5a2b;color:#fff8e7;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">{{ mb_substr($brideNick, 0, 1) }}</div>@endif
-      @if(mcGet('groom_photo'))<img src="{{ mcGet('groom_photo') }}" alt="{{ $groomFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #8b5a2b;flex:none">@else<div style="width:56px;height:56px;border-radius:50%;border:2px solid #8b5a2b;background:#8b5a2b;color:#fff8e7;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">{{ mb_substr($groomNick, 0, 1) }}</div>@endif
-    </div>
     <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#6b543a">The Wedding Of</div>
     <div style="font-family:serif;font-size:23px;line-height:1.25;color:#5b4636;margin:2px 0 0">{{ $brideNick }} &amp; {{ $groomNick }}</div>
     <div style="font-size:13px;color:#3a2a18;margin-top:6px">{{ mcDate($wDate) }}, {{ str_replace(':', '.', $wTime) }}&ndash;{{ str_replace(':', '.', $wTimeE) }} {{ mcGet('wedding_timezone','WIB') }}</div>
@@ -841,7 +837,29 @@ window.addEventListener('scroll', function(){
     a.innerHTML = '<span class="ic">' + s[1] + '</span><span>' + s[2] + '</span>';
     a.addEventListener('click', function(e){
       e.preventDefault();
-      document.getElementById(s[0]).scrollIntoView({behavior:'instant'});
+      function smoothScrollTo(el){
+        if(!el)return;
+        var y=el.getBoundingClientRect().top+window.scrollY;
+        if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){window.scrollTo({top:y,behavior:'instant'});return;}
+        if(smoothScrollTo._c)smoothScrollTo._c();
+        var start=window.scrollY,dur=800,t0=null,cancelled=false;
+        function cancel(){cancelled=true;window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
+        smoothScrollTo._c=cancel;
+        window.addEventListener('wheel',cancel,{passive:true});
+        window.addEventListener('touchmove',cancel,{passive:true});
+        function step(ts){
+          if(cancelled)return;
+          if(t0===null)t0=ts;
+          var p=Math.min((ts-t0)/dur,1);
+          var e=p<0.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+          window.scrollTo({top:start+(y-start)*e,behavior:'instant'});
+          if(p<1){requestAnimationFrame(step);}
+          else{window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
+        }
+        requestAnimationFrame(step);
+        setTimeout(function(){if(!cancelled&&Math.abs(window.scrollY-y)>2){window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);window.scrollTo({top:y,behavior:'instant'});}},dur+500);
+      }
+      smoothScrollTo(document.getElementById(s[0]));
     });
     nav.appendChild(a); items.push([s[0], a]);
   });

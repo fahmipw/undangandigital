@@ -156,7 +156,8 @@ class FrontController extends Controller
         return view('front.generator', [
             'invitation' => $invitation,
             'bride' => $bride,
-            'groom' => $groom
+            'groom' => $groom,
+            'theme' => $settings['theme'] ?? 'default'
         ]);
     }
 }

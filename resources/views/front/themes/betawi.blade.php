@@ -615,10 +615,6 @@ tailwind.config = {
     <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65;padding:20px" onclick="if(event.target===this)closeQrModal()">
     <div style="background:#FAF9F4;border:2px solid #D4AF6A;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
       <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#1E4D33">&times;</button>
-      <div style="display:flex;justify-content:center;gap:10px;margin:2px 0 10px">
-        @if(btwGet('bride_photo'))<img src="{{ btwGet('bride_photo') }}" alt="{{ $brideFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #D4AF6A;flex:none">@else<div style="width:56px;height:56px;border-radius:50%;border:2px solid #D4AF6A;background:#1E4D33;color:#FAF9F4;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">{{ mb_substr($brideNick, 0, 1) }}</div>@endif
-        @if(btwGet('groom_photo'))<img src="{{ btwGet('groom_photo') }}" alt="{{ $groomFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #D4AF6A;flex:none">@else<div style="width:56px;height:56px;border-radius:50%;border:2px solid #D4AF6A;background:#1E4D33;color:#FAF9F4;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">{{ mb_substr($groomNick, 0, 1) }}</div>@endif
-      </div>
       <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(31,42,36,.65)">The Wedding Of</div>
       <div style="font-family:serif;font-size:23px;line-height:1.25;color:#1E4D33;margin:2px 0 0">{{ $brideNick }} &amp; {{ $groomNick }}</div>
       <div style="font-size:13px;color:#1F2A24;margin-top:6px">{{ btwDate($wDate) }}, {{ str_replace(':', '.', $wTime) }}&ndash;{{ str_replace(':', '.', $wTimeE) }} {{ $tzLabel }}</div>
@@ -1249,7 +1245,29 @@ function fallbackCopy(text) {
     links.forEach(function(a){ a.classList.toggle('active', a === cur); });
   }
   window.addEventListener('scroll', spy, {passive:true});
-  links.forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); a._sec.scrollIntoView({behavior:'instant'}); }); });
+  function smoothScrollTo(el){
+    if(!el)return;
+    var y=el.getBoundingClientRect().top+window.scrollY;
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){window.scrollTo({top:y,behavior:'instant'});return;}
+    if(smoothScrollTo._c)smoothScrollTo._c();
+    var start=window.scrollY,dur=800,t0=null,cancelled=false;
+    function cancel(){cancelled=true;window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
+    smoothScrollTo._c=cancel;
+    window.addEventListener('wheel',cancel,{passive:true});
+    window.addEventListener('touchmove',cancel,{passive:true});
+    function step(ts){
+      if(cancelled)return;
+      if(t0===null)t0=ts;
+      var p=Math.min((ts-t0)/dur,1);
+      var e=p<0.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+      window.scrollTo({top:start+(y-start)*e,behavior:'instant'});
+      if(p<1){requestAnimationFrame(step);}
+      else{window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
+    }
+    requestAnimationFrame(step);
+    setTimeout(function(){if(!cancelled&&Math.abs(window.scrollY-y)>2){window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);window.scrollTo({top:y,behavior:'instant'});}},dur+500);
+  }
+  links.forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); smoothScrollTo(a._sec); }); });
   spy();
   if(bar.classList.contains('hidden')){
     var tries = 0;

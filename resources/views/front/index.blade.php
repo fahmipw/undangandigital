@@ -1427,10 +1427,6 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             <div id="qrModal" style="position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65;padding:20px" onclick="if(event.target===this)closeQrModal()">
         <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
           <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
-          <div style="display:flex;justify-content:center;gap:10px;margin:2px 0 10px">
-            <?php if(getSet('bride_photo')): ?><img src="<?php echo getSet('bride_photo'); ?>" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #c9a45c;flex:none"><?php else: ?><div style="width:56px;height:56px;border-radius:50%;border:2px solid #c9a45c;background:#775a19;color:#fdf6dd;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700"><?php echo htmlspecialchars(mb_substr((getSet('bride_nickname') ? getSet('bride_nickname') : getSet('bride_name', 'Hawa')), 0, 1)); ?></div><?php endif; ?>
-            <?php if(getSet('groom_photo')): ?><img src="<?php echo getSet('groom_photo'); ?>" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #c9a45c;flex:none"><?php else: ?><div style="width:56px;height:56px;border-radius:50%;border:2px solid #c9a45c;background:#775a19;color:#fdf6dd;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700"><?php echo htmlspecialchars(mb_substr((getSet('groom_nickname') ? getSet('groom_nickname') : getSet('groom_name', 'Adam')), 0, 1)); ?></div><?php endif; ?>
-          </div>
           <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#6d4a2c">The Wedding Of</div>
           <div style="font-family:serif;font-size:23px;line-height:1.25;color:#6d4a2c;margin:2px 0 0"><?php echo (getSet('bride_nickname') ? getSet('bride_nickname') : getSet('bride_name', 'Hawa')) . ' &amp; ' . (getSet('groom_nickname') ? getSet('groom_nickname') : getSet('groom_name', 'Adam')); ?></div>
           <div style="font-size:13px;color:#2b2118;margin-top:6px"><?php echo formatIndoDate($wDate); ?>, <?php echo str_replace(':', '.', getSet('wedding_time_start', '08:00')); ?>&ndash;<?php echo str_replace(':', '.', getSet('wedding_time_end', '10:00')); ?> <?php echo getSet('wedding_timezone', 'WIB'); ?></div>
@@ -2208,7 +2204,29 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           Array.prototype.forEach.call(nav.querySelectorAll('a[data-sec]'),function(a){
             var el=document.getElementById(a.getAttribute('data-sec'));
             if(!el){a.remove();return;}
-            a.addEventListener('click',function(e){e.preventDefault();el.scrollIntoView({behavior:'instant'});});
+            function smoothScrollTo(el){
+              if(!el)return;
+              var y=el.getBoundingClientRect().top+window.scrollY;
+              if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){window.scrollTo({top:y,behavior:'instant'});return;}
+              if(smoothScrollTo._c)smoothScrollTo._c();
+              var start=window.scrollY,dur=800,t0=null,cancelled=false;
+              function cancel(){cancelled=true;window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
+              smoothScrollTo._c=cancel;
+              window.addEventListener('wheel',cancel,{passive:true});
+              window.addEventListener('touchmove',cancel,{passive:true});
+              function step(ts){
+                if(cancelled)return;
+                if(t0===null)t0=ts;
+                var p=Math.min((ts-t0)/dur,1);
+                var e=p<0.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+                window.scrollTo({top:start+(y-start)*e,behavior:'instant'});
+                if(p<1){requestAnimationFrame(step);}
+                else{window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
+              }
+              requestAnimationFrame(step);
+              setTimeout(function(){if(!cancelled&&Math.abs(window.scrollY-y)>2){window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);window.scrollTo({top:y,behavior:'instant'});}},dur+500);
+            }
+            a.addEventListener('click',function(e){e.preventDefault();smoothScrollTo(el);});
             items.push([a,el]);
           });
           if(!items.length){nav.style.display='none';return;}

@@ -366,10 +366,6 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 <div id="qrModal" style="position:fixed;inset:0;z-index:96;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65;padding:20px" onclick="if(event.target===this)closeQrModal()">
   <div style="background:#140e2c;border:2px solid #a78bfa;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
     <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#a78bfa">&times;</button>
-    <div style="display:flex;justify-content:center;gap:10px;margin:2px 0 10px">
-      @if(mcGet('bride_photo'))<img src="{{ mcGet('bride_photo') }}" alt="{{ $brideFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #a78bfa;flex:none">@else<div style="width:56px;height:56px;border-radius:50%;border:2px solid #a78bfa;background:#2b1b4d;color:#e8ecff;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">{{ mb_substr($brideNick, 0, 1) }}</div>@endif
-      @if(mcGet('groom_photo'))<img src="{{ mcGet('groom_photo') }}" alt="{{ $groomFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #a78bfa;flex:none">@else<div style="width:56px;height:56px;border-radius:50%;border:2px solid #a78bfa;background:#2b1b4d;color:#e8ecff;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">{{ mb_substr($groomNick, 0, 1) }}</div>@endif
-    </div>
     <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(232,236,255,.62)">The Wedding Of</div>
     <div style="font-family:serif;font-size:23px;line-height:1.25;color:#a78bfa;margin:2px 0 0">{{ $brideNick }} &amp; {{ $groomNick }}</div>
     <div style="font-size:13px;color:#e8ecff;margin-top:6px">{{ mcDate($wDate) }}, {{ str_replace(':', '.', $wTime) }}&ndash;{{ str_replace(':', '.', $wTimeE) }} {{ mcGet('wedding_timezone','WIB') }}</div>
@@ -841,7 +837,29 @@ async function sendWish(e){
     var el = document.getElementById(s[0]); if(!el) return;
     var a = document.createElement('a'); a.href = '#' + s[0];
     a.innerHTML = '<i>' + s[1] + '</i><span>' + s[2] + '</span>';
-    a.addEventListener('click', function(e){ e.preventDefault(); el.scrollIntoView({behavior:'instant'}); });
+    function smoothScrollTo(el){
+      if(!el)return;
+      var y=el.getBoundingClientRect().top+window.scrollY;
+      if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){window.scrollTo({top:y,behavior:'instant'});return;}
+      if(smoothScrollTo._c)smoothScrollTo._c();
+      var start=window.scrollY,dur=800,t0=null,cancelled=false;
+      function cancel(){cancelled=true;window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
+      smoothScrollTo._c=cancel;
+      window.addEventListener('wheel',cancel,{passive:true});
+      window.addEventListener('touchmove',cancel,{passive:true});
+      function step(ts){
+        if(cancelled)return;
+        if(t0===null)t0=ts;
+        var p=Math.min((ts-t0)/dur,1);
+        var e=p<0.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+        window.scrollTo({top:start+(y-start)*e,behavior:'instant'});
+        if(p<1){requestAnimationFrame(step);}
+        else{window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
+      }
+      requestAnimationFrame(step);
+      setTimeout(function(){if(!cancelled&&Math.abs(window.scrollY-y)>2){window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);window.scrollTo({top:y,behavior:'instant'});}},dur+500);
+    }
+    a.addEventListener('click', function(e){ e.preventDefault(); smoothScrollTo(el); });
     nav.appendChild(a); items.push([a, el]);
   });
   if(!items.length){ nav.style.display = 'none'; return; }
