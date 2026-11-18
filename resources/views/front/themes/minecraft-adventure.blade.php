@@ -768,7 +768,7 @@ function closePanel(){
   var pb=document.querySelector('#panelBody');if(pb)pb.classList.remove('in');
   var _bn=document.getElementById("bottomNav");if(_bn)_bn.hidden=false;
   prewedPauseVideo();prewedResumeMusic();
-  $("#panelOverlay").hidden=true;panelOpen=false;gameOn=true;
+  (function(){var _d=(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)?0:720;if(!_d){var o=document.querySelector('#panelOverlay');if(o)o.hidden=true;return;}setTimeout(function(){requestAnimationFrame(function(){var pb=document.querySelector('#panelBody');if(pb&&pb.classList.contains('in'))return;var o=document.querySelector('#panelOverlay');if(o)o.hidden=true;});},_d);})();panelOpen=false;gameOn=true;
   stopCd();blip(440,0.07,0.05);
   if(visited.size>=LOCS.length&&!completedShown){completedShown=true;
     setTimeout(openComplete,400);}
@@ -820,7 +820,7 @@ function wireUcapan(){
   const box=$("#ul2");
   const load=async()=>{try{const _all=(await apiGet("/api/ucapan?inv_id="+MC.invId));var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=_all.length;const rows=_all.slice(0,8);
     box.innerHTML=rows.length?rows.map(x=>
-      `<div class="msg-row"><div class="nm">${esc(x.nama)}</div><div class="ps">${esc(x.pesan)}</div>
+      `<div class="msg-row"><div class="nm" style="display:flex;align-items:center;gap:8px"><div style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:#fcee5e;color:#1b1c1a;font-weight:700;font-size:13px;line-height:1;flex:none">${esc((String(x.nama||'').trim().charAt(0)||'?').toUpperCase())}</div><span>${esc(x.nama)}</span></div><div class="ps">${esc(x.pesan)}</div>
        <div class="tm">${timeAgo(x.created_at)}</div></div>`
     ).join(""):'<div class="msg-row"><div class="ps" style="color:#777">Belum ada ucapan.</div></div>';
   }catch(e){box.innerHTML='<div class="msg-row"><div class="ps" style="color:#777">Gagal memuat.</div></div>';}};
@@ -851,7 +851,7 @@ function wireChest(){
     try{await navigator.clipboard.writeText(t);}catch(err){
       const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);
       ta.select();document.execCommand("copy");ta.remove();}
-    blip(880,0.08,0.05);toast("NOMOR TERSALIN!");}));
+    blip(880,0.08,0.05);toast("rekening berhasil disalin");}));
 }
 function openComplete(){
   var _bn=document.getElementById("bottomNav");if(_bn)_bn.hidden=true;

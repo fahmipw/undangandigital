@@ -392,13 +392,56 @@ body:not(.gate-open) #bottomNav{display:none!important}
   <section class="block reveal" id="storySec">
     <div class="sec-head reveal-down"><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas><h2 class="sec-title">CATATAN PETUALANGAN</h2><canvas class="sec-ico" data-icon="book" width="16" height="16"></canvas></div>
     <p class="sec-sub">Jejak langkah kami hingga ke sini.</p>
+    <div class="story-list" style="position:relative">
+      <div class="story-rope-track" aria-hidden="true"></div>
+      <div class="story-rope" aria-hidden="true"></div>
     @foreach($stories as $st)
     <div class="adv">
-      <div class="icon"><canvas class="story-ico" data-icon="heart" width="16" height="16"></canvas></div>
+      <div class="icon story-node"><canvas class="story-ico" data-icon="heart" width="16" height="16"></canvas></div>
       <div><h3>@if(!empty($st->tahun))<span style="font-size:10px;opacity:.6;letter-spacing:.15em">{{ $st->tahun }} — </span>@endif{{ $st->judul ?? 'Cerita' }}</h3><p>{{ $st->isi ?? '' }}</p></div>
     </div>
     @endforeach
+    </div>
   </section>
+<style>
+/* kisah: tali + node love (sweep 2026-11-18) */
+.story-rope{position:absolute;left:45px;top:8px;bottom:8px;width:3px;border-radius:3px;z-index:1;
+  background:repeating-linear-gradient(45deg,rgba(0,0,0,.22) 0 2px,transparent 2px 7px),
+    linear-gradient(90deg,#59b844,#caffbf 45%,#7bff5e 55%,#59b844);
+  box-shadow:0 0 8px rgba(123,255,94,0.35);transform:scaleY(0);transform-origin:top}
+.story-rope-track{position:absolute;left:46px;top:8px;bottom:8px;width:1px;background:linear-gradient(180deg,#7bff5e 0%,#7bff5e 60%,transparent 100%);opacity:.35}
+.story-node{opacity:.45;transition:opacity .5s ease,border-color .5s ease,box-shadow .5s ease,transform .5s ease}
+.story-node.on{opacity:1;border-color:#7bff5e;transform:scale(1.08);box-shadow:0 0 12px rgba(123,255,94,0.55),0 0 26px rgba(123,255,94,0.3),inset 2px 2px 0 rgba(255,255,255,.5),inset -2px -2px 0 rgba(0,0,0,.4)}
+@media (prefers-reduced-motion:reduce){.story-rope{transform:none}.story-node{transition:none}}
+</style>
+<script>
+(function(){
+  var sec=document.getElementById('storySec');if(!sec)return;
+  var rope=sec.querySelector('.story-rope');if(!rope)return;
+  var cont=rope.parentNode;
+  var nodes=[].slice.call(cont.querySelectorAll('.story-node'));
+  if(!nodes.length)return;
+  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function update(){
+    var r=cont.getBoundingClientRect();
+    var vh=window.innerHeight||document.documentElement.clientHeight;
+    var p=(vh*0.7-r.top)/r.height;if(p<0)p=0;if(p>1)p=1;
+    rope.style.transform='scaleY('+p.toFixed(3)+')';
+    var ropeTop=rope.offsetTop,trackH=rope.offsetHeight;
+    nodes.forEach(function(n){
+      var nr=n.getBoundingClientRect();
+      var y=nr.top+nr.height/2-r.top-ropeTop;
+      n.classList.toggle('on',p*trackH>=y);
+    });
+  }
+  if(reduced){rope.style.transform='scaleY(1)';nodes.forEach(function(n){n.classList.add('on');});return;}
+  var tick=false;
+  function onScroll(){if(tick)return;tick=true;requestAnimationFrame(function(){tick=false;update();});}
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  update();
+})();
+</script>
   @endif
 
   <section class="block reveal" id="rsvpSec">
@@ -846,7 +889,7 @@ async function loadUcapan(){
     const r=await fetch("/api/ucapan?inv_id="+MC.invId);const j=await r.json();
     const _all=(j.data||[]);var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=_all.length;const rows=_all.slice(0,10);
     box.innerHTML=rows.length?rows.map(x=>
-      `<div class="msg-row"><div class="nm">${esc(x.nama)}</div><div class="ps">${esc(x.pesan)}</div>
+      `<div class="msg-row"><div class="nm" style="display:flex;align-items:center;gap:8px"><div style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:#7bff5e;color:#1b1c1a;font-weight:700;font-size:13px;line-height:1;flex:none">${esc((String(x.nama||'').trim().charAt(0)||'?').toUpperCase())}</div><span>${esc(x.nama)}</span></div><div class="ps">${esc(x.pesan)}</div>
        <div class="tm">${timeAgo(x.created_at)}</div></div>`
     ).join(""):'<div class="score-empty">Belum ada ucapan. Jadilah yang pertama!</div>';
   }catch(e){box.innerHTML='<div class="score-empty">Gagal memuat ucapan.</div>';}
@@ -886,7 +929,7 @@ $$(".copy-btn").forEach(b=>b.addEventListener("click",async e=>{
   try{await navigator.clipboard.writeText(t);}catch(err){
     const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);
     ta.select();document.execCommand("copy");ta.remove();}
-  blip(880,0.08,0.05);toast("NOMOR TERSALIN!");
+  blip(880,0.08,0.05);toast("rekening berhasil disalin");
 }));
 
 /* ---------- lain-lain ---------- */
@@ -1043,8 +1086,14 @@ if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded
 
 </script>
 @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
+<style>
+#qrModal .qr-pop{transform:translateY(100%);opacity:0;transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .45s ease;will-change:transform,opacity}
+#qrModal.qr-open .qr-pop{transform:translateY(0);opacity:1}
+#qrModal.qr-closing .qr-pop{transform:translateY(100%);opacity:0}
+@media (prefers-reduced-motion:reduce){#qrModal .qr-pop{transition:none}}
+</style>
 <div id="qrModal" style="position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7;padding:20px" onclick="if(event.target===this)closeQrModal()">
-  <div style="background:#101010;border:3px solid #000;box-shadow:inset 2px 2px 0 rgba(255,255,255,.12),0 0 0 2px #3a3a3a,0 24px 60px rgba(0,0,0,.5);padding:22px 18px;max-width:360px;width:100%;text-align:center;position:relative">
+  <div class="qr-pop" style="background:#101010;border:3px solid #000;box-shadow:inset 2px 2px 0 rgba(255,255,255,.12),0 0 0 2px #3a3a3a,0 24px 60px rgba(0,0,0,.5);padding:22px 18px;max-width:360px;width:100%;text-align:center;position:relative">
     <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:6px;right:10px;border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:#fff">&times;</button>
     <div style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:.18em;color:#7bff5e">THE WEDDING OF</div>
     <div style="font-family:'Press Start 2P',monospace;font-size:11px;line-height:1.6;color:#7bff5e;margin:8px 0 0">{{ $brideNick }} &amp; {{ $groomNick }}</div>
@@ -1066,8 +1115,8 @@ if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
-function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
+function openQrModal(){var m=document.getElementById('qrModal');if(!m)return;if(window.__qrT){clearTimeout(window.__qrT);window.__qrT=null;}m.classList.remove('qr-closing');m.style.display='flex';if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){m.classList.add('qr-open');return;}void m.offsetWidth;m.classList.add('qr-open');}
+function closeQrModal(){var m=document.getElementById('qrModal');if(!m)return;if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){m.style.display='none';m.classList.remove('qr-open','qr-closing');return;}m.classList.remove('qr-open');m.classList.add('qr-closing');if(window.__qrT)clearTimeout(window.__qrT);window.__qrT=setTimeout(function(){m.style.display='none';m.classList.remove('qr-closing');window.__qrT=null;},460);}
 if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:150,height:150,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
 </script>
 @endif

@@ -750,8 +750,10 @@ function withEnvelope(fn){
     <p class="anim-fade font-serif text-[1.15rem] tracking-[0.25em] text-jbiru-100/80 mb-2 relative z-10">KISAH KAMI</p>
     <svg class="anim-fade w-48 h-5 relative z-10 mb-10" viewBox="0 0 300 24"><use href="#jb-divider"/></svg>
     <div class="relative z-10 w-full max-w-[340px] flex flex-col gap-5 text-left">
+      <div class="story-rope-track" aria-hidden="true"></div>
+      <div class="story-rope" aria-hidden="true"></div>
       @foreach($stories as $story)
-      <div class="anim-zoom card-gading px-6 pt-6 pb-10">
+      <div class="anim-zoom card-gading px-6 pt-6 pb-10"><div class="story-node"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
         <svg class="corner tl" style="width:34px;height:34px"><use href="#jb-corner"/></svg>
         <svg class="corner br" style="width:34px;height:34px"><use href="#jb-corner"/></svg>
         <p class="font-serif text-xl font-semibold tracking-[0.06em] text-jbiru-900">{{ $story->judul }}</p>
@@ -762,6 +764,45 @@ function withEnvelope(fn){
       @endforeach
     </div>
   </section>
+<style>
+/* kisah: tali + node love (sweep 2026-11-18) */
+.story-rope{position:absolute;left:-9px;top:8px;bottom:8px;width:3px;border-radius:3px;z-index:1;
+  background:repeating-linear-gradient(45deg,rgba(0,0,0,.22) 0 2px,transparent 2px 7px),
+    linear-gradient(90deg,#a69061,#f5e9cf 45%,#e6c887 55%,#a69061);
+  box-shadow:0 0 8px rgba(230,200,135,0.35);transform:scaleY(0);transform-origin:top}
+.story-rope-track{position:absolute;left:-8px;top:8px;bottom:8px;width:1px;background:linear-gradient(180deg,#e6c887 0%,#e6c887 60%,transparent 100%);opacity:.35}
+.story-node{position:absolute;left:-17px;top:22px;width:19px;height:19px;display:flex;align-items:center;justify-content:center;color:rgba(230,200,135,0.35);transition:color .5s ease,filter .5s ease,transform .5s ease}
+.story-node.on{color:#e6c887;transform:scale(1.18);filter:drop-shadow(0 0 6px rgba(230,200,135,0.8)) drop-shadow(0 0 14px rgba(230,200,135,0.4))}
+@media (prefers-reduced-motion:reduce){.story-rope{transform:none}.story-node{transition:none}}
+</style>
+<script>
+(function(){
+  var sec=document.getElementById('sec-kisah');if(!sec)return;
+  var rope=sec.querySelector('.story-rope');if(!rope)return;
+  var cont=rope.parentNode;
+  var nodes=[].slice.call(cont.querySelectorAll('.story-node'));
+  if(!nodes.length)return;
+  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function update(){
+    var r=cont.getBoundingClientRect();
+    var vh=window.innerHeight||document.documentElement.clientHeight;
+    var p=(vh*0.7-r.top)/r.height;if(p<0)p=0;if(p>1)p=1;
+    rope.style.transform='scaleY('+p.toFixed(3)+')';
+    var ropeTop=rope.offsetTop,trackH=rope.offsetHeight;
+    nodes.forEach(function(n){
+      var nr=n.getBoundingClientRect();
+      var y=nr.top+nr.height/2-r.top-ropeTop;
+      n.classList.toggle('on',p*trackH>=y);
+    });
+  }
+  if(reduced){rope.style.transform='scaleY(1)';nodes.forEach(function(n){n.classList.add('on');});return;}
+  var tick=false;
+  function onScroll(){if(tick)return;tick=true;requestAnimationFrame(function(){tick=false;update();});}
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  update();
+})();
+</script>
   @endif
 
   <!-- ================= 9. GIFT ================= -->
@@ -790,7 +831,7 @@ function withEnvelope(fn){
         </div>
         <p class="text-[11px] text-jbiru-100/55 mb-3">a.n {{ !empty($acc['an']) ? $acc['an'] : $giftRecipient }}</p>
         <p class="font-mono text-xl tracking-[0.14em] text-gading mb-4">{{ $acc['no'] }}</p>
-        <button onclick="copyText('{{ $acc['no'] }}')" class="btn-outline text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full">SALIN NOMOR</button>
+        <button onclick="copyText('{{ $acc['no'] }}', 'rekening berhasil disalin')" class="btn-outline text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full">SALIN NOMOR</button>
       </div>
       @endforeach
 
@@ -808,8 +849,14 @@ function withEnvelope(fn){
   <!-- ================= 10. RSVP ================= -->
     @if(jklGet('guest_qr_enabled') && !empty($guestQrCode))
   <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in" class="hidden"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
+    <style>
+    #qrModal .qr-pop{transform:translateY(100%);opacity:0;transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .45s ease;will-change:transform,opacity}
+    #qrModal.qr-open .qr-pop{transform:translateY(0);opacity:1}
+    #qrModal.qr-closing .qr-pop{transform:translateY(100%);opacity:0}
+    @media (prefers-reduced-motion:reduce){#qrModal .qr-pop{transition:none}}
+    </style>
     <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65;padding:20px" onclick="if(event.target===this)closeQrModal()">
-    <div style="background:#0a1b30;border:2px solid #e6c887;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+    <div class="qr-pop" style="background:#0a1b30;border:2px solid #e6c887;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
       <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#e6c887">&times;</button>
       <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(253,251,247,.65)">The Wedding Of</div>
       <div style="font-family:serif;font-size:23px;line-height:1.25;color:#e6c887;margin:2px 0 0">{{ $brideNick }} &amp; {{ $groomNick }}</div>
@@ -831,8 +878,8 @@ function withEnvelope(fn){
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
-  function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
-  function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
+  function openQrModal(){var m=document.getElementById('qrModal');if(!m)return;if(window.__qrT){clearTimeout(window.__qrT);window.__qrT=null;}m.classList.remove('qr-closing');m.style.display='flex';if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){m.classList.add('qr-open');return;}void m.offsetWidth;m.classList.add('qr-open');}
+  function closeQrModal(){var m=document.getElementById('qrModal');if(!m)return;if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){m.style.display='none';m.classList.remove('qr-open','qr-closing');return;}m.classList.remove('qr-open');m.classList.add('qr-closing');if(window.__qrT)clearTimeout(window.__qrT);window.__qrT=setTimeout(function(){m.style.display='none';m.classList.remove('qr-closing');window.__qrT=null;},460);}
   if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:150,height:150,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
   </script>
   @endif
@@ -1268,10 +1315,11 @@ window.prewedPauseMusic=prewedPauseMusic;
     const when = relTime(w.created_at || w.tanggal || w.time || '');
     const el = document.createElement('div');
     el.className = 'card-navy px-5 py-4';
-    el.innerHTML = '<div class="flex items-baseline justify-between gap-3 mb-1"><p class="font-serif font-semibold text-[15px] tracking-wide text-gading"></p>' +
+    el.innerHTML = '<div class="flex items-center justify-between gap-3 mb-1"><div class="flex items-center gap-2 min-w-0"><div data-ini style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:#e6c887;color:#1b1c1a;font-weight:700;font-size:13px;line-height:1;flex:none"></div><p class="font-serif font-semibold text-[15px] tracking-wide text-gading"></p></div>' +
       (when ? '<span class="text-[10px] text-jbiru-100/45 whitespace-nowrap"></span>' : '') + '</div>' +
       '<p class="text-[13px] leading-relaxed text-jbiru-100/80"></p>';
     el.querySelector('p').textContent = name;
+    el.querySelector('[data-ini]').textContent = (name.trim().charAt(0) || '?').toUpperCase();
     const spans = el.querySelectorAll('span'); if (spans.length && when) spans[0].textContent = when;
     el.querySelectorAll('p')[1].textContent = msg;
     return el;
@@ -1304,16 +1352,16 @@ function showToast(msg) { window.alert(msg); return;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
 }
-function copyText(text) {
+function copyText(text, msg) {
   if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text).then(() => showToast('Berhasil disalin')).catch(() => fallbackCopy(text));
-  } else { fallbackCopy(text); }
+    navigator.clipboard.writeText(text).then(() => showToast(msg || 'Berhasil disalin')).catch(() => fallbackCopy(text, msg));
+  } else { fallbackCopy(text, msg); }
 }
-function fallbackCopy(text) {
+function fallbackCopy(text, msg) {
   const ta = document.createElement('textarea');
   ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
   document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); showToast('Berhasil disalin'); }
+  try { document.execCommand('copy'); showToast(msg || 'Berhasil disalin'); }
   catch (e) { showToast('Gagal menyalin'); }
   document.body.removeChild(ta);
 }

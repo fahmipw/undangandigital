@@ -700,11 +700,12 @@ function withEnvelope(fn){
     <p class="anim-fade-down text-[11px] tracking-[0.3em] uppercase text-klasik-gold/80 mb-10 relative z-10">Perjalanan cinta kami</p>
     @if(!empty($stories) && count($stories))
     <div class="relative z-10 w-full max-w-[320px] pl-8 pb-10 text-left">
-      <div class="absolute left-[9px] top-2 bottom-2 w-px bg-gradient-to-b from-klasik-gold/60 via-klasik-gold/30 to-transparent"></div>
+      <div class="story-rope-track absolute left-[9px] top-2 bottom-2 w-px bg-gradient-to-b from-klasik-gold/60 via-klasik-gold/30 to-transparent"></div>
+      <div class="story-rope" aria-hidden="true"></div>
       @foreach($stories as $st)
       <div class="anim-fade relative mb-8">
-        <div class="absolute -left-8 top-1 w-[19px] h-[19px] rounded-full border-2 border-klasik-gold bg-klasik-deep flex items-center justify-center">
-          <div class="w-1.5 h-1.5 rounded-full bg-klasik-gold"></div>
+        <div class="story-node absolute -left-8 top-1 w-[19px] h-[19px] flex items-center justify-center">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
         </div>
         @if(!empty($st->tahun))
         <p class="font-script text-2xl text-gold-grad mb-1">{{ $st->tahun }}</p>
@@ -717,6 +718,44 @@ function withEnvelope(fn){
     @endif
   </section>
 
+  <style>
+  .story-rope{position:absolute;left:8px;top:8px;bottom:8px;width:3px;border-radius:3px;z-index:1;
+    background:repeating-linear-gradient(45deg,rgba(0,0,0,.22) 0 2px,transparent 2px 7px),
+      linear-gradient(90deg,#8a6a1f,#f6e27a 45%,#d4af37 55%,#8a6a1f);
+    box-shadow:0 0 8px rgba(212,175,55,.35);transform:scaleY(0);transform-origin:top}
+  .story-rope-track{opacity:.35}
+  .story-node{color:rgba(212,175,55,.35);transition:color .5s ease,filter .5s ease,transform .5s ease}
+  .story-node.on{color:#d4af37;transform:scale(1.18);filter:drop-shadow(0 0 6px rgba(212,175,55,.8)) drop-shadow(0 0 14px rgba(212,175,55,.4))}
+  @media (prefers-reduced-motion:reduce){.story-rope{transform:none}.story-node{transition:none}}
+  </style>
+  <script>
+  (function(){
+    var sec=document.getElementById('sec-kisah');if(!sec)return;
+    var rope=sec.querySelector('.story-rope');if(!rope)return;
+    var cont=rope.parentNode;
+    var nodes=[].slice.call(cont.querySelectorAll('.story-node'));
+    if(!nodes.length)return;
+    var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function update(){
+      var r=cont.getBoundingClientRect();
+      var vh=window.innerHeight||document.documentElement.clientHeight;
+      var p=(vh*0.7-r.top)/r.height;if(p<0)p=0;if(p>1)p=1;
+      rope.style.transform='scaleY('+p.toFixed(3)+')';
+      var trackH=r.height-16;
+      nodes.forEach(function(n){
+        var nr=n.getBoundingClientRect();
+        var y=nr.top+nr.height/2-r.top-8;
+        n.classList.toggle('on',p*trackH>=y);
+      });
+    }
+    if(reduced){rope.style.transform='scaleY(1)';nodes.forEach(function(n){n.classList.add('on');});return;}
+    var tick=false;
+    function onScroll(){if(tick)return;tick=true;requestAnimationFrame(function(){tick=false;update();});}
+    window.addEventListener('scroll',onScroll,{passive:true});
+    window.addEventListener('resize',onScroll);
+    update();
+  })();
+  </script>
   <!-- ================= 10. WEDDING GIFT ================= -->
   <section class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden batik-bg" style="background-color:#31220f" id="sec-gift">
     <div class="pointer-events-none absolute left-[-7%] top-0 bottom-0 flex items-center z-20">
@@ -774,8 +813,14 @@ function withEnvelope(fn){
   <!-- ================= 11. RSVP & UCAPAN ================= -->
     @if(jklGet('guest_qr_enabled') && !empty($guestQrCode))
   <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in" hidden><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
+    <style>
+    #qrModal .qr-pop{transform:translateY(100%);opacity:0;transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .45s ease;will-change:transform,opacity}
+    #qrModal.qr-open .qr-pop{transform:translateY(0);opacity:1}
+    #qrModal.qr-closing .qr-pop{transform:translateY(100%);opacity:0}
+    @media (prefers-reduced-motion:reduce){#qrModal .qr-pop{transition:none}}
+    </style>
     <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65;padding:20px" onclick="if(event.target===this)closeQrModal()">
-    <div style="background:#2a1c11;border:2px solid #d4af37;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+    <div class="qr-pop" style="background:#2a1c11;border:2px solid #d4af37;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
       <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#e6c887">&times;</button>
       <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(245,234,217,.65)">The Wedding Of</div>
       <div style="font-family:serif;font-size:23px;line-height:1.25;color:#e6c887;margin:2px 0 0">{{ $brideNick }} &amp; {{ $groomNick }}</div>
@@ -797,8 +842,8 @@ function withEnvelope(fn){
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
-  function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
-  function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
+  function openQrModal(){var m=document.getElementById('qrModal');if(!m)return;if(window.__qrT){clearTimeout(window.__qrT);window.__qrT=null;}m.classList.remove('qr-closing');m.style.display='flex';if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){m.classList.add('qr-open');return;}void m.offsetWidth;m.classList.add('qr-open');}
+  function closeQrModal(){var m=document.getElementById('qrModal');if(!m)return;if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){m.style.display='none';m.classList.remove('qr-open','qr-closing');return;}m.classList.remove('qr-open');m.classList.add('qr-closing');if(window.__qrT)clearTimeout(window.__qrT);window.__qrT=setTimeout(function(){m.style.display='none';m.classList.remove('qr-closing');window.__qrT=null;},460);}
   if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:150,height:150,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
   </script>
   @endif
@@ -1095,7 +1140,7 @@ async function loadWishes(){
     var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=list.length;
     if(!list.length){ box.innerHTML='<p class="text-center text-klasik-cream/50 text-sm font-serif italic">Belum ada ucapan. Jadilah yang pertama!</p>'; return; }
     box.innerHTML=list.map(w=>
-      '<div class="card-klasik p-4"><p class="font-semibold text-klasik-lightgold text-sm">'+esc(w.nama)+'</p>'+
+      '<div class="card-klasik p-4"><div class="flex items-center gap-2 mb-1"><div style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:#d4af37;color:#1b1c1a;font-weight:700;font-size:13px;line-height:1;flex:none">'+esc((String(w.nama||'').trim().charAt(0)||'?').toUpperCase())+'</div><p class="font-semibold text-klasik-lightgold text-sm">'+esc(w.nama)+'</p></div>'+
       '<p class="text-klasik-cream/70 text-[13px] mt-1 leading-relaxed">'+esc(w.pesan)+'</p>'+
       '<p class="text-klasik-gold/60 text-[10px] mt-2 tracking-wider">'+esc(timeAgo(w.created_at))+'</p></div>'
     ).join("");
@@ -1119,9 +1164,9 @@ document.querySelectorAll(".copy-btn").forEach(btn=>{
   btn.addEventListener("click",()=>{
     const i=btn.dataset.i, el=document.getElementById("accNo"+i);
     const txt=el?el.textContent.trim():"";
-    if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(()=>toast("Nomor rekening tersalin")); }
+    if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(()=>toast("rekening berhasil disalin")); }
     else{ const ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta);
-      ta.select(); try{document.execCommand("copy"); toast("Nomor rekening tersalin");}catch(e){}
+      ta.select(); try{document.execCommand("copy"); toast("rekening berhasil disalin");}catch(e){}
       ta.remove(); }
   });
 });

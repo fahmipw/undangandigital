@@ -324,7 +324,7 @@
             <button onclick="showTab('stories')"
                 class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
                 id="btn-stories">
-                <span class="material-symbols-outlined">auto_stories</span> Kisah Kasih
+                Kisah Kasih
             </button>
             <button onclick="showTab('theme')"
                 class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"

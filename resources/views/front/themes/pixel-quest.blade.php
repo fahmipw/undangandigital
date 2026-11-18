@@ -1063,7 +1063,7 @@ function openPanel(id){
   $("#panelOverlay").hidden=false;
   panelAnimate();
 }
-function closePanel(){ var pb=document.querySelector('#panelBody');if(pb)pb.classList.remove('in');prewedPauseVideo();prewedResumeMusic(); $("#panelOverlay").hidden=true; var _bn=document.getElementById("bottomNav");if(_bn)_bn.hidden=false; }
+function closePanel(){ var pb=document.querySelector('#panelBody');if(pb)pb.classList.remove('in');prewedPauseVideo();prewedResumeMusic(); (function(){var _d=(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)?0:720;if(!_d){var o=document.querySelector('#panelOverlay');if(o)o.hidden=true;return;}setTimeout(function(){requestAnimationFrame(function(){var pb=document.querySelector('#panelBody');if(pb&&pb.classList.contains('in'))return;var o=document.querySelector('#panelOverlay');if(o)o.hidden=true;});},_d);})(); var _bn=document.getElementById("bottomNav");if(_bn)_bn.hidden=false; }
 $("#panelClose").addEventListener("click",closePanel);
 $("#panelOverlay").addEventListener("click",e=>{ if(e.target.id==="panelOverlay") closePanel(); });
 
@@ -1091,7 +1091,7 @@ function renderShop(tab){
     : `<p style="font-size:20px;color:#7a6a4a">Informasi hadiah akan segera hadir.</p>`);
     $$("#shopBody .wicon").forEach(c=>drawWeaponIcon(c,c.dataset.kind));
     $$("#shopBody .copybtn").forEach(b=>b.addEventListener("click",()=>{
-      copyText(b.dataset.no); toast("NOMOR REKENING TERSALIN!");
+      copyText(b.dataset.no); toast("rekening berhasil disalin");
     }));
   }
   else if(tab==="armor"){
@@ -1174,7 +1174,7 @@ async function loadWishes(){
     const list=Array.isArray(j)?j:(j.data||[]);
     var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=list.length;
     if(!list.length){ box.innerHTML='<p style="text-align:center;color:#7a6a4a;font-size:19px">Belum ada ucapan. Jadilah yang pertama!</p>'; return; }
-    box.innerHTML=list.map(w=>`<div class="msg-row"><div class="nm">${esc(w.nama)}</div><div class="ps">${esc(w.pesan)}</div><div class="tm">${esc(timeAgo(w.created_at))}</div></div>`).join("");
+    box.innerHTML=list.map(w=>`<div class="msg-row"><div class="nm" style="display:flex;align-items:center;gap:8px"><div style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:#ffd93b;color:#1b1c1a;font-weight:700;font-size:13px;line-height:1;flex:none">${esc((String(w.nama||'').trim().charAt(0)||'?').toUpperCase())}</div><span>${esc(w.nama)}</span></div><div class="ps">${esc(w.pesan)}</div><div class="tm">${esc(timeAgo(w.created_at))}</div></div>`).join("");
   }catch(e){ box.innerHTML='<p style="text-align:center;color:#7a6a4a">Gagal memuat ucapan.</p>'; }
 }
 async function submitWish(e){

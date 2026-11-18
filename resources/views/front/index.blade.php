@@ -947,12 +947,6 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             </div>
           </div>
           <?php  endforeach; ?>
-    <div id="gal3dNav" class="gal3dNav">
-      <button id="galPrev" type="button" aria-label="Sebelumnya">&#8249;</button>
-      <div id="galDots" class="gal3dDots"></div>
-      <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
-    </div>
-    <div class="gal-hint"><span><span class="gh-a">&#8249;</span> Geser untuk melihat foto <span class="gh-a">&#8250;</span></span></div>
           <?php else: ?>
           <!-- Default Placeholders if empty -->
           <div
@@ -1042,6 +1036,14 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           </div>
           <?php endif; ?>
         </div>
+          <?php if (!empty($gallery)): ?>
+        <div id="gal3dNav" class="gal3dNav">
+          <button id="galPrev" type="button" aria-label="Sebelumnya">&#8249;</button>
+          <div id="galDots" class="gal3dDots"></div>
+          <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
+        </div>
+        <div class="gal-hint"><span><span class="gh-a">&#8249;</span> Geser untuk melihat foto <span class="gh-a">&#8250;</span></span></div>
+          <?php endif; ?>
       </section>
       <section class="px-margin-page mb-section-gap relative z-10 reveal" id="kisah">
 
@@ -1056,7 +1058,9 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             <h2 class="font-display-lg text-headline-md text-primary">Kisah Kasih</h2>
           </div>
 
-          <div class="space-y-12 reveal-stagger">
+          <div class="space-y-12 reveal-stagger relative">
+            <div class="story-rope-track" aria-hidden="true"></div>
+            <div class="story-rope" aria-hidden="true"></div>
 
             <?php if (!empty($stories)): ?>
             <?php  foreach ($stories as $index => $story): ?>
@@ -1067,7 +1071,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
     $bgClass = $isLast ? 'bg-primary-container text-on-primary-container shadow-md' : 'bg-secondary-container text-on-secondary-container shadow-inner';
     $borderClass = $isLast ? '' : 'border-b border-outline-variant pb-6';
                 ?>
-            <div class="flex gap-6 items-start">
+            <div class="flex gap-6 items-start relative"><div class="story-node"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
               <div class="flex-none w-16 h-16 rounded-full <?php    echo $bgClass; ?> flex items-center justify-center">
                 <?php    if ($isNumeric): ?>
                 <span class="font-display-lg text-title-sm"><?php      echo htmlspecialchars($story['tahun']); ?></span>
@@ -1092,6 +1096,45 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 
         </div>
       </section>
+<style>
+/* kisah: tali + node love (sweep 2026-11-18) */
+.story-rope{position:absolute;left:30px;top:0;bottom:0;width:3px;border-radius:3px;z-index:1;
+  background:repeating-linear-gradient(45deg,rgba(0,0,0,.22) 0 2px,transparent 2px 7px),
+    linear-gradient(90deg,#564112,#c9bda3 45%,#775a19 55%,#564112);
+  box-shadow:0 0 8px rgba(119,90,25,0.35);transform:scaleY(0);transform-origin:top}
+.story-rope-track{position:absolute;left:31px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,#775a19 0%,#775a19 60%,transparent 100%);opacity:.35}
+.story-node{position:absolute;left:22px;top:54px;width:19px;height:19px;display:flex;align-items:center;justify-content:center;color:rgba(119,90,25,0.35);transition:color .5s ease,filter .5s ease,transform .5s ease}
+.story-node.on{color:#775a19;transform:scale(1.18);filter:drop-shadow(0 0 6px rgba(119,90,25,0.8)) drop-shadow(0 0 14px rgba(119,90,25,0.4))}
+@media (prefers-reduced-motion:reduce){.story-rope{transform:none}.story-node{transition:none}}
+</style>
+<script>
+(function(){
+  var sec=document.getElementById('kisah');if(!sec)return;
+  var rope=sec.querySelector('.story-rope');if(!rope)return;
+  var cont=rope.parentNode;
+  var nodes=[].slice.call(cont.querySelectorAll('.story-node'));
+  if(!nodes.length)return;
+  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function update(){
+    var r=cont.getBoundingClientRect();
+    var vh=window.innerHeight||document.documentElement.clientHeight;
+    var p=(vh*0.7-r.top)/r.height;if(p<0)p=0;if(p>1)p=1;
+    rope.style.transform='scaleY('+p.toFixed(3)+')';
+    var ropeTop=rope.offsetTop,trackH=rope.offsetHeight;
+    nodes.forEach(function(n){
+      var nr=n.getBoundingClientRect();
+      var y=nr.top+nr.height/2-r.top-ropeTop;
+      n.classList.toggle('on',p*trackH>=y);
+    });
+  }
+  if(reduced){rope.style.transform='scaleY(1)';nodes.forEach(function(n){n.classList.add('on');});return;}
+  var tick=false;
+  function onScroll(){if(tick)return;tick=true;requestAnimationFrame(function(){tick=false;update();});}
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  update();
+})();
+</script>
 
       <!-- QUOTES SECTION -->
       <section id="quotes" class="py-12 reveal">
@@ -1424,8 +1467,14 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       </section>
 
       <?php if (getSet('guest_qr_enabled') && !empty($guestQrCode)): ?>
+            <style>
+            #qrModal .qr-pop{transform:translateY(100%);opacity:0;transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .45s ease;will-change:transform,opacity}
+            #qrModal.qr-open .qr-pop{transform:translateY(0);opacity:1}
+            #qrModal.qr-closing .qr-pop{transform:translateY(100%);opacity:0}
+            @media (prefers-reduced-motion:reduce){#qrModal .qr-pop{transition:none}}
+            </style>
             <div id="qrModal" style="position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65;padding:20px" onclick="if(event.target===this)closeQrModal()">
-        <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+        <div class="qr-pop" style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
           <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
           <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#6d4a2c">The Wedding Of</div>
           <div style="font-family:serif;font-size:23px;line-height:1.25;color:#6d4a2c;margin:2px 0 0"><?php echo (getSet('bride_nickname') ? getSet('bride_nickname') : getSet('bride_name', 'Hawa')) . ' &amp; ' . (getSet('groom_nickname') ? getSet('groom_nickname') : getSet('groom_name', 'Adam')); ?></div>
@@ -1447,8 +1496,8 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       </div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
       <script>
-      function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
-      function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
+      function openQrModal(){var m=document.getElementById('qrModal');if(!m)return;if(window.__qrT){clearTimeout(window.__qrT);window.__qrT=null;}m.classList.remove('qr-closing');m.style.display='flex';if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){m.classList.add('qr-open');return;}void m.offsetWidth;m.classList.add('qr-open');}
+      function closeQrModal(){var m=document.getElementById('qrModal');if(!m)return;if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){m.style.display='none';m.classList.remove('qr-open','qr-closing');return;}m.classList.remove('qr-open');m.classList.add('qr-closing');if(window.__qrT)clearTimeout(window.__qrT);window.__qrT=setTimeout(function(){m.style.display='none';m.classList.remove('qr-closing');window.__qrT=null;},460);}
       if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb, { text: "<?php echo htmlspecialchars($guestQrCode); ?>", width:150,height:150, correctLevel: QRCode.CorrectLevel.M });document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
       </script>
       <?php endif; ?>
@@ -1878,7 +1927,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             }
             if (typeof Swal !== 'undefined') {
               Swal.fire({
-                text: "Rekening berhasil disalin",
+                text: "rekening berhasil disalin",
                 icon: 'success',
                 confirmButtonColor: '#775a19',
                 confirmButtonText: 'OK',
@@ -1888,7 +1937,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
                 }
               });
             } else {
-              showToast("Rekening berhasil disalin");
+              showToast("rekening berhasil disalin");
             }
           });
         }
@@ -2192,8 +2241,6 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
            window.URL.revokeObjectURL(url);
          }
 
-       </script>
-</body>
         /* ---------- menu bawah pill klasik emas ---------- */
         (function(){
           var nav=document.getElementById('bottomNav');if(!nav)return;
@@ -2201,31 +2248,31 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           var gate=document.getElementById('opening-overlay');
           if(!gate||gate.classList.contains('opened')){nav.hidden=false;}
           var items=[];
+          function smoothScrollTo(el){
+            if(!el)return;
+            var y=el.getBoundingClientRect().top+window.scrollY;
+            if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){window.scrollTo({top:y,behavior:'instant'});return;}
+            if(smoothScrollTo._c)smoothScrollTo._c();
+            var start=window.scrollY,dur=800,t0=null,cancelled=false;
+            function cancel(){cancelled=true;window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
+            smoothScrollTo._c=cancel;
+            window.addEventListener('wheel',cancel,{passive:true});
+            window.addEventListener('touchmove',cancel,{passive:true});
+            function step(ts){
+              if(cancelled)return;
+              if(t0===null)t0=ts;
+              var p=Math.min((ts-t0)/dur,1);
+              var e=p<0.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+              window.scrollTo({top:start+(y-start)*e,behavior:'instant'});
+              if(p<1){requestAnimationFrame(step);}
+              else{window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
+            }
+            requestAnimationFrame(step);
+            setTimeout(function(){if(!cancelled&&Math.abs(window.scrollY-y)>2){window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);window.scrollTo({top:y,behavior:'instant'});}},dur+500);
+          }
           Array.prototype.forEach.call(nav.querySelectorAll('a[data-sec]'),function(a){
             var el=document.getElementById(a.getAttribute('data-sec'));
             if(!el){a.remove();return;}
-            function smoothScrollTo(el){
-              if(!el)return;
-              var y=el.getBoundingClientRect().top+window.scrollY;
-              if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){window.scrollTo({top:y,behavior:'instant'});return;}
-              if(smoothScrollTo._c)smoothScrollTo._c();
-              var start=window.scrollY,dur=800,t0=null,cancelled=false;
-              function cancel(){cancelled=true;window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
-              smoothScrollTo._c=cancel;
-              window.addEventListener('wheel',cancel,{passive:true});
-              window.addEventListener('touchmove',cancel,{passive:true});
-              function step(ts){
-                if(cancelled)return;
-                if(t0===null)t0=ts;
-                var p=Math.min((ts-t0)/dur,1);
-                var e=p<0.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
-                window.scrollTo({top:start+(y-start)*e,behavior:'instant'});
-                if(p<1){requestAnimationFrame(step);}
-                else{window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);}
-              }
-              requestAnimationFrame(step);
-              setTimeout(function(){if(!cancelled&&Math.abs(window.scrollY-y)>2){window.removeEventListener('wheel',cancel);window.removeEventListener('touchmove',cancel);window.scrollTo({top:y,behavior:'instant'});}},dur+500);
-            }
             a.addEventListener('click',function(e){e.preventDefault();smoothScrollTo(el);});
             items.push([a,el]);
           });

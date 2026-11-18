@@ -337,12 +337,55 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 <section id="kisah">
   <div class="rvd"><div class="sec-kicker">Perjalanan Kami</div><div class="sec-title serif glow">Kisah Cinta</div><div class="const">✦</div></div>
   <div class="tl">
+    <div class="story-rope-track" aria-hidden="true"></div>
+    <div class="story-rope" aria-hidden="true"></div>
     @foreach($stories as $st)
-    <div class="tl-item rv">@if(!empty($st->tahun))<div style="font-size:11px;letter-spacing:.25em;opacity:.55;margin-bottom:6px">{{ $st->tahun }}</div>@endif
+    <div class="tl-item rv"><div class="story-node"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>@if(!empty($st->tahun))<div style="font-size:11px;letter-spacing:.25em;opacity:.55;margin-bottom:6px">{{ $st->tahun }}</div>@endif
 <h4>{{ $st->judul ?? 'Cerita' }}</h4><p>{{ $st->isi ?? '' }}</p></div>
     @endforeach
   </div>
 </section>
+<style>
+/* kisah: tali + node love (sweep 2026-11-18) */
+.story-rope{position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:3px;z-index:1;
+  background:repeating-linear-gradient(45deg,rgba(0,0,0,.22) 0 2px,transparent 2px 7px),
+    linear-gradient(90deg,#7864b4,#dcd1fd 45%,#a78bfa 55%,#7864b4);
+  box-shadow:0 0 8px rgba(167,139,250,0.35);transform:scaleY(0);transform-origin:top}
+.story-rope-track{position:absolute;left:1px;top:8px;bottom:8px;width:1px;background:linear-gradient(180deg,#a78bfa 0%,#a78bfa 60%,transparent 100%);opacity:.35}
+.story-node{position:absolute;left:-8px;top:18px;width:19px;height:19px;display:flex;align-items:center;justify-content:center;color:rgba(167,139,250,0.35);transition:color .5s ease,filter .5s ease,transform .5s ease}
+.story-node.on{color:#a78bfa;transform:scale(1.18);filter:drop-shadow(0 0 6px rgba(167,139,250,0.8)) drop-shadow(0 0 14px rgba(167,139,250,0.4))}
+@media (prefers-reduced-motion:reduce){.story-rope{transform:none}.story-node{transition:none}}
+.tl{position:relative}
+.tl-item{position:relative}
+</style>
+<script>
+(function(){
+  var sec=document.getElementById('kisah');if(!sec)return;
+  var rope=sec.querySelector('.story-rope');if(!rope)return;
+  var cont=rope.parentNode;
+  var nodes=[].slice.call(cont.querySelectorAll('.story-node'));
+  if(!nodes.length)return;
+  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function update(){
+    var r=cont.getBoundingClientRect();
+    var vh=window.innerHeight||document.documentElement.clientHeight;
+    var p=(vh*0.7-r.top)/r.height;if(p<0)p=0;if(p>1)p=1;
+    rope.style.transform='scaleY('+p.toFixed(3)+')';
+    var ropeTop=rope.offsetTop,trackH=rope.offsetHeight;
+    nodes.forEach(function(n){
+      var nr=n.getBoundingClientRect();
+      var y=nr.top+nr.height/2-r.top-ropeTop;
+      n.classList.toggle('on',p*trackH>=y);
+    });
+  }
+  if(reduced){rope.style.transform='scaleY(1)';nodes.forEach(function(n){n.classList.add('on');});return;}
+  var tick=false;
+  function onScroll(){if(tick)return;tick=true;requestAnimationFrame(function(){tick=false;update();});}
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  update();
+})();
+</script>
 @endif
 
 <section id="rsvp">
@@ -363,8 +406,14 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 
 @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
 <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
+<style>
+#qrModal .qr-pop{transform:translateY(100%);opacity:0;transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .45s ease;will-change:transform,opacity}
+#qrModal.qr-open .qr-pop{transform:translateY(0);opacity:1}
+#qrModal.qr-closing .qr-pop{transform:translateY(100%);opacity:0}
+@media (prefers-reduced-motion:reduce){#qrModal .qr-pop{transition:none}}
+</style>
 <div id="qrModal" style="position:fixed;inset:0;z-index:96;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65;padding:20px" onclick="if(event.target===this)closeQrModal()">
-  <div style="background:#140e2c;border:2px solid #a78bfa;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+  <div class="qr-pop" style="background:#140e2c;border:2px solid #a78bfa;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
     <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#a78bfa">&times;</button>
     <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(232,236,255,.62)">The Wedding Of</div>
     <div style="font-family:serif;font-size:23px;line-height:1.25;color:#a78bfa;margin:2px 0 0">{{ $brideNick }} &amp; {{ $groomNick }}</div>
@@ -386,8 +435,8 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
-function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
+function openQrModal(){var m=document.getElementById('qrModal');if(!m)return;if(window.__qrT){clearTimeout(window.__qrT);window.__qrT=null;}m.classList.remove('qr-closing');m.style.display='flex';if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){m.classList.add('qr-open');return;}void m.offsetWidth;m.classList.add('qr-open');}
+function closeQrModal(){var m=document.getElementById('qrModal');if(!m)return;if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){m.style.display='none';m.classList.remove('qr-open','qr-closing');return;}m.classList.remove('qr-open');m.classList.add('qr-closing');if(window.__qrT)clearTimeout(window.__qrT);window.__qrT=setTimeout(function(){m.style.display='none';m.classList.remove('qr-closing');window.__qrT=null;},460);}
 if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:150,height:150,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
 </script>
 @endif
@@ -501,13 +550,13 @@ async function sendRSVP(e){e.preventDefault();const f=e.target;
   alert(r.ok?'Terima kasih atas konfirmasinya!':'Gagal, coba lagi.');f.reset();return false;}
 function wishTime(ts){if(!ts)return '';var s=String(ts).replace(' ','T');if(s.indexOf('Z')<0&&s.indexOf('+')<0)s+='+07:00';var d=new Date(s),diff=Math.floor((Date.now()-d.getTime())/1000);if(isNaN(diff)||diff<0||diff<60)return 'Baru saja';if(diff<3600)return Math.floor(diff/60)+' menit yang lalu';if(diff<86400)return Math.floor(diff/3600)+' jam yang lalu';return Math.floor(diff/86400)+' hari yang lalu';}
 async function loadWishes(){try{const r=await fetch('/api/ucapan?inv_id='+INV_ID);const d=await r.json();
-  var _rows=(d.data||d||[]);var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=_rows.length;wishList.innerHTML=_rows.map(w=>`<div class="wish"><b>${esc(w.nama||w.name)}</b><span class="st">${esc(w.status||'')}</span><span class="wtime">${esc(wishTime(w.created_at||w.tanggal||''))}</span><p>${esc(w.pesan||w.message||w.ucapan||'')}</p></div>`).join('')||'<p style="color:var(--dim)">Belum ada ucapan.</p>';}catch(e){}}
+  var _rows=(d.data||d||[]);var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=_rows.length;wishList.innerHTML=_rows.map(w=>`<div class="wish"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:#a78bfa;color:#1b1c1a;font-weight:700;font-size:13px;line-height:1;flex:none;vertical-align:middle;margin-right:8px">${esc((String(w.nama||w.name||'').trim().charAt(0)||'?').toUpperCase())}</span><b>${esc(w.nama||w.name)}</b><span class="st">${esc(w.status||'')}</span><span class="wtime">${esc(wishTime(w.created_at||w.tanggal||''))}</span><p>${esc(w.pesan||w.message||w.ucapan||'')}</p></div>`).join('')||'<p style="color:var(--dim)">Belum ada ucapan.</p>';}catch(e){}}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function sendWish(e){e.preventDefault();const f=e.target;
   const r=await fetch('/api/ucapan?inv_id='+INV_ID,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:f.name.value,message:f.message.value})});
   if(r.ok){f.reset();loadWishes();}else alert('Gagal mengirim.');return false;}
 loadWishes();
-function copyNo(t){navigator.clipboard.writeText(t).then(()=>alert('Nomor tersalin!'));}
+function copyNo(t){navigator.clipboard.writeText(t).then(()=>alert('rekening berhasil disalin'));}
 function toggleMus(){const m=document.getElementById('mus');if(m.paused){m.play();musBtn.style.opacity=1}else{m.pause();musBtn.style.opacity=.5}}
 </script>
 
@@ -800,7 +849,7 @@ async function loadWishes(){
     var rows = d.data || [];
     var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=rows.length;
     document.getElementById('wishList').innerHTML = rows.map(function(w){
-      return '<div class="wish"><div class="wish-head"><b>' + esc(w.nama) + '</b><span class="wtime">' + esc(timeAgo(w.created_at)) + '</span></div><p>' + esc(w.pesan) + '</p></div>';
+      return '<div class="wish"><div class="wish-head"><div style="display:flex;align-items:center;gap:8px;min-width:0"><div style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:#a78bfa;color:#1b1c1a;font-weight:700;font-size:13px;line-height:1;flex:none">' + esc((String(w.nama||'').trim().charAt(0)||'?').toUpperCase()) + '</div><b>' + esc(w.nama) + '</b></div><span class="wtime">' + esc(timeAgo(w.created_at)) + '</span></div><p>' + esc(w.pesan) + '</p></div>';
     }).join('') || '<p class="wish-empty">Belum ada ucapan.</p>';
   }catch(e){}
 }

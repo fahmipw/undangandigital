@@ -270,6 +270,19 @@ select.sd-input{appearance:none}
 #dpad.show{bottom:78px}
 #actBtn.show{bottom:78px}
 </style>
+<style>
+/* kisah: tali + node love (sweep 2026-11-18) */
+.story-rope{position:absolute;left:4px;top:8px;bottom:8px;width:3px;border-radius:3px;z-index:1;
+  background:repeating-linear-gradient(45deg,rgba(0,0,0,.22) 0 2px,transparent 2px 7px),
+    linear-gradient(90deg,#356f24,#b7d7ad 45%,#4a9a32 55%,#356f24);
+  box-shadow:0 0 8px rgba(74,154,50,0.35);transform:scaleY(0);transform-origin:top}
+.story-rope-track{position:absolute;left:5px;top:8px;bottom:8px;width:1px;background:linear-gradient(180deg,#4a9a32 0%,#4a9a32 60%,transparent 100%);opacity:.35}
+.story-list{position:relative}
+.story::before{display:none}
+.story-node{position:absolute;left:-10px;top:2px;width:19px;height:19px;display:flex;align-items:center;justify-content:center;color:rgba(74,154,50,0.35);transition:color .5s ease,filter .5s ease,transform .5s ease}
+.story-node.on{color:#4a9a32;transform:scale(1.18);filter:drop-shadow(0 0 6px rgba(74,154,50,0.8)) drop-shadow(0 0 14px rgba(74,154,50,0.4))}
+@media (prefers-reduced-motion:reduce){.story-rope{transform:none}.story-node{transition:none}}
+</style>
 </head>
 <body>
 <div id="start">
@@ -721,12 +734,14 @@ count:()=>`<h2 class="ptitle">MENARA JAM</h2><p class="psub">${MC.dateText} &mda
 </div>
 ${MC.quotes?`<p class="psub" style="margin-top:14px;font-style:italic">&ldquo;${esc(MC.quotes)}&rdquo;</p>`:""}`,
 story:()=>`<h2 class="ptitle">RUMAH KACA</h2><p class="psub">Jurnal cinta yang tumbuh seperti tanaman.</p>
+<div class="story-list"><div class="story-rope-track" aria-hidden="true"></div><div class="story-rope" aria-hidden="true"></div>
 @foreach($stories as $st)
-<div class="story">
+<div class="story"><div class="story-node"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
   @if(!empty($st->tahun))<div class="yr">{{ $st->tahun }}</div>@endif
   <h4>{{ $st->judul }}</h4><p>{{ $st->isi }}</p>
 </div>
 @endforeach
+</div>
 @if(empty($stories))<p class="psub">Kisah cinta akan segera tumbuh di sini.</p>@endif`,
 event:()=>`<h2 class="ptitle">LUMBUNG ACARA</h2><p class="psub">Dua perayaan besar menantimu.</p>
 <div class="adv"><div class="ic"><canvas class="ev-ic" data-ic="ring" width="16" height="16"></canvas></div>
@@ -791,6 +806,33 @@ gift:()=>`<h2 class="ptitle">GUDANG HARTA</h2><p class="psub">Klik petinya untuk
 
 /* Panel: Fade In Up */
 function panelAnimate(){requestAnimationFrame(function(){var pb=document.querySelector('#panelBody');if(pb)pb.classList.add('in');});}
+var _storyBound=false;
+function storyRopeUpdate(){
+  var sc=document.querySelector('#panel');if(!sc)return;
+  var rope=sc.querySelector('.story-rope');if(!rope)return;
+  var cont=rope.parentNode;
+  var nodes=[].slice.call(cont.querySelectorAll('.story-node'));
+  if(!nodes.length)return;
+  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced){rope.style.transform='scaleY(1)';nodes.forEach(function(n){n.classList.add('on');});return;}
+  var pr=sc.getBoundingClientRect();
+  var r=cont.getBoundingClientRect();
+  var vh=pr.height;
+  var p=(vh*0.7-(r.top-pr.top))/r.height;if(p<0)p=0;if(p>1)p=1;
+  rope.style.transform='scaleY('+p.toFixed(3)+')';
+  var ropeTop=rope.offsetTop,trackH=rope.offsetHeight;
+  nodes.forEach(function(n){
+    var nr=n.getBoundingClientRect();
+    var y=nr.top+nr.height/2-r.top-ropeTop;
+    n.classList.toggle('on',p*trackH>=y);
+  });
+}
+function wireStoryRope(){
+  if(!_storyBound){_storyBound=true;
+    var sc=document.querySelector('#panel');
+    if(sc)sc.addEventListener('scroll',function(){requestAnimationFrame(storyRopeUpdate);},{passive:true});}
+  storyRopeUpdate();
+}
 function openPanel(id){
   var _bn=document.getElementById("bottomNav");if(_bn)_bn.hidden=true;
   markVisited(id);
@@ -810,6 +852,7 @@ function openPanel(id){
     drawSprite(t,ICONS[c.dataset.ic],PAL);c.getContext("2d").drawImage(t,0,0,16,16);});
   if(id==="rsvp")wireRsvp();
   if(id==="ucapan")wireUcapan();
+  if(id==="story")wireStoryRope();
   if(id==="gift")wireChest();
   if(id==="gallery")$$("#panelBody .frame2").forEach(f=>f.addEventListener("click",()=>{
     window.open(f.dataset.full,"_blank");blip(700,0.06,0.05);}));
@@ -831,7 +874,7 @@ function closePanel(){
   var pb=document.querySelector('#panelBody');if(pb)pb.classList.remove('in');
   var _bn=document.getElementById("bottomNav");if(_bn)_bn.hidden=false;
   prewedPauseVideo();prewedResumeMusic();
-  $("#panelOverlay").hidden=true;panelOpen=false;gameOn=true;
+  (function(){var _d=(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)?0:720;if(!_d){var o=document.querySelector('#panelOverlay');if(o)o.hidden=true;return;}setTimeout(function(){requestAnimationFrame(function(){var pb=document.querySelector('#panelBody');if(pb&&pb.classList.contains('in'))return;var o=document.querySelector('#panelOverlay');if(o)o.hidden=true;});},_d);})();panelOpen=false;gameOn=true;
   stopCd();blip(440,0.07,0.05);
   if(visited.size>=LOCS.length&&!completedShown){completedShown=true;
     setTimeout(openComplete,400);}
@@ -883,7 +926,7 @@ function wireUcapan(){
   const box=$("#ul2");
   const load=async()=>{try{const _all=(await apiGet("/api/ucapan?inv_id="+MC.invId));var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=_all.length;const rows=_all.slice(0,8);
     box.innerHTML=rows.length?rows.map(x=>
-      `<div class="msg-row"><div class="nm">${esc(x.nama)}</div><div class="ps">${esc(x.pesan)}</div>
+      `<div class="msg-row"><div class="nm" style="display:flex;align-items:center;gap:8px"><div style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:#4a9a32;color:#1b1c1a;font-weight:700;font-size:13px;line-height:1;flex:none">${esc((String(x.nama||'').trim().charAt(0)||'?').toUpperCase())}</div><span>${esc(x.nama)}</span></div><div class="ps">${esc(x.pesan)}</div>
        <div class="tm">${timeAgo(x.created_at)}</div></div>`
     ).join(""):'<div class="msg-row"><div class="ps" style="color:#777">Belum ada ucapan.</div></div>';
   }catch(e){box.innerHTML='<div class="msg-row"><div class="ps" style="color:#777">Gagal memuat.</div></div>';}};
@@ -914,7 +957,7 @@ function wireChest(){
     try{await navigator.clipboard.writeText(t);}catch(err){
       const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);
       ta.select();document.execCommand("copy");ta.remove();}
-    blip(880,0.08,0.05);toast("NOMOR TERSALIN!");}));
+    blip(880,0.08,0.05);toast("rekening berhasil disalin");}));
 }
 function openComplete(){
   var _bn=document.getElementById("bottomNav");if(_bn)_bn.hidden=true;
