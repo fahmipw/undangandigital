@@ -566,6 +566,11 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 .gal3dDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(255,255,255,.35);cursor:pointer}
 .gal3dDots .gal-dot.on{background:#b8934a}
 @media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
+.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2}
+.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(127,127,127,.10)}
+.gal-hint .gh-a{display:inline-block;animation:galHintNudge 1.6s ease-in-out infinite}
+@keyframes galHintNudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+@media (prefers-reduced-motion:reduce){.gal-hint .gh-a{animation:none}}
 </style>
 </head>
 
@@ -947,6 +952,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       <div id="galDots" class="gal3dDots"></div>
       <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
     </div>
+    <div class="gal-hint"><span><span class="gh-a">&#8249;</span> Geser untuk melihat foto <span class="gh-a">&#8250;</span></span></div>
           <?php else: ?>
           <!-- Default Placeholders if empty -->
           <div
@@ -1418,22 +1424,36 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       </section>
 
       <?php if (getSet('guest_qr_enabled') && !empty($guestQrCode)): ?>
-      <div id="qrModal" style="position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
-        <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+            <div id="qrModal" style="position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65;padding:20px" onclick="if(event.target===this)closeQrModal()">
+        <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
           <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
-          <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
-          <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
-          <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
-          <p style="margin:16px 0 0;font-weight:600;color:#2b2118"><?php echo htmlspecialchars($guestName); ?></p>
-          <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em"><?php echo htmlspecialchars($guestQrCode); ?></b></p>
-          <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+          <div style="display:flex;justify-content:center;gap:10px;margin:2px 0 10px">
+            <?php if(getSet('bride_photo')): ?><img src="<?php echo getSet('bride_photo'); ?>" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #c9a45c;flex:none"><?php else: ?><div style="width:56px;height:56px;border-radius:50%;border:2px solid #c9a45c;background:#775a19;color:#fdf6dd;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700"><?php echo htmlspecialchars(mb_substr((getSet('bride_nickname') ? getSet('bride_nickname') : getSet('bride_name', 'Hawa')), 0, 1)); ?></div><?php endif; ?>
+            <?php if(getSet('groom_photo')): ?><img src="<?php echo getSet('groom_photo'); ?>" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #c9a45c;flex:none"><?php else: ?><div style="width:56px;height:56px;border-radius:50%;border:2px solid #c9a45c;background:#775a19;color:#fdf6dd;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700"><?php echo htmlspecialchars(mb_substr((getSet('groom_nickname') ? getSet('groom_nickname') : getSet('groom_name', 'Adam')), 0, 1)); ?></div><?php endif; ?>
+          </div>
+          <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#6d4a2c">The Wedding Of</div>
+          <div style="font-family:serif;font-size:23px;line-height:1.25;color:#6d4a2c;margin:2px 0 0"><?php echo (getSet('bride_nickname') ? getSet('bride_nickname') : getSet('bride_name', 'Hawa')) . ' &amp; ' . (getSet('groom_nickname') ? getSet('groom_nickname') : getSet('groom_name', 'Adam')); ?></div>
+          <div style="font-size:13px;color:#2b2118;margin-top:6px"><?php echo formatIndoDate($wDate); ?>, <?php echo str_replace(':', '.', getSet('wedding_time_start', '08:00')); ?>&ndash;<?php echo str_replace(':', '.', getSet('wedding_time_end', '10:00')); ?> <?php echo getSet('wedding_timezone', 'WIB'); ?></div>
+          <div style="border-top:1px solid #c9a45c;opacity:.55;margin:14px 0 0"></div>
+          <div style="display:flex;gap:14px;align-items:center;text-align:left;margin-top:14px">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;color:#6d4a2c">Kepada Yth:</div>
+              <div style="font-size:12px;color:#6d4a2c">Bpk/Ibu/Saudara/i</div>
+              <div style="font-size:17px;font-weight:700;line-height:1.3;color:#6d4a2c;margin:2px 0"><?php echo htmlspecialchars($guestName); ?></div>
+              <div style="font-size:12px;color:#6d4a2c">di Tempat</div>
+            </div>
+            <div style="background:#fff;padding:8px;border-radius:12px;flex:none;box-shadow:0 8px 24px rgba(0,0,0,.18)"><div id="qrModalBox"></div></div>
+          </div>
+          <p style="margin:14px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em;color:#2b2118"><?php echo htmlspecialchars($guestQrCode); ?></b></p>
+          <p style="margin:8px 0 0;font-size:12px;line-height:1.6;color:#2b2118;opacity:.85">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+          <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:16px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#ffffff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
         </div>
       </div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
       <script>
       function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
       function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
-      if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb, { text: "<?php echo htmlspecialchars($guestQrCode); ?>", width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
+      if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb, { text: "<?php echo htmlspecialchars($guestQrCode); ?>", width:150,height:150, correctLevel: QRCode.CorrectLevel.M });document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
       </script>
       <?php endif; ?>
 
@@ -1654,6 +1674,10 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         <img id="lightbox-img" src=""
           class="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl scale-95 transition-transform duration-300"
           onclick="event.stopPropagation()" />
+<button type="button" onclick="event.stopPropagation();lbStep(-1)" aria-label="Sebelumnya" class="fixed left-3 top-1/2 -translate-y-1/2 text-white bg-black/60 px-4 py-2 rounded-full hover:bg-black/80 transition backdrop-blur shadow-2xl border border-white/20 flex items-center justify-center cursor-pointer text-3xl leading-none" style="z-index:9999999;">&#8249;</button>
+        <button type="button" onclick="event.stopPropagation();lbStep(1)" aria-label="Berikutnya" class="fixed right-3 top-1/2 -translate-y-1/2 text-white bg-black/60 px-4 py-2 rounded-full hover:bg-black/80 transition backdrop-blur shadow-2xl border border-white/20 flex items-center justify-center cursor-pointer text-3xl leading-none" style="z-index:9999999;">&#8250;</button>
+        <div id="lbCount" class="fixed bottom-5 left-0 right-0 text-center text-white/80 text-sm tracking-widest" style="z-index:9999999;"></div>
+        <div class="fixed bottom-12 left-0 right-0 text-center text-white/70 text-xs tracking-widest pointer-events-none" style="z-index:9999999;">&#8249; Geser untuk foto berikutnya &#8250;</div>
       </div>
 
       <!-- Make variables available before nav.js loads -->
@@ -1691,7 +1715,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           if (dotNav) dotNav.style.display = 'none';
           var _bn=document.getElementById('bottomNav');if(_bn)_bn.hidden=true;
 
-          img.src = src;
+          lbCollect(); var _li=lbList.indexOf(src); lbIdx=_li<0?0:_li; lbShow();
           lb.classList.remove('hidden');
           lb.classList.add('flex');
 
@@ -1725,6 +1749,16 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             var _bn2=document.getElementById('bottomNav');if(_bn2)_bn2.hidden=false;
           }, 300);
         }
+        /* ---- Lightbox galeri: prev/next + swipe (foto sebelum/berikutnya) ---- */
+        var lbList=[], lbIdx=0;
+        function lbCollect(){ lbList=[...document.querySelectorAll('#galGrid img')].map(function(im){return im.getAttribute('src')||im.src;}).filter(Boolean); }
+        function lbShow(){ var img=document.getElementById('lightbox-img'); if(!lbList.length) return; img.src=lbList[lbIdx]; var c=document.getElementById('lbCount'); if(c) c.textContent=(lbIdx+1)+' / '+lbList.length; }
+        function lbStep(d){ if(!lbList.length) return; lbIdx=(lbIdx+d+lbList.length)%lbList.length; lbShow(); }
+        (function(){ var img=document.getElementById('lightbox-img'); if(!img) return; var sx=0, sw=false;
+          img.addEventListener('touchstart',function(e){ sx=e.changedTouches[0].clientX; sw=false; },{passive:true});
+          img.addEventListener('touchmove',function(e){ if(sw) return; var dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>50){ sw=true; lbStep(dx<0?1:-1); } },{passive:true});
+        })();
+
 
 
         /* =========================================
@@ -2171,7 +2205,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           Array.prototype.forEach.call(nav.querySelectorAll('a[data-sec]'),function(a){
             var el=document.getElementById(a.getAttribute('data-sec'));
             if(!el){a.remove();return;}
-            a.addEventListener('click',function(e){e.preventDefault();el.scrollIntoView({behavior:'smooth'});});
+            a.addEventListener('click',function(e){e.preventDefault();el.scrollIntoView({behavior:'instant'});});
             items.push([a,el]);
           });
           if(!items.length){nav.style.display='none';return;}

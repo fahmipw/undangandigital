@@ -6,7 +6,6 @@
    Poster cover: public/images/jawa-gunungan/poster.jpg (bingkai filigri + gunungan, frame t=0)
    Background: public/images/jawa-gunungan/background.jpg (frame video t=8, crop atas — taman joglo sepia)
    Gunungan: public/images/jawa-gunungan/gunungan.png (crop frame t=2, chroma-key transparan)
-   Bunga divider: public/images/jawa-gunungan/bunga-divider.jpg (pita bunga frame t=8)
    Strip batik: public/images/jawa-gunungan/batik-strip-v.jpg (band kawung frame t=2, diputar vertikal)
    Wayang: public/images/amplop/wayang-pria.png + public/images/amplop/wayang-wanita.png (aset proyek, bawah hero + pita penutup)
    TANPA amplop — pembukanya video opening: cover DIAM (poster) sampai klik BUKA ->
@@ -309,9 +308,8 @@ tailwind.config = {
     </div>
     <p class="hero-stagger absolute bottom-[92px] z-10 opacity-0 text-[9px] tracking-[0.4em] text-gunungan-soft/70 uppercase">Geser ke bawah</p>
     <div class="absolute bottom-0 left-0 right-0 z-10 pointer-events-none">
-      <img src="{{ asset('images/jawa-gunungan/bunga-divider.jpg') }}" alt="" class="w-full h-20 object-cover object-center" />
-      <img src="{{ asset('images/amplop/wayang-pria.png') }}" alt="" class="absolute left-3 bottom-[76px] w-10" />
-      <img src="{{ asset('images/amplop/wayang-wanita.png') }}" alt="" class="absolute right-3 bottom-[76px] w-10" />
+      <img src="{{ asset('images/amplop/wayang-pria.png') }}" alt="" class="absolute left-3 bottom-2 w-10" />
+      <img src="{{ asset('images/amplop/wayang-wanita.png') }}" alt="" class="absolute right-3 bottom-2 w-10" />
     </div>
   </section>
 
@@ -405,7 +403,6 @@ tailwind.config = {
       @endif
     </div>
 
-    <img src="{{ asset('images/jawa-gunungan/bunga-divider.jpg') }}" alt="" class="anim-zoom relative z-10 w-full max-w-[340px] h-12 object-cover rounded-xl mt-10" />
 
     <!-- Resepsi -->
     <div class="anim-zoom relative z-10 w-full max-w-[340px] card-putih px-6 py-8 mt-10">
@@ -447,7 +444,6 @@ tailwind.config = {
       <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(90,54,32,.5);box-shadow:0 12px 24px -12px rgba(62,38,24,.35)"><div class="font-serif text-[1.6rem] font-bold text-gunungan-ink" id="cd-s">00</div><div class="text-[8px] tracking-[0.22em] text-gunungan-soft mt-1 font-medium">DETIK</div></div>
     </div>
     <a href="{{ $gcalUrl }}" target="_blank" rel="noopener" class="anim-fade btn-outline relative z-10 text-[10px] tracking-[0.25em] px-7 py-3 rounded-full mt-7 font-medium">+ SIMPAN KE GOOGLE CALENDAR</a>
-    <img src="{{ asset('images/jawa-gunungan/bunga-divider.jpg') }}" alt="" class="anim-zoom relative z-10 w-full max-w-[340px] h-14 object-cover rounded-xl mt-8" />
   </section>
 
   <!-- ================= 8. GALERI ================= -->
@@ -465,6 +461,11 @@ tailwind.config = {
 #galDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(245,234,217,.35);cursor:pointer}
 #galDots .gal-dot.on{background:#cdab80}
 @media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
+.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2}
+.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(127,127,127,.10)}
+.gal-hint .gh-a{display:inline-block;animation:galHintNudge 1.6s ease-in-out infinite}
+@keyframes galHintNudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+@media (prefers-reduced-motion:reduce){.gal-hint .gh-a{animation:none}}
 </style>
   <section id="sec-galeri" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
     <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-2 relative z-10">Wedding Gallery</h2>
@@ -516,6 +517,7 @@ tailwind.config = {
       <div id="galDots" class="flex items-center gap-2"></div>
       <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
     </div>
+    <div class="gal-hint"><span><span class="gh-a">&#8249;</span> Geser untuk melihat foto <span class="gh-a">&#8250;</span></span></div>
   </section>
 
   <!-- ================= 9. LOVE STORY ================= -->
@@ -580,22 +582,36 @@ tailwind.config = {
   <!-- ================= 11. RSVP & UCAPAN ================= -->
     @if(jgnGet('guest_qr_enabled') && !empty($guestQrCode))
   <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in" class="hidden"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
-  <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
-    <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
-      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#5a3620">&times;</button>
-      <h2 style="font-family:serif;font-size:24px;color:#5a3620;margin:0 0 6px">QR Check-In</h2>
-      <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#3e2618">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
-      <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
-      <p style="margin:16px 0 0;font-weight:600;color:#3e2618">{{ $guestName }}</p>
-      <p style="margin:6px 0 0;font-size:13px;color:#5a3620">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
-      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#654432;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+    <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65;padding:20px" onclick="if(event.target===this)closeQrModal()">
+    <div style="background:#F5EAD9;border:2px solid #D7B580;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#5A3620">&times;</button>
+      <div style="display:flex;justify-content:center;gap:10px;margin:2px 0 10px">
+        @if(jgnGet('bride_photo'))<img src="{{ jgnGet('bride_photo') }}" alt="{{ $brideFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #D7B580;flex:none">@else<div style="width:56px;height:56px;border-radius:50%;border:2px solid #D7B580;background:#5A3620;color:#F5EAD9;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">{{ mb_substr($brideNick, 0, 1) }}</div>@endif
+        @if(jgnGet('groom_photo'))<img src="{{ jgnGet('groom_photo') }}" alt="{{ $groomFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #D7B580;flex:none">@else<div style="width:56px;height:56px;border-radius:50%;border:2px solid #D7B580;background:#5A3620;color:#F5EAD9;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">{{ mb_substr($groomNick, 0, 1) }}</div>@endif
+      </div>
+      <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#654432">The Wedding Of</div>
+      <div style="font-family:serif;font-size:23px;line-height:1.25;color:#5A3620;margin:2px 0 0">{{ $brideNick }} &amp; {{ $groomNick }}</div>
+      <div style="font-size:13px;color:#3E2618;margin-top:6px">{{ jgnDate($wDate) }}, {{ str_replace(':', '.', $wTime) }}&ndash;{{ str_replace(':', '.', $wTimeE) }} {{ $tzLabel }}</div>
+      <div style="border-top:1px solid #D7B580;opacity:.55;margin:14px 0 0"></div>
+      <div style="display:flex;gap:14px;align-items:center;text-align:left;margin-top:14px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;color:#654432">Kepada Yth:</div>
+          <div style="font-size:12px;color:#654432">Bpk/Ibu/Saudara/i</div>
+          <div style="font-size:17px;font-weight:700;line-height:1.3;color:#5A3620;margin:2px 0">{{ $guestName }}</div>
+          <div style="font-size:12px;color:#654432">di Tempat</div>
+        </div>
+        <div style="background:#fff;padding:8px;border-radius:12px;flex:none;box-shadow:0 8px 24px rgba(0,0,0,.18)"><div id="qrModalBox"></div></div>
+      </div>
+      <p style="margin:14px 0 0;font-size:13px;color:#654432">Kode manual: <b style="letter-spacing:.12em;color:#3E2618">{{ $guestQrCode }}</b></p>
+      <p style="margin:8px 0 0;font-size:12px;line-height:1.6;color:#3E2618;opacity:.85">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:16px;padding:12px;border:none;border-radius:999px;background:#5A3620;color:#F5EAD9;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
     </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
   function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
   function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
-  if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:200,height:200,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
+  if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:150,height:150,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
   </script>
   @endif
 <section id="sec-ucapan" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
@@ -689,11 +705,6 @@ function playLive(btn, id){
       <p class="anim-fade-down text-[10px] tracking-[0.3em] uppercase text-gunungan-deep mb-2">Kami yang berbahagia,</p>
       <h3 class="anim-zoom font-script text-[2.9rem] leading-tight text-gunungan-ink mb-3">{{ $groomNick }} &amp; {{ $brideNick }}</h3>
       <p class="anim-fade-down text-[10px] tracking-[0.3em] uppercase text-gunungan-soft/70">Beserta Keluarga Besar</p>
-      <div class="anim-zoom relative w-full max-w-[340px] mt-8">
-        <img src="{{ asset('images/jawa-gunungan/bunga-divider.jpg') }}" alt="" class="w-full h-14 object-cover rounded-xl" />
-        <img src="{{ asset('images/amplop/wayang-pria.png') }}" alt="" class="absolute left-2 -top-9 w-9" />
-        <img src="{{ asset('images/amplop/wayang-wanita.png') }}" alt="" class="absolute right-2 -top-9 w-9" />
-      </div>
     </div>
   </footer>
 
@@ -720,7 +731,8 @@ function playLive(btn, id){
     <button id="lbPrev" class="absolute left-2 z-10 w-11 h-11 rounded-full text-[#ead9c8] text-3xl flex items-center justify-center" style="background:rgba(90,54,32,.18);border:1px solid rgba(205,171,128,.6)" aria-label="Sebelumnya">&#8249;</button>
     <img id="lbImg" class="max-w-full max-h-[82vh] rounded-xl object-contain select-none" style="border:1px solid rgba(205,171,128,.55)" alt="Galeri" draggable="false" />
     <button id="lbNext" class="absolute right-2 z-10 w-11 h-11 rounded-full text-[#ead9c8] text-3xl flex items-center justify-center" style="background:rgba(90,54,32,.18);border:1px solid rgba(205,171,128,.6)" aria-label="Berikutnya">&#8250;</button>
-    <div id="lbCount" class="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/70 text-sm tracking-[0.25em]"></div>
+    <div style="position:absolute;bottom:52px;left:0;right:0;text-align:center;font-size:12px;letter-spacing:.12em;color:rgba(255,255,255,.75);pointer-events:none">&#8249; Geser untuk foto berikutnya &#8250;</div>
+  <div id="lbCount" class="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/70 text-sm tracking-[0.25em]"></div>
   </div>
 
   <div id="toast" role="status"></div>
@@ -1196,7 +1208,7 @@ function fallbackCopy(text) {
     links.forEach(function(a){ a.classList.toggle('active', a === cur); });
   }
   window.addEventListener('scroll', spy, {passive:true});
-  links.forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); a._sec.scrollIntoView({behavior:'smooth'}); }); });
+  links.forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); a._sec.scrollIntoView({behavior:'instant'}); }); });
   spy();
   if(bar.classList.contains('hidden')){
     var tries = 0;

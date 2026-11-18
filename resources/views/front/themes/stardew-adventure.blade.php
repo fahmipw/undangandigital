@@ -205,6 +205,11 @@ select.sd-input{appearance:none}
 .gal3dDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(255,255,255,.35);cursor:pointer}
 .gal3dDots .gal-dot.on{background:#5eb83d}
 @media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
+.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2}
+.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(127,127,127,.10)}
+.gal-hint .gh-a{display:inline-block;animation:galHintNudge 1.6s ease-in-out infinite}
+@keyframes galHintNudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+@media (prefers-reduced-motion:reduce){.gal-hint .gh-a{animation:none}}
 .story{border-left:4px solid var(--leaf);padding:0 0 4px 16px;margin:0 0 18px 6px;position:relative}
 .story::before{content:"";position:absolute;left:-11px;top:2px;width:18px;height:18px;border-radius:50%;
   background:var(--gold);border:3px solid var(--wood-d)}
@@ -333,6 +338,7 @@ const MC = {
   musVol: @json($musVol),
   musAuto: @json($musAuto),
   brideNick: @json($brideNick), groomNick: @json($groomNick),
+  bridePhoto: @json(sdaGet('bride_photo')), groomPhoto: @json(sdaGet('groom_photo')),
   brideFull: @json($brideFull), groomFull: @json($groomFull),
   guestName: @json($guestName),
   dateText: @json(sdaDate($wDate)),
@@ -694,6 +700,7 @@ function markVisited(id){
   heartFx(player.x-camX,player.y-camY-30,10);
   toast(`LOKASI DITEMUKAN: ${L.name} (${visited.size}/${LOCS.length})`);
 }
+function qrPhoto(u,n){return u?'<img src="'+esc(u)+'" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:3px solid #8b5a2b;flex:none">':'<div style="width:56px;height:56px;border-radius:50%;border:3px solid #8b5a2b;background:#8b5a2b;color:#fff8e7;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">'+esc((n||'?').charAt(0))+'</div>';}
 const TPL={
 couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2>
 @if(sdaGet('quotes'))<p class="psub" style="font-style:italic">&ldquo;{{ sdaGet('quotes') }}&rdquo;</p>@endif<p class="psub">Dua petani. Satu ladang. Selamanya.</p>
@@ -706,7 +713,7 @@ couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2>
 `,
 quotes:()=>`<h2 class="ptitle">KUTIPAN</h2>
 ${MC.quotes?`<p class="psub" style="font-style:italic;font-size:15px;line-height:1.8">&ldquo;${esc(MC.quotes)}&rdquo;</p>`:`<p class="psub">Belum ada kutipan.</p>`}`,
-qr:()=>`<h2 class="ptitle">KARTU TAMU</h2><p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p><div class="qr-card"><div id="qrBox" style="display:flex;justify-content:center"></div><p class="psub" style="margin-top:10px">Nama: <b>${esc(MC.guestName)}</b></p><p class="psub" style="margin-top:6px">Kode manual: <b>${esc(MC.guestQr)}</b></p></div>`,
+qr:()=>`<h2 class="ptitle">KARTU TAMU</h2><div style="display:flex;justify-content:center;gap:10px;margin:6px 0 10px">${qrPhoto(MC.bridePhoto,MC.brideNick)}${qrPhoto(MC.groomPhoto,MC.groomNick)}</div><p style="text-align:center;font-size:11px;letter-spacing:.2em;color:#7a6a4a;margin:0">THE WEDDING OF</p><p style="text-align:center;font-family:'Press Start 2P',monospace;font-size:11px;color:#3a5a22;margin:6px 0 2px">${esc(MC.brideNick)} &amp; ${esc(MC.groomNick)}</p><p class="psub" style="margin-bottom:10px">${esc(MC.dateText)} &middot; ${esc(MC.akad.time.replace(/:/g,'.'))}</p><div class="qr-card"><div style="display:flex;gap:14px;align-items:center;text-align:left"><div style="flex:1;min-width:0"><p class="psub" style="margin:0;text-align:left;font-size:13px">Kepada Yth:<br>Bpk/Ibu/Saudara/i</p><p style="font-weight:700;margin:4px 0;font-size:18px;color:#3a5a22">${esc(MC.guestName)}</p><p class="psub" style="margin:0;text-align:left;font-size:13px">di Tempat</p></div><div id="qrBox" style="background:#fff;padding:8px;flex:none"></div></div><p class="psub" style="margin-top:10px">Kode manual: <b>${esc(MC.guestQr)}</b></p></div><p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p>`,
 count:()=>`<h2 class="ptitle">MENARA JAM</h2><p class="psub">${MC.dateText} &mdash; musim panen dimulai dalam:</p>
 <div class="hud2">
 <div class="slot"><span class="num" id="cD">00</span><span class="unit">HARI</span></div>
@@ -817,8 +824,8 @@ function openQrPanel(){
   $("#panelOverlay").hidden=false;
   panelAnimate();
   if(window.QRCode){
-    new QRCode($("#qrBox"),{text:MC.guestQr,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});
-    var qb=document.getElementById('qrBox');if(qb){if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}
+    new QRCode($("#qrBox"),{text:MC.guestQr,width:150,height:150,correctLevel:QRCode.CorrectLevel.M});
+    var qb=document.getElementById('qrBox');if(qb){if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#5eb83d;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}
   }
 }
 function closePanel(){
@@ -1094,6 +1101,9 @@ function gal3dConvert(grid, prev, next, dotsBox, itemSel){
     var next=document.createElement("button"); next.type="button"; next.setAttribute("aria-label","Berikutnya"); next.innerHTML="&#8250;";
     nav.appendChild(prev); nav.appendChild(dotsBox); nav.appendChild(next);
     grid.parentNode.insertBefore(nav, grid.nextSibling);
+    var hint=document.createElement("div"); hint.className="gal-hint";
+    hint.innerHTML='<span><span class="gh-a">&#8249;</span> Geser untuk melihat foto <span class="gh-a">&#8250;</span></span>';
+    grid.parentNode.insertBefore(hint, nav.nextSibling);
     gal3dConvert(grid, prev, next, dotsBox, ".frame2");
   }
   function scan(){ var g=panelBody.querySelector(".frames2"); if(g) convert(g); }

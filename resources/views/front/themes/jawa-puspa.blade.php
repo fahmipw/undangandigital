@@ -631,6 +631,11 @@ function withEnvelope(fn){
 #galDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(245,234,217,.35);cursor:pointer}
 #galDots .gal-dot.on{background:#c2ab72}
 @media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
+.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2}
+.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(127,127,127,.10)}
+.gal-hint .gh-a{display:inline-block;animation:galHintNudge 1.6s ease-in-out infinite}
+@keyframes galHintNudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+@media (prefers-reduced-motion:reduce){.gal-hint .gh-a{animation:none}}
 </style>
   <section id="sec-galeri" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
     <h2 class="anim-zoom font-script text-5xl text-gold-grad mb-2 relative z-10">Wedding Gallery</h2>
@@ -682,6 +687,7 @@ function withEnvelope(fn){
       <div id="galDots" class="flex items-center gap-2"></div>
       <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
     </div>
+    <div class="gal-hint"><span><span class="gh-a">&#8249;</span> Geser untuk melihat foto <span class="gh-a">&#8250;</span></span></div>
   </section>
 
   <!-- ================= 10. GIFT ================= -->
@@ -726,22 +732,36 @@ function withEnvelope(fn){
   <!-- ================= 11. RSVP & UCAPAN ================= -->
     @if(jklGet('guest_qr_enabled') && !empty($guestQrCode))
   <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in" class="hidden"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h3.5v3.5H14zM20.5 14v.5M14 20.5h.5M17.5 17.5h3v3h-3z"/></svg></button>
-  <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
-    <div style="background:#fdf6dd;border:2px solid #c9a45c;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
-      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#6d4a2c">&times;</button>
-      <h2 style="font-family:serif;font-size:24px;color:#6d4a2c;margin:0 0 6px">QR Check-In</h2>
-      <p style="opacity:.75;font-size:13px;line-height:1.6;margin:0 0 18px;color:#2b2118">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
-      <div style="background:#fff;padding:16px;border-radius:18px;display:inline-block;box-shadow:0 14px 34px rgba(0,0,0,.25)"><div id="qrModalBox"></div></div>
-      <p style="margin:16px 0 0;font-weight:600;color:#2b2118">{{ $guestName }}</p>
-      <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
-      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+    <div id="qrModal" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65;padding:20px" onclick="if(event.target===this)closeQrModal()">
+    <div style="background:#fffdf7;border:2px solid #c2ab72;border-radius:18px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+      <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#77603a">&times;</button>
+      <div style="display:flex;justify-content:center;gap:10px;margin:2px 0 10px">
+        @if(jklGet('bride_photo'))<img src="{{ jklGet('bride_photo') }}" alt="{{ $brideFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #c2ab72;flex:none">@else<div style="width:56px;height:56px;border-radius:50%;border:2px solid #c2ab72;background:#77603a;color:#fffdf7;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">{{ mb_substr($brideNick, 0, 1) }}</div>@endif
+        @if(jklGet('groom_photo'))<img src="{{ jklGet('groom_photo') }}" alt="{{ $groomFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #c2ab72;flex:none">@else<div style="width:56px;height:56px;border-radius:50%;border:2px solid #c2ab72;background:#77603a;color:#fffdf7;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">{{ mb_substr($groomNick, 0, 1) }}</div>@endif
+      </div>
+      <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#978045">The Wedding Of</div>
+      <div style="font-family:serif;font-size:23px;line-height:1.25;color:#77603a;margin:2px 0 0">{{ $brideNick }} &amp; {{ $groomNick }}</div>
+      <div style="font-size:13px;color:#2a2519;margin-top:6px">{{ jklDate($wDate) }}, {{ str_replace(':', '.', $wTime) }}&ndash;{{ str_replace(':', '.', $wTimeE) }} {{ $tzLabel }}</div>
+      <div style="border-top:1px solid #c2ab72;opacity:.55;margin:14px 0 0"></div>
+      <div style="display:flex;gap:14px;align-items:center;text-align:left;margin-top:14px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;color:#978045">Kepada Yth:</div>
+          <div style="font-size:12px;color:#978045">Bpk/Ibu/Saudara/i</div>
+          <div style="font-size:17px;font-weight:700;line-height:1.3;color:#77603a;margin:2px 0">{{ $guestName }}</div>
+          <div style="font-size:12px;color:#978045">di Tempat</div>
+        </div>
+        <div style="background:#fff;padding:8px;border-radius:12px;flex:none;box-shadow:0 8px 24px rgba(0,0,0,.18)"><div id="qrModalBox"></div></div>
+      </div>
+      <p style="margin:14px 0 0;font-size:13px;color:#978045">Kode manual: <b style="letter-spacing:.12em;color:#2a2519">{{ $guestQrCode }}</b></p>
+      <p style="margin:8px 0 0;font-size:12px;line-height:1.6;color:#2a2519;opacity:.85">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+      <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:16px;padding:12px;border:none;border-radius:999px;background:#77603a;color:#fffdf7;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
     </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
   function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
   function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
-  if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:200,height:200,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
+  if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:150,height:150,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
   </script>
   @endif
 <section id="sec-ucapan" class="scroll-section relative py-20 px-6 flex flex-col items-center text-center overflow-hidden">
@@ -863,7 +883,8 @@ function playLive(btn, id){
     <button id="lbPrev" class="absolute left-2 z-10 w-11 h-11 rounded-full text-[#e8d9ae] text-3xl flex items-center justify-center" style="background:rgba(151,128,69,.18);border:1px solid rgba(194,171,114,.6)" aria-label="Sebelumnya">&#8249;</button>
     <img id="lbImg" class="max-w-full max-h-[82vh] rounded-xl object-contain select-none" style="border:1px solid rgba(194,171,114,.55)" alt="Galeri" draggable="false" />
     <button id="lbNext" class="absolute right-2 z-10 w-11 h-11 rounded-full text-[#e8d9ae] text-3xl flex items-center justify-center" style="background:rgba(151,128,69,.18);border:1px solid rgba(194,171,114,.6)" aria-label="Berikutnya">&#8250;</button>
-    <div id="lbCount" class="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/70 text-sm tracking-[0.25em]"></div>
+    <div style="position:absolute;bottom:52px;left:0;right:0;text-align:center;font-size:12px;letter-spacing:.12em;color:rgba(255,255,255,.75);pointer-events:none">&#8249; Geser untuk foto berikutnya &#8250;</div>
+  <div id="lbCount" class="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/70 text-sm tracking-[0.25em]"></div>
   </div>
 
   <div id="toast" role="status"></div>
@@ -1313,7 +1334,7 @@ function fallbackCopy(text) {
     links.forEach(function(a){ a.classList.toggle('active', a === cur); });
   }
   window.addEventListener('scroll', spy, {passive:true});
-  links.forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); a._sec.scrollIntoView({behavior:'smooth'}); }); });
+  links.forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); a._sec.scrollIntoView({behavior:'instant'}); }); });
   spy();
   if(bar.classList.contains('hidden')){
     var tries = 0;

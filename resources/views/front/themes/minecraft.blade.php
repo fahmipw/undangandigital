@@ -183,6 +183,11 @@ section.block{max-width:860px;margin:0 auto;padding:56px 20px 8px}
 .gal3dDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(255,255,255,.35);cursor:pointer}
 .gal3dDots .gal-dot.on{background:#7bff5e}
 @media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
+.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2}
+.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(127,127,127,.10)}
+.gal-hint .gh-a{display:inline-block;animation:galHintNudge 1.6s ease-in-out infinite}
+@keyframes galHintNudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+@media (prefers-reduced-motion:reduce){.gal-hint .gh-a{animation:none}}
 .rsvp-panel{padding:26px 24px}
 .scoreboard{margin-top:22px;background:#101010;border:3px solid #000;box-shadow:0 0 0 2px #3a3a3a;padding:6px 0}
 .scoreboard h4{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--gold);padding:12px 16px;letter-spacing:1px;border-bottom:2px solid #2a2a2a}
@@ -368,7 +373,7 @@ body:not(.gate-open) #bottomNav{display:none!important}
   <section class="block reveal" id="gallerySec">
     <div class="sec-head reveal-down"><canvas class="sec-ico" data-icon="frame" width="16" height="16"></canvas><h2 class="sec-title">GALERI PETUALANGAN</h2><canvas class="sec-ico" data-icon="frame" width="16" height="16"></canvas></div>
     <p class="sec-sub">Momen yang diabadikan dalam balok kenangan.</p>
-    @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div id="prewedBox" style="margin:12px auto 2px;max-width:330px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@endif @endif
+    @if(mcGet('prewedding_video_file') || mcGet('prewedding_video_link'))@php $pwF = mcGet('prewedding_video_file'); $pwL = mcGet('prewedding_video_link'); $pwY = null; if (!$pwF && $pwL && preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$pwL, $pm)) { $pwY = $pm[1]; } @endphp<div id="prewedBox" style="margin:12px auto 2px;max-width:330px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden"><div style="position:relative;padding-top:56.25%">@if($pwF)<video controls preload="metadata" playsinline src="{{ asset($pwF) }}" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>@elseif($pwY)<iframe src="https://www.youtube-nocookie.com/embed/{{ $pwY }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>@else<a href="{{ $pwL }}" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.2em">&#9654; TONTON VIDEO PREWEDDING</a>@endif</div></div>@endif
     <div id="galGrid" class="frames">
       @foreach(array_slice($gallery, 0, 8) as $i => $img)
       <div class="item-frame"><img src="{{ $img }}" alt="Galeri {{ $i + 1 }}" loading="lazy"><p>Kenangan {{ $i + 1 }}</p></div>
@@ -379,6 +384,7 @@ body:not(.gate-open) #bottomNav{display:none!important}
       <div id="galDots" class="gal3dDots"></div>
       <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
     </div>
+    <div class="gal-hint"><span><span class="gh-a">&#8249;</span> Geser untuk melihat foto <span class="gh-a">&#8250;</span></span></div>
   </section>
   @endif
 
@@ -441,25 +447,6 @@ body:not(.gate-open) #bottomNav{display:none!important}
         <h4>&#9733; UCAPAN MASUK</h4>
         <div id="ucapanList"><div class="score-empty">Memuat ucapan...</div></div>
       </div>
-@if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
-<div id="qrModal" style="position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);padding:20px" onclick="if(event.target===this)closeQrModal()">
-  <div style="background:#101010;border:3px solid #000;box-shadow:inset 2px 2px 0 rgba(255,255,255,.12),0 0 0 2px #3a3a3a,0 24px 60px rgba(0,0,0,.5);padding:22px 18px;max-width:340px;width:100%;text-align:center;position:relative">
-    <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:6px;right:10px;border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:#fff">&times;</button>
-    <h4 style="font-family:'Press Start 2P',monospace;font-size:13px;color:#7bff5e;margin:0 0 10px">QR CHECK-IN</h4>
-    <p style="font-size:11px;line-height:1.7;color:#c8d2dc;margin:0 0 16px">Tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
-    <div style="background:#fff;padding:12px;display:inline-block;border:3px solid #5b5b5b"><div id="qrModalBox"></div></div>
-    <p style="margin:14px 0 0;font-size:12px;font-weight:700;color:#fdf6dd">{{ $guestName }}</p>
-    <p style="margin:6px 0 0;font-size:12px;color:#fdf6dd">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
-    <button id="qrModalDownloadBtn" type="button" class="mc-btn gold" style="display:block;width:100%;margin-top:14px;padding:12px;font-size:11px">UNDUH QR</button>
-  </div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
-function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
-function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
-if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:180,height:180,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
-</script>
-@endif
     </div>
   </section>
 
@@ -939,7 +926,7 @@ requestAnimationFrame(loop);
   Array.prototype.forEach.call(nav.querySelectorAll('a[data-sec]'),function(a){
     var el=document.getElementById(a.getAttribute('data-sec'));
     if(!el){a.remove();return;}
-    a.addEventListener('click',function(e){e.preventDefault();el.scrollIntoView({behavior:'smooth'});});
+    a.addEventListener('click',function(e){e.preventDefault();el.scrollIntoView({behavior:'instant'});});
     items.push([a,el]);
   });
   if(!items.length){nav.style.display='none';return;}
@@ -1016,7 +1003,64 @@ function gal3dConvert(grid, prev, next, dotsBox, itemSel){
     var _nv=document.getElementById("gal3dNav"); if(_nv) _nv.style.display="none";
   }
 })( );
+/* ---------- Lightbox galeri minecraft: klik foto depan membuka, geser ganti foto ---------- */
+var mcLbList=[], mcLbIdx=0;
+function mcLbCollect(){ mcLbList=[...document.querySelectorAll("#galGrid .item-frame img")].map(function(im){return im.getAttribute("src")||im.src;}).filter(Boolean); }
+function mcLbShow(){ if(!mcLbList.length) return; document.getElementById("mcLbImg").src=mcLbList[mcLbIdx]; document.getElementById("mcLbCount").textContent=(mcLbIdx+1)+" / "+mcLbList.length; document.getElementById("mcLb").style.display="flex"; }
+function openMcLb(i){ mcLbCollect(); if(!mcLbList.length) return; mcLbIdx=(i+mcLbList.length)%mcLbList.length; mcLbShow(); }
+function stepMcLb(d){ if(!mcLbList.length) return; mcLbIdx=(mcLbIdx+d+mcLbList.length)%mcLbList.length; mcLbShow(); }
+function closeMcLb(){ document.getElementById("mcLb").style.display="none"; }
+function mcLbInit(){ var lb=document.getElementById("mcLb"); if(!lb) return; var sx=0, sw=false;
+  lb.addEventListener("touchstart",function(e){ sx=e.changedTouches[0].clientX; sw=false; },{passive:true});
+  lb.addEventListener("touchmove",function(e){ if(sw) return; var dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>50){ sw=true; stepMcLb(dx<0?1:-1); } },{passive:true});
+  var grid=document.getElementById("galGrid");
+  if(grid) grid.addEventListener("click",function(e){ var fr=e.target.closest(".item-frame"); if(!fr) return; var frames=[...grid.querySelectorAll(".item-frame")]; var i=frames.indexOf(fr); if(i>=0) openMcLb(i); });
+}
+if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded", mcLbInit); } else { mcLbInit(); }
+
 </script>
+@if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
+<div id="qrModal" style="position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7;padding:20px" onclick="if(event.target===this)closeQrModal()">
+  <div style="background:#101010;border:3px solid #000;box-shadow:inset 2px 2px 0 rgba(255,255,255,.12),0 0 0 2px #3a3a3a,0 24px 60px rgba(0,0,0,.5);padding:22px 18px;max-width:360px;width:100%;text-align:center;position:relative">
+    <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:6px;right:10px;border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:#fff">&times;</button>
+    <div style="display:flex;justify-content:center;gap:10px;margin:2px 0 10px">
+      @if(mcGet('bride_photo'))<img src="{{ mcGet('bride_photo') }}" alt="{{ $brideFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:0;border:2px solid #5b5b5b;flex:none">@else<div style="width:56px;height:56px;border-radius:0;border:2px solid #5b5b5b;background:#2b2b2b;color:#fcee5e;display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:20px;">{{ mb_substr($brideNick, 0, 1) }}</div>@endif
+      @if(mcGet('groom_photo'))<img src="{{ mcGet('groom_photo') }}" alt="{{ $groomFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:0;border:2px solid #5b5b5b;flex:none">@else<div style="width:56px;height:56px;border-radius:0;border:2px solid #5b5b5b;background:#2b2b2b;color:#fcee5e;display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:20px;">{{ mb_substr($groomNick, 0, 1) }}</div>@endif
+    </div>
+    <div style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:.18em;color:#7bff5e">THE WEDDING OF</div>
+    <div style="font-family:'Press Start 2P',monospace;font-size:11px;line-height:1.6;color:#7bff5e;margin:8px 0 0">{{ $brideNick }} &amp; {{ $groomNick }}</div>
+    <div style="font-size:11px;color:#c8d2dc;margin-top:8px">{{ mcDate($wDate) }}, {{ str_replace(':', '.', $wTime) }}&ndash;{{ str_replace(':', '.', $wTimeE) }} {{ mcGet('wedding_timezone','WIB') }}</div>
+    <div style="border-top:2px solid #3a3a3a;margin:14px 0 0"></div>
+    <div style="display:flex;gap:14px;align-items:center;text-align:left;margin-top:14px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11px;color:#c8d2dc">Kepada Yth:</div>
+        <div style="font-size:11px;color:#c8d2dc">Bpk/Ibu/Saudara/i</div>
+        <div style="font-size:14px;font-weight:700;line-height:1.3;color:#fdf6dd;margin:2px 0">{{ $guestName }}</div>
+        <div style="font-size:11px;color:#c8d2dc">di Tempat</div>
+      </div>
+      <div style="background:#fff;padding:8px;flex:none;border:3px solid #5b5b5b"><div id="qrModalBox"></div></div>
+    </div>
+    <p style="margin:14px 0 0;font-size:12px;color:#fdf6dd">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
+    <p style="margin:8px 0 0;font-size:11px;line-height:1.7;color:#c8d2dc">Tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+    <button id="qrModalDownloadBtn" type="button" class="mc-btn gold" style="display:block;width:100%;margin-top:14px;padding:12px;font-size:11px">UNDUH QR</button>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
+function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
+if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:150,height:150,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
+</script>
+@endif
+
+<div id="mcLb" style="position:fixed;inset:0;z-index:140;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.92);padding:20px" onclick="if(event.target===this)closeMcLb()">
+  <button type="button" onclick="closeMcLb()" aria-label="Tutup" style="position:absolute;top:10px;right:14px;border:0;background:none;color:#fff;font-size:30px;line-height:1;cursor:pointer">&times;</button>
+  <img id="mcLbImg" src="" alt="Galeri" style="max-width:100%;max-height:80vh;object-fit:contain;border:3px solid #222;box-shadow:0 0 0 2px #6b6b6b" />
+  <button type="button" onclick="event.stopPropagation();stepMcLb(-1)" aria-label="Sebelumnya" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);border:1px solid rgba(123,255,94,.65);background:rgba(20,20,20,.85);color:#7bff5e;font-size:28px;line-height:1;width:44px;height:44px;border-radius:9999px;cursor:pointer">&#8249;</button>
+  <button type="button" onclick="event.stopPropagation();stepMcLb(1)" aria-label="Berikutnya" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);border:1px solid rgba(123,255,94,.65);background:rgba(20,20,20,.85);color:#7bff5e;font-size:28px;line-height:1;width:44px;height:44px;border-radius:9999px;cursor:pointer">&#8250;</button>
+  <div id="mcLbCount" style="position:absolute;bottom:20px;left:0;right:0;text-align:center;color:rgba(255,255,255,.8);font-size:13px;letter-spacing:.2em"></div>
+  <div style="position:absolute;bottom:48px;left:0;right:0;text-align:center;color:rgba(255,255,255,.7);font-size:12px;letter-spacing:.12em;pointer-events:none">&#8249; Geser untuk foto berikutnya &#8250;</div>
+</div>
 </body>
 </script>
 </body>

@@ -186,6 +186,11 @@ body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn
 .gal3dDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(255,255,255,.35);cursor:pointer}
 .gal3dDots .gal-dot.on{background:#e8b93c}
 @media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
+.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2}
+.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(127,127,127,.10)}
+.gal-hint .gh-a{display:inline-block;animation:galHintNudge 1.6s ease-in-out infinite}
+@keyframes galHintNudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+@media (prefers-reduced-motion:reduce){.gal-hint .gh-a{animation:none}}
 /* kisah journal */
 .journal{background:var(--paper);border:4px solid var(--wood-d);border-radius:10px;box-shadow:0 8px 0 rgba(93,58,26,.25);padding:6px}
 .jpage{border:2px dashed rgba(139,90,43,.4);border-radius:6px;padding:20px 16px;margin:10px}
@@ -231,6 +236,7 @@ body.locked .pbar,body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn
 .lb{position:fixed;inset:0;z-index:200;background:rgba(10,8,4,.94);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.35s;padding:20px;touch-action:pan-y}
 .lb.show{opacity:1;visibility:visible}
 #lbImg{max-width:100%;max-height:86vh;border-radius:8px;will-change:transform,opacity;border:4px solid var(--wood)}
+.lb-hint{position:absolute;bottom:48px;left:0;right:0;text-align:center;font-size:12px;letter-spacing:.12em;color:rgba(255,255,255,.75);pointer-events:none}
 .lb-x{position:absolute;top:14px;right:20px;font-size:42px;color:#fff;cursor:pointer;line-height:1;z-index:201;font-family:'Nunito',sans-serif}
 .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);font-size:32px;color:#fff;cursor:pointer;padding:16px 12px;z-index:201;user-select:none;opacity:.85;line-height:1;font-family:'Nunito',sans-serif}
 .lb-prev{left:6px}.lb-next{right:6px}
@@ -499,6 +505,7 @@ footer{padding:50px 20px 110px;text-align:center}
       <div id="galDots" class="gal3dDots"></div>
       <button id="galNext" type="button" aria-label="Berikutnya">&#8250;</button>
     </div>
+    <div class="gal-hint"><span><span class="gh-a">&#8249;</span> Geser untuk melihat foto <span class="gh-a">&#8250;</span></span></div>
   @endif
   <p class="rv" style="text-align:center;font-size:12px;color:var(--ink-soft);margin-top:14px">Klik foto untuk memperbesar • geser untuk lanjut</p>
 </section>
@@ -565,22 +572,36 @@ footer{padding:50px 20px 110px;text-align:center}
 </section>
 
 @if(mcGet('guest_qr_enabled') && !empty($guestQrCode))
-<div id="qrModal" style="position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px" onclick="if(event.target===this)closeQrModal()">
-  <div style="background:#fffdf4;border:3px solid var(--wood);border-radius:14px;padding:26px 22px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+<div id="qrModal" style="position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65;padding:20px" onclick="if(event.target===this)closeQrModal()">
+  <div style="background:#fffdf4;border:3px solid #8b5a2b;border-radius:14px;padding:24px 20px;max-width:360px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.4)">
     <button type="button" onclick="closeQrModal()" aria-label="Tutup" style="position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#5b4636">&times;</button>
-    <h2 style="font-size:22px;color:#5b4636;margin:0 0 6px">QR Check-In</h2>
-    <p style="font-size:13px;line-height:1.6;color:var(--ink-soft);margin:0 0 18px">Tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
-    <div style="background:#fff;padding:14px;border-radius:12px;display:inline-block;box-shadow:0 8px 24px rgba(0,0,0,.12)"><div id="qrModalBox"></div></div>
-    <p style="margin:16px 0 0;font-weight:700;color:#2b2118">{{ $guestName }}</p>
-    <p style="margin:6px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
-    <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
+    <div style="display:flex;justify-content:center;gap:10px;margin:2px 0 10px">
+      @if(mcGet('bride_photo'))<img src="{{ mcGet('bride_photo') }}" alt="{{ $brideFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #8b5a2b;flex:none">@else<div style="width:56px;height:56px;border-radius:50%;border:2px solid #8b5a2b;background:#8b5a2b;color:#fff8e7;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">{{ mb_substr($brideNick, 0, 1) }}</div>@endif
+      @if(mcGet('groom_photo'))<img src="{{ mcGet('groom_photo') }}" alt="{{ $groomFull }}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #8b5a2b;flex:none">@else<div style="width:56px;height:56px;border-radius:50%;border:2px solid #8b5a2b;background:#8b5a2b;color:#fff8e7;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;font-weight:700;">{{ mb_substr($groomNick, 0, 1) }}</div>@endif
+    </div>
+    <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#6b543a">The Wedding Of</div>
+    <div style="font-family:serif;font-size:23px;line-height:1.25;color:#5b4636;margin:2px 0 0">{{ $brideNick }} &amp; {{ $groomNick }}</div>
+    <div style="font-size:13px;color:#3a2a18;margin-top:6px">{{ mcDate($wDate) }}, {{ str_replace(':', '.', $wTime) }}&ndash;{{ str_replace(':', '.', $wTimeE) }} {{ mcGet('wedding_timezone','WIB') }}</div>
+    <div style="border-top:1px solid #8b5a2b;opacity:.55;margin:14px 0 0"></div>
+    <div style="display:flex;gap:14px;align-items:center;text-align:left;margin-top:14px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;color:#6b543a">Kepada Yth:</div>
+        <div style="font-size:12px;color:#6b543a">Bpk/Ibu/Saudara/i</div>
+        <div style="font-size:17px;font-weight:700;line-height:1.3;color:#5b4636;margin:2px 0">{{ $guestName }}</div>
+        <div style="font-size:12px;color:#6b543a">di Tempat</div>
+      </div>
+      <div style="background:#fff;padding:8px;border-radius:12px;flex:none;box-shadow:0 8px 24px rgba(0,0,0,.12)"><div id="qrModalBox"></div></div>
+    </div>
+    <p style="margin:14px 0 0;font-size:13px;color:#6b543a">Kode manual: <b style="letter-spacing:.12em;color:#3a2a18">{{ $guestQrCode }}</b></p>
+    <p style="margin:8px 0 0;font-size:12px;line-height:1.6;color:#6b543a">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
+    <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:16px;padding:12px;border:none;border-radius:999px;background:#8b5a2b;color:#fff8e7;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
   </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 function openQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='flex';}
 function closeQrModal(){var m=document.getElementById('qrModal');if(m)m.style.display='none';}
-if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:200,height:200,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
+if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{text:"{{ $guestQrCode }}",width:150,height:150,correctLevel:QRCode.CorrectLevel.M});document.getElementById('qrModalDownloadBtn').onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};}
 </script>
 @endif
 
@@ -677,7 +698,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
   <span class="lb-prev" onclick="stepLb(-1)">&#10094;</span>
   <img id="lbImg" src="" alt="Foto">
   <span class="lb-next" onclick="stepLb(1)">&#10095;</span>
-  <span class="lb-count" id="lbCount"></span>
+  <span class="lb-hint">&#8249; Geser untuk foto berikutnya &#8250;</span><span class="lb-count" id="lbCount"></span>
 </div>
 
 <audio id="mus" loop preload="none"></audio>
@@ -819,7 +840,7 @@ window.addEventListener('scroll', function(){
     a.innerHTML = '<span class="ic">' + s[1] + '</span><span>' + s[2] + '</span>';
     a.addEventListener('click', function(e){
       e.preventDefault();
-      document.getElementById(s[0]).scrollIntoView({behavior:'smooth'});
+      document.getElementById(s[0]).scrollIntoView({behavior:'instant'});
     });
     nav.appendChild(a); items.push([s[0], a]);
   });

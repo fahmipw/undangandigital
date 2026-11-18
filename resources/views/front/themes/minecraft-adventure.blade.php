@@ -203,6 +203,11 @@ select.mc-input{appearance:none}
 .gal3dDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(255,255,255,.35);cursor:pointer}
 .gal3dDots .gal-dot.on{background:#fcee5e}
 @media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
+.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2}
+.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(127,127,127,.10)}
+.gal-hint .gh-a{display:inline-block;animation:galHintNudge 1.6s ease-in-out infinite}
+@keyframes galHintNudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+@media (prefers-reduced-motion:reduce){.gal-hint .gh-a{animation:none}}
 .scoreboard{margin-top:16px;background:#101010;border:3px solid #000;padding:4px 0}
 .scoreboard h4{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--gold);padding:10px 14px;border-bottom:2px solid #2a2a2a}
 .srow{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #222;font-size:20px;color:#e8e8e8}
@@ -311,6 +316,7 @@ select.mc-input{appearance:none}
   <a href="#" onclick="event.preventDefault();openPanel('gallery')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path stroke-linecap="round" stroke-linejoin="round" d="m5 19 5.5-5.5 3 3L19 11l2 2"/></svg><span>Galeri</span></a>
   <a href="#" onclick="event.preventDefault();openPanel('gift')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8v13H3V8M1 3h22v5H1zM12 8v13M12 8H7.5a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8zm0 0h4.5a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8z"/></svg><span>Gift</span></a>
   <a href="#" onclick="event.preventDefault();openPanel('rsvp')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg><span>RSVP</span></a>
+  <a href="#" onclick="event.preventDefault();openPanel('ucapan')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span>Ucapan</span></a>
 </nav>
 </div>
 
@@ -339,6 +345,7 @@ const MC = {
   prewedLink: @json($prewedLink),
   prewedEmbed: @json($prewedEmbed),
   brideNick: @json($brideNick), groomNick: @json($groomNick),
+  bridePhoto: @json(mcaGet('bride_photo')), groomPhoto: @json(mcaGet('groom_photo')),
   brideFull: @json($brideFull), groomFull: @json($groomFull),
   guestName: @json($guestName),
   dateText: @json(mcaDate($wDate)),
@@ -639,6 +646,7 @@ function markVisited(id){
   heartFx(player.x-camX,player.y-camY-30,10);
   toast(`LOKASI DITEMUKAN: ${L.name} (${visited.size}/6)`);
 }
+function qrPhoto(u,n){return u?'<img src="'+esc(u)+'" style="width:56px;height:56px;object-fit:cover;border-radius:0;border:3px solid #2b2b2b;flex:none">':'<div style="width:56px;height:56px;border-radius:0;border:3px solid #2b2b2b;background:#2b2b2b;color:#fcee5e;display:flex;align-items:center;justify-content:center;font-family:\'Press Start 2P\',monospace;font-size:20px;">'+esc((n||'?').charAt(0))+'</div>';}
 const TPL={
 couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2>
 @if(mcaGet('quotes'))<p class="psub" style="font-style:italic">&ldquo;{{ mcaGet('quotes') }}&rdquo;</p>@endif<p class="psub">Dua pemain. Satu tim. Selamanya.</p>
@@ -651,7 +659,7 @@ couple:()=>`<h2 class="ptitle">RUMAH MEMPELAI</h2>
 `,
 quotes:()=>`<h2 class="ptitle">KUTIPAN</h2>
 @if(mcaGet('quotes'))<p class="psub" style="font-style:italic;font-size:15px;line-height:1.8">&ldquo;{{ mcaGet('quotes') }}&rdquo;</p>@else<p class="psub">Belum ada kutipan.</p>@endif`,
-qr:()=>`<h2 class="ptitle">KARTU TAMU</h2><p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p><div class="qr-card"><div id="qrBox" style="display:flex;justify-content:center"></div><p class="psub" style="margin-top:10px">Nama: <b>${esc(MC.guestName)}</b></p><p class="psub" style="margin-top:6px">Kode manual: <b>${esc(MC.guestQr)}</b></p></div>`,
+qr:()=>`<h2 class="ptitle">KARTU TAMU</h2><div style="display:flex;justify-content:center;gap:10px;margin:6px 0 10px">${qrPhoto(MC.bridePhoto,MC.brideNick)}${qrPhoto(MC.groomPhoto,MC.groomNick)}</div><p style="text-align:center;font-size:11px;letter-spacing:.2em;color:#5a5a5a;margin:0">THE WEDDING OF</p><p style="text-align:center;font-family:'Press Start 2P',monospace;font-size:11px;color:#2b2b2b;margin:6px 0 2px">${esc(MC.brideNick)} &amp; ${esc(MC.groomNick)}</p><p class="psub" style="margin-bottom:10px">${esc(MC.dateText)} &middot; ${esc(MC.akad.time.replace(/:/g,'.'))}</p><div class="qr-card"><div style="display:flex;gap:14px;align-items:center;text-align:left"><div style="flex:1;min-width:0"><p class="psub" style="margin:0;text-align:left;font-size:13px">Kepada Yth:<br>Bpk/Ibu/Saudara/i</p><p style="font-weight:700;margin:4px 0;font-size:18px;color:#2b2b2b">${esc(MC.guestName)}</p><p class="psub" style="margin:0;text-align:left;font-size:13px">di Tempat</p></div><div id="qrBox" style="background:#fff;padding:8px;flex:none"></div></div><p class="psub" style="margin-top:10px">Kode manual: <b>${esc(MC.guestQr)}</b></p></div><p class="psub">Tunjukkan QR ini saat check-in di lokasi acara.</p>`,
 count:()=>`<h2 class="ptitle">MENARA JAM</h2><p class="psub">${MC.dateText} &mdash; quest dimulai dalam:</p>
 <div class="hud2">
 <div class="slot"><span class="num" id="cD">00</span><span class="unit">HARI</span></div>
@@ -670,7 +678,7 @@ gallery:()=>`<h2 class="ptitle">GALERI</h2><p class="psub">Balok-balok kenangan.
 ${(MC.prewedFile||MC.prewedLink)?'<div style="margin-top:10px;border:3px solid #222;box-shadow:inset 0 0 0 2px #6b6b6b;border-radius:4px;overflow:hidden;max-width:320px"><div style="position:relative;padding-top:56.25%">' + (MC.prewedFile?'<video controls preload="metadata" playsinline src="'+esc(MC.prewedFile)+'" style="position:absolute;inset:0;width:100%;height:100%;background:#000" title="Video Prewedding"></video>':MC.prewedEmbed?'<iframe src="'+esc(MC.prewedEmbed)+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>':'<a href="'+esc(MC.prewedLink)+'" target="_blank" rel="noopener" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fdf6dd;text-decoration:none;font-size:9px;font-weight:700;letter-spacing:.15em">&#9654; TONTON VIDEO PREWEDDING</a>') + '</div></div>' : ""}
 <div class="frames2">
 @foreach(array_slice($gallery, 0, 6) as $i => $img)
-<div class="frame2"><img src="{{ $img }}" alt="Galeri {{ $i+1 }}" loading="lazy"><p>Kenangan {{ $i+1 }}</p></div>
+<div class="frame2" data-full="{{ $img }}"><img src="{{ $img }}" alt="Galeri {{ $i+1 }}" loading="lazy"><p>Kenangan {{ $i+1 }}</p></div>
 @endforeach
 </div>
 @if(empty($gallery))<p class="psub">Belum ada foto galeri.</p>@endif`,
@@ -682,6 +690,14 @@ rsvp:()=>`<h2 class="ptitle">POS RSVP</h2><p class="psub">Apakah kamu bergabung 
 <div style="margin-top:14px"><button class="mc-btn green" type="submit" style="font-size:11px">KIRIM RSVP</button></div>
 </form>
 <div class="scoreboard"><h4>&#9733; DAFTAR PETUALANG</h4><div id="rl2"><div class="srow"><span style="color:#777">Memuat...</span></div></div></div>
+<div class="scoreboard"><h4>&#9733; PAPAN UCAPAN</h4>
+<form id="uf2" style="padding:12px 14px">
+<input class="mc-input" id="un2" required maxlength="40" placeholder="Namamu..." style="margin-bottom:10px">
+<input class="mc-input" id="up2" required maxlength="160" placeholder="Tulis ucapan...">
+<div style="margin-top:10px"><button class="mc-btn gold" type="submit" style="font-size:10px">KIRIM UCAPAN</button></div>
+</form>
+<div id="ul2"></div></div>`,
+ucapan:()=>`<h2 class="ptitle">PAPAN UCAPAN</h2><p class="psub">Tulis doa restu untuk kedua mempelai.</p>
 <div class="scoreboard"><h4>&#9733; PAPAN UCAPAN</h4>
 <form id="uf2" style="padding:12px 14px">
 <input class="mc-input" id="un2" required maxlength="40" placeholder="Namamu..." style="margin-bottom:10px">
@@ -721,6 +737,7 @@ function openPanel(id){
   $("#panelOverlay").hidden=false;
   panelAnimate();
   if(id==="gallery")prewedPanelOpened();
+  if(id==="gallery")$$("#panelBody .frame2").forEach(f=>f.addEventListener("click",()=>{window.open(f.dataset.full,"_blank");blip(700,0.06,0.05);}));
   if(id==="couple"){
     drawFace($("#pfB"),{skin:"#f0c49c",hair:"#5a3a22",shirt:"#c2437f",style:"bride"});
     drawFace($("#pfG"),{skin:"#e8b98a",hair:"#2b2b2b",shirt:"#2f6db3",style:"groom"});
@@ -731,6 +748,7 @@ function openPanel(id){
     const t=document.createElement("canvas");t.width=16;t.height=16;
     drawSprite(t,ICONS[c.dataset.ic],PAL);c.getContext("2d").drawImage(t,0,0,16,16);});
   if(id==="rsvp"){wireRsvp();wireUcapan();}
+  if(id==="ucapan")wireUcapan();
   if(id==="gift")wireChest();
   blip(660,0.07,0.05);
 }
@@ -742,8 +760,8 @@ function openQrPanel(){
   $("#panelOverlay").hidden=false;
   panelAnimate();
   if(window.QRCode){
-    new QRCode($("#qrBox"),{text:MC.guestQr,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});
-    var qb=document.getElementById('qrBox');if(qb){if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#fff;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}
+    new QRCode($("#qrBox"),{text:MC.guestQr,width:150,height:150,correctLevel:QRCode.CorrectLevel.M});
+    var qb=document.getElementById('qrBox');if(qb){if(!document.getElementById('qrDownloadBtn')){var db=document.createElement('button');db.id='qrDownloadBtn';db.type='button';db.textContent='Unduh QR';db.style.cssText='display:block;width:100%;margin-top:14px;padding:12px;border:none;border-radius:999px;background:#fcee5e;color:#1c1c1c;font-weight:700;font-size:14px;cursor:pointer';db.onclick=function(){var c=qb.querySelector('canvas');var im=qb.querySelector('img');var u=c?c.toDataURL('image/png'):(im?im.src:'');if(!u)return;var a=document.createElement('a');a.href=u;a.download='QR-Undangan.png';a.click();};qb.parentNode.insertBefore(db,qb.nextSibling);}}
   }
 }
 function closePanel(){
@@ -987,6 +1005,9 @@ function gal3dConvert(grid, prev, next, dotsBox, itemSel){
     var next=document.createElement("button"); next.type="button"; next.setAttribute("aria-label","Berikutnya"); next.innerHTML="&#8250;";
     nav.appendChild(prev); nav.appendChild(dotsBox); nav.appendChild(next);
     grid.parentNode.insertBefore(nav, grid.nextSibling);
+    var hint=document.createElement("div"); hint.className="gal-hint";
+    hint.innerHTML='<span><span class="gh-a">&#8249;</span> GESER UNTUK MELIHAT FOTO <span class="gh-a">&#8250;</span></span>';
+    grid.parentNode.insertBefore(hint, nav.nextSibling);
     gal3dConvert(grid, prev, next, dotsBox, ".frame2");
   }
   function scan(){ var g=panelBody.querySelector(".frames2"); if(g) convert(g); }
