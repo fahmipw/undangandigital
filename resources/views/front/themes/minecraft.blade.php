@@ -445,6 +445,7 @@ body:not(.gate-open) #bottomNav{display:none!important}
       </form>
       <div class="scoreboard">
         <h4>&#9733; UCAPAN MASUK</h4>
+        <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
         <div id="ucapanList"><div class="score-empty">Memuat ucapan...</div></div>
       </div>
     </div>
@@ -843,7 +844,7 @@ async function loadUcapan(){
   const box=$("#ucapanList");if(!box)return;
   try{
     const r=await fetch("/api/ucapan?inv_id="+MC.invId);const j=await r.json();
-    const rows=(j.data||[]).slice(0,10);
+    const _all=(j.data||[]);var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=_all.length;const rows=_all.slice(0,10);
     box.innerHTML=rows.length?rows.map(x=>
       `<div class="msg-row"><div class="nm">${esc(x.nama)}</div><div class="ps">${esc(x.pesan)}</div>
        <div class="tm">${timeAgo(x.created_at)}</div></div>`

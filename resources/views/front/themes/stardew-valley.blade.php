@@ -635,6 +635,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
     <div class="sec-title">Ucapan</div>
     <div class="fence"></div>
   </div>
+  <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
   <div id="wishList" class="rv"></div>
   <form id="wishForm" class="formbox rv" onsubmit="return sendWish(event)" style="margin-top:22px">
     <div class="field"><label>Nama</label><input required name="name" maxlength="40" placeholder="Nama Anda"></div>
@@ -971,6 +972,7 @@ async function loadWishes(){
     var r = await fetch('/api/ucapan?inv_id=' + INV_ID + '&limit=20');
     var d = await r.json();
     var rows = d.data || [];
+    var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=rows.length;
     document.getElementById('wishList').innerHTML = rows.map(function(w){
       return '<div class="wish"><div class="wish-head"><b>' + esc(w.nama) + '</b><span class="wtime">' + esc(timeAgo(w.created_at)) + '</span></div><p>' + esc(w.pesan) + '</p></div>';
     }).join('') || '<p class="wish-empty">Belum ada ucapan. Jadilah yang pertama! 🌻</p>';

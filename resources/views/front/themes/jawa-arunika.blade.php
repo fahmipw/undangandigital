@@ -867,6 +867,7 @@ function withEnvelope(fn){
         <textarea id="wishPesan" required maxlength="300" rows="3" placeholder="Tulis ucapan & doa terbaik..." class="field-dark mb-3 resize-none"></textarea>
         <button type="submit" id="wishBtn" class="btn-outline-gold w-full text-[11px] tracking-[0.25em] font-semibold py-3 rounded-xl">KIRIM UCAPAN</button>
       </form>
+      <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
       <div id="wishList" class="space-y-3 max-h-80 overflow-y-auto pr-1">
         <p class="text-center text-stone-500 font-serif italic text-sm" id="wishLoading">Memuat ucapan...</p>
       </div>
@@ -1246,6 +1247,7 @@ async function loadWishes(){
   try{
     const r=await fetch("/api/ucapan?inv_id="+JWA.invId+"&limit=20"); const j=await r.json();
     const rows=j.data||[];
+    var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=rows.length;
     box.innerHTML=rows.length?rows.map(x=>
       `<div class="bg-black/30 border border-jawa-gold/20 rounded-xl p-4 text-left">
         <p class="text-jawa-gold text-[10px] tracking-[0.2em] font-semibold mb-1">${esc(x.nama)}</p>

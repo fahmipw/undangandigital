@@ -803,6 +803,8 @@ function withEnvelope(fn){
       <button type="submit" id="wish-submit" class="btn-gold w-full py-3.5 rounded-full text-[12px] font-semibold tracking-[0.25em]">KIRIM UCAPAN</button>
     </form>
 
+    <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
+
     <div id="wish-list" class="relative z-10 w-full max-w-[340px] mt-8 flex flex-col gap-3 text-left"></div>
   </section>
 
@@ -1202,9 +1204,10 @@ window.prewedPauseMusic=prewedPauseMusic;
     if (!list) return;
     list.innerHTML = '';
     try {
-      const res = await fetch('/api/ucapan/' + INV_ID);
+      const res = await fetch('/api/ucapan?inv_id=' + INV_ID);
       const data = await res.json();
       const itemsW = Array.isArray(data) ? data : (data.data || data.ucapan || []);
+      var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=itemsW.length;
       if (!itemsW.length) { list.innerHTML = '<p class="text-center text-[13px] text-puspa-soft/60 py-2">Jadilah yang pertama memberikan ucapan</p>'; return; }
       itemsW.forEach(w => list.appendChild(wishCard(w)));
     } catch (e) {

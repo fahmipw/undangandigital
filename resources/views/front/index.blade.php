@@ -1591,6 +1591,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         </div>
 
         <!-- Message list -->
+        <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
         <div id="message-list" class="space-y-4 reveal-stagger">
           <!-- Seed messages -->
           <div class="message-card p-5 border-l-2 border-secondary bg-surface-container-low rounded-r-xl">
@@ -1956,6 +1957,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           fetch(`api/ucapan?inv_id=${invId}&limit=20`)
             .then(function (res) { return res.json(); })
             .then(function (data) {
+              var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=(data.data||[]).length;
               if (!data.success || !data.data.length) return;
               var list = document.getElementById("message-list");
               list.innerHTML = ""; // hapus seed messages
@@ -1986,6 +1988,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
                 var list = document.getElementById("message-list");
                 var card = renderCard(data.data, true);
                 list.insertBefore(card, list.firstChild);
+                var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=(parseInt(_wt.textContent||'0',10)||0)+1;
                 card.scrollIntoView({ behavior: "smooth", block: "start" });
                 document.getElementById("guest-name").value = "";
                 document.getElementById("guest-message").value = "";

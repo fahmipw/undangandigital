@@ -1030,6 +1030,7 @@ function openPanel(id){
       <label class="lbl">UCAPAN &amp; DOA</label><textarea class="pq-input" name="pesan" required rows="3" placeholder="Tulis ucapan & doa restu..."></textarea>
       <button type="submit" class="pq-btn green" style="width:100%;margin-top:14px">KIRIM UCAPAN</button>
     </form>
+    <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
     <div id="wishList" style="margin-top:16px"></div>`;
     $("#wishForm").addEventListener("submit",submitWish);
     loadWishes();
@@ -1173,6 +1174,7 @@ async function loadWishes(){
   try{
     const r=await fetch("/api/ucapan?inv_id="+MC.invId); const j=await r.json();
     const list=Array.isArray(j)?j:(j.data||[]);
+    var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=list.length;
     if(!list.length){ box.innerHTML='<p style="text-align:center;color:#7a6a4a;font-size:19px">Belum ada ucapan. Jadilah yang pertama!</p>'; return; }
     box.innerHTML=list.map(w=>`<div class="msg-row"><div class="nm">${esc(w.nama)}</div><div class="ps">${esc(w.pesan)}</div><div class="tm">${esc(timeAgo(w.created_at))}</div></div>`).join("");
   }catch(e){ box.innerHTML='<p style="text-align:center;color:#7a6a4a">Gagal memuat ucapan.</p>'; }

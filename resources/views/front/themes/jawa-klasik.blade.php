@@ -830,6 +830,7 @@ function withEnvelope(fn){
       <textarea name="pesan" required rows="3" placeholder="Tulis ucapan & doa restu..." class="field-klasik"></textarea>
       <button type="submit" class="btn-gold w-full text-[11px] font-semibold tracking-[0.25em] py-3.5 rounded-xl">KIRIM UCAPAN</button>
     </form>
+    <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
     <div id="wishList" class="anim-fade relative z-10 w-full max-w-[340px] space-y-3 max-h-80 overflow-y-auto pr-1 text-left"></div>
   </section>
 
@@ -1095,6 +1096,7 @@ async function loadWishes(){
   try{
     const r=await fetch("/api/ucapan?inv_id="+JWA.invId); const j=await r.json();
     const list=Array.isArray(j)?j:(j.data||[]);
+    var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=list.length;
     if(!list.length){ box.innerHTML='<p class="text-center text-klasik-cream/50 text-sm font-serif italic">Belum ada ucapan. Jadilah yang pertama!</p>'; return; }
     box.innerHTML=list.map(w=>
       '<div class="card-klasik p-4"><p class="font-semibold text-klasik-lightgold text-sm">'+esc(w.nama)+'</p>'+

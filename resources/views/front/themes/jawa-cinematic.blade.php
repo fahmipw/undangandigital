@@ -682,6 +682,7 @@ function withEnvelope(fn){
         <textarea id="wishPesan" required maxlength="300" rows="3" placeholder="Tulis ucapan & doa terbaik..." class="w-full bg-white/70 border border-mocha/25 rounded-xl px-4 py-3 mb-3 outline-none focus:border-gold transition resize-none"></textarea>
         <button type="submit" id="wishBtn" class="btn-ghost w-full text-sm tracking-[.2em] font-semibold py-3.5 rounded-xl !text-mochadark !border-mochadark/50">KIRIM UCAPAN</button>
       </form>
+      <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
       <div id="wishList" class="space-y-4 max-h-96 overflow-y-auto pr-1">
         <p class="text-center text-mochadark/50 font-serif italic" id="wishLoading">Memuat ucapan...</p>
       </div>
@@ -1068,6 +1069,7 @@ async function loadWishes(){
   try{
     const r=await fetch("/api/ucapan?inv_id="+JC.invId+"&limit=20");const j=await r.json();
     const rows=j.data||[];
+    var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=rows.length;
     box.innerHTML=rows.length?rows.map(x=>
       `<div class="bg-white/70 border border-mocha/15 rounded-xl p-4">
         <p class="text-golddim text-[11px] tracking-[.2em] font-semibold mb-1">${esc(x.nama)}</p>

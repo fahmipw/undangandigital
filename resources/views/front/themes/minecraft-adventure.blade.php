@@ -696,6 +696,7 @@ rsvp:()=>`<h2 class="ptitle">POS RSVP</h2><p class="psub">Apakah kamu bergabung 
 <input class="mc-input" id="up2" required maxlength="160" placeholder="Tulis ucapan...">
 <div style="margin-top:10px"><button class="mc-btn gold" type="submit" style="font-size:10px">KIRIM UCAPAN</button></div>
 </form>
+<div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
 <div id="ul2"></div></div>`,
 ucapan:()=>`<h2 class="ptitle">PAPAN UCAPAN</h2><p class="psub">Tulis doa restu untuk kedua mempelai.</p>
 <div class="scoreboard"><h4>&#9733; PAPAN UCAPAN</h4>
@@ -704,6 +705,7 @@ ucapan:()=>`<h2 class="ptitle">PAPAN UCAPAN</h2><p class="psub">Tulis doa restu 
 <input class="mc-input" id="up2" required maxlength="160" placeholder="Tulis ucapan...">
 <div style="margin-top:10px"><button class="mc-btn gold" type="submit" style="font-size:10px">KIRIM UCAPAN</button></div>
 </form>
+<div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
 <div id="ul2"></div></div>`,
 gift:()=>`<h2 class="ptitle">PETI HARTA</h2><p class="psub">Klik petinya untuk membuka.</p>
 <div class="chest-zone"><div class="chest" id="ch2"><div class="glow"></div><div class="lid"></div><div class="base"></div></div>
@@ -818,7 +820,7 @@ function timeAgo(s){const d=new Date(String(s).replace(" ","T")+"+07:00");if(isN
   return Math.floor(n/86400)+" hari yang lalu";}
 function wireUcapan(){
   const box=$("#ul2");
-  const load=async()=>{try{const rows=(await apiGet("/api/ucapan?inv_id="+MC.invId)).slice(0,8);
+  const load=async()=>{try{const _all=(await apiGet("/api/ucapan?inv_id="+MC.invId));var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=_all.length;const rows=_all.slice(0,8);
     box.innerHTML=rows.length?rows.map(x=>
       `<div class="msg-row"><div class="nm">${esc(x.nama)}</div><div class="ps">${esc(x.pesan)}</div>
        <div class="tm">${timeAgo(x.created_at)}</div></div>`

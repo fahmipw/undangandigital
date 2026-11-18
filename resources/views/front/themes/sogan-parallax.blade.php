@@ -508,6 +508,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 <section id="ucapan">
 <div class="rvd"><div class="sec-kicker">Doa &amp; Harapan</div><div class="sec-title dekor">Ucapan</div></div>
 <svg class="ukiran rv" viewBox="0 0 320 30"><path d="M10 15 H138 M182 15 H310" stroke="#a87e1f" stroke-width="1.5"/><path d="M160 4 l11 11 -11 11 -11 -11 Z" fill="url(#emasG)"/><circle cx="146" cy="15" r="3" fill="#d4af37"/><circle cx="174" cy="15" r="3" fill="#d4af37"/></svg>
+<div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
 <div id="wishList" class="rv"></div>
 <form id="wishForm" class="rv" onsubmit="return sendWish(event)" style="margin-top:22px">
 <div class="field"><label>Nama</label><input required name="name" placeholder="Nama Anda"></div>
@@ -625,7 +626,7 @@ async function sendRSVP(e){e.preventDefault();const f=e.target;
 // wishes
 function wishTime(ts){if(!ts)return '';var s=String(ts).replace(' ','T');if(s.indexOf('Z')<0&&s.indexOf('+')<0)s+='+07:00';var d=new Date(s),diff=Math.floor((Date.now()-d.getTime())/1000);if(isNaN(diff)||diff<0||diff<60)return 'Baru saja';if(diff<3600)return Math.floor(diff/60)+' menit yang lalu';if(diff<86400)return Math.floor(diff/3600)+' jam yang lalu';return Math.floor(diff/86400)+' hari yang lalu';}
 async function loadWishes(){try{const r=await fetch('/api/ucapan?inv_id='+INV_ID);const d=await r.json();
-  wishList.innerHTML=(d.data||d||[]).map(w=>`<div class="wish"><b>${esc(w.nama||w.name)}</b><span class="st">${esc(w.status||'')}</span><span class="wtime">${esc(wishTime(w.created_at||w.tanggal||''))}</span><p>${esc(w.pesan||w.message||w.ucapan||'')}</p></div>`).join('')||'<p style="color:var(--tinta-dim)">Belum ada ucapan.</p>';}catch(e){}}
+  var _rows=(d.data||d||[]);var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=_rows.length;wishList.innerHTML=_rows.map(w=>`<div class="wish"><b>${esc(w.nama||w.name)}</b><span class="st">${esc(w.status||'')}</span><span class="wtime">${esc(wishTime(w.created_at||w.tanggal||''))}</span><p>${esc(w.pesan||w.message||w.ucapan||'')}</p></div>`).join('')||'<p style="color:var(--tinta-dim)">Belum ada ucapan.</p>';}catch(e){}}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function sendWish(e){e.preventDefault();const f=e.target;
   const r=await fetch('/api/ucapan?inv_id='+INV_ID,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:f.name.value,message:f.message.value})});
@@ -934,6 +935,7 @@ async function loadWishes(){
     var r = await fetch('/api/ucapan?inv_id=' + INV_ID + '&limit=20');
     var d = await r.json();
     var rows = d.data || [];
+    var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=rows.length;
     document.getElementById('wishList').innerHTML = rows.map(function(w){
       return '<div class="wish"><div class="wish-head"><b>' + esc(w.nama) + '</b><span class="wtime">' + esc(timeAgo(w.created_at)) + '</span></div><p>' + esc(w.pesan) + '</p></div>';
     }).join('') || '<p class="wish-empty">Belum ada ucapan.</p>';
