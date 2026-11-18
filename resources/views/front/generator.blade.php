@@ -503,6 +503,16 @@
                 <input type="text" id="generator-guest-search" placeholder="Cari nama tamu..." autocomplete="off"
                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] transition-all text-sm mb-4">
                 <p class="text-sm text-gray-600 mb-4"><span id="generator-guest-count">0</span> tamu. Tanda <span class="font-semibold text-green-600">Sudah dikirim</span> muncul saat tombol Kirim WA diklik, atau saat ditandai manual — pengiriman di dalam aplikasi WhatsApp sendiri tidak bisa dilacak dari sini.</p>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4 text-sm">
+                    <p class="font-bold text-[#775a19] mb-2">Keterangan ikon di kolom Aksi:</p>
+                    <ul class="space-y-1.5 text-gray-700">
+                        <li class="flex items-start gap-2"><span class="text-[#775a19] mt-0.5"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></span><span><span class="font-semibold">Salin link</span> — menyalin tautan undangan tamu tersebut.</span></li>
+                        <li class="flex items-start gap-2"><span class="text-green-600 mt-0.5"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg></span><span><span class="font-semibold">Kirim WA</span> — membuka WhatsApp dengan pesan undangan siap dikirim ke nomor tamu.</span></li>
+                        <li class="flex items-start gap-2"><span class="text-amber-600 mt-0.5"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span><span><span class="font-semibold">Tandai sudah dikirim</span> — menandai tamu sudah dikirimi undangan (klik lagi, ikon berubah jadi panah putar, untuk membatalkan tanda).</span></li>
+                        <li class="flex items-start gap-2"><span class="text-[#775a19] mt-0.5"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></span><span><span class="font-semibold">Edit nama</span> — mengubah nama tamu (lalu simpan dengan centang hijau, atau batal dengan silang).</span></li>
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></span><span><span class="font-semibold">Hapus tamu</span> — menghapus tamu dari daftar (akan diminta konfirmasi dulu).</span></li>
+                    </ul>
+                </div>
                 <div class="border border-gray-200 rounded-xl max-h-96 overflow-y-auto">
                     <table class="responsive-table w-full text-sm text-left">
                         <colgroup><col style="width:6%"><col style="width:22%"><col style="width:34%"><col style="width:20%"><col style="width:18%"></colgroup>

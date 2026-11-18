@@ -10,6 +10,8 @@
    sampai klik BUKA -> video jalan (gerbang terbuka, bingkai emas turun ~7 dtk,
    nama + tanggal muncul di bingkai) -> selesai -> undangan terbuka + musik.
    Video TIDAK autoplay/loop; ada audio (musik opening) selama video jalan.
+   Keterbacaan cover (2026-11-18, diwarisi dari Pendopo): scrim + shadow teks
+   header diperkuat + kartu nama tamu solid + teks permohonan maaf berpil gelap.
    ============================================================ */
 $GLOBALS['jgb_settings'] = $settings ?? [];
 if (!function_exists('jgbGet')) {
@@ -243,7 +245,7 @@ tailwind.config = {
   <!-- ================= 2. COVER (VIDEO OPENING) ================= -->
   <section id="cover-gate" class="fixed inset-0 z-40 mx-auto max-w-[430px] h-[100dvh] overflow-hidden bg-[#2a1f14] text-center">
     <video id="coverVideo" class="absolute inset-0 w-full h-full object-cover" playsinline preload="auto" poster="{{ asset('images/jawa-gerbang/poster.jpg') }}" src="{{ asset('videos/jawa-gerbang-opening.mp4') }}"></video>
-    <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(42,31,20,.28) 0%,rgba(42,31,20,0) 30%,rgba(42,31,20,0) 55%,rgba(42,31,20,.55) 100%)"></div>
+    <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(20,14,8,.62) 0%,rgba(20,14,8,.30) 26%,rgba(20,14,8,0) 45%,rgba(20,14,8,0) 58%,rgba(20,14,8,.55) 84%,rgba(20,14,8,.72) 100%)"></div>
     <div id="coverNames" aria-hidden="true">
       <p class="cn-label">THE WEDDING OF</p>
       <p class="cn-names">{{ $groomNick }} <span>&amp;</span> {{ $brideNick }}</p>
@@ -251,11 +253,11 @@ tailwind.config = {
     </div>
     <div id="gate-content" class="relative z-10 h-full flex flex-col justify-between px-6 py-8">
       <div id="gate-header">
-        <p class="text-[11px] tracking-[0.35em] text-[#f4e8c8] font-semibold" style="text-shadow:0 2px 8px rgba(0,0,0,.5)">THE WEDDING OF</p>
-        <p class="font-serif text-[1.35rem] tracking-[0.08em] text-[#fdf6dd] mt-1" style="text-shadow:0 2px 10px rgba(0,0,0,.55)">{{ strtoupper($groomNick) }} &amp; {{ strtoupper($brideNick) }}</p>
+        <p class="text-[11px] tracking-[0.35em] text-[#f4e8c8] font-semibold" style="text-shadow:0 2px 10px rgba(0,0,0,.85),0 0 22px rgba(0,0,0,.6)">THE WEDDING OF</p>
+        <p class="font-serif text-[1.35rem] tracking-[0.08em] text-[#fdf6dd] mt-1" style="text-shadow:0 2px 12px rgba(0,0,0,.85),0 0 26px rgba(0,0,0,.6)">{{ strtoupper($groomNick) }} &amp; {{ strtoupper($brideNick) }}</p>
       </div>
       <div id="gate-center" class="flex flex-col items-center">
-        <div class="px-6 py-5 rounded-2xl" style="background:rgba(253,246,221,.92);border:1px solid rgba(201,164,92,.7);box-shadow:0 18px 40px rgba(0,0,0,.35)">
+        <div class="px-6 py-5 rounded-2xl" style="background:rgba(253,246,221,.92);background-color:#fdf6dd;border:2px solid rgba(201,164,92,.7);box-shadow:0 18px 44px rgba(0,0,0,.5)">
           <p class="text-[10px] tracking-[0.3em] uppercase text-gerbang-deep mb-2">Kepada Yth<br>Bapak/Ibu/Saudara/i</p>
           <p class="font-serif text-[1.35rem] font-semibold text-gerbang-ink">{{ $toName }}</p>
         </div>
@@ -264,7 +266,7 @@ tailwind.config = {
         <button id="btn-open" class="btn-gold font-semibold text-[12px] tracking-[0.25em] px-10 py-3.5 rounded-full">
           BUKA UNDANGAN
         </button>
-        <p class="text-[10px] text-[#f4e8c8]/80 mt-4 tracking-widest" style="text-shadow:0 2px 8px rgba(0,0,0,.5)">* Mohon maaf apabila ada kesalahan penulisan nama &amp; gelar</p>
+        <p class="text-[10px] text-[#f4e8c8]/80 mt-4 tracking-widest" style="text-shadow:0 1px 6px rgba(0,0,0,.8);background:rgba(0,0,0,.38);padding:5px 12px;border-radius:999px;display:inline-block">* Mohon maaf apabila ada kesalahan penulisan nama &amp; gelar</p>
       </div>
     </div>
   </section>
