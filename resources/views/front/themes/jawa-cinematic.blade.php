@@ -687,7 +687,7 @@ function withEnvelope(fn){
         </div>
         <div style="background:#fff;padding:8px;border-radius:12px;flex:none;box-shadow:0 8px 24px rgba(0,0,0,.18)"><div id="qrModalBox"></div></div>
       </div>
-      <p style="margin:14px 0 0;font-size:13px;color:rgba(248,245,238,.65)">Kode manual: <b style="letter-spacing:.12em;color:#F8F5EE">{{ $guestQrCode }}</b></p>
+      <p style="margin:14px 0 0;font-size:13px;color:rgba(248,245,238,.65)">Kode Undangan: <b style="letter-spacing:.12em;color:#F8F5EE">{{ $guestQrCode }}</b></p>
       <p style="margin:8px 0 0;font-size:12px;line-height:1.6;color:#F8F5EE;opacity:.85">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
       <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:16px;padding:12px;border:none;border-radius:999px;background:#D4AF37;color:#0A192F;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
     </div>

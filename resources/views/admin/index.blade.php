@@ -880,29 +880,6 @@
                     </div>
                 </div>
 
-                <div class="data-card p-8 rounded-3xl mt-6">
-                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-                        <h3 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
-                            <span class="material-symbols-outlined">bar_chart</span> Laporan Kehadiran
-                        </h3>
-                        <a id="ci-export-link" href="#" class="btn-theme px-5 py-2 rounded-xl font-bold text-xs uppercase flex items-center gap-1"><span class="material-symbols-outlined text-sm">download</span>Unduh CSV</a>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <div class="text-xs uppercase tracking-widest text-gray-500 mb-2 font-semibold">Per Petugas</div>
-                            <div id="ci-by-operator" class="space-y-2"><p class="text-sm text-gray-400 italic">Belum ada data.</p></div>
-                        </div>
-                        <div>
-                            <div class="text-xs uppercase tracking-widest text-gray-500 mb-2 font-semibold">Kedatangan per Jam</div>
-                            <div id="ci-hourly" class="space-y-2"><p class="text-sm text-gray-400 italic">Belum ada data.</p></div>
-                        </div>
-                    </div>
-                    <div class="mt-6">
-                        <div class="text-xs uppercase tracking-widest text-gray-500 mb-2 font-semibold">Belum Hadir <span id="ci-pending-count"></span></div>
-                        <div id="ci-pending-list" class="space-y-2 max-h-[300px] overflow-y-auto"><p class="text-sm text-gray-400 italic">Memuat...</p></div>
-                        <button id="ci-pending-more" class="mt-3 text-xs font-bold text-secondary underline hidden" onclick="toggleCiPending()">Tampilkan semua</button>
-                    </div>
-                </div>
             </div>
 
             <!-- RSVP Tab -->
@@ -1900,64 +1877,7 @@
                 }
                 setCiLink(token);
             } catch (e) {}
-            document.getElementById('ci-export-link').href = `api/checkin_export?inv_id=${currentInvId}`;
             refreshCiStats();
-            refreshCiReport();
-        }
-
-        var ciPendingExpanded = false;
-        var ciPendingCache = [];
-
-        async function refreshCiReport() {
-            try {
-                const res = await fetch(`api/checkin_report?inv_id=${currentInvId}`);
-                const d = await res.json();
-                if (!d.success) return;
-                const opBox = document.getElementById('ci-by-operator');
-                opBox.innerHTML = d.by_operator.length ? d.by_operator.map(o =>
-                    `<div class="flex justify-between items-center bg-white border border-outline-variant/30 rounded-xl px-4 py-2 text-sm">
-                        <span class="font-semibold text-primary">${escapeHtml(o.operator)}</span>
-                        <span class="text-xs text-gray-500">${o.count} tamu${o.companions ? ' \u2022 +' + o.companions + ' pendamping' : ''}</span>
-                    </div>`
-                ).join('') : '<p class="text-sm text-gray-400 italic">Belum ada data.</p>';
-                const hBox = document.getElementById('ci-hourly');
-                const maxH = d.hourly_buckets.length ? Math.max(...d.hourly_buckets.map(h => h.count)) : 0;
-                hBox.innerHTML = d.hourly_buckets.length ? d.hourly_buckets.map(h =>
-                    `<div class="flex items-center gap-3 text-sm">
-                        <span class="w-12 font-semibold text-primary">${escapeHtml(h.hour)}</span>
-                        <span class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden"><span class="block h-full rounded-full" style="width:${maxH ? Math.round(h.count / maxH * 100) : 0}%;background:#775a19"></span></span>
-                        <span class="text-xs text-gray-500 w-14 text-right">${h.count} tamu</span>
-                    </div>`
-                ).join('') : '<p class="text-sm text-gray-400 italic">Belum ada data.</p>';
-                ciPendingCache = d.pending_list || [];
-                document.getElementById('ci-pending-count').textContent = ciPendingCache.length ? '(' + ciPendingCache.length + ' tamu)' : '';
-                renderCiPending();
-            } catch (e) {}
-        }
-
-        function renderCiPending() {
-            const box = document.getElementById('ci-pending-list');
-            const more = document.getElementById('ci-pending-more');
-            if (!ciPendingCache.length) {
-                box.innerHTML = '<p class="text-sm text-gray-400 italic">Semua tamu sudah hadir.</p>';
-                more.classList.add('hidden');
-                return;
-            }
-            const shown = ciPendingExpanded ? ciPendingCache : ciPendingCache.slice(0, 20);
-            box.innerHTML = shown.map(n =>
-                `<div class="bg-white border border-outline-variant/30 rounded-xl px-4 py-2 text-sm font-semibold text-primary">${escapeHtml(n)}</div>`
-            ).join('');
-            if (ciPendingCache.length > 20) {
-                more.classList.remove('hidden');
-                more.textContent = ciPendingExpanded ? 'Tampilkan lebih sedikit' : 'Tampilkan semua (' + ciPendingCache.length + ' tamu)';
-            } else {
-                more.classList.add('hidden');
-            }
-        }
-
-        function toggleCiPending() {
-            ciPendingExpanded = !ciPendingExpanded;
-            renderCiPending();
         }
 
         function genToken(n) {

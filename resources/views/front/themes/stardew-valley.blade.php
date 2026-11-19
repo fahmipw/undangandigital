@@ -641,7 +641,7 @@ footer{padding:50px 20px 110px;text-align:center}
       </div>
       <div style="background:#fff;padding:8px;border-radius:12px;flex:none;box-shadow:0 8px 24px rgba(0,0,0,.12)"><div id="qrModalBox"></div></div>
     </div>
-    <p style="margin:14px 0 0;font-size:13px;color:#6b543a">Kode manual: <b style="letter-spacing:.12em;color:#3a2a18">{{ $guestQrCode }}</b></p>
+    <p style="margin:14px 0 0;font-size:13px;color:#6b543a">Kode Undangan: <b style="letter-spacing:.12em;color:#3a2a18">{{ $guestQrCode }}</b></p>
     <p style="margin:8px 0 0;font-size:12px;line-height:1.6;color:#6b543a">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
     <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:16px;padding:12px;border:none;border-radius:999px;background:#8b5a2b;color:#fff8e7;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
   </div>

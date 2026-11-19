@@ -52,6 +52,54 @@ $genLum = function($hex){ $hex = ltrim($hex, '#'); $r = hexdec(substr($hex, 0, 2
 $genDarkBg = $genLum($gen['bg']) < 0.25;
 $genPct = $genDarkBg ? '#4ade80' : '#166534';
 $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
+// Turunan kontras (WCAG >=4,5:1, dihitung dari luminansi — tanpa mengubah
+// entri $genPalettes, jadi generator.blade.php tak ikut berubah):
+// --gen-accent-text (judul kartu), --gen-top-bg (header), --gen-btn-*
+// (teks + gradien tombol emas), --gen-amber (stat Belum).
+$genRatio = function($a, $b) use ($genLum){
+    $l1 = $genLum($a); $l2 = $genLum($b);
+    return (max($l1, $l2) + 0.05) / (min($l1, $l2) + 0.05);
+};
+$genHex = function($r, $g, $b){
+    return sprintf('#%02x%02x%02x', max(0, min(255, (int)round($r))), max(0, min(255, (int)round($g))), max(0, min(255, (int)round($b))));
+};
+$genMoveAway = function($fg, $bg) use ($genLum, $genRatio, $genHex){
+    if($genRatio($fg, $bg) >= 4.5) return [$fg, 0];
+    $r = hexdec(substr($fg, 1, 2)); $g = hexdec(substr($fg, 3, 2)); $b = hexdec(substr($fg, 5, 2));
+    $toWhite = $genLum($fg) > $genLum($bg);
+    $out = $fg;
+    for($step = 1; $step <= 40; $step++){
+        $t = $step * 0.03;
+        if($toWhite){ $cr = $r + (255 - $r) * $t; $cg = $g + (255 - $g) * $t; $cb = $b + (255 - $b) * $t; }
+        else { $cr = $r * (1 - $t); $cg = $g * (1 - $t); $cb = $b * (1 - $t); }
+        $out = $genHex($cr, $cg, $cb);
+        if($genRatio($out, $bg) >= 4.5) return [$out, $step];
+    }
+    return [$out, 40];
+};
+// Teks aksen: lawan latar terburuk (card & bg).
+$genAccentText = $gen['accent'];
+if($genRatio($genAccentText, $gen['card']) <= $genRatio($genAccentText, $gen['bg'])){
+    list($genAccentText) = $genMoveAway($genAccentText, $gen['card']);
+    list($genAccentText) = $genMoveAway($genAccentText, $gen['bg']);
+} else {
+    list($genAccentText) = $genMoveAway($genAccentText, $gen['bg']);
+    list($genAccentText) = $genMoveAway($genAccentText, $gen['card']);
+}
+// Header: latar digeser sampai teks onAccent lolos (hanya bila perlu).
+list($genTopBg) = $genMoveAway($gen['accent'], $gen['onAccent']);
+// Tombol emas: pilih teks (onAccent / lawannya) dengan geseran minimal.
+$genBtnPick = null;
+foreach([$gen['onAccent'], $gen['onAccent'] === '#ffffff' ? '#1b1c1a' : '#ffffff'] as $txt){
+    list($bs, $s1) = $genMoveAway($gen['accent'], $txt);
+    list($be, $s2) = $genMoveAway($gen['accentDark'], $txt);
+    if($genBtnPick === null || $s1 + $s2 < $genBtnPick[0] || ($s1 + $s2 === $genBtnPick[0] && $txt === $gen['onAccent'])){
+        $genBtnPick = [$s1 + $s2, $txt, $bs, $be];
+    }
+}
+$genBtnText = $genBtnPick[1]; $genBtnStart = $genBtnPick[2]; $genBtnEnd = $genBtnPick[3];
+// Amber stat Belum di atas kartu (cermin skema hijau: terang/gelap).
+$genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
 @endphp
 <style>
   :root{
@@ -68,18 +116,21 @@ $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
     --gen-on-accent:{{ $gen['onAccent'] }};
     --gen-pct:{{ $genPct }};
     --gen-pct-fill:{{ $genPctFill }};
+    --gen-accent-text:{{ $genAccentText }};
+    --gen-top-bg:{{ $genTopBg }};
+    --gen-btn-text:{{ $genBtnText }};
+    --gen-btn-start:{{ $genBtnStart }};
+    --gen-btn-end:{{ $genBtnEnd }};
+    --gen-amber:{{ $genAmber }};
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--gen-bg);color:var(--gen-ink);min-height:100vh;padding-bottom:40px}
-  .top{background:var(--gen-accent);color:var(--gen-on-accent);padding:22px 18px;text-align:center}
-  .top small{letter-spacing:.25em;font-size:10px;opacity:.75;text-transform:uppercase}
+  .top{background:var(--gen-top-bg);color:var(--gen-on-accent);padding:22px 18px;text-align:center}
+  .top small{letter-spacing:.25em;font-size:10px;text-transform:uppercase}
   .top h1{font-size:20px;margin-top:6px}
-  .top .evdate{font-size:13px;margin-top:4px;opacity:.9}
+  .top .evdate{font-size:13px;margin-top:4px}
   .top .clock{font-size:13px;margin-top:6px;font-variant-numeric:tabular-nums}
   .top .clock b{font-weight:700}
-  .top-actions{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-  .top-pill{display:inline-block;background:transparent;color:inherit;border:1px solid currentColor;border-radius:999px;padding:6px 12px;font-size:12px;cursor:pointer;text-decoration:none;opacity:.9}
-  .top-pill:hover{opacity:1}
   .wrap{max-width:480px;margin:0 auto;padding:16px}
   .stats{display:flex;gap:10px;margin:16px 0 10px}
   .stat{flex:1;background:var(--gen-card);border:1px solid var(--gen-border);border-radius:14px;padding:14px 8px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.05)}
@@ -92,12 +143,15 @@ $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
   .progress .lbl{font-size:12px;color:var(--gen-inkSoft);text-align:center;margin-top:6px}
   .progress .lbl .pct{color:var(--gen-pct);font-weight:700}
   .card{background:var(--gen-card);border:1px solid var(--gen-border);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-  .card h3{font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:var(--gen-accent);margin-bottom:12px}
+  .card h3{font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:var(--gen-accent-text);margin-bottom:12px}
   .card h3 .pill{float:right;background:var(--gen-soft);border:1px solid var(--gen-border);color:var(--gen-inkSoft);border-radius:999px;padding:1px 8px;font-size:11px;letter-spacing:0;text-transform:none}
   #reader{border-radius:12px;overflow:hidden;background:#000;min-height:240px}
   #reader video{object-fit:cover}
+  .scan-wrap{position:relative}
+  .cam-switch{position:absolute;top:10px;right:10px;z-index:5;width:44px;height:44px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;display:none;align-items:center;justify-content:center;cursor:pointer;padding:0}
+  .cam-switch svg{display:block}
   .btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;margin-top:10px}
-  .btn-gold{background:linear-gradient(135deg,var(--gen-accent),var(--gen-accentDark));color:var(--gen-on-accent)}
+  .btn-gold{background:linear-gradient(135deg,var(--gen-btn-start),var(--gen-btn-end));color:var(--gen-btn-text)}
   .btn-ghost{background:var(--gen-soft);color:var(--gen-inkSoft);border:1px solid var(--gen-border)}
   .btn .ic{vertical-align:-3px;margin-right:6px}
   .row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
@@ -120,7 +174,7 @@ $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
   .badge{flex-shrink:0;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;white-space:nowrap}
   .badge.in{background:#dcfce7;color:#166534}
   .badge.out{background:#fef3c7;color:#92400e}
-  .mini{flex-shrink:0;border:none;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--gen-accent),var(--gen-accentDark));color:var(--gen-on-accent)}
+  .mini{flex-shrink:0;border:none;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--gen-btn-start),var(--gen-btn-end));color:var(--gen-btn-text)}
   .count{font-size:12px;color:var(--gen-inkSoft);text-align:center;margin-top:8px}
   .empty{color:var(--gen-inkSoft);font-style:italic;font-size:13px;text-align:center;padding:12px}
   /* Bar nama petugas + stepper pendamping (gelombang 2) */
@@ -129,13 +183,30 @@ $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
   .opbar input::placeholder{color:var(--gen-inkSoft)}
   .opbar .opname{flex:1;min-width:0;font-size:14px}
   .opbar .opname b{font-weight:700}
-  .opbar button{flex-shrink:0;border:none;border-radius:12px;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--gen-accent),var(--gen-accentDark));color:var(--gen-on-accent)}
+  .opbar button{flex-shrink:0;border:none;border-radius:12px;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--gen-btn-start),var(--gen-btn-end));color:var(--gen-btn-text)}
   .opbar button.alt{background:var(--gen-soft);color:var(--gen-inkSoft);border:1px solid var(--gen-border)}
   .stepper{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px}
   .stepper button{width:44px;height:44px;border-radius:50%;border:1px solid var(--gen-border);background:var(--gen-soft);color:var(--gen-ink);font-size:24px;font-weight:700;cursor:pointer}
   .stepper b{font-size:26px;min-width:36px;text-align:center;font-variant-numeric:tabular-nums}
   .people-lbl{font-size:12px;color:var(--gen-inkSoft);text-align:center;margin-top:4px}
   .recent-meta{font-size:11px;color:var(--gen-inkSoft);margin-top:2px}
+  /* Menu bertab */
+  .tabs{display:flex;gap:6px;margin:0 0 14px}
+  .tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 2px;border:1px solid var(--gen-border);border-radius:12px;background:var(--gen-card);color:var(--gen-inkSoft);font-size:11px;font-weight:700;cursor:pointer}
+  .tab svg{width:20px;height:20px}
+  .tab.active{background:linear-gradient(135deg,var(--gen-btn-start),var(--gen-btn-end));color:var(--gen-btn-text);border-color:transparent}
+  .tabpanel{display:none}
+  .tabpanel.active{display:block}
+  .rep-summary{font-size:14px;line-height:1.7}
+  .rep-summary b{font-size:18px}
+  .op-row{display:flex;justify-content:space-between;gap:8px;padding:9px 2px;border-bottom:1px solid var(--gen-border);font-size:14px}
+  .op-row:last-child{border-bottom:none}
+  .op-row small{color:var(--gen-inkSoft);font-size:11px;white-space:nowrap}
+  .hour-row{display:flex;align-items:center;gap:8px;font-size:13px;margin-top:6px}
+  .hour-row .hh{width:44px;flex-shrink:0;font-variant-numeric:tabular-nums}
+  .hour-row .track{flex:1;height:10px;border-radius:999px;background:var(--gen-soft);border:1px solid var(--gen-border);overflow:hidden}
+  .hour-row .hbar{height:100%;background:var(--gen-pct-fill)}
+  .hour-row .cc{width:28px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
   /* Overlay animasi sukses (Lottie centang hijau) */
   #success-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
   #success-overlay.show{display:flex}
@@ -144,7 +215,7 @@ $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
   #success-anim{width:200px;height:200px;margin:0 auto}
   #success-fallback{display:none;width:120px;height:120px;margin:16px auto;border-radius:50%;background:#dcfce7;color:#166534;font-size:72px;font-weight:800;align-items:center;justify-content:center}
   #success-fallback.show{display:flex}
-  .success-name{font-size:20px;font-weight:800;color:#166534;margin-top:4px}
+  .success-name{font-size:20px;font-weight:800;color:var(--gen-pct);margin-top:4px}
   .success-sub{font-size:13px;color:var(--gen-inkSoft);margin-top:4px}
 </style>
 </head>
@@ -154,10 +225,6 @@ $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
   <h1>{{ $title }}</h1>
   <div class="evdate" id="ev-date"></div>
   <div class="clock" id="clock">—</div>
-  <div class="top-actions">
-    <a class="top-pill" href="/checkin/{{ $slug }}/{{ $token }}/monitor">Mode Monitor</a>
-    <button class="top-pill" id="btn-sound" type="button" onclick="toggleSound()">Suara: Nyala</button>
-  </div>
 </div>
 <div class="wrap">
   <div class="card" id="op-card" style="padding:14px 18px">
@@ -175,8 +242,8 @@ $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
   </div>
   <div class="stats">
     <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gen-accent)"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><b id="st-total">–</b><span>Total Tamu</span></div>
-    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#15803d"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><b id="st-in" style="color:#15803d">–</b><span>Hadir</span></div>
-    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#b45309"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><b id="st-out" style="color:#b45309">–</b><span>Belum</span></div>
+    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gen-pct)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><b id="st-in" style="color:var(--gen-pct)">–</b><span>Hadir</span></div>
+    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gen-amber)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><b id="st-out" style="color:var(--gen-amber)">–</b><span>Belum</span></div>
   </div>
   <div class="progress">
     <div class="bar"><div class="fill" id="prog-fill"></div></div>
@@ -185,17 +252,38 @@ $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
   </div>
 
   <div id="result"><div class="big" id="res-title"></div><div class="sub" id="res-sub"></div></div>
+  <div class="tabs" role="tablist" aria-label="Menu check-in">
+    <button type="button" class="tab active" role="tab" aria-selected="true" data-tab="scan" onclick="switchTab('scan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM21 14v3M14 21h3M21 18v3h-3"/></svg><span>Scan QR</span></button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-tab="guests" onclick="switchTab('guests')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Kehadiran</span></button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-tab="report" onclick="switchTab('report')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg><span>Laporan</span></button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-tab="monitor" onclick="switchTab('monitor')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>Monitor</span></button>
+  </div>
+
+  <div class="tabpanel active" id="tab-scan" role="tabpanel">
 
   <div class="card">
     <h3>Scan QR Tamu</h3>
-    <div id="reader"></div>
+    <div class="scan-wrap">
+      <div id="reader"></div>
+      <button type="button" class="cam-switch" id="btn-cam" style="display:none" onclick="switchCamera()" title="Kamera belakang — ketuk untuk ganti" aria-label="Ganti kamera"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
+    </div>
     <button class="btn btn-gold" id="btn-scan" onclick="toggleScanner()"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM21 14v3M14 21h3M21 18v3h-3"/></svg><span id="btn-scan-label">Mulai Scan QR</span></button>
     <div class="row">
       <input id="manual" placeholder="KODE UNDANGAN" maxlength="16" autocomplete="off">
-      <button class="btn btn-gold" style="width:auto;margin-top:0;padding:13px 20px;white-space:nowrap" onclick="manualGo()">KODE UNDANGAN</button>
+    </div>
+    <div style="text-align:center">
+      <button type="button" class="btn btn-gold" id="btn-submit" style="display:inline-block;width:auto;margin-top:10px;padding:13px 28px;white-space:nowrap" onclick="manualGo()">Submit</button>
     </div>
   </div>
 
+    <div class="card">
+      <h3>Petugas Aktif</h3>
+      <div id="active-operators"><div class="empty">Belum ada check-in tercatat.</div></div>
+      <div style="font-size:12px;color:var(--gen-inkSoft);margin-top:8px">Tiap petugas buka link check-in di HP masing-masing dan isi nama sekali — daftar ini tersinkron otomatis.</div>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="tab-guests" role="tabpanel">
   <div class="card">
     <h3>Cari Tamu</h3>
     <input class="search" id="guest-search" type="search" placeholder="Cari nama tamu..." autocomplete="off" oninput="renderGuestSearch()">
@@ -212,6 +300,37 @@ $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
   <div class="card">
     <h3>Baru Saja Hadir</h3>
     <div id="recent"><div class="empty">Belum ada check-in.</div></div>
+  </div>
+  </div>
+
+  <div class="tabpanel" id="tab-report" role="tabpanel">
+    <div class="card">
+      <h3>Laporan Kehadiran</h3>
+      <div id="rep-summary" class="rep-summary"><div class="empty">Memuat laporan...</div></div>
+      <a id="report-csv" class="btn btn-gold" style="text-decoration:none;text-align:center;display:block" href="#">Unduh CSV</a>
+    </div>
+    <div class="card">
+      <h3>Per Petugas</h3>
+      <div id="rep-operators"><div class="empty">Memuat laporan...</div></div>
+    </div>
+    <div class="card">
+      <h3>Kedatangan per Jam</h3>
+      <div id="rep-hourly"><div class="empty">Memuat laporan...</div></div>
+    </div>
+    <div class="card">
+      <h3>Belum Hadir</h3>
+      <div id="rep-pending"><div class="empty">Memuat laporan...</div></div>
+      <div class="count" id="rep-pending-count"></div>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="tab-monitor" role="tabpanel">
+    <div class="card">
+      <h3>Mode Monitor</h3>
+      <div id="mon-sum" class="rep-summary">—</div>
+      <p style="font-size:13px;color:var(--gen-inkSoft);margin:10px 0">Halaman monitor hanya menampilkan kehadiran, tanpa tombol check-in. Cocok dibuka di layar besar atau HP kedua.</p>
+      <a class="btn btn-gold" style="text-decoration:none;text-align:center;display:block" href="/checkin/{{ $slug }}/{{ $token }}/monitor">Buka Halaman Monitor</a>
+    </div>
   </div>
 </div>
 
@@ -243,7 +362,7 @@ var CHECKIN_TOKEN = "{{ $token }}";
 var EVENT_TZ_LABEL = "{{ $event_timezone ?? 'WIB' }}";
 var EVENT_TZ_IANA = {WIB: 'Asia/Jakarta', WITA: 'Asia/Makassar', WIT: 'Asia/Jayapura'}[EVENT_TZ_LABEL] || 'Asia/Jakarta';
 var EVENT_DATE = "{{ $event_date ?? '' }}";
-var scanner = null, scanning = false, lastScan = 0;
+var scanner = null, scanning = false, lastScan = 0, camFacing = 'environment';
 
 // --- Nama petugas (opsi 1): ditanya sekali, disimpan per HP + undangan ---
 var OP_KEY = 'checkin_operator_' + INV_ID;
@@ -312,8 +431,7 @@ setInterval(tickClock, 1000);
 // --- Suara notifikasi (WebAudio, tanpa file) ---
 // AudioContext hanya boleh dibuat/di-resume setelah interaksi pengguna,
 // jadi dibuat malas (lazy) pada sentuhan/klik pertama.
-var audioCtx = null, soundOn = true;
-try{ soundOn = localStorage.getItem('checkin_sound') !== 'off'; }catch(e){}
+var audioCtx = null;
 function ensureAudio(){
   if(!audioCtx){ try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){} }
   if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
@@ -331,19 +449,14 @@ function beep(freq, start, dur, type, vol){
   o.start(start); o.stop(start + dur + 0.05);
 }
 function playSound(kind){
-  if(!soundOn || !audioCtx) return;
+  // Suara selalu aktif (tanpa toggle); AudioContext tetap lazy-init
+  // setelah interaksi pertama (aturan browser).
+  if(!audioCtx) return;
   var t = audioCtx.currentTime + 0.01;
   if(kind === 'ok'){ beep(660, t, 0.12); beep(880, t + 0.13, 0.2); }
   else if(kind === 'dup'){ beep(520, t, 0.12); beep(520, t + 0.16, 0.12); }
   else { beep(160, t, 0.3, 'sawtooth', 0.12); }
 }
-function toggleSound(){
-  soundOn = !soundOn;
-  try{ localStorage.setItem('checkin_sound', soundOn ? 'on' : 'off'); }catch(e){}
-  document.getElementById('btn-sound').textContent = soundOn ? 'Suara: Nyala' : 'Suara: Mati';
-  if(soundOn){ ensureAudio(); playSound('ok'); }
-}
-document.getElementById('btn-sound').textContent = soundOn ? 'Suara: Nyala' : 'Suara: Mati';
 
 function showRes(ok, title, sub){
   var r = document.getElementById('result');
@@ -376,6 +489,7 @@ async function doCheckin(code){
       playSound(d.already ? 'dup' : 'ok');
       refreshStats();
       loadGuests();
+      if(reportLoaded) loadReport();
     }else{
       showRes(false, 'GAGAL', d.message || 'Kode tidak valid');
       playSound('err');
@@ -484,26 +598,61 @@ function setScanBtn(on){
   document.getElementById('btn-scan').className = 'btn ' + (on ? 'btn-ghost' : 'btn-gold');
 }
 
-function toggleScanner(){
-  if(scanning){ stopScanner(); return; }
+function startScanner(){
   loadLib(function(){
     scanner = new Html5Qrcode('reader');
-    scanner.start({facingMode:'environment'}, {fps:10, qrbox:{width:230,height:230}},
+    scanner.start({facingMode:camFacing}, {fps:10, qrbox:{width:230,height:230}},
       function(text){ doCheckin(text); }, function(){}
     ).then(function(){
       scanning = true;
       setScanBtn(true);
+      detectCameras();
     }).catch(function(){ alert('Tidak dapat mengakses kamera.'); });
   });
+}
+function toggleScanner(){
+  if(scanning){ stopScanner(); return; }
+  startScanner();
 }
 function stopScanner(){
   if(scanner){ scanner.stop().then(function(){ scanner.clear(); }).catch(function(){}); }
   scanning = false;
   setScanBtn(false);
 }
+// Tampilkan tombol Ganti Kamera hanya bila HP punya >1 kamera.
+// getCameras butuh izin kamera, jadi baru dipanggil sesudah scanner jalan.
+function detectCameras(){
+  try{
+    if(window.Html5Qrcode && typeof Html5Qrcode.getCameras === 'function'){
+      Html5Qrcode.getCameras().then(function(list){
+        if(list && list.length > 1){
+          document.getElementById('btn-cam').style.display = 'flex';
+        }
+      }).catch(function(){});
+    }
+  }catch(e){}
+}
+function switchCamera(){
+  camFacing = (camFacing === 'environment') ? 'user' : 'environment';
+  var cb = document.getElementById('btn-cam');
+  cb.title = 'Kamera ' + (camFacing === 'environment' ? 'belakang' : 'depan') + ' — ketuk untuk ganti';
+  cb.setAttribute('aria-label', 'Ganti kamera');
+  if(!scanning) return;
+  // Hentikan dulu, baru mulai lagi dengan facingMode baru.
+  var s = scanner;
+  scanning = false;
+  setScanBtn(false);
+  if(s){
+    s.stop().then(function(){ try{ s.clear(); }catch(e){} startScanner(); })
+      .catch(function(){ startScanner(); });
+  }else{
+    startScanner();
+  }
+}
 
 // --- Daftar tamu: dimuat sekali, difilter client-side ---
 var guestsCache = [], guestsSig = '', pendingExpanded = false;
+var lastRecent = [];
 
 async function loadGuests(){
   try{
@@ -582,15 +731,111 @@ async function refreshStats(){
     document.getElementById('prog-lbl').innerHTML = '<span class="pct">' + pct + '%</span> (' + d.checked_in + ' dari ' + d.total + ' tamu sudah hadir)';
     var tp = (typeof d.total_people === 'number') ? d.total_people : d.checked_in;
     document.getElementById('people-lbl').textContent = 'Total orang hadir: ' + tp + ' orang' + (tp > d.checked_in ? ' (termasuk ' + (tp - d.checked_in) + ' pendamping)' : '');
+    lastRecent = d.recent || [];
+    var monSum = document.getElementById('mon-sum');
+    if(monSum) monSum.textContent = d.checked_in + ' dari ' + d.total + ' tamu hadir (' + pct + '%) • Total orang hadir: ' + tp + ' orang';
+    renderActiveOperators();
     document.getElementById('recent').innerHTML = d.recent.length
       ? d.recent.map(function(r,i){
           var meta = [];
           if(r.companions > 0) meta.push('+' + r.companions + ' pendamping');
           if(r.checked_in_by) meta.push('Petugas: ' + r.checked_in_by);
-          return '<div class="recent-item"><span><b style="color:var(--gen-accent);margin-right:6px">' + (i+1) + '.</b>' + esc(r.nama) + (meta.length ? '<div class="recent-meta">' + esc(meta.join(' • ')) + '</div>' : '') + '</span><small>' + esc(formatEventTime(r.checked_in_at)) + '</small></div>';
+          return '<div class="recent-item"><span><b style="color:var(--gen-accent-text);margin-right:6px">' + (i+1) + '.</b>' + esc(r.nama) + (meta.length ? '<div class="recent-meta">' + esc(meta.join(' • ')) + '</div>' : '') + '</span><small>' + esc(formatEventTime(r.checked_in_at)) + '</small></div>';
         }).join('')
       : '<div class="empty">Belum ada check-in.</div>';
   }catch(e){}
+}
+
+// --- Menu bertab ---
+var activeTab = 'scan';
+function switchTab(name){
+  activeTab = name;
+  var tabs = document.querySelectorAll('.tab');
+  for(var i = 0; i < tabs.length; i++){
+    var on = tabs[i].getAttribute('data-tab') === name;
+    tabs[i].classList.toggle('active', on);
+    tabs[i].setAttribute('aria-selected', on ? 'true' : 'false');
+  }
+  var panels = document.querySelectorAll('.tabpanel');
+  for(var j = 0; j < panels.length; j++){
+    panels[j].classList.toggle('active', panels[j].id === 'tab-' + name);
+  }
+  if(name === 'report') loadReport();
+}
+
+// --- Laporan kehadiran (endpoint checkin_report/checkin_export, token sama) ---
+var reportLoaded = false, reportData = null;
+function loadReport(){
+  fetch('/api/checkin_report?inv_id=' + INV_ID + '&token=' + encodeURIComponent(CHECKIN_TOKEN))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.success) return;
+      reportLoaded = true;
+      reportData = d;
+      renderReport();
+      renderActiveOperators();
+    }).catch(function(){});
+}
+function renderReport(){
+  var d = reportData;
+  if(!d) return;
+  document.getElementById('rep-summary').innerHTML =
+    '<b>' + d.checked_in + '</b> dari <b>' + d.total + '</b> tamu hadir (<b>' + d.percent + '%</b>)<br>' +
+    'Total orang hadir: <b>' + d.total_people + '</b> orang';
+  var ops = document.getElementById('rep-operators');
+  if(d.by_operator && d.by_operator.length){
+    ops.innerHTML = d.by_operator.map(function(o){
+      return '<div class="op-row"><span>' + esc(o.operator) + '</span><small>' + o.count + ' check-in' + (o.companions > 0 ? ' • +' + o.companions + ' pendamping' : '') + '</small></div>';
+    }).join('');
+  }else{
+    ops.innerHTML = '<div class="empty">Belum ada check-in.</div>';
+  }
+  var hr = document.getElementById('rep-hourly');
+  if(d.hourly_buckets && d.hourly_buckets.length){
+    var mx = 0;
+    d.hourly_buckets.forEach(function(h){ if(h.count > mx) mx = h.count; });
+    hr.innerHTML = d.hourly_buckets.map(function(h){
+      return '<div class="hour-row"><span class="hh">' + esc(h.hour) + '</span><span class="track"><span class="hbar" style="display:block;width:' + Math.round(h.count / mx * 100) + '%"></span></span><span class="cc">' + h.count + '</span></div>';
+    }).join('');
+  }else{
+    hr.innerHTML = '<div class="empty">Belum ada check-in.</div>';
+  }
+  var pd = document.getElementById('rep-pending');
+  var pend = d.pending_list || [];
+  if(pend.length){
+    pd.innerHTML = pend.map(function(n){
+      return '<div class="guest-item"><span class="gname">' + esc(n) + '</span></div>';
+    }).join('');
+  }else{
+    pd.innerHTML = '<div class="empty">Semua tamu sudah hadir.</div>';
+  }
+  document.getElementById('rep-pending-count').textContent = pend.length ? pend.length + ' tamu belum hadir' : '';
+}
+// --- Petugas aktif: dari laporan bila sudah dimuat, fallback dari recent ---
+function renderActiveOperators(){
+  var box = document.getElementById('active-operators');
+  if(!box) return;
+  if(reportData && reportData.by_operator && reportData.by_operator.length){
+    box.innerHTML = reportData.by_operator.map(function(o){
+      return '<div class="op-row"><span>' + esc(o.operator) + '</span><small>' + o.count + ' check-in' + (o.companions > 0 ? ' • +' + o.companions + ' pendamping' : '') + '</small></div>';
+    }).join('');
+    return;
+  }
+  var counts = {};
+  (lastRecent || []).forEach(function(r){
+    var n = r.checked_in_by || '(tanpa nama)';
+    counts[n] = (counts[n] || 0) + 1;
+  });
+  if(operatorName && !counts[operatorName]) counts[operatorName] = 0;
+  var names = Object.keys(counts);
+  if(!names.length){
+    box.innerHTML = '<div class="empty">Belum ada check-in tercatat.</div>';
+    return;
+  }
+  box.innerHTML = names.map(function(n){
+    var tag = (n === operatorName) ? ' (HP ini)' : '';
+    return '<div class="op-row"><span>' + esc(n) + tag + '</span><small>' + counts[n] + ' check-in</small></div>';
+  }).join('') + '<div style="font-size:11px;color:var(--gen-inkSoft);margin-top:6px">Dari 20 check-in terakhir — buka tab Laporan untuk hitungan lengkap.</div>';
 }
 
 // Polling tiap 5 detik saat halaman aktif (tab tersembunyi dijeda).
@@ -598,9 +843,11 @@ function tick(){
   if(document.hidden) return;
   refreshStats();
   loadGuests();
+  if(activeTab === 'report' && reportLoaded) loadReport();
 }
 refreshStats();
 loadGuests();
+document.getElementById('report-csv').href = '/api/checkin_export?inv_id=' + INV_ID + '&token=' + encodeURIComponent(CHECKIN_TOKEN);
 setInterval(tick, 5000);
 </script>
 </body>

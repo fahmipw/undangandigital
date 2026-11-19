@@ -52,6 +52,54 @@ $genLum = function($hex){ $hex = ltrim($hex, '#'); $r = hexdec(substr($hex, 0, 2
 $genDarkBg = $genLum($gen['bg']) < 0.25;
 $genPct = $genDarkBg ? '#4ade80' : '#166534';
 $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
+// Turunan kontras (WCAG >=4,5:1, dihitung dari luminansi — tanpa mengubah
+// entri $genPalettes, jadi generator.blade.php tak ikut berubah):
+// --gen-accent-text (judul kartu), --gen-top-bg (header), --gen-btn-*
+// (teks + gradien tombol emas), --gen-amber (stat Belum).
+$genRatio = function($a, $b) use ($genLum){
+    $l1 = $genLum($a); $l2 = $genLum($b);
+    return (max($l1, $l2) + 0.05) / (min($l1, $l2) + 0.05);
+};
+$genHex = function($r, $g, $b){
+    return sprintf('#%02x%02x%02x', max(0, min(255, (int)round($r))), max(0, min(255, (int)round($g))), max(0, min(255, (int)round($b))));
+};
+$genMoveAway = function($fg, $bg) use ($genLum, $genRatio, $genHex){
+    if($genRatio($fg, $bg) >= 4.5) return [$fg, 0];
+    $r = hexdec(substr($fg, 1, 2)); $g = hexdec(substr($fg, 3, 2)); $b = hexdec(substr($fg, 5, 2));
+    $toWhite = $genLum($fg) > $genLum($bg);
+    $out = $fg;
+    for($step = 1; $step <= 40; $step++){
+        $t = $step * 0.03;
+        if($toWhite){ $cr = $r + (255 - $r) * $t; $cg = $g + (255 - $g) * $t; $cb = $b + (255 - $b) * $t; }
+        else { $cr = $r * (1 - $t); $cg = $g * (1 - $t); $cb = $b * (1 - $t); }
+        $out = $genHex($cr, $cg, $cb);
+        if($genRatio($out, $bg) >= 4.5) return [$out, $step];
+    }
+    return [$out, 40];
+};
+// Teks aksen: lawan latar terburuk (card & bg).
+$genAccentText = $gen['accent'];
+if($genRatio($genAccentText, $gen['card']) <= $genRatio($genAccentText, $gen['bg'])){
+    list($genAccentText) = $genMoveAway($genAccentText, $gen['card']);
+    list($genAccentText) = $genMoveAway($genAccentText, $gen['bg']);
+} else {
+    list($genAccentText) = $genMoveAway($genAccentText, $gen['bg']);
+    list($genAccentText) = $genMoveAway($genAccentText, $gen['card']);
+}
+// Header: latar digeser sampai teks onAccent lolos (hanya bila perlu).
+list($genTopBg) = $genMoveAway($gen['accent'], $gen['onAccent']);
+// Tombol emas: pilih teks (onAccent / lawannya) dengan geseran minimal.
+$genBtnPick = null;
+foreach([$gen['onAccent'], $gen['onAccent'] === '#ffffff' ? '#1b1c1a' : '#ffffff'] as $txt){
+    list($bs, $s1) = $genMoveAway($gen['accent'], $txt);
+    list($be, $s2) = $genMoveAway($gen['accentDark'], $txt);
+    if($genBtnPick === null || $s1 + $s2 < $genBtnPick[0] || ($s1 + $s2 === $genBtnPick[0] && $txt === $gen['onAccent'])){
+        $genBtnPick = [$s1 + $s2, $txt, $bs, $be];
+    }
+}
+$genBtnText = $genBtnPick[1]; $genBtnStart = $genBtnPick[2]; $genBtnEnd = $genBtnPick[3];
+// Amber stat Belum di atas kartu (cermin skema hijau: terang/gelap).
+$genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
 @endphp
 <style>
   :root{
@@ -68,18 +116,23 @@ $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
     --gen-on-accent:{{ $gen['onAccent'] }};
     --gen-pct:{{ $genPct }};
     --gen-pct-fill:{{ $genPctFill }};
+    --gen-accent-text:{{ $genAccentText }};
+    --gen-top-bg:{{ $genTopBg }};
+    --gen-btn-text:{{ $genBtnText }};
+    --gen-btn-start:{{ $genBtnStart }};
+    --gen-btn-end:{{ $genBtnEnd }};
+    --gen-amber:{{ $genAmber }};
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--gen-bg);color:var(--gen-ink);min-height:100vh;padding-bottom:40px}
-  .top{background:var(--gen-accent);color:var(--gen-on-accent);padding:22px 18px;text-align:center}
-  .top small{letter-spacing:.25em;font-size:10px;opacity:.75;text-transform:uppercase}
+  .top{background:var(--gen-top-bg);color:var(--gen-on-accent);padding:22px 18px;text-align:center}
+  .top small{letter-spacing:.25em;font-size:10px;text-transform:uppercase}
   .top h1{font-size:20px;margin-top:6px}
-  .top .evdate{font-size:13px;margin-top:4px;opacity:.9}
-  .top .clock{font-size:13px;margin-top:6px;font-variant-numeric:tabular-nums}
-  .top .clock b{font-weight:700}
-  .top .note{font-size:12px;margin-top:10px;opacity:.85}
+  .topline{display:flex;justify-content:center;align-items:baseline;gap:6px;flex-wrap:wrap;font-size:13px;margin-top:6px;font-variant-numeric:tabular-nums}
+  .topline .clock b{font-weight:700}
+  .topline .sep{opacity:.6}
   .top-actions{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-  .top-pill{display:inline-block;background:transparent;color:inherit;border:1px solid currentColor;border-radius:999px;padding:6px 12px;font-size:12px;cursor:pointer;text-decoration:none;opacity:.9}
+  .top-pill{display:inline-block;background:transparent;color:inherit;border:1px solid currentColor;border-radius:999px;padding:6px 12px;font-size:12px;cursor:pointer;text-decoration:none}
   .top-pill:hover{opacity:1}
   .wrap{max-width:480px;margin:0 auto;padding:16px}
   .stats{display:flex;gap:10px;margin:16px 0 10px}
@@ -106,9 +159,7 @@ $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
 <div class="top">
   <small>Monitor Check-in</small>
   <h1>{{ $title }}</h1>
-  <div class="evdate" id="ev-date"></div>
-  <div class="clock" id="clock">—</div>
-  <div class="note">Mode pantau — hanya melihat, tidak bisa check-in.</div>
+  <div class="topline"><span id="ev-date"></span><span class="sep">&bull;</span><span class="clock" id="clock">—</span></div>
   <div class="top-actions">
     <a class="top-pill" href="/checkin/{{ $slug }}/{{ $token }}">Kembali ke Check-in Panitia</a>
   </div>
@@ -116,8 +167,8 @@ $genPctFill = $genDarkBg ? '#22c55e' : '#15803d';
 <div class="wrap">
   <div class="stats">
     <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gen-accent)"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><b id="st-total">–</b><span>Total Tamu</span></div>
-    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#15803d"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><b id="st-in" style="color:#15803d">–</b><span>Hadir</span></div>
-    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#b45309"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><b id="st-out" style="color:#b45309">–</b><span>Belum</span></div>
+    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gen-pct)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><b id="st-in" style="color:var(--gen-pct)">–</b><span>Hadir</span></div>
+    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gen-amber)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><b id="st-out" style="color:var(--gen-amber)">–</b><span>Belum</span></div>
   </div>
   <div class="progress">
     <div class="bar"><div class="fill" id="prog-fill"></div></div>
@@ -172,9 +223,8 @@ document.getElementById('ev-date').textContent = formatEventDate(EVENT_DATE);
 // Jam realtime dalam zona waktu acara, diperbarui tiap detik.
 function tickClock(){
   var now = new Date();
-  var dateStr = now.toLocaleDateString('id-ID', {timeZone:EVENT_TZ_IANA, weekday:'long', day:'numeric', month:'long', year:'numeric'});
   var timeStr = now.toLocaleTimeString('id-ID', {timeZone:EVENT_TZ_IANA, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
-  document.getElementById('clock').innerHTML = '<b>' + esc(timeStr) + ' ' + esc(EVENT_TZ_LABEL) + '</b> &bull; ' + esc(dateStr);
+  document.getElementById('clock').innerHTML = '<b>' + esc(timeStr) + ' ' + esc(EVENT_TZ_LABEL) + '</b>';
 }
 tickClock();
 setInterval(tickClock, 1000);
@@ -197,7 +247,7 @@ async function refreshStats(){
           var meta = [];
           if(r.companions > 0) meta.push('+' + r.companions + ' pendamping');
           if(r.checked_in_by) meta.push('Petugas: ' + r.checked_in_by);
-          return '<div class="recent-item"><span><b style="color:var(--gen-accent);margin-right:6px">' + (i+1) + '.</b>' + esc(r.nama) + (meta.length ? '<div class="recent-meta">' + esc(meta.join(' • ')) + '</div>' : '') + '</span><small>' + esc(formatEventTime(r.checked_in_at)) + '</small></div>';
+          return '<div class="recent-item"><span><b style="color:var(--gen-accent-text);margin-right:6px">' + (i+1) + '.</b>' + esc(r.nama) + (meta.length ? '<div class="recent-meta">' + esc(meta.join(' • ')) + '</div>' : '') + '</span><small>' + esc(formatEventTime(r.checked_in_at)) + '</small></div>';
         }).join('')
       : '<div class="empty">Belum ada check-in.</div>';
   }catch(e){}

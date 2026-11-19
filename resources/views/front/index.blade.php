@@ -1493,7 +1493,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             </div>
             <div style="background:#fff;padding:8px;border-radius:12px;flex:none;box-shadow:0 8px 24px rgba(0,0,0,.18)"><div id="qrModalBox"></div></div>
           </div>
-          <p style="margin:14px 0 0;font-size:13px;color:#6d4a2c">Kode manual: <b style="letter-spacing:.12em;color:#2b2118"><?php echo htmlspecialchars($guestQrCode); ?></b></p>
+          <p style="margin:14px 0 0;font-size:13px;color:#6d4a2c">Kode Undangan: <b style="letter-spacing:.12em;color:#2b2118"><?php echo htmlspecialchars($guestQrCode); ?></b></p>
           <p style="margin:8px 0 0;font-size:12px;line-height:1.6;color:#2b2118;opacity:.85">Simpan dan tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
           <button id="qrModalDownloadBtn" type="button" style="display:block;width:100%;margin-top:16px;padding:12px;border:none;border-radius:999px;background:#775a19;color:#ffffff;font-weight:700;font-size:14px;cursor:pointer">Unduh QR</button>
         </div>

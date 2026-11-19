@@ -1120,7 +1120,7 @@ if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded
       </div>
       <div style="background:#fff;padding:8px;flex:none;border:3px solid #5b5b5b"><div id="qrModalBox"></div></div>
     </div>
-    <p style="margin:14px 0 0;font-size:12px;color:#fdf6dd">Kode manual: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
+    <p style="margin:14px 0 0;font-size:12px;color:#fdf6dd">Kode Undangan: <b style="letter-spacing:.12em">{{ $guestQrCode }}</b></p>
     <p style="margin:8px 0 0;font-size:11px;line-height:1.7;color:#c8d2dc">Tunjukkan QR ini kepada panitia saat check-in di lokasi acara.</p>
     <button id="qrModalDownloadBtn" type="button" class="mc-btn gold" style="display:block;width:100%;margin-top:14px;padding:12px;font-size:11px">UNDUH QR</button>
   </div>
