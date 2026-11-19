@@ -148,6 +148,9 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
   #reader{border-radius:12px;overflow:hidden;background:#000;min-height:240px}
   #reader video{object-fit:cover}
   .scan-wrap{position:relative}
+  .scan-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .scan-head h3{margin:0}
+  .scan-head .btn{width:auto;margin-top:0;padding:9px 13px;font-size:13px;white-space:nowrap}
   .cam-switch{position:absolute;top:10px;right:10px;z-index:5;width:44px;height:44px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;display:none;align-items:center;justify-content:center;cursor:pointer;padding:0}
   .cam-switch svg{display:block}
   .btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;margin-top:10px}
@@ -176,6 +179,10 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
   .badge.out{background:#fef3c7;color:#92400e}
   .mini{flex-shrink:0;border:none;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--gen-btn-start),var(--gen-btn-end));color:var(--gen-btn-text)}
   .count{font-size:12px;color:var(--gen-inkSoft);text-align:center;margin-top:8px}
+  .pager{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+  .pager button{min-width:34px;padding:7px 10px;border-radius:999px;border:1px solid var(--gen-border);background:var(--gen-card);color:var(--gen-ink);font-size:13px;font-weight:700;cursor:pointer}
+  .pager button.on{background:linear-gradient(135deg,var(--gen-btn-start),var(--gen-btn-end));color:var(--gen-btn-text);border-color:transparent}
+  .pager button:disabled{opacity:.45;cursor:default}
   .empty{color:var(--gen-inkSoft);font-style:italic;font-size:13px;text-align:center;padding:12px}
   /* Bar nama petugas + stepper pendamping (gelombang 2) */
   .opbar{display:flex;gap:8px;align-items:center}
@@ -263,14 +270,16 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
   <div class="tabpanel active" id="tab-scan" role="tabpanel">
 
   <div class="card">
-    <h3>Scan QR Tamu</h3>
+    <div class="scan-head">
+      <h3>Scan QR Tamu</h3>
+      <button type="button" class="btn btn-ghost" id="btn-sound-test" onclick="playSound('ok')" title="Tes suara notifikasi" aria-label="Tes suara notifikasi"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg><span>Tes Suara</span></button>
+    </div>
     <div class="scan-wrap">
       <div id="reader"></div>
       <button type="button" class="cam-switch" id="btn-cam" style="display:none" onclick="switchCamera()" title="Kamera belakang — ketuk untuk ganti" aria-label="Ganti kamera"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
     </div>
     <div style="display:flex;gap:8px;align-items:stretch">
       <button class="btn btn-gold" id="btn-scan" style="flex:1" onclick="toggleScanner()"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM21 14v3M14 21h3M21 18v3h-3"/></svg><span id="btn-scan-label">Mulai Scan QR</span></button>
-      <button type="button" class="btn btn-ghost" id="btn-sound-test" style="flex:0 0 auto;width:auto;padding:14px 16px;white-space:nowrap" onclick="playSound('ok')" title="Tes suara notifikasi" aria-label="Tes suara notifikasi"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg><span>Tes Suara</span></button>
     </div>
     <div class="row">
       <input id="manual" placeholder="KODE UNDANGAN" maxlength="16" autocomplete="off">
@@ -290,8 +299,9 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
   <div class="tabpanel" id="tab-guests" role="tabpanel">
   <div class="card">
     <h3>Cari Tamu</h3>
-    <input class="search" id="guest-search" type="search" placeholder="Cari nama tamu..." autocomplete="off" oninput="renderGuestSearch()">
+    <input class="search" id="guest-search" type="search" placeholder="Cari nama tamu..." autocomplete="off" oninput="renderGuestSearch(true)">
     <div id="guest-list"><div class="empty">Memuat daftar tamu...</div></div>
+    <div class="pager" id="guest-pager" style="display:none"></div>
     <div class="count" id="guest-count"></div>
   </div>
 
@@ -525,6 +535,10 @@ var lastCode = '', compVal = 0;
 function compStep(d){
   compVal = Math.max(0, Math.min(20, compVal + d));
   document.getElementById('comp-val').textContent = compVal;
+  // Petugas sedang mengisi: mundur ulang hitung 5 detik supaya overlay
+  // tidak menutup di tengah pengisian pendamping.
+  clearTimeout(successTimer);
+  successTimer = setTimeout(hideSuccessAnim, 5000);
 }
 async function saveCompanions(){
   if(!lastCode) return;
@@ -569,8 +583,8 @@ function showSuccessAnim(nama, already, companions, checkedInAt){
   document.getElementById('success-sub').textContent = already ? 'Sudah tercatat hadir' : 'Check-in berhasil';
   // Waktu check-in (dari server, zona acara) di bawah sub-teks overlay.
   document.getElementById('success-time').textContent = checkedInAt ? 'Waktu check-in: ' + formatEventTime(checkedInAt) : '';
-  // Stepper pendamping: tampil di setiap scan sukses; overlay tidak
-  // menutup otomatis supaya petugas sempat mengisi lalu Simpan/Lewati.
+  // Stepper pendamping: tampil di setiap scan sukses; overlay menutup
+  // otomatis 5 detik sesudah tampil (hitung mundur diulang tiap ketuk +/-).
   compVal = companions || 0;
   document.getElementById('comp-val').textContent = compVal;
   document.getElementById('comp-box').style.display = 'block';
@@ -599,6 +613,7 @@ function showSuccessAnim(nama, already, companions, checkedInAt){
     successAnim.addEventListener('data_failed', showFallbackAnim);
   });
   clearTimeout(successTimer);
+  successTimer = setTimeout(hideSuccessAnim, 5000);
 }
 
 function loadLib(cb){
@@ -695,19 +710,47 @@ function guestRow(g){
   return '<div class="guest-item"><span class="gname">' + esc(g.nama) + '</span>' + badge + '</div>';
 }
 
-function renderGuestSearch(){
+var guestPage = 1;
+var GUESTS_PER_PAGE = 10;
+
+function goGuestPage(p){
+  guestPage = p;
+  renderGuestSearch();
+}
+
+function renderGuestPager(pages){
+  var pg = document.getElementById('guest-pager');
+  if(pages <= 1){ pg.style.display = 'none'; pg.innerHTML = ''; return; }
+  pg.style.display = 'flex';
+  var h = '<button type="button" onclick="goGuestPage(' + (guestPage - 1) + ')"' + (guestPage <= 1 ? ' disabled' : '') + '>&#8249;</button>';
+  // Jendela nomor: maks 5 halaman di sekitar halaman aktif.
+  var start = Math.max(1, Math.min(guestPage - 2, pages - 4));
+  var end = Math.min(pages, start + 4);
+  for(var i = start; i <= end; i++){
+    h += '<button type="button" class="' + (i === guestPage ? 'on' : '') + '" onclick="goGuestPage(' + i + ')">' + i + '</button>';
+  }
+  h += '<button type="button" onclick="goGuestPage(' + (guestPage + 1) + ')"' + (guestPage >= pages ? ' disabled' : '') + '>&#8250;</button>';
+  pg.innerHTML = h;
+}
+
+function renderGuestSearch(resetPage){
+  if(resetPage) guestPage = 1;
   var q = (document.getElementById('guest-search').value || '').trim().toLowerCase();
   var list = guestsCache.filter(function(g){ return !q || String(g.nama).toLowerCase().indexOf(q) !== -1; });
+  var pages = Math.max(1, Math.ceil(list.length / GUESTS_PER_PAGE));
+  if(guestPage > pages) guestPage = pages;
   var box = document.getElementById('guest-list');
   if(!guestsCache.length){
     box.innerHTML = '<div class="empty">Belum ada tamu.</div>';
   }else if(!list.length){
     box.innerHTML = '<div class="empty">Tidak ada tamu bernama "' + esc(q) + '".</div>';
   }else{
-    box.innerHTML = list.slice(0, 50).map(guestRow).join('');
+    var from = (guestPage - 1) * GUESTS_PER_PAGE;
+    box.innerHTML = list.slice(from, from + GUESTS_PER_PAGE).map(guestRow).join('');
   }
+  renderGuestPager(pages);
   document.getElementById('guest-count').textContent = guestsCache.length
-    ? 'Menampilkan ' + Math.min(list.length, 50) + ' dari ' + list.length + ' hasil • ' + guestsCache.length + ' tamu'
+    ? 'Menampilkan ' + (list.length ? ((guestPage - 1) * GUESTS_PER_PAGE + 1) + '\u2013' + Math.min(list.length, guestPage * GUESTS_PER_PAGE) : 0) + ' dari ' + list.length + ' hasil \u2022 ' + guestsCache.length + ' tamu'
     : '';
 }
 
