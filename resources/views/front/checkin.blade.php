@@ -217,6 +217,7 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
   #success-fallback.show{display:flex}
   .success-name{font-size:20px;font-weight:800;color:var(--gen-pct);margin-top:4px}
   .success-sub{font-size:13px;color:var(--gen-inkSoft);margin-top:4px}
+  .success-time{font-size:13px;color:var(--gen-inkSoft);margin-top:2px}
 </style>
 </head>
 <body>
@@ -340,6 +341,7 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
     <div id="success-fallback">&#10003;</div>
     <div class="success-name" id="success-name"></div>
     <div class="success-sub" id="success-sub">Check-in berhasil</div>
+    <div class="success-time" id="success-time"></div>
     <div id="comp-box" style="display:none;margin-top:16px;border-top:1px solid var(--gen-border);padding-top:14px">
       <div style="font-size:13px;color:var(--gen-inkSoft)">Jumlah pendamping (di luar tamu)</div>
       <div class="stepper">
@@ -485,7 +487,7 @@ async function doCheckin(code){
         d.nama + (d.already ? ' (sudah tercatat)' : ' • ' + formatEventTime(d.checked_in_at)) + compTxt);
       // Animasi diputar untuk semua scan yang berhasil — check-in baru
       // maupun scan ulang tamu yang sudah hadir (teksnya dibedakan).
-      showSuccessAnim(d.nama, d.already, d.companions || 0);
+      showSuccessAnim(d.nama, d.already, d.companions || 0, d.checked_in_at);
       playSound(d.already ? 'dup' : 'ok');
       refreshStats();
       loadGuests();
@@ -549,9 +551,11 @@ function showFallbackAnim(){
   document.getElementById('success-fallback').classList.add('show');
 }
 
-function showSuccessAnim(nama, already, companions){
+function showSuccessAnim(nama, already, companions, checkedInAt){
   document.getElementById('success-name').textContent = nama || '';
   document.getElementById('success-sub').textContent = already ? 'Sudah tercatat hadir' : 'Check-in berhasil';
+  // Waktu check-in (dari server, zona acara) di bawah sub-teks overlay.
+  document.getElementById('success-time').textContent = checkedInAt ? 'Waktu check-in: ' + formatEventTime(checkedInAt) : '';
   // Stepper pendamping: tampil di setiap scan sukses; overlay tidak
   // menutup otomatis supaya petugas sempat mengisi lalu Simpan/Lewati.
   compVal = companions || 0;
