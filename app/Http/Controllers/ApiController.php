@@ -439,6 +439,7 @@ class ApiController extends Controller
         $invitation_id = $request->input('invitation_id', 1);
         $nama = trim($request->input('nama', ''));
         $no_hp = trim($request->input('no_hp', ''));
+        $category = mb_substr(trim($request->input('category', '')), 0, 50);
 
         if ($nama === '') {
             return response()->json(['success' => false, 'message' => 'Nama tidak boleh kosong.'], 422);
@@ -452,13 +453,17 @@ class ApiController extends Controller
             $slug = $slug . '-' . time();
         }
 
-        $guest = \App\Models\Guest::create([
+        $createData = [
             'invitation_id' => $invitation_id,
             'nama' => $nama,
             'slug' => $slug,
             'no_hp' => $no_hp,
             'qr_code' => \App\Models\Guest::newQrCode($invitation_id)
-        ]);
+        ];
+        if (\Illuminate\Support\Facades\Schema::hasColumn('guests', 'category')) {
+            $createData['category'] = $category === '' ? null : $category;
+        }
+        $guest = \App\Models\Guest::create($createData);
 
         return response()->json([
             'success' => true,
@@ -510,6 +515,8 @@ class ApiController extends Controller
         $hasWaCol = \Illuminate\Support\Facades\Schema::hasColumn('guests', 'wa_sent_at');
         $existingCols = ['nama', 'slug'];
         if ($hasWaCol) $existingCols[] = 'wa_sent_at';
+        $hasCatCol = \Illuminate\Support\Facades\Schema::hasColumn('guests', 'category');
+        if ($hasCatCol) $existingCols[] = 'category';
         $existing = \App\Models\Guest::where('invitation_id', $invitation_id)->get($existingCols);
         $existingByName = [];
         foreach ($existing as $e) {
@@ -530,9 +537,10 @@ class ApiController extends Controller
             if (substr($no_hp, 0, 1) === '0') {
                 $no_hp = '62' . substr($no_hp, 1);
             }
+            $category = mb_substr(trim(is_array($g) ? ($g['category'] ?? '') : ''), 0, 50);
 
             if (isset($existingByName[$key])) {
-                $results[] = ['nama' => $existingByName[$key]->nama, 'slug' => $existingByName[$key]->slug, 'no_hp' => $no_hp, 'existed' => true, 'wa_sent_at' => $this->waIso($hasWaCol ? $existingByName[$key]->wa_sent_at : null)];
+                $results[] = ['nama' => $existingByName[$key]->nama, 'slug' => $existingByName[$key]->slug, 'no_hp' => $no_hp, 'category' => $hasCatCol ? ($existingByName[$key]->category ?? '') : $category, 'existed' => true, 'wa_sent_at' => $this->waIso($hasWaCol ? $existingByName[$key]->wa_sent_at : null)];
                 continue;
             }
 
@@ -543,15 +551,19 @@ class ApiController extends Controller
                 $slug = $slug . '-' . time() . '-' . count($results);
             }
 
-            $guest = \App\Models\Guest::create([
+            $createData = [
                 'invitation_id' => $invitation_id,
                 'nama' => $nama,
                 'slug' => $slug,
                 'no_hp' => $no_hp,
                 'qr_code' => \App\Models\Guest::newQrCode($invitation_id)
-            ]);
+            ];
+            if ($hasCatCol) {
+                $createData['category'] = $category === '' ? null : $category;
+            }
+            $guest = \App\Models\Guest::create($createData);
             $existingByName[$key] = $guest;
-            $results[] = ['nama' => $guest->nama, 'slug' => $guest->slug, 'no_hp' => $no_hp, 'existed' => false, 'wa_sent_at' => null];
+            $results[] = ['nama' => $guest->nama, 'slug' => $guest->slug, 'no_hp' => $no_hp, 'category' => $category, 'existed' => false, 'wa_sent_at' => null];
         }
 
         return response()->json(['success' => true, 'data' => $results]);
@@ -569,10 +581,12 @@ class ApiController extends Controller
         if (\Illuminate\Support\Facades\Schema::hasColumn('guests', 'wa_sent_at')) {
             $cols[] = 'wa_sent_at';
         }
+        $hasCatCol = \Illuminate\Support\Facades\Schema::hasColumn('guests', 'category');
+        if ($hasCatCol) $cols[] = 'category';
         $rows = \App\Models\Guest::where('invitation_id', $invitation_id)
             ->orderBy('id', 'DESC')->get($cols)
             ->map(function ($g) {
-                return ['id' => $g->id, 'nama' => $g->nama, 'slug' => $g->slug, 'no_hp' => $g->no_hp, 'wa_sent_at' => $this->waIso(isset($g->wa_sent_at) ? $g->wa_sent_at : null)];
+                return ['id' => $g->id, 'nama' => $g->nama, 'slug' => $g->slug, 'no_hp' => $g->no_hp, 'category' => isset($g->category) ? $g->category : null, 'wa_sent_at' => $this->waIso(isset($g->wa_sent_at) ? $g->wa_sent_at : null)];
             })->values();
         return response()->json(['success' => true, 'data' => $rows]);
     }
@@ -622,6 +636,7 @@ class ApiController extends Controller
         $invitation_id = $request->input('invitation_id', 1);
         $slug = trim($request->input('slug', ''));
         $nama = trim($request->input('nama', ''));
+        $category = mb_substr(trim($request->input('category', '')), 0, 50);
         if ($slug === '' || $nama === '') {
             return response()->json(['success' => false, 'message' => 'Slug dan nama tamu tidak boleh kosong.'], 422);
         }
@@ -636,8 +651,11 @@ class ApiController extends Controller
             }
         }
         $guest->nama = $nama;
+        if ($request->has('category') && \Illuminate\Support\Facades\Schema::hasColumn('guests', 'category')) {
+            $guest->category = $category === '' ? null : $category;
+        }
         $guest->save();
-        return response()->json(['success' => true, 'data' => ['id' => $guest->id, 'nama' => $guest->nama, 'slug' => $guest->slug, 'no_hp' => $guest->no_hp, 'wa_sent_at' => $this->waIso($guest->wa_sent_at ?? null)]]);
+        return response()->json(['success' => true, 'data' => ['id' => $guest->id, 'nama' => $guest->nama, 'slug' => $guest->slug, 'no_hp' => $guest->no_hp, 'category' => $guest->category ?? null, 'wa_sent_at' => $this->waIso($guest->wa_sent_at ?? null)]]);
     }
 
     /** Hapus tamu dari halaman Link Generator (linknya ikut tidak berlaku). */
