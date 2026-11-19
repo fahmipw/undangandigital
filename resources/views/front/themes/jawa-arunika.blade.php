@@ -136,7 +136,11 @@ $rDate  = jwaGet('reception_date', $wDate);
 $rTimeS = jwaTime(jwaGet('reception_time_start', '11:00'));
 $rTimeE = jwaTime(jwaGet('reception_time_end', '13:00'));
 $tzLabel = jwaGet('wedding_timezone', 'WIB');
-$sameLoc = (jwaGet('event_location_mode', 'same') === 'same');
+$locW = trim((string)jwaGet('wedding_location'));
+$locR = trim((string)jwaGet('reception_location'));
+$mapW = trim((string)jwaGet('wedding_map_link'));
+$mapR = trim((string)jwaGet('reception_map_link'));
+$sameLoc = !(jwaGet('event_location_mode', 'same') === 'different' || ($locW !== '' && $locR !== '' && $locW !== $locR) || ($mapW !== '' && $mapR !== '' && $mapW !== $mapR));
 $mainMapLink = trim((string)jwaGet('wedding_map_link')) ?: trim((string)jwaGet('reception_map_link'));
 $giftRecipient = jwaGet('gift_recipient_name', jwaGet('gift_owner', ''));
 $countdownISO = $rDate.'T'.$rTimeS.':00';
@@ -887,7 +891,7 @@ function withEnvelope(fn){
     <form id="rsvpForm" class="anim-scale relative z-10 w-full max-w-[340px] card-dark p-6 mb-6 text-left">
       <label class="block text-[10px] tracking-[0.25em] text-jawa-gold font-semibold mb-2">NAMA LENGKAP</label>
       <input id="rsvpNama" required maxlength="60" placeholder="Tulis nama Anda..." class="field-dark mb-4" />
-      <label class="block text-[10px] tracking-[0.25em] text-jawa-gold font-semibold mb-2">KEHADIRAN</label>
+      <label class="block text-[10px] tracking-[0.25em] text-jawa-gold font-semibold mb-2">KONFIRMASI KEHADIRAN</label>
       <div class="grid grid-cols-2 gap-2 mb-4" id="attendWrap">
         <button type="button" data-val="hadir" class="attend-btn border rounded-xl py-3 text-[11px] tracking-[0.2em] font-semibold transition border-jawa-gold bg-jawa-gold/15 text-jawa-lightgold">HADIR</button>
         <button type="button" data-val="tidak" class="attend-btn border rounded-xl py-3 text-[11px] tracking-[0.2em] font-semibold transition border-stone-600 text-stone-400">BERHALANGAN</button>
@@ -946,7 +950,7 @@ function withEnvelope(fn){
           </div>
           <p class="font-cinzel text-jawa-lightgold text-xl tracking-[0.12em]" id="accNo{{ $i }}">{{ $a['no'] }}</p>
           <p class="text-stone-400 text-xs mt-1 mb-4">a.n. {{ $a['an'] }}</p>
-          <button class="btn-gold-gradient copy-btn w-full text-stone-950 text-[10px] font-semibold tracking-[0.25em] py-3 rounded-xl" data-i="{{ $i }}">SALIN NOMOR</button>
+          <button class="btn-gold-gradient copy-btn w-full text-stone-950 text-[10px] font-semibold tracking-[0.25em] py-3 rounded-xl" data-i="{{ $i }}">SALIN REKENING</button>
         </div>
       </div>
       @endforeach

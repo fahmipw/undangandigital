@@ -41,7 +41,11 @@ $rDate  = jwcGet('reception_date', $wDate);
 $rTimeS = jwcTime(jwcGet('reception_time_start', '11:00'));
 $rTimeE = jwcTime(jwcGet('reception_time_end', '13:00'));
 $tzLabel = jwcGet('wedding_timezone', 'WIB');
-$sameLoc = (jwcGet('event_location_mode', 'same') === 'same');
+$locW = trim((string)jwcGet('wedding_location'));
+$locR = trim((string)jwcGet('reception_location'));
+$mapW = trim((string)jwcGet('wedding_map_link'));
+$mapR = trim((string)jwcGet('reception_map_link'));
+$sameLoc = !(jwcGet('event_location_mode', 'same') === 'different' || ($locW !== '' && $locR !== '' && $locW !== $locR) || ($mapW !== '' && $mapR !== '' && $mapW !== $mapR));
 $mainMapLink = trim((string)jwcGet('wedding_map_link')) ?: trim((string)jwcGet('reception_map_link'));
 $giftRecipient = jwcGet('gift_recipient_name', jwcGet('gift_owner', ''));
 $countdownISO = $rDate.'T'.$rTimeS.':00';
@@ -539,8 +543,8 @@ function withEnvelope(fn){
 #galDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(245,234,217,.35);cursor:pointer}
 #galDots .gal-dot.on{background:#D4AF37}
 @media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
-.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2}
-.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(127,127,127,.10)}
+.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2;color:#F8F5EE}
+.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(248,245,238,.14)}
 .gal-hint .gh-a{display:inline-block;animation:galHintNudge 1.6s ease-in-out infinite}
 @keyframes galHintNudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
 @media (prefers-reduced-motion:reduce){.gal-hint .gh-a{animation:none}}
@@ -702,7 +706,7 @@ function withEnvelope(fn){
     <form id="rsvpForm" class="reveal card-ivory rounded-2xl border border-gold/50 p-7 shadow-lg mb-8">
       <label class="block text-[11px] tracking-[.25em] text-golddim font-semibold mb-2">NAMA LENGKAP</label>
       <input id="rsvpNama" required maxlength="60" placeholder="Tulis nama Anda..." class="w-full bg-white/70 border border-mocha/25 rounded-xl px-4 py-3 mb-4 outline-none focus:border-gold transition">
-      <label class="block text-[11px] tracking-[.25em] text-golddim font-semibold mb-2">KEHADIRAN</label>
+      <label class="block text-[11px] tracking-[.25em] text-golddim font-semibold mb-2">KONFIRMASI KEHADIRAN</label>
       <div class="grid grid-cols-2 gap-3 mb-4" id="attendWrap">
         <button type="button" data-val="hadir" class="attend-btn border rounded-xl py-3 text-sm tracking-widest font-semibold transition border-gold bg-gold/15 text-mochadark">HADIR</button>
         <button type="button" data-val="tidak" class="attend-btn border rounded-xl py-3 text-sm tracking-widest font-semibold transition border-mocha/25 text-mochadark/60">BERHALANGAN</button>
@@ -760,7 +764,7 @@ function withEnvelope(fn){
           </div>
           <p class="font-display text-ivory text-2xl tracking-[.12em]" id="accNo{{ $i }}">{{ $a['no'] }}</p>
           <p class="text-ivory/60 text-sm mt-1 mb-5">a.n. {{ $a['an'] }}</p>
-          <button class="btn-gold copy-btn w-full text-xs tracking-[.2em] font-semibold py-3 rounded-xl" data-i="{{ $i }}">SALIN NOMOR</button>
+          <button class="btn-gold copy-btn w-full text-xs tracking-[.2em] font-semibold py-3 rounded-xl" data-i="{{ $i }}">SALIN REKENING</button>
         </div>
       </div>
       @endforeach

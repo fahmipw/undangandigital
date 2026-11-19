@@ -85,7 +85,11 @@ $rDate  = btwGet('reception_date', $wDate);
 $rTimeS = btwTime(btwGet('reception_time_start', '11:00'));
 $rTimeE = btwTime(btwGet('reception_time_end', '13:00'));
 $tzLabel = btwGet('wedding_timezone', 'WIB');
-$sameLoc = (btwGet('event_location_mode', 'same') === 'same');
+$locW = trim((string)btwGet('wedding_location'));
+$locR = trim((string)btwGet('reception_location'));
+$mapW = trim((string)btwGet('wedding_map_link'));
+$mapR = trim((string)btwGet('reception_map_link'));
+$sameLoc = !(btwGet('event_location_mode', 'same') === 'different' || ($locW !== '' && $locR !== '' && $locW !== $locR) || ($mapW !== '' && $mapR !== '' && $mapW !== $mapR));
 $mainMapLink = trim((string)btwGet('wedding_map_link')) ?: trim((string)btwGet('reception_map_link'));
 $giftRecipient = btwGet('gift_recipient_name', btwGet('gift_owner', ''));
 $countdownISO = $rDate.'T'.$rTimeS.':00';
@@ -551,8 +555,8 @@ tailwind.config = {
 #galDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(245,234,217,.35);cursor:pointer}
 #galDots .gal-dot.on{background:#D4AF6A}
 @media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
-.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2}
-.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(127,127,127,.10)}
+.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2;color:#1E4D33}
+.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(250,249,244,.88)}
 .gal-hint .gh-a{display:inline-block;animation:galHintNudge 1.6s ease-in-out infinite}
 @keyframes galHintNudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
 @media (prefers-reduced-motion:reduce){.gal-hint .gh-a{animation:none}}
@@ -633,7 +637,7 @@ tailwind.config = {
         </div>
         <p class="text-[11px] text-betawi-soft mb-3">a.n {{ !empty($acc['an']) ? $acc['an'] : $giftRecipient }}</p>
         <p class="font-mono text-xl tracking-[0.12em] text-betawi-ink mb-4">{{ $acc['no'] }}</p>
-        <button onclick="copyText('{{ $acc['no'] }}', 'rekening berhasil disalin')" class="btn-outline text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full font-medium">SALIN NO REKENING</button>
+        <button onclick="copyText('{{ $acc['no'] }}', 'rekening berhasil disalin')" class="btn-outline text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full font-medium">SALIN REKENING</button>
       </div>
       @endforeach
 

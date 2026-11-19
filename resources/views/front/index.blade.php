@@ -22,7 +22,11 @@ function formatIndoDate($dateStr)
   return $days[date('w', $timestamp)] . ', ' . date('j', $timestamp) . ' ' . $months[date('n', $timestamp)] . ' ' . date('Y', $timestamp);
 }
 
-$sameEventLocation = ($settings['event_location_mode'] ?? 'same') === 'same';
+$locW = trim((string)($settings['wedding_location'] ?? ''));
+$locR = trim((string)($settings['reception_location'] ?? ''));
+$mapW = trim((string)($settings['wedding_map_link'] ?? ''));
+$mapR = trim((string)($settings['reception_map_link'] ?? ''));
+$sameEventLocation = !(($settings['event_location_mode'] ?? 'same') === 'different' || ($locW !== '' && $locR !== '' && $locW !== $locR) || ($mapW !== '' && $mapR !== '' && $mapW !== $mapR));
 $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((string) ($settings['reception_map_link'] ?? ''));
 ?>
 <!DOCTYPE html>
@@ -1424,7 +1428,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 
             <!-- Attendance toggle -->
             <div class="mb-10">
-              <p class="font-label-caps text-[10px] text-secondary mb-4 tracking-widest">STATUS KEHADIRAN</p>
+              <p class="font-label-caps text-[10px] text-secondary mb-4 tracking-widest">KONFIRMASI KEHADIRAN</p>
               <div class="grid grid-cols-2 gap-3">
                 <button id="btn-hadir" type="button"
                   class="attendance-btn flex items-center justify-center gap-2 py-4 rounded-2xl border-2 border-secondary text-secondary font-label-caps tracking-wider btn-3d"
@@ -1436,14 +1440,14 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
                   class="attendance-btn flex items-center justify-center gap-2 py-4 rounded-2xl border-2 border-outline-variant text-on-surface-variant font-label-caps tracking-wider btn-3d"
                   onclick="selectAttendance('tidak')">
                   <span class="material-symbols-outlined text-xl">close</span>
-                  TIDAK HADIR
+                  BERHALANGAN
                 </button>
               </div>
 
-              <!-- Alasan tidak hadir (muncul saat pilih Tidak Hadir) -->
+              <!-- Alasan berhalangan (muncul saat pilih Berhalangan) -->
               <div id="alasan-box" class="overflow-hidden transition-all duration-300" style="max-height:0;opacity:0;">
                 <div class="mt-4 pt-4 border-t border-outline-variant/30">
-                  <label class="font-label-caps text-[10px] text-secondary mb-2 block">ALASAN TIDAK HADIR</label>
+                  <label class="font-label-caps text-[10px] text-secondary mb-2 block">ALASAN BERHALANGAN</label>
                   <textarea id="rsvp-alasan"
                     class="w-full bg-surface border border-outline-variant/40 rounded-xl p-3 text-sm font-body-md focus:ring-1 focus:ring-secondary focus:outline-none resize-none transition-all"
                     rows="3" placeholder="Tuliskan alasan Anda..."></textarea>
@@ -1707,7 +1711,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       <!-- Lightbox Modal -->
       <div id="lightbox"
         class="fixed inset-0 bg-black/90 hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300"
-        style="z-index: 999999;" onclick="closeLightbox()">
+        style="z-index: 999999;" onclick="lbBgClick(event)">
         <button type="button" onclick="closeLightbox()"
           class="fixed top-6 right-6 text-white bg-black/60 p-3 rounded-full hover:bg-black/80 transition backdrop-blur shadow-2xl border border-white/20 flex items-center justify-center cursor-pointer"
           style="z-index: 9999999;">
@@ -1796,13 +1800,16 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           }, 300);
         }
         /* ---- Lightbox galeri: prev/next + swipe (foto sebelum/berikutnya) ---- */
-        var lbList=[], lbIdx=0;
+        var lbList=[], lbIdx=0, lbFadeGen=0;
         function lbCollect(){ lbList=[...document.querySelectorAll('#galGrid img')].map(function(im){return im.getAttribute('src')||im.src;}).filter(Boolean); }
-        function lbShow(){ var img=document.getElementById('lightbox-img'); if(!lbList.length) return; img.src=lbList[lbIdx]; var c=document.getElementById('lbCount'); if(c) c.textContent=(lbIdx+1)+' / '+lbList.length; }
+        function lbShow(){ var img=document.getElementById('lightbox-img'); if(!lbList.length) return; var c=document.getElementById('lbCount'); if(c) c.textContent=(lbIdx+1)+' / '+lbList.length; var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches; if(reduced){ img.style.opacity='1'; img.src=lbList[lbIdx]; return; } var gen=++lbFadeGen; img.style.transition='transform .3s ease,opacity .15s ease'; img.style.opacity='0'; setTimeout(function(){ if(gen!==lbFadeGen) return; img.src=lbList[lbIdx]; img.style.opacity='1'; },150); }
         function lbStep(d){ if(!lbList.length) return; lbIdx=(lbIdx+d+lbList.length)%lbList.length; lbShow(); }
-        (function(){ var img=document.getElementById('lightbox-img'); if(!img) return; var sx=0, sw=false;
-          img.addEventListener('touchstart',function(e){ sx=e.changedTouches[0].clientX; sw=false; },{passive:true});
-          img.addEventListener('touchmove',function(e){ if(sw) return; var dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>50){ sw=true; lbStep(dx<0?1:-1); } },{passive:true});
+        (function(){ var lb=document.getElementById('lightbox'); if(!lb) return; var sx=0, sy=0, moved=false, lastEnd=0;
+          lb.addEventListener('touchstart',function(e){ var t=e.touches[0]; sx=t.clientX; sy=t.clientY; moved=false; },{passive:true});
+          lb.addEventListener('touchmove',function(e){ var t=e.touches[0]; var dx=t.clientX-sx; if(Math.abs(dx)>50){ lbStep(dx<0?1:-1); sx=t.clientX; moved=true; } else if(Math.abs(dx)>10||Math.abs(t.clientY-sy)>10){ moved=true; } },{passive:true});
+          lb.addEventListener('touchend',function(){ if(moved) lastEnd=Date.now(); },{passive:true});
+          window.lbBgClick=function(){ if(moved&&Date.now()-lastEnd<400) return; closeLightbox(); };
+          document.addEventListener('keydown',function(e){ if(lb.classList.contains('hidden')) return; if(e.key==='Escape') closeLightbox(); else if(e.key==='ArrowLeft') lbStep(-1); else if(e.key==='ArrowRight') lbStep(1); });
         })();
 
 

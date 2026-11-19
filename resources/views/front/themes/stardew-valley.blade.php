@@ -42,7 +42,11 @@ $rDate  = mcGet('reception_date', $wDate);
 $rTimeS = mcTime(mcGet('reception_time_start', '11:00'));
 $rTimeE = mcTime(mcGet('reception_time_end', '13:00'));
 $countdownISO = $rDate.'T'.$rTimeS.':00';
-$sameLoc = (mcGet('event_location_mode', 'same') === 'same');
+$locW = trim((string)mcGet('wedding_location'));
+$locR = trim((string)mcGet('reception_location'));
+$mapW = trim((string)mcGet('wedding_map_link'));
+$mapR = trim((string)mcGet('reception_map_link'));
+$sameLoc = !(mcGet('event_location_mode', 'same') === 'different' || ($locW !== '' && $locR !== '' && $locW !== $locR) || ($mapW !== '' && $mapR !== '' && $mapW !== $mapR));
 $mainMapLink = trim((string)mcGet('wedding_map_link')) ?: trim((string)mcGet('reception_map_link'));
 $tz = mcGet('reception_timezone', mcGet('wedding_timezone', 'Asia/Jakarta'));
 $accounts = [];
@@ -510,7 +514,6 @@ footer{padding:50px 20px 110px;text-align:center}
   @endif
   <p class="rv" style="text-align:center;font-size:12px;color:var(--ink-soft);margin-top:14px">Klik foto untuk memperbesar • geser untuk lanjut</p>
 </section>
-@endif
 
 <!-- ================= KISAH ================= -->
 @if(!empty($stories) && count($stories))
@@ -663,10 +666,10 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
     <div class="field"><label>Jumlah Tamu</label>
       <select id="rsvpJumlah"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
     </div>
-    <div class="field"><label>Kehadiran</label>
+    <div class="field"><label>KONFIRMASI KEHADIRAN</label>
       <div class="att-row">
-        <div class="att sel-hadir" data-v="hadir" onclick="setAtt(this)">HADIR ✓</div>
-        <div class="att" data-v="tidak" onclick="setAtt(this)">TIDAK ✗</div>
+        <div class="att sel-hadir" data-v="hadir" onclick="setAtt(this)">HADIR</div>
+        <div class="att" data-v="tidak" onclick="setAtt(this)">BERHALANGAN</div>
       </div>
     </div>
     <div class="field" id="alasanBox" style="display:none"><label>Alasan / Ucapan</label><textarea id="rsvpAlasan" rows="2" placeholder="Tulis alasan..."></textarea></div>
@@ -714,7 +717,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
     <div class="bno">{{ $a['no'] }}</div>
     <div class="ban">a.n. {{ $a['an'] }}</div>
     @if(!empty($a['logo']))<img src="{{ $a['logo'] }}" alt="Logo bank">@endif
-    <button class="copybtn" onclick="copyText('{{ $a['no'] }}', this)">SALIN NOMOR</button>
+    <button class="copybtn" onclick="copyText('{{ $a['no'] }}', this)">SALIN REKENING</button>
   </div>
   @endforeach
   @endif

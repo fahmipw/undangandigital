@@ -46,7 +46,11 @@ $rDate  = jklGet('reception_date', $wDate);
 $rTimeS = jklTime(jklGet('reception_time_start', '11:00'));
 $rTimeE = jklTime(jklGet('reception_time_end', '13:00'));
 $tzLabel = jklGet('wedding_timezone', 'WIB');
-$sameLoc = (jklGet('event_location_mode', 'same') === 'same');
+$locW = trim((string)jklGet('wedding_location'));
+$locR = trim((string)jklGet('reception_location'));
+$mapW = trim((string)jklGet('wedding_map_link'));
+$mapR = trim((string)jklGet('reception_map_link'));
+$sameLoc = !(jklGet('event_location_mode', 'same') === 'different' || ($locW !== '' && $locR !== '' && $locW !== $locR) || ($mapW !== '' && $mapR !== '' && $mapW !== $mapR));
 $mainMapLink = trim((string)jklGet('wedding_map_link')) ?: trim((string)jklGet('reception_map_link'));
 $giftRecipient = jklGet('gift_recipient_name', jklGet('gift_owner', ''));
 $countdownISO = $rDate.'T'.$rTimeS.':00';
@@ -672,7 +676,7 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
         </div>
         <p class="font-serif text-surga-ink text-xl tracking-[0.12em]" id="accNo{{ $i }}">{{ $a['no'] }}</p>
         <p class="text-surga-ink/55 text-xs mt-1 mb-4">a.n. {{ $a['an'] }}</p>
-        <button class="btn-gold copy-btn w-full text-[10px] font-semibold tracking-[0.25em] py-3 rounded-xl" data-i="{{ $i }}">SALIN NOMOR</button>
+        <button class="btn-gold copy-btn w-full text-[10px] font-semibold tracking-[0.25em] py-3 rounded-xl" data-i="{{ $i }}">SALIN REKENING</button>
       </div>
       @endforeach
     </div>
@@ -732,14 +736,26 @@ $gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='.u
     <h2 class="anim-zoom font-script text-[2.6rem] text-surga-ink mb-3 relative z-10">RSVP</h2>
     <p class="anim-fade font-serif italic text-surga-ink/65 text-[14px] leading-relaxed mb-8 max-w-[300px] relative z-10">Tanpa mengurangi rasa hormat kami, mohon konfirmasi kehadiran Anda terlebih dahulu.</p>
     <form id="rsvpForm" class="anim-zoom relative z-10 w-full max-w-[340px] card-surga p-5 text-left space-y-3 mb-10">
-      <input type="text" name="nama" required placeholder="Nama lengkap" class="field-surga" />
-      <select name="kehadiran" class="field-surga" required>
-        <option value="">Konfirmasi kehadiran</option>
-        <option value="Hadir">Hadir, Insya Allah</option>
-        <option value="Tidak Hadir">Berhalangan</option>
-      </select>
-      <textarea name="alasan" id="rsvpAlasan" rows="2" placeholder="Alasan berhalangan..." class="field-surga" style="display:none"></textarea>
-      <input type="number" name="jumlah" min="1" max="10" value="1" class="field-surga" />
+      <div>
+        <label class="block text-[10px] tracking-[0.25em] text-surga-ink font-semibold mb-2">NAMA LENGKAP</label>
+        <input type="text" name="nama" required placeholder="Nama lengkap" class="field-surga" />
+      </div>
+      <div>
+        <label class="block text-[10px] tracking-[0.25em] text-surga-ink font-semibold mb-2">KONFIRMASI KEHADIRAN</label>
+        <select name="kehadiran" class="field-surga" required>
+          <option value="">Konfirmasi kehadiran</option>
+          <option value="Hadir">Hadir</option>
+          <option value="Tidak Hadir">Berhalangan</option>
+        </select>
+      </div>
+      <div id="rsvpAlasanWrap" style="display:none">
+        <label class="block text-[10px] tracking-[0.25em] text-surga-ink font-semibold mb-2">ALASAN BERHALANGAN</label>
+        <textarea name="alasan" id="rsvpAlasan" rows="2" placeholder="Alasan berhalangan..." class="field-surga"></textarea>
+      </div>
+      <div>
+        <label class="block text-[10px] tracking-[0.25em] text-surga-ink font-semibold mb-2">JUMLAH TAMU</label>
+        <input type="number" name="jumlah" min="1" max="10" placeholder="Jumlah tamu" class="field-surga" />
+      </div>
       <button type="submit" class="btn-gold w-full text-[11px] font-semibold tracking-[0.25em] py-3.5 rounded-xl">KIRIM RSVP</button>
     </form>
 
@@ -1033,7 +1049,7 @@ window.prewedPauseMusic=prewedPauseMusic;
 /* ---------- 7. RSVP ---------- */
 document.querySelector('#rsvpForm select[name="kehadiran"]').addEventListener("change",function(){
   var show=this.value==="Tidak Hadir";
-  var ta=document.getElementById("rsvpAlasan"); ta.style.display=show?"block":"none"; ta.required=show;
+  var w=document.getElementById("rsvpAlasanWrap"); w.style.display=show?"block":"none"; var ta=document.getElementById("rsvpAlasan"); ta.required=show;
 });
 document.getElementById("rsvpForm").addEventListener("submit", async function(e){
   e.preventDefault();
@@ -1057,7 +1073,7 @@ document.getElementById("rsvpForm").addEventListener("submit", async function(e)
         window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
     }
     this.reset();
-    var ta=document.getElementById("rsvpAlasan"); ta.style.display="none"; ta.required=false;
+    var w=document.getElementById("rsvpAlasanWrap"); w.style.display="none"; var ta=document.getElementById("rsvpAlasan"); ta.required=false;
   }catch(err){ toast("Gagal mengirim. Coba lagi."); }
 });
 

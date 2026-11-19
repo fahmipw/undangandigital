@@ -134,6 +134,47 @@ class FrontController extends Controller
             // Zona waktu acara dari Data Utama (WIB/WITA/WIT); dipakai
             // halaman check-in untuk menampilkan jam, bukan hardcode WIB.
             'event_timezone' => $settings['wedding_timezone'] ?? 'WIB',
+            // Tema undangan + tanggal acara + slug/token (untuk tautan Mode
+            // Monitor) — halaman check-in mengikuti palet tema yang dipilih.
+            'theme' => $settings['theme'] ?? 'default',
+            'event_date' => $settings['wedding_date'] ?? ($settings['reception_date'] ?? ''),
+            'slug' => $slug,
+            'token' => $token,
+        ]);
+    }
+
+    /**
+     * Halaman monitor check-in read-only untuk pemilik acara.
+     * URL: /checkin/{slug}/{token}/monitor — token sama dengan halaman
+     * panitia; tanpa scanner dan tanpa tombol check-in, hanya memantau
+     * statistik via polling /api/checkin_stats.
+     */
+    public function checkinMonitorPage($slug, $token)
+    {
+        $invitation = Invitation::with('settings')->where('slug', $slug)->first();
+        if (!$invitation) abort(404);
+
+        $settings = [];
+        foreach ($invitation->settings as $s) {
+            $settings[$s->key_name] = $s->key_value;
+        }
+
+        $savedToken = $settings['checkin_token'] ?? '';
+        if (!$savedToken || !hash_equals((string) $savedToken, (string) $token)) {
+            abort(403, 'Link tidak valid.');
+        }
+
+        $bride = !empty($settings['bride_nickname']) ? $settings['bride_nickname'] : (!empty($settings['bride_name']) ? $settings['bride_name'] : 'Mempelai Wanita');
+        $groom = !empty($settings['groom_nickname']) ? $settings['groom_nickname'] : (!empty($settings['groom_name']) ? $settings['groom_name'] : 'Mempelai Pria');
+
+        return view('front.checkin-monitor', [
+            'inv_id' => $invitation->id,
+            'title' => $groom . ' & ' . $bride,
+            'event_timezone' => $settings['wedding_timezone'] ?? 'WIB',
+            'theme' => $settings['theme'] ?? 'default',
+            'event_date' => $settings['wedding_date'] ?? ($settings['reception_date'] ?? ''),
+            'slug' => $slug,
+            'token' => $token,
         ]);
     }
 

@@ -38,7 +38,11 @@ $wTimeE = sdaTime(sdaGet('wedding_time_end', '10:00'));
 $rDate  = sdaGet('reception_date', $wDate);
 $rTimeS = sdaTime(sdaGet('reception_time_start', '11:00'));
 $rTimeE = sdaTime(sdaGet('reception_time_end', '13:00'));
-$sameLoc = (sdaGet('event_location_mode', 'same') === 'same');
+$locW = trim((string)sdaGet('wedding_location'));
+$locR = trim((string)sdaGet('reception_location'));
+$mapW = trim((string)sdaGet('wedding_map_link'));
+$mapR = trim((string)sdaGet('reception_map_link'));
+$sameLoc = !(sdaGet('event_location_mode', 'same') === 'different' || ($locW !== '' && $locR !== '' && $locW !== $locR) || ($mapW !== '' && $mapR !== '' && $mapW !== $mapR));
 $mainMapLink = trim((string)sdaGet('wedding_map_link')) ?: trim((string)sdaGet('reception_map_link'));
 $giftRecipient = sdaGet('gift_recipient_name', sdaGet('gift_owner', ''));
 $countdownISO = $wDate.'T'.$wTime.':00+07:00';
@@ -259,6 +263,9 @@ select.sd-input{appearance:none}
 #bottomNav a span{display:inline-block;flex:none;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .35s ease,opacity .3s ease,margin-left .35s ease}
 #bottomNav a.active span{max-width:90px;opacity:1;margin-left:6px}
 #bottomNav a.active{background:rgba(94,184,61,.18)!important;box-shadow:inset 0 0 0 1.5px #5eb83d!important;color:#fff8e7!important}
+#bottomNav a{position:relative}
+#bottomNav a .wish-badge{position:absolute;top:-5px;right:-2px;max-width:none;opacity:1;margin:0;overflow:visible;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:#5eb83d;color:#fff8e7;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.45)}
+#bottomNav a.active .wish-badge{margin-left:0;max-width:none}
 #bottomNav[hidden]{display:none!important}
 @media (max-width:400px){
 #bottomNav a{padding:7px 6px}
@@ -330,7 +337,7 @@ select.sd-input{appearance:none}
   <a href="#" onclick="event.preventDefault();openPanel('story')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.5C10 4.8 7 4.3 4.5 4.5v13c2.5-.2 5.5.3 7.5 2 2-1.7 5-2.2 7.5-2v-13C17 4.3 14 4.8 12 6.5z"/><path stroke-linecap="round" d="M12 6.5v13"/></svg><span>Kisah</span></a>
   <a href="#" onclick="event.preventDefault();openPanel('gift')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8v13H3V8M1 3h22v5H1zM12 8v13M12 8H7.5a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8zm0 0h4.5a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8z"/></svg><span>Gift</span></a>
   <a href="#" onclick="event.preventDefault();openPanel('rsvp')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg><span>RSVP</span></a>
-  <a href="#" onclick="event.preventDefault();openPanel('ucapan')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span>Ucapan</span></a>
+  <a href="#" onclick="event.preventDefault();openPanel('ucapan')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span>Ucapan (<span class="wish-menu-total">0</span>)</span><span class="wish-badge wish-menu-total">0</span></a>
 </nav>
 </div>
 
@@ -361,7 +368,7 @@ const MC = {
   akad: { date: @json(sdaDate($wDate)), time: @json($wTime.' – '.$wTimeE.' '.sdaGet('wedding_timezone','WIB')),
     venue: @json(sdaGet('wedding_location','Kediaman Mempelai')), maps: @json($sameLoc ? $mainMapLink : sdaGet('wedding_map_link','')) },
   resepsi: { date: @json(sdaDate($rDate)), time: @json($rTimeS.' – '.$rTimeE.' '.sdaGet('wedding_timezone','WIB')),
-    venue: @json(sdaGet('reception_location', sdaGet('wedding_location','Kediaman Mempelai'))), maps: @json($sameLoc ? $mainMapLink : sdaGet('reception_map_link','')) },
+    venue: @json(sdaGet('reception_location', sdaGet('wedding_location','Kediaman Mempelai'))), maps: @json($sameLoc ? '' : sdaGet('reception_map_link','')) },
   liveStream: @json(sdaGet('live_stream_link', '')),
   liveEmbed: @json($liveEmbed),
   prewedFile: @json($prewedFileUrl),
@@ -792,7 +799,7 @@ gift:()=>`<h2 class="ptitle">GUDANG HARTA</h2><p class="psub">Klik petinya untuk
 <div class="acct"><div class="bank">{{ $a['bank'] }}</div>
     @if(!empty($a['logo']))<img src="{{ $a['logo'] }}" alt="Logo bank">@endif<div class="no" id="gno{{ $i }}">{{ $a['no'] }}</div>
 <div class="an">{{ $a['an'] }}</div>
-<button class="sd-btn gold" style="font-size:10px;padding:10px 14px" data-g="{{ $i }}">SALIN</button></div>
+<button class="sd-btn gold" style="font-size:10px;padding:10px 14px" data-g="{{ $i }}">SALIN REKENING</button></div>
 @endforeach
 </div>
 @if(!empty($giftRecipient))
@@ -931,7 +938,7 @@ function timeAgo(s){const d=new Date(String(s).replace(" ","T")+"+07:00");if(isN
   return Math.floor(n/86400)+" hari yang lalu";}
 function wireUcapan(){
   const box=$("#ul2");
-  const load=async()=>{try{const _all=(await apiGet("/api/ucapan?inv_id="+MC.invId));var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=_all.length;const rows=_all.slice(0,8);
+  const load=async()=>{try{const _all=(await apiGet("/api/ucapan?inv_id="+MC.invId));var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=_all.length;updateWishMenuCount(_all.length);const rows=_all.slice(0,8);
     box.innerHTML=rows.length?rows.map(x=>
       `<div class="msg-row"><div class="nm" style="display:flex;align-items:center;gap:8px"><div style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:#4a9a32;color:#1b1c1a;font-weight:700;font-size:13px;line-height:1;flex:none">${esc((String(x.nama||'').trim().charAt(0)||'?').toUpperCase())}</div><span>${esc(x.nama)}</span></div><div class="ps">${esc(x.pesan)}</div>
        <div class="tm">${timeAgo(x.created_at)}</div></div>`
@@ -950,6 +957,9 @@ function wireUcapan(){
     }catch(err){toast("Gagal: "+err.message);}
     btn.disabled=false;};
 }
+/* jumlah ucapan di menu (selalu terlihat, tanpa buka panel) */
+function updateWishMenuCount(n){document.querySelectorAll('.wish-menu-total').forEach(function(e){e.textContent=n;});}
+(function(){apiGet('/api/ucapan?inv_id='+MC.invId).then(function(rows){updateWishMenuCount(rows.length);}).catch(function(){});})();
 /* peti harta */
 function wireChest(){
   const ch=$("#ch2");if(!ch)return;

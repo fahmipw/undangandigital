@@ -41,7 +41,11 @@ $rDate  = jklGet('reception_date', $wDate);
 $rTimeS = jklTime(jklGet('reception_time_start', '11:00'));
 $rTimeE = jklTime(jklGet('reception_time_end', '13:00'));
 $tzLabel = jklGet('wedding_timezone', 'WIB');
-$sameLoc = (jklGet('event_location_mode', 'same') === 'same');
+$locW = trim((string)jklGet('wedding_location'));
+$locR = trim((string)jklGet('reception_location'));
+$mapW = trim((string)jklGet('wedding_map_link'));
+$mapR = trim((string)jklGet('reception_map_link'));
+$sameLoc = !(jklGet('event_location_mode', 'same') === 'different' || ($locW !== '' && $locR !== '' && $locW !== $locR) || ($mapW !== '' && $mapR !== '' && $mapW !== $mapR));
 $mainMapLink = trim((string)jklGet('wedding_map_link')) ?: trim((string)jklGet('reception_map_link'));
 $giftRecipient = jklGet('gift_recipient_name', jklGet('gift_owner', ''));
 $countdownISO = $rDate.'T'.$rTimeS.':00';
@@ -285,6 +289,9 @@ select.pq-input{appearance:none}
 #bottomNav a span{display:inline-block;flex:none;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .35s ease,opacity .3s ease,margin-left .35s ease}
 #bottomNav a.active span{max-width:90px;opacity:1;margin-left:6px}
 #bottomNav a.active{background:rgba(255,217,59,.18)!important;box-shadow:inset 0 0 0 1.5px #ffd93b!important;color:#fff8e7!important}
+#bottomNav a{position:relative}
+#bottomNav a .wish-badge{position:absolute;top:-5px;right:-2px;max-width:none;opacity:1;margin:0;overflow:visible;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:#ffd93b;color:#1b1c1a;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.45)}
+#bottomNav a.active .wish-badge{margin-left:0;max-width:none}
 #bottomNav[hidden]{display:none!important}
 @media (max-width:400px){
 #bottomNav a{padding:7px 6px}
@@ -348,7 +355,7 @@ select.pq-input{appearance:none}
   <a href="#" onclick="event.preventDefault();openPanel('gallery')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path stroke-linecap="round" stroke-linejoin="round" d="m5 19 5.5-5.5 3 3L19 11l2 2"/></svg><span>Galeri</span></a>
   <a href="#" onclick="event.preventDefault();openPanel('gift')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8v13H3V8M1 3h22v5H1zM12 8v13M12 8H7.5a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8zm0 0h4.5a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8z"/></svg><span>Gift</span></a>
   <a href="#" onclick="event.preventDefault();openPanel('rsvp')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg><span>RSVP</span></a>
-  <a href="#" onclick="event.preventDefault();openPanel('ucapan')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span>Ucapan</span></a>
+  <a href="#" onclick="event.preventDefault();openPanel('ucapan')"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span>Ucapan (<span class="wish-menu-total">0</span>)</span><span class="wish-badge wish-menu-total">0</span></a>
 </nav>
   <div id="dialog">
     <div id="dlgFace"><canvas id="dlgFaceCv" width="66" height="66"></canvas></div>
@@ -387,7 +394,7 @@ const MC = {
   akadVenue: @json(jklGet('wedding_location','Kediaman Mempelai')),
   resepsiVenue: @json(jklGet('reception_location', jklGet('wedding_location','Kediaman Mempelai'))),
   akadMaps: @json($sameLoc ? $mainMapLink : jklGet('wedding_map_link','')),
-  resepsiMaps: @json($sameLoc ? $mainMapLink : jklGet('reception_map_link','')),
+  resepsiMaps: @json($sameLoc ? '' : jklGet('reception_map_link','')),
   liveStream: @json(jklGet('live_stream_link', '')),
   liveEmbed: @json($liveEmbed),
   prewedFile: @json($prewedFileUrl),
@@ -1013,7 +1020,7 @@ function openPanel(id){
       <label class="lbl">NAMA LENGKAP</label><input class="pq-input" name="nama" required placeholder="Nama lengkap">
       <label class="lbl">KONFIRMASI</label><select class="pq-input" name="kehadiran" required>
         <option value="">Konfirmasi kehadiran</option>
-        <option value="Hadir">Hadir, Insya Allah</option>
+        <option value="Hadir">Hadir</option>
         <option value="Tidak Hadir">Berhalangan</option></select>
       <label class="lbl">ALASAN BERHALANGAN</label><textarea class="pq-input" name="alasan" id="rsvpAlasan" rows="2" placeholder="Tulis alasan berhalangan..." style="display:none"></textarea>
       <label class="lbl">JUMLAH TAMU</label><input class="pq-input" type="number" name="jumlah" min="1" max="10" value="1">
@@ -1087,7 +1094,7 @@ function renderShop(tab){
       <h4>${esc(a.bank)}</h4>
       <div class="price">REKENING: ${esc(a.no)}</div>
       <div class="stat">a.n. ${esc(a.an)}</div>
-      <button class="pq-btn gold copybtn" data-no="${esc(a.no)}" style="font-size:9px;padding:10px 6px">SALIN NOMOR</button>
+      <button class="pq-btn gold copybtn" data-no="${esc(a.no)}" style="font-size:9px;padding:10px 6px">SALIN REKENING</button>
       </div>`;}).join("")}</div>`
     : `<p style="font-size:20px;color:#7a6a4a">Informasi hadiah akan segera hadir.</p>`);
     $$("#shopBody .wicon").forEach(c=>drawWeaponIcon(c,c.dataset.kind));
@@ -1182,11 +1189,14 @@ async function loadWishes(){
   try{
     const r=await fetch("/api/ucapan?inv_id="+MC.invId); const j=await r.json();
     const list=Array.isArray(j)?j:(j.data||[]);
-    var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=list.length;
+    var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=list.length;updateWishMenuCount(list.length);
     if(!list.length){ box.innerHTML='<p style="text-align:center;color:#7a6a4a;font-size:19px">Belum ada ucapan. Jadilah yang pertama!</p>'; return; }
     box.innerHTML=list.map(w=>`<div class="msg-row"><div class="nm" style="display:flex;align-items:center;gap:8px"><div style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:#ffd93b;color:#1b1c1a;font-weight:700;font-size:13px;line-height:1;flex:none">${esc((String(w.nama||'').trim().charAt(0)||'?').toUpperCase())}</div><span>${esc(w.nama)}</span></div><div class="ps">${esc(w.pesan)}</div><div class="tm">${esc(timeAgo(w.created_at))}</div></div>`).join("");
   }catch(e){ box.innerHTML='<p style="text-align:center;color:#7a6a4a">Gagal memuat ucapan.</p>'; }
 }
+/* jumlah ucapan di menu (selalu terlihat, tanpa buka panel) */
+function updateWishMenuCount(n){document.querySelectorAll('.wish-menu-total').forEach(function(e){e.textContent=n;});}
+(function(){fetch('/api/ucapan?inv_id='+MC.invId).then(function(r){return r.json();}).then(function(j){var l=Array.isArray(j)?j:(j.data||[]);updateWishMenuCount(l.length);}).catch(function(){});})();
 async function submitWish(e){
   e.preventDefault();
   const fd=new FormData(e.target);

@@ -72,7 +72,11 @@ $rDate  = jgnGet('reception_date', $wDate);
 $rTimeS = jgnTime(jgnGet('reception_time_start', '11:00'));
 $rTimeE = jgnTime(jgnGet('reception_time_end', '13:00'));
 $tzLabel = jgnGet('wedding_timezone', 'WIB');
-$sameLoc = (jgnGet('event_location_mode', 'same') === 'same');
+$locW = trim((string)jgnGet('wedding_location'));
+$locR = trim((string)jgnGet('reception_location'));
+$mapW = trim((string)jgnGet('wedding_map_link'));
+$mapR = trim((string)jgnGet('reception_map_link'));
+$sameLoc = !(jgnGet('event_location_mode', 'same') === 'different' || ($locW !== '' && $locR !== '' && $locW !== $locR) || ($mapW !== '' && $mapR !== '' && $mapW !== $mapR));
 $mainMapLink = trim((string)jgnGet('wedding_map_link')) ?: trim((string)jgnGet('reception_map_link'));
 $giftRecipient = jgnGet('gift_recipient_name', jgnGet('gift_owner', ''));
 $countdownISO = $rDate.'T'.$rTimeS.':00';
@@ -603,7 +607,7 @@ tailwind.config = {
         </div>
         <p class="text-[11px] text-gunungan-soft mb-3">a.n {{ !empty($acc['an']) ? $acc['an'] : $giftRecipient }}</p>
         <p class="font-mono text-xl tracking-[0.12em] text-gunungan-ink mb-4">{{ $acc['no'] }}</p>
-        <button onclick="copyText('{{ $acc['no'] }}', 'rekening berhasil disalin')" class="btn-outline text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full font-medium">SALIN NO REKENING</button>
+        <button onclick="copyText('{{ $acc['no'] }}', 'rekening berhasil disalin')" class="btn-outline text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full font-medium">SALIN REKENING</button>
       </div>
       @endforeach
 

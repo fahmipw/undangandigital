@@ -60,7 +60,11 @@ $rDate  = jklGet('reception_date', $wDate);
 $rTimeS = jklTime(jklGet('reception_time_start', '11:00'));
 $rTimeE = jklTime(jklGet('reception_time_end', '13:00'));
 $tzLabel = jklGet('wedding_timezone', 'WIB');
-$sameLoc = (jklGet('event_location_mode', 'same') === 'same');
+$locW = trim((string)jklGet('wedding_location'));
+$locR = trim((string)jklGet('reception_location'));
+$mapW = trim((string)jklGet('wedding_map_link'));
+$mapR = trim((string)jklGet('reception_map_link'));
+$sameLoc = !(jklGet('event_location_mode', 'same') === 'different' || ($locW !== '' && $locR !== '' && $locW !== $locR) || ($mapW !== '' && $mapR !== '' && $mapW !== $mapR));
 $mainMapLink = trim((string)jklGet('wedding_map_link')) ?: trim((string)jklGet('reception_map_link'));
 $giftRecipient = jklGet('gift_recipient_name', jklGet('gift_owner', ''));
 $countdownISO = $rDate.'T'.$rTimeS.':00';
@@ -684,8 +688,8 @@ function withEnvelope(fn){
 #galDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(245,234,217,.35);cursor:pointer}
 #galDots .gal-dot.on{background:#e6c887}
 @media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
-.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2}
-.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(127,127,127,.10)}
+.gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2;color:#dbe6f2}
+.gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(219,230,242,.14)}
 .gal-hint .gh-a{display:inline-block;animation:galHintNudge 1.6s ease-in-out infinite}
 @keyframes galHintNudge{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
 @media (prefers-reduced-motion:reduce){.gal-hint .gh-a{animation:none}}
@@ -832,7 +836,7 @@ function withEnvelope(fn){
         </div>
         <p class="text-[11px] text-jbiru-100/55 mb-3">a.n {{ !empty($acc['an']) ? $acc['an'] : $giftRecipient }}</p>
         <p class="font-mono text-xl tracking-[0.14em] text-gading mb-4">{{ $acc['no'] }}</p>
-        <button onclick="copyText('{{ $acc['no'] }}', 'rekening berhasil disalin')" class="btn-outline text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full">SALIN NOMOR</button>
+        <button onclick="copyText('{{ $acc['no'] }}', 'rekening berhasil disalin')" class="btn-outline text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full">SALIN REKENING</button>
       </div>
       @endforeach
 

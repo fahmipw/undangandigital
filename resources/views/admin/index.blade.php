@@ -119,6 +119,29 @@
             color: #4e342e;
         }
 
+        /* Dropdown berikon di Data Utama (ikut pola #inv-selector):
+           ikon kiri + chevron kanan, di luar <select> (option native tak bisa berikon).
+           Select .rsvp-field punya padding atas 1.6rem / bawah 0.5rem, jadi ikon
+           digeser 0.55rem dari tengah agar sejajar garis teks. */
+        .select-icon-wrap { position: relative; }
+        .rsvp-field .select-icon-wrap select {
+            padding-left: 2.25rem;
+            padding-right: 2rem;
+        }
+        .select-icon-wrap .sel-ico,
+        .select-icon-wrap .sel-chev {
+            position: absolute;
+            top: 50%;
+            margin-top: 0.55rem;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #775a19;
+            font-size: 1.15rem;
+            line-height: 1;
+        }
+        .select-icon-wrap .sel-ico { left: 0.5rem; }
+        .select-icon-wrap .sel-chev { right: 0.5rem; }
+
         .mobile-admin-bar {
             display: none;
         }
@@ -539,10 +562,14 @@
                         </h3>
                         <div class="rsvp-field">
                             <label>MODE LOKASI ACARA</label>
-                            <select id="set-event_location_mode">
-                                <option value="same">Akad dan resepsi satu tempat</option>
-                                <option value="different">Akad dan resepsi berbeda tempat</option>
-                            </select>
+                            <div class="select-icon-wrap">
+                                <span id="ico-event_location_mode" class="material-symbols-outlined sel-ico">location_on</span>
+                                <select id="set-event_location_mode">
+                                    <option value="same">Akad dan resepsi satu tempat</option>
+                                    <option value="different">Akad dan resepsi berbeda tempat</option>
+                                </select>
+                                <span class="material-symbols-outlined sel-chev">expand_more</span>
+                            </div>
                         </div>
                         <div class="rsvp-field"><label>TGL AKAD</label><input type="date" id="set-wedding_date"></div>
                         <div class="grid grid-cols-3 gap-2">
@@ -552,11 +579,15 @@
                                     id="set-wedding_time_end" placeholder="10:00 atau Selesai"></div>
                             <div class="rsvp-field">
                                 <label>ZONA WAKTU</label>
-                                <select id="set-wedding_timezone">
-                                    <option value="WIB">WIB</option>
-                                    <option value="WITA">WITA</option>
-                                    <option value="WIT">WIT</option>
-                                </select>
+                                <div class="select-icon-wrap">
+                                    <span class="material-symbols-outlined sel-ico">schedule</span>
+                                    <select id="set-wedding_timezone">
+                                        <option value="WIB">WIB</option>
+                                        <option value="WITA">WITA</option>
+                                        <option value="WIT">WIT</option>
+                                    </select>
+                                    <span class="material-symbols-outlined sel-chev">expand_more</span>
+                                </div>
                             </div>
                         </div>
 
@@ -582,11 +613,15 @@
                                     id="set-reception_time_end" placeholder="14:00 atau Selesai"></div>
                             <div class="rsvp-field">
                                 <label>ZONA WAKTU</label>
-                                <select id="set-reception_timezone">
-                                    <option value="WIB">WIB</option>
-                                    <option value="WITA">WITA</option>
-                                    <option value="WIT">WIT</option>
-                                </select>
+                                <div class="select-icon-wrap">
+                                    <span class="material-symbols-outlined sel-ico">schedule</span>
+                                    <select id="set-reception_timezone">
+                                        <option value="WIB">WIB</option>
+                                        <option value="WITA">WITA</option>
+                                        <option value="WIT">WIT</option>
+                                    </select>
+                                    <span class="material-symbols-outlined sel-chev">expand_more</span>
+                                </div>
                             </div>
                         </div>
 
@@ -633,10 +668,14 @@
                             </h4>
                             <div class="rsvp-field">
                                 <label>STATUS QRIS</label>
-                                <select id="set-gift_qris_enabled" class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm mt-2">
-                                    <option value="0">Nonaktif — hanya transfer bank</option>
-                                    <option value="1">Aktif — tamu bisa memilih QRIS atau transfer</option>
-                                </select>
+                                <div class="select-icon-wrap">
+                                    <span id="ico-gift_qris_enabled" class="material-symbols-outlined sel-ico">block</span>
+                                    <select id="set-gift_qris_enabled" class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm">
+                                        <option value="0">Nonaktif — hanya transfer bank</option>
+                                        <option value="1">Aktif — tamu bisa memilih QRIS atau transfer</option>
+                                    </select>
+                                    <span class="material-symbols-outlined sel-chev">expand_more</span>
+                                </div>
                                 <p class="text-[10px] opacity-50 mt-2 italic">*Jika aktif, kartu QRIS tampil di bagian amplop digital undangan, di atas daftar rekening.</p>
                             </div>
                             <div class="flex gap-4 items-start">
@@ -806,7 +845,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-4 mb-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     <div class="data-card p-6 rounded-3xl text-center">
                         <div class="text-3xl font-bold text-primary" id="ci-total">0</div>
                         <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Total Tamu</div>
@@ -819,6 +858,16 @@
                         <div class="text-3xl font-bold text-amber-700" id="ci-pending">0</div>
                         <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Belum Hadir</div>
                     </div>
+                    <div class="data-card p-6 rounded-3xl text-center">
+                        <div class="text-3xl font-bold text-sky-700" id="ci-people">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Total Orang Hadir</div>
+                    </div>
+                </div>
+
+                <div class="data-card p-6 rounded-3xl mb-8">
+                    <div class="flex justify-between text-xs text-gray-500 mb-2"><span class="uppercase tracking-widest font-semibold">Progres Kehadiran</span><span id="ci-pct" class="font-bold text-green-800">0%</span></div>
+                    <div class="h-3 bg-gray-100 rounded-full overflow-hidden"><div id="ci-prog-fill" class="h-full rounded-full" style="width:0%;background:#15803d"></div></div>
+                    <p class="text-xs text-gray-500 mt-2" id="ci-prog-lbl">—</p>
                 </div>
 
                 <div class="data-card p-8 rounded-3xl">
@@ -828,6 +877,30 @@
                     <p class="text-xs text-gray-400 mb-4">Scan dilakukan lewat <strong>link khusus panitia</strong> di atas (tanpa login admin).</p>
                     <div id="ci-recent" class="space-y-2 max-h-[380px] overflow-y-auto">
                         <p class="text-sm text-gray-400 italic">Belum ada check-in.</p>
+                    </div>
+                </div>
+
+                <div class="data-card p-8 rounded-3xl mt-6">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <h3 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
+                            <span class="material-symbols-outlined">bar_chart</span> Laporan Kehadiran
+                        </h3>
+                        <a id="ci-export-link" href="#" class="btn-theme px-5 py-2 rounded-xl font-bold text-xs uppercase flex items-center gap-1"><span class="material-symbols-outlined text-sm">download</span>Unduh CSV</a>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="text-xs uppercase tracking-widest text-gray-500 mb-2 font-semibold">Per Petugas</div>
+                            <div id="ci-by-operator" class="space-y-2"><p class="text-sm text-gray-400 italic">Belum ada data.</p></div>
+                        </div>
+                        <div>
+                            <div class="text-xs uppercase tracking-widest text-gray-500 mb-2 font-semibold">Kedatangan per Jam</div>
+                            <div id="ci-hourly" class="space-y-2"><p class="text-sm text-gray-400 italic">Belum ada data.</p></div>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <div class="text-xs uppercase tracking-widest text-gray-500 mb-2 font-semibold">Belum Hadir <span id="ci-pending-count"></span></div>
+                        <div id="ci-pending-list" class="space-y-2 max-h-[300px] overflow-y-auto"><p class="text-sm text-gray-400 italic">Memuat...</p></div>
+                        <button id="ci-pending-more" class="mt-3 text-xs font-bold text-secondary underline hidden" onclick="toggleCiPending()">Tampilkan semua</button>
                     </div>
                 </div>
             </div>
@@ -1412,11 +1485,14 @@
             renderBankRows();
 
             updateLocationModeStatus();
+            updateQrisIcon();
         }
 
         function updateLocationModeStatus() {
             const locationMode = document.getElementById('set-event_location_mode')?.value;
             const status = document.getElementById('location-mode-status');
+            const ico = document.getElementById('ico-event_location_mode');
+            if (ico) ico.textContent = locationMode === 'different' ? 'alt_route' : 'location_on';
             if (!status || !locationMode) return;
 
             if (locationMode === 'same') {
@@ -1424,6 +1500,13 @@
             } else {
                 status.textContent = 'Lokasi berbeda: undangan akan menampilkan tombol navigasi pada masing-masing card dan menyembunyikan section Peta Lokasi.';
             }
+        }
+
+        function updateQrisIcon() {
+            const ico = document.getElementById('ico-gift_qris_enabled');
+            if (!ico) return;
+            const v = document.getElementById('set-gift_qris_enabled')?.value;
+            ico.textContent = v === '1' ? 'qr_code_2' : 'block';
         }
 
         async function saveSettings() {
@@ -1817,7 +1900,64 @@
                 }
                 setCiLink(token);
             } catch (e) {}
+            document.getElementById('ci-export-link').href = `api/checkin_export?inv_id=${currentInvId}`;
             refreshCiStats();
+            refreshCiReport();
+        }
+
+        var ciPendingExpanded = false;
+        var ciPendingCache = [];
+
+        async function refreshCiReport() {
+            try {
+                const res = await fetch(`api/checkin_report?inv_id=${currentInvId}`);
+                const d = await res.json();
+                if (!d.success) return;
+                const opBox = document.getElementById('ci-by-operator');
+                opBox.innerHTML = d.by_operator.length ? d.by_operator.map(o =>
+                    `<div class="flex justify-between items-center bg-white border border-outline-variant/30 rounded-xl px-4 py-2 text-sm">
+                        <span class="font-semibold text-primary">${escapeHtml(o.operator)}</span>
+                        <span class="text-xs text-gray-500">${o.count} tamu${o.companions ? ' \u2022 +' + o.companions + ' pendamping' : ''}</span>
+                    </div>`
+                ).join('') : '<p class="text-sm text-gray-400 italic">Belum ada data.</p>';
+                const hBox = document.getElementById('ci-hourly');
+                const maxH = d.hourly_buckets.length ? Math.max(...d.hourly_buckets.map(h => h.count)) : 0;
+                hBox.innerHTML = d.hourly_buckets.length ? d.hourly_buckets.map(h =>
+                    `<div class="flex items-center gap-3 text-sm">
+                        <span class="w-12 font-semibold text-primary">${escapeHtml(h.hour)}</span>
+                        <span class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden"><span class="block h-full rounded-full" style="width:${maxH ? Math.round(h.count / maxH * 100) : 0}%;background:#775a19"></span></span>
+                        <span class="text-xs text-gray-500 w-14 text-right">${h.count} tamu</span>
+                    </div>`
+                ).join('') : '<p class="text-sm text-gray-400 italic">Belum ada data.</p>';
+                ciPendingCache = d.pending_list || [];
+                document.getElementById('ci-pending-count').textContent = ciPendingCache.length ? '(' + ciPendingCache.length + ' tamu)' : '';
+                renderCiPending();
+            } catch (e) {}
+        }
+
+        function renderCiPending() {
+            const box = document.getElementById('ci-pending-list');
+            const more = document.getElementById('ci-pending-more');
+            if (!ciPendingCache.length) {
+                box.innerHTML = '<p class="text-sm text-gray-400 italic">Semua tamu sudah hadir.</p>';
+                more.classList.add('hidden');
+                return;
+            }
+            const shown = ciPendingExpanded ? ciPendingCache : ciPendingCache.slice(0, 20);
+            box.innerHTML = shown.map(n =>
+                `<div class="bg-white border border-outline-variant/30 rounded-xl px-4 py-2 text-sm font-semibold text-primary">${escapeHtml(n)}</div>`
+            ).join('');
+            if (ciPendingCache.length > 20) {
+                more.classList.remove('hidden');
+                more.textContent = ciPendingExpanded ? 'Tampilkan lebih sedikit' : 'Tampilkan semua (' + ciPendingCache.length + ' tamu)';
+            } else {
+                more.classList.add('hidden');
+            }
+        }
+
+        function toggleCiPending() {
+            ciPendingExpanded = !ciPendingExpanded;
+            renderCiPending();
         }
 
         function genToken(n) {
@@ -1876,13 +2016,22 @@
                 document.getElementById('ci-total').textContent = d.total;
                 document.getElementById('ci-checked').textContent = d.checked_in;
                 document.getElementById('ci-pending').textContent = d.total - d.checked_in;
+                const tp = (typeof d.total_people === 'number') ? d.total_people : d.checked_in;
+                document.getElementById('ci-people').textContent = tp;
+                const pct = d.total ? Math.round(d.checked_in / d.total * 100) : 0;
+                document.getElementById('ci-pct').textContent = pct + '%';
+                document.getElementById('ci-prog-fill').style.width = pct + '%';
+                document.getElementById('ci-prog-lbl').innerHTML = '<span class="text-green-800 font-bold">' + pct + '%</span> (' + d.checked_in + ' dari ' + d.total + ' tamu sudah hadir) \u2022 Total orang hadir: ' + tp + ' orang';
                 const box = document.getElementById('ci-recent');
-                box.innerHTML = d.recent.length ? d.recent.map(r =>
-                    `<div class="flex justify-between items-center bg-white border border-outline-variant/30 rounded-xl px-4 py-2 text-sm">
-                        <span class="font-semibold text-primary">${escapeHtml(r.nama)}</span>
+                box.innerHTML = d.recent.length ? d.recent.map(r => {
+                    const meta = [];
+                    if (r.companions > 0) meta.push('+' + r.companions + ' pendamping');
+                    if (r.checked_in_by) meta.push('Petugas: ' + r.checked_in_by);
+                    return `<div class="flex justify-between items-center bg-white border border-outline-variant/30 rounded-xl px-4 py-2 text-sm">
+                        <span class="font-semibold text-primary">${escapeHtml(r.nama)}${meta.length ? `<span class="block text-[11px] font-normal text-gray-500">${escapeHtml(meta.join(' \u2022 '))}</span>` : ''}</span>
                         <span class="text-xs text-gray-500">${escapeHtml(ciTime(r.checked_in_at))}</span>
-                    </div>`
-                ).join('') : '<p class="text-sm text-gray-400 italic">Belum ada check-in.</p>';
+                    </div>`;
+                }).join('') : '<p class="text-sm text-gray-400 italic">Belum ada check-in.</p>';
             } catch (e) {}
         }
 
@@ -1908,6 +2057,9 @@
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('change', updateLocationModeStatus);
             });
+
+            const qrisEl = document.getElementById('set-gift_qris_enabled');
+            if (qrisEl) qrisEl.addEventListener('change', updateQrisIcon);
 
             // Masking waktu HH:mm otomatis hanya untuk waktu mulai
             ['set-wedding_time_start', 'set-reception_time_start'].forEach(id => {

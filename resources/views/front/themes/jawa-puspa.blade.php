@@ -60,7 +60,11 @@ $rDate  = jklGet('reception_date', $wDate);
 $rTimeS = jklTime(jklGet('reception_time_start', '11:00'));
 $rTimeE = jklTime(jklGet('reception_time_end', '13:00'));
 $tzLabel = jklGet('wedding_timezone', 'WIB');
-$sameLoc = (jklGet('event_location_mode', 'same') === 'same');
+$locW = trim((string)jklGet('wedding_location'));
+$locR = trim((string)jklGet('reception_location'));
+$mapW = trim((string)jklGet('wedding_map_link'));
+$mapR = trim((string)jklGet('reception_map_link'));
+$sameLoc = !(jklGet('event_location_mode', 'same') === 'different' || ($locW !== '' && $locR !== '' && $locW !== $locR) || ($mapW !== '' && $mapR !== '' && $mapW !== $mapR));
 $mainMapLink = trim((string)jklGet('wedding_map_link')) ?: trim((string)jklGet('reception_map_link'));
 $giftRecipient = jklGet('gift_recipient_name', jklGet('gift_owner', ''));
 $countdownISO = $rDate.'T'.$rTimeS.':00';
@@ -753,7 +757,7 @@ function withEnvelope(fn){
         </div>
         <p class="text-[11px] text-puspa-soft mb-3">a.n {{ !empty($acc['an']) ? $acc['an'] : $giftRecipient }}</p>
         <p class="font-mono text-xl tracking-[0.12em] text-puspa-ink mb-4">{{ $acc['no'] }}</p>
-        <button onclick="copyText('{{ $acc['no'] }}', 'rekening berhasil disalin')" class="btn-outline text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full font-medium">SALIN NO REKENING</button>
+        <button onclick="copyText('{{ $acc['no'] }}', 'rekening berhasil disalin')" class="btn-outline text-[10px] tracking-[0.25em] px-6 py-2.5 rounded-full font-medium">SALIN REKENING</button>
       </div>
       @endforeach
 

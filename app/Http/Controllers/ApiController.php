@@ -60,8 +60,27 @@ class ApiController extends Controller
     }
 
     /**
+     * Otorisasi endpoint check-in: token dari URL halaman panitia harus
+     * cocok dengan settings.checkin_token (hash_equals), ATAU pemanggil
+     * adalah admin yang sudah login (tab check-in admin memanggil
+     * checkin_stats tanpa token).
+     */
+    private function checkinAuthorized($inv_id, $token)
+    {
+        if (auth()->guard('admin')->check()) return true;
+        if (!$inv_id || $token === null || $token === '') return false;
+        $saved = Setting::where('invitation_id', $inv_id)->where('key_name', 'checkin_token')->value('key_value');
+        if (!$saved) return false;
+        return hash_equals((string) $saved, (string) $token);
+    }
+
+    /**
      * QR Check-in tamu (dipakai halaman scanner panitia).
-     * POST {invitation_id, code}
+     * POST {invitation_id, code, token, companions?, operator?}
+     * Token = checkin_token dari URL halaman panitia; admin yang sudah
+     * login juga diizinkan (tab check-in admin memanggil endpoint ini
+     * tanpa token). companions (0-20) + operator (nama petugas) hanya
+     * dicatat pada check-in pertama; scan ulang tidak menimpa data.
      */
     public function checkin(Request $request)
     {
@@ -73,6 +92,10 @@ class ApiController extends Controller
         $invitation_id = $request->input('invitation_id');
         $code = strtoupper(trim($request->input('code', '')));
 
+        if (!$this->checkinAuthorized($invitation_id, $request->input('token', ''))) {
+            return response()->json(['success' => false, 'message' => 'Token tidak valid.'], 403);
+        }
+
         $guest = \App\Models\Guest::where('invitation_id', $invitation_id)
             ->where('qr_code', $code)->first();
 
@@ -81,8 +104,14 @@ class ApiController extends Controller
         }
 
         $already = !empty($guest->checked_in_at);
+        // Pendamping (opsional, default 0) + nama petugas (opsional) hanya
+        // dicatat pada check-in pertama; scan ulang tidak menimpa data.
+        $companions = max(0, min(20, (int) $request->input('companions', 0)));
+        $operator = trim((string) $request->input('operator', ''));
         if (!$already) {
             $guest->checked_in_at = now();
+            $guest->companions = $companions;
+            if ($operator !== '') $guest->checked_in_by = mb_substr($operator, 0, 100);
             $guest->save();
             $guest->refresh();
         }
@@ -95,29 +124,226 @@ class ApiController extends Controller
             // dalam WIB, bukan waktu UTC mentah — akar masalah yang sama
             // seperti waktu kirim WA sebelumnya.
             'checked_in_at' => $this->waIso($guest->checked_in_at),
+            'companions' => (int) ($guest->companions ?? 0),
+            'checked_in_by' => $guest->checked_in_by,
         ]);
     }
 
     /**
      * Statistik check-in untuk dashboard admin.
-     * GET ?inv_id=
+     * GET ?inv_id=&token= — token wajib kecuali pemanggil admin login.
      */
     public function checkinStats(Request $request)
     {
         $inv_id = $request->query('inv_id', $request->input('invitation_id'));
+        if (!$this->checkinAuthorized($inv_id, $request->query('token', $request->input('token', '')))) {
+            return response()->json(['success' => false, 'message' => 'Token tidak valid.'], 403);
+        }
         $total = \App\Models\Guest::where('invitation_id', $inv_id)->count();
         $checked = \App\Models\Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')->count();
+        // Total orang yang benar-benar hadir = tamu + pendamping mereka.
+        $totalPeople = $this->checkinPeopleTotal($inv_id);
         $recent = \App\Models\Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')
-            ->orderBy('checked_in_at', 'DESC')->limit(20)->get(['nama', 'checked_in_at'])
+            ->orderBy('checked_in_at', 'DESC')->limit(20)->get(['nama', 'checked_in_at', 'companions', 'checked_in_by'])
             ->map(function ($g) {
-                return ['nama' => $g->nama, 'checked_in_at' => $this->waIso($g->checked_in_at)];
+                return [
+                    'nama' => $g->nama,
+                    'checked_in_at' => $this->waIso($g->checked_in_at),
+                    'companions' => (int) ($g->companions ?? 0),
+                    'checked_in_by' => $g->checked_in_by,
+                ];
             })->values();
 
         return response()->json([
             'success' => true,
             'total' => $total,
             'checked_in' => $checked,
+            'total_people' => $totalPeople,
             'recent' => $recent,
+        ]);
+    }
+
+    /**
+     * Daftar lengkap tamu untuk pencarian + daftar belum hadir di halaman
+     * check-in panitia. GET ?inv_id=&token= — dimuat sekali saat load,
+     * lalu difilter client-side. Token wajib kecuali pemanggil admin login.
+     * qr_code ikut dikembalikan agar tombol "Check-in" per baris bisa
+     * memakai jalur /api/checkin yang sama (dengan token yang sama).
+     */
+    public function checkinGuests(Request $request)
+    {
+        $inv_id = $request->query('inv_id', $request->input('invitation_id'));
+        if (!$this->checkinAuthorized($inv_id, $request->query('token', $request->input('token', '')))) {
+            return response()->json(['success' => false, 'message' => 'Token tidak valid.'], 403);
+        }
+        $rows = \App\Models\Guest::where('invitation_id', $inv_id)
+            ->orderBy('nama', 'ASC')->get(['nama', 'qr_code', 'checked_in_at', 'companions', 'checked_in_by'])
+            ->map(function ($g) {
+                return [
+                    'nama' => $g->nama,
+                    'qr_code' => $g->qr_code,
+                    'checked_in_at' => $this->waIso($g->checked_in_at),
+                    'companions' => (int) ($g->companions ?? 0),
+                    'checked_in_by' => $g->checked_in_by,
+                ];
+            })->values();
+
+        return response()->json([
+            'success' => true,
+            'guests' => $rows,
+        ]);
+    }
+
+    /** Total orang hadir (tamu + pendamping) untuk satu undangan. */
+    private function checkinPeopleTotal($inv_id)
+    {
+        $checked = \App\Models\Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')->count();
+        return $checked + (int) \App\Models\Guest::where('invitation_id', $inv_id)
+            ->whereNotNull('checked_in_at')->sum('companions');
+    }
+
+    /**
+     * Simpan jumlah pendamping untuk tamu yang sudah check-in.
+     * POST {invitation_id, code, companions, token, operator?}
+     * Dipakai stepper di overlay sukses halaman panitia; token wajib
+     * kecuali pemanggil admin login.
+     */
+    public function checkinCompanions(Request $request)
+    {
+        $json = json_decode($request->getContent(), true) ?? [];
+        if (!empty($json)) {
+            $request->merge($json);
+        }
+
+        $invitation_id = $request->input('invitation_id');
+        $code = strtoupper(trim($request->input('code', '')));
+
+        if (!$this->checkinAuthorized($invitation_id, $request->input('token', ''))) {
+            return response()->json(['success' => false, 'message' => 'Token tidak valid.'], 403);
+        }
+
+        $guest = \App\Models\Guest::where('invitation_id', $invitation_id)
+            ->where('qr_code', $code)->first();
+
+        if (!$guest) {
+            return response()->json(['success' => false, 'message' => 'Kode QR tidak ditemukan.'], 404);
+        }
+        if (empty($guest->checked_in_at)) {
+            return response()->json(['success' => false, 'message' => 'Tamu belum check-in.'], 422);
+        }
+
+        $guest->companions = max(0, min(20, (int) $request->input('companions', 0)));
+        // Petugas diisi bila belum tercatat (check-in pertama yang
+        // menyertakan nama petugas).
+        $operator = trim((string) $request->input('operator', ''));
+        if ($operator !== '' && empty($guest->checked_in_by)) {
+            $guest->checked_in_by = mb_substr($operator, 0, 100);
+        }
+        $guest->save();
+
+        return response()->json([
+            'success' => true,
+            'nama' => $guest->nama,
+            'companions' => (int) $guest->companions,
+            'total_people' => $this->checkinPeopleTotal($invitation_id),
+        ]);
+    }
+
+    /**
+     * Laporan statistik kehadiran untuk tab Check-in admin.
+     * GET ?inv_id=&token= — token wajib kecuali pemanggil admin login.
+     * Mengembalikan total, hadir, persen, total orang (termasuk
+     * pendamping), ringkasan per petugas, daftar belum hadir, dan
+     * kedatangan per jam dalam zona waktu acara (Data Utama).
+     */
+    public function checkinReport(Request $request)
+    {
+        $inv_id = $request->query('inv_id', $request->input('invitation_id'));
+        if (!$this->checkinAuthorized($inv_id, $request->query('token', $request->input('token', '')))) {
+            return response()->json(['success' => false, 'message' => 'Token tidak valid.'], 403);
+        }
+        $total = \App\Models\Guest::where('invitation_id', $inv_id)->count();
+        $checked = \App\Models\Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')->count();
+        $totalPeople = $this->checkinPeopleTotal($inv_id);
+
+        $byOperator = \App\Models\Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')
+            ->selectRaw('checked_in_by as operator, COUNT(*) as count, COALESCE(SUM(companions), 0) as companions')
+            ->groupBy('checked_in_by')->orderByDesc('count')->get()
+            ->map(function ($r) {
+                return [
+                    'operator' => $r->operator ?: '(tanpa nama)',
+                    'count' => (int) $r->count,
+                    'companions' => (int) $r->companions,
+                ];
+            })->values();
+
+        $pending = \App\Models\Guest::where('invitation_id', $inv_id)->whereNull('checked_in_at')
+            ->orderBy('nama', 'ASC')->pluck('nama')->values();
+
+        // Kedatangan per jam dalam zona waktu acara (bukan UTC).
+        $tzLabel = Setting::where('invitation_id', $inv_id)->where('key_name', 'wedding_timezone')->value('key_value') ?: 'WIB';
+        $iana = ['WIB' => 'Asia/Jakarta', 'WITA' => 'Asia/Makassar', 'WIT' => 'Asia/Jayapura'][$tzLabel] ?? 'Asia/Jakarta';
+        $buckets = [];
+        $times = \App\Models\Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')->pluck('checked_in_at');
+        foreach ($times as $t) {
+            $h = \Carbon\Carbon::parse($t, 'UTC')->setTimezone($iana)->format('H:00');
+            $buckets[$h] = ($buckets[$h] ?? 0) + 1;
+        }
+        ksort($buckets);
+        $hourly = [];
+        foreach ($buckets as $h => $c) $hourly[] = ['hour' => $h, 'count' => $c];
+
+        return response()->json([
+            'success' => true,
+            'total' => $total,
+            'checked_in' => $checked,
+            'percent' => $total ? (int) round($checked / $total * 100) : 0,
+            'total_people' => $totalPeople,
+            'by_operator' => $byOperator,
+            'pending_list' => $pending,
+            'hourly_buckets' => $hourly,
+        ]);
+    }
+
+    /**
+     * Unduh laporan kehadiran sebagai CSV (dari tab Check-in admin).
+     * GET ?inv_id=&token= — token wajib kecuali pemanggil admin login.
+     * Kolom: Nama, Status, Jam Check-in (zona acara), Pendamping, Petugas.
+     */
+    public function checkinExport(Request $request)
+    {
+        $inv_id = $request->query('inv_id', $request->input('invitation_id'));
+        if (!$this->checkinAuthorized($inv_id, $request->query('token', $request->input('token', '')))) {
+            return response()->json(['success' => false, 'message' => 'Token tidak valid.'], 403);
+        }
+        $tzLabel = Setting::where('invitation_id', $inv_id)->where('key_name', 'wedding_timezone')->value('key_value') ?: 'WIB';
+        $iana = ['WIB' => 'Asia/Jakarta', 'WITA' => 'Asia/Makassar', 'WIT' => 'Asia/Jayapura'][$tzLabel] ?? 'Asia/Jakarta';
+        $rows = \App\Models\Guest::where('invitation_id', $inv_id)->orderBy('nama', 'ASC')
+            ->get(['nama', 'checked_in_at', 'companions', 'checked_in_by']);
+
+        $out = fopen('php://temp', 'r+');
+        // BOM UTF-8 agar Excel membuka file tanpa karakter rusak.
+        fwrite($out, "\xEF\xBB\xBF");
+        fputcsv($out, ['Nama', 'Status', 'Jam Check-in', 'Pendamping', 'Petugas']);
+        foreach ($rows as $g) {
+            $time = $g->checked_in_at
+                ? \Carbon\Carbon::parse($g->checked_in_at, 'UTC')->setTimezone($iana)->format('d M Y H:i') . ' ' . $tzLabel
+                : '-';
+            fputcsv($out, [
+                $g->nama,
+                $g->checked_in_at ? 'Hadir' : 'Belum',
+                $time,
+                (int) ($g->companions ?? 0),
+                $g->checked_in_by ?: '-',
+            ]);
+        }
+        rewind($out);
+        $csv = stream_get_contents($out);
+        fclose($out);
+
+        return response($csv, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="checkin-' . $inv_id . '-' . date('Ymd') . '.csv"',
         ]);
     }
 

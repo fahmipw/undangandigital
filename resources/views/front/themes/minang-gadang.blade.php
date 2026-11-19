@@ -40,7 +40,11 @@ $wTimeE = mcTime(mcGet('wedding_time_end', '10:00'));
 $rDate  = mcGet('reception_date', $wDate);
 $rTimeS = mcTime(mcGet('reception_time_start', '11:00'));
 $rTimeE = mcTime(mcGet('reception_time_end', '13:00'));
-$sameLoc = (mcGet('event_location_mode', 'same') === 'same');
+$locW = trim((string)mcGet('wedding_location'));
+$locR = trim((string)mcGet('reception_location'));
+$mapW = trim((string)mcGet('wedding_map_link'));
+$mapR = trim((string)mcGet('reception_map_link'));
+$sameLoc = !(mcGet('event_location_mode', 'same') === 'different' || ($locW !== '' && $locR !== '' && $locW !== $locR) || ($mapW !== '' && $mapR !== '' && $mapW !== $mapR));
 $mainMapLink = trim((string)mcGet('wedding_map_link')) ?: trim((string)mcGet('reception_map_link'));
 $giftRecipient = mcGet('gift_recipient_name', mcGet('gift_owner', ''));
 $countdownISO = $wDate.'T'.$wTime.':00+07:00';
@@ -627,7 +631,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
     @if(!empty($a['logo']))<img src="{{ $a['logo'] }}" alt="Logo bank" style="height:36px;max-width:150px;object-fit:contain;margin:10px auto 0;display:block">@endif
     <div class="no">{{ $a['no'] }}</div>
     <div class="an">a.n. {{ $a['an'] }}</div>
-    <button class="btn-line copy" onclick="copyNo('{{ $a['no'] }}')">Salin Nomor</button>
+    <button class="btn-line copy" onclick="copyNo('{{ $a['no'] }}')">Salin Rekening</button>
   </div>
   @endforeach
   @if(mcGet('gift_address'))<div class="bank rv"><div class="bk">Kirim Hadiah Fisik</div><p style="font-size:14px;color:var(--gading-dim);margin-top:10px;line-height:1.7">{{ mcGet('gift_address') }}</p>@if($giftRecipient)<p style="font-size:13px;opacity:.75;margin-top:8px">Penerima: {{ $giftRecipient }}</p>@endif
