@@ -268,7 +268,10 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
       <div id="reader"></div>
       <button type="button" class="cam-switch" id="btn-cam" style="display:none" onclick="switchCamera()" title="Kamera belakang — ketuk untuk ganti" aria-label="Ganti kamera"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
     </div>
-    <button class="btn btn-gold" id="btn-scan" onclick="toggleScanner()"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM21 14v3M14 21h3M21 18v3h-3"/></svg><span id="btn-scan-label">Mulai Scan QR</span></button>
+    <div style="display:flex;gap:8px;align-items:stretch">
+      <button class="btn btn-gold" id="btn-scan" style="flex:1" onclick="toggleScanner()"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM21 14v3M14 21h3M21 18v3h-3"/></svg><span id="btn-scan-label">Mulai Scan QR</span></button>
+      <button type="button" class="btn btn-ghost" id="btn-sound-test" style="flex:0 0 auto;width:auto;padding:14px 16px;white-space:nowrap" onclick="playSound('ok')" title="Tes suara notifikasi" aria-label="Tes suara notifikasi"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg><span>Tes Suara</span></button>
+    </div>
     <div class="row">
       <input id="manual" placeholder="KODE UNDANGAN" maxlength="16" autocomplete="off">
     </div>
@@ -436,7 +439,9 @@ setInterval(tickClock, 1000);
 var audioCtx = null;
 function ensureAudio(){
   if(!audioCtx){ try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){} }
-  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  // Kembalikan promise resume agar pemanggil bisa menunggu context 'running'.
+  if(audioCtx && audioCtx.state === 'suspended') return audioCtx.resume();
+  return Promise.resolve();
 }
 document.addEventListener('pointerdown', ensureAudio);
 document.addEventListener('keydown', ensureAudio);
@@ -451,13 +456,20 @@ function beep(freq, start, dur, type, vol){
   o.start(start); o.stop(start + dur + 0.05);
 }
 function playSound(kind){
-  // Suara selalu aktif (tanpa toggle); AudioContext tetap lazy-init
-  // setelah interaksi pertama (aturan browser).
-  if(!audioCtx) return;
-  var t = audioCtx.currentTime + 0.01;
-  if(kind === 'ok'){ beep(660, t, 0.12); beep(880, t + 0.13, 0.2); }
-  else if(kind === 'dup'){ beep(520, t, 0.12); beep(520, t + 0.16, 0.12); }
-  else { beep(160, t, 0.3, 'sawtooth', 0.12); }
+  // Suara selalu aktif (tanpa toggle). Pastikan context sudah 'running'
+  // dulu — beep yang dijadwalkan saat context masih 'suspended' tidak
+  // terdengar, jadi tunggu resume() selesai baru jadwalkan (boleh sedikit
+  // terlambat asal bunyi). Jangan pernah diam-diam no-op bila ada gesture
+  // sebelumnya.
+  var p = ensureAudio();
+  function go(){
+    if(!audioCtx) return;
+    var t = audioCtx.currentTime + 0.01;
+    if(kind === 'ok'){ beep(660, t, 0.12, 'sine', 0.25); beep(880, t + 0.13, 0.2, 'sine', 0.25); }
+    else if(kind === 'dup'){ beep(520, t, 0.12, 'sine', 0.25); beep(520, t + 0.16, 0.12, 'sine', 0.25); }
+    else { beep(160, t, 0.3, 'sawtooth', 0.2); }
+  }
+  if(p && typeof p.then === 'function') p.then(go).catch(go); else go();
 }
 
 function showRes(ok, title, sub){
@@ -468,6 +480,7 @@ function showRes(ok, title, sub){
 }
 
 async function doCheckin(code){
+  ensureAudio();
   code = String(code||'').trim().toUpperCase();
   if(!code) return;
   // cegah double-scan beruntun dari kamera
@@ -603,6 +616,7 @@ function setScanBtn(on){
 }
 
 function startScanner(){
+  ensureAudio();
   loadLib(function(){
     scanner = new Html5Qrcode('reader');
     scanner.start({facingMode:camFacing}, {fps:10, qrbox:{width:230,height:230}},
@@ -615,6 +629,7 @@ function startScanner(){
   });
 }
 function toggleScanner(){
+  ensureAudio();
   if(scanning){ stopScanner(); return; }
   startScanner();
 }
