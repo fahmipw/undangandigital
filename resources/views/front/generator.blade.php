@@ -503,9 +503,9 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
               </button>
             </div>
 
-            <!-- Toggle Legenda Ikon -->
+            <!-- Tombol Legenda Ikon (buka modal) -->
             <button
-              onclick="toggleLegendBox()"
+              onclick="openLegendModal()"
               class="text-[11px] font-semibold text-gold-dark dark:text-gold flex items-center gap-1 hover:underline"
             >
               <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
@@ -515,20 +515,6 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
         </div>
 
         <p class="text-[11px] text-espresso/55 dark:text-white/50 leading-relaxed">Tanda <strong>Sudah dikirim</strong> muncul saat tombol Kirim WA diklik, atau saat ditandai manual — pengiriman di dalam aplikasi WhatsApp sendiri tidak bisa dilacak dari sini.</p>
-
-        <!-- Collapsible Legend Box (Keterangan Ikon Aksi) -->
-        <div id="legendBox" class="p-3 rounded-xl bg-ivory dark:bg-charcoal border border-[#E5DEC9] dark:border-charcoal-border text-[11px] space-y-1.5 text-espresso/80 dark:text-white/80">
-          <div class="flex items-center justify-between mb-1">
-            <p class="font-bold text-espresso dark:text-gold-light">Keterangan Tombol Aksi:</p>
-            <button onclick="toggleLegendBox()" class="text-[10px] text-espresso/50 dark:text-white/50 hover:underline">Sembunyikan</button>
-          </div>
-          <div class="flex items-center gap-2"><i data-lucide="copy" class="w-3.5 h-3.5 text-espresso dark:text-gold shrink-0"></i> <span><strong>Salin</strong> — menyalin tautan undangan tamu.</span></div>
-          <div class="flex items-center gap-2"><i data-lucide="send" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i> <span><strong>Kirim WA</strong> — membuka WhatsApp dengan pesan siap kirim.</span></div>
-          <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i> <span><strong>Centang</strong> — menandai tamu sudah dikirimi undangan.</span></div>
-          <div class="flex items-center gap-2"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i> <span><strong>Panah Melingkar</strong> — membatalkan tanda <em>Sudah Dikirim</em> (muncul jika sudah terkirim).</span></div>
-          <div class="flex items-center gap-2"><i data-lucide="pencil" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i> <span><strong>Pensil</strong> — mengubah nama tamu (tautan lama tetap berlaku).</span></div>
-          <div class="flex items-center gap-2"><i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600 shrink-0"></i> <span><strong>Hapus</strong> — menghapus tamu dari daftar.</span></div>
-        </div>
 
         <!-- Mobile-Friendly Guest Cards Container -->
         <div id="guestCardsContainer" class="space-y-2.5 pt-1"></div>
@@ -563,6 +549,41 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
           Ya, Hapus
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL KETERANGAN IKON AKSI ==================== -->
+  <div
+    id="legendModal"
+    class="hidden fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center p-4"
+    onclick="if (event.target === this) closeLegendModal()"
+  >
+    <div class="bg-white dark:bg-charcoal-card border border-[#E6DFD3] dark:border-charcoal-border rounded-2xl max-w-xs w-full p-5 shadow-xl animate-pop-in">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-gold/20 text-gold-dark dark:text-gold flex items-center justify-center">
+            <i data-lucide="help-circle" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-bold text-espresso dark:text-white">Keterangan Tombol Aksi</h3>
+        </div>
+        <button onclick="closeLegendModal()" title="Tutup" class="p-1.5 rounded-lg text-espresso/50 dark:text-white/50 hover:bg-espresso/10 dark:hover:bg-white/10 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="space-y-2.5 text-[11px] text-espresso/80 dark:text-white/80">
+        <div class="flex items-center gap-2"><i data-lucide="copy" class="w-3.5 h-3.5 text-espresso dark:text-gold shrink-0"></i> <span><strong>Salin</strong> — menyalin tautan undangan tamu.</span></div>
+        <div class="flex items-center gap-2"><i data-lucide="send" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i> <span><strong>Kirim WA</strong> — membuka WhatsApp dengan pesan siap kirim.</span></div>
+        <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i> <span><strong>Centang</strong> — menandai tamu sudah dikirimi undangan.</span></div>
+        <div class="flex items-center gap-2"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i> <span><strong>Panah Melingkar</strong> — membatalkan tanda <em>Sudah Dikirim</em> (muncul jika sudah terkirim).</span></div>
+        <div class="flex items-center gap-2"><i data-lucide="pencil" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i> <span><strong>Pensil</strong> — mengubah nama tamu (tautan lama tetap berlaku).</span></div>
+        <div class="flex items-center gap-2"><i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600 shrink-0"></i> <span><strong>Hapus</strong> — menghapus tamu dari daftar.</span></div>
+      </div>
+      <button
+        onclick="closeLegendModal()"
+        class="w-full mt-4 py-2.5 rounded-xl bg-espresso hover:bg-[#2E2216] dark:bg-gold dark:hover:bg-gold-light text-white dark:text-charcoal text-xs font-semibold transition active:scale-[0.99]"
+      >
+        Tutup
+      </button>
     </div>
   </div>
 
@@ -1009,10 +1030,18 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
       renderGuestCards();
     }
 
-    // Toggle Box Keterangan Ikon
-    function toggleLegendBox() {
-      document.getElementById('legendBox').classList.toggle('hidden');
+    // Modal Keterangan Ikon Aksi
+    function openLegendModal() {
+      document.getElementById('legendModal').classList.remove('hidden');
     }
+
+    function closeLegendModal() {
+      document.getElementById('legendModal').classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeLegendModal();
+    });
 
     // Muat Ulang Daftar Tamu dari Server
     async function loadGeneratorGuests() {
