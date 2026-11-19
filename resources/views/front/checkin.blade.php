@@ -177,7 +177,6 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
   .badge{flex-shrink:0;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;white-space:nowrap}
   .badge.in{background:#dcfce7;color:#166534}
   .badge.out{background:#fef3c7;color:#92400e}
-  .mini{flex-shrink:0;border:none;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--gen-btn-start),var(--gen-btn-end));color:var(--gen-btn-text)}
   .count{font-size:12px;color:var(--gen-inkSoft);text-align:center;margin-top:8px}
   .pager{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
   .pager button{min-width:34px;padding:7px 10px;border-radius:999px;border:1px solid var(--gen-border);background:var(--gen-card);color:var(--gen-ink);font-size:13px;font-weight:700;cursor:pointer}
@@ -706,7 +705,7 @@ function guestRow(g){
   var done = !!g.checked_in_at;
   var badge = done
     ? '<span class="badge in">Hadir</span><span class="gtime">' + esc(formatEventTime(g.checked_in_at)) + (g.companions > 0 ? ' • +' + g.companions : '') + '</span>'
-    : '<span class="badge out">Belum</span><button class="mini" type="button" onclick="doCheckin(\'' + esc(g.qr_code || '') + '\')">Check-in</button>';
+    : '<span class="badge out">Belum</span>';
   return '<div class="guest-item"><span class="gname">' + esc(g.nama) + '</span>' + badge + '</div>';
 }
 
