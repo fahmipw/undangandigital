@@ -95,6 +95,13 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
       background: rgba(197, 160, 89, 0.35);
       border-radius: 9999px;
     }
+
+    /* Daftar tamu: scroll di dalam wadah (Firefox + cegah rantai scroll ke halaman) */
+    .guest-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(197, 160, 89, 0.45) transparent;
+      overscroll-behavior: contain;
+    }
   </style>
 </head>
 
@@ -516,8 +523,8 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
 
         <p class="text-[11px] text-espresso/55 dark:text-white/50 leading-relaxed">Tanda <strong>Sudah dikirim</strong> muncul saat tombol Kirim WA diklik, atau saat ditandai manual — pengiriman di dalam aplikasi WhatsApp sendiri tidak bisa dilacak dari sini.</p>
 
-        <!-- Mobile-Friendly Guest Cards Container -->
-        <div id="guestCardsContainer" class="space-y-2.5 pt-1"></div>
+        <!-- Mobile-Friendly Guest Cards Container (scroll di dalam, halaman tidak memanjang) -->
+        <div id="guestCardsContainer" class="space-y-2.5 pt-1 pr-1 pb-1 max-h-[520px] overflow-y-auto guest-scroll"></div>
       </section>
     </main>
   </div>
