@@ -570,6 +570,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 .gal3dDots .gal-dot{width:8px;height:8px;border-radius:9999px;border:0;padding:0;background:rgba(255,255,255,.35);cursor:pointer}
 .gal3dDots .gal-dot.on{background:#b8934a}
 @media (prefers-reduced-motion:reduce){.gal3d-ring{transition:none}}
+@media (hover:none){#galGrid .group-hover\:opacity-100{opacity:0!important}#galGrid .group-hover\:scale-110{transform:none!important}}
 .gal-hint{display:flex;justify-content:center;margin-top:12px;position:relative;z-index:2}
 .gal-hint>span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid currentColor;border-radius:999px;font-size:12px;letter-spacing:.08em;opacity:.85;background:rgba(127,127,127,.10)}
 .gal-hint .gh-a{display:inline-block;animation:galHintNudge 1.6s ease-in-out infinite}
@@ -898,7 +899,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         </div>
         <?php endif; ?>
         <?php endif; ?>
-        <div id="galGrid" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 reveal-stagger perspective-container">
+        <div id="galGrid" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 perspective-container">
           <?php if (!empty($gallery)): ?>
           <?php  foreach ($gallery as $index => $img): ?>
           <?php
