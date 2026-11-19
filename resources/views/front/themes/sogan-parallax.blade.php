@@ -561,12 +561,12 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 <div class="rvd"><div class="sec-kicker">Doa &amp; Harapan</div><div class="sec-title dekor">Ucapan</div></div>
 <svg class="ukiran rv" viewBox="0 0 320 30"><path d="M10 15 H138 M182 15 H310" stroke="#a87e1f" stroke-width="1.5"/><path d="M160 4 l11 11 -11 11 -11 -11 Z" fill="url(#emasG)"/><circle cx="146" cy="15" r="3" fill="#d4af37"/><circle cx="174" cy="15" r="3" fill="#d4af37"/></svg>
 <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
-<div id="wishList" class="rv"></div>
-<form id="wishForm" class="rv" onsubmit="return sendWish(event)" style="margin-top:22px">
+<form id="wishForm" class="rv" onsubmit="return sendWish(event)" style="margin:22px 0">
 <div class="field"><label>Nama</label><input required name="name" placeholder="Nama Anda"></div>
 <div class="field"><label>Ucapan</label><textarea required name="message" rows="3" placeholder="Tulis doa terbaik Anda..."></textarea></div>
 <button class="btn-line" type="submit">Kirim Ucapan</button>
 </form>
+<div id="wishList" class="rv"></div>
 </section>
 
 <!-- GIFT -->

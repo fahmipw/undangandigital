@@ -647,12 +647,12 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
 <section id="ucapan">
   <div class="rvd"><div class="sec-kicker">Donga Pangestu</div><div class="sec-title serif">Ucapan</div><div class="ukel">❋</div></div>
   <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
-  <div id="wishList" class="rv"></div>
-  <form id="wishForm" class="rv" onsubmit="return sendWish(event)" style="margin-top:22px">
+  <form id="wishForm" class="rv" onsubmit="return sendWish(event)" style="margin:22px 0">
     <div class="field"><label>Nama</label><input required name="name" placeholder="Nama Anda"></div>
     <div class="field"><label>Ucapan</label><textarea required name="message" rows="3" placeholder="Tulis doa terbaik..."></textarea></div>
     <button class="btn-line" type="submit">Kirim Ucapan</button>
   </form>
+  <div id="wishList" class="rv"></div>
 </section>
 
 @if(!empty($accounts) || mcGet('gift_address'))

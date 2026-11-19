@@ -750,6 +750,8 @@ async function refreshStats(){
 var activeTab = 'scan';
 function switchTab(name){
   activeTab = name;
+  // Scanner jangan terus menyala di luar tab Scan: matikan kamera saat pindah tab.
+  if(name !== 'scan' && scanning) stopScanner();
   var tabs = document.querySelectorAll('.tab');
   for(var i = 0; i < tabs.length; i++){
     var on = tabs[i].getAttribute('data-tab') === name;
