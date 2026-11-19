@@ -307,6 +307,38 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
         </div>
       </section>
 
+      <!-- ==================== PANEL HASIL GENERATE SATUAN ==================== -->
+      <section id="singleResultPanel" class="hidden bg-white dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[#E6DFD3] dark:border-charcoal-border space-y-3">
+        <h2 class="text-xs font-bold tracking-wider uppercase text-espresso dark:text-white">Hasil Generate</h2>
+        <div>
+          <label class="block text-[11px] font-bold tracking-wider uppercase text-espresso/75 dark:text-white/75 mb-1">Link Undangan</label>
+          <div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-ivory dark:bg-charcoal border border-[#DCD3C2] dark:border-charcoal-border">
+            <i data-lucide="link-2" class="w-3.5 h-3.5 text-gold-dark dark:text-gold shrink-0"></i>
+            <input id="singleResultLink" type="text" readonly onclick="this.select()" class="w-full bg-transparent text-[11px] font-mono text-espresso/80 dark:text-white/80 focus:outline-none truncate" />
+            <button type="button" onclick="copySingleLink()" title="Salin link" class="p-1.5 rounded-lg text-gold-dark dark:text-gold hover:bg-gold/15 shrink-0"><i data-lucide="copy" class="w-4 h-4"></i></button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold tracking-wider uppercase text-espresso/75 dark:text-white/75 mb-1">Pesan WhatsApp</label>
+          <textarea id="singleResultMessage" rows="9" readonly class="w-full p-3 rounded-xl bg-ivory dark:bg-charcoal border border-[#DCD3C2] dark:border-charcoal-border text-xs text-espresso dark:text-white focus:outline-none leading-relaxed resize-none"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="copySingleMessage()" class="py-2.5 px-3 rounded-xl border border-[#DCD3C2] dark:border-charcoal-border bg-ivory dark:bg-charcoal hover:bg-gold/15 text-espresso dark:text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 transition active:scale-95"><i data-lucide="copy" class="w-3.5 h-3.5 text-gold-dark dark:text-gold"></i><span>Salin Pesan</span></button>
+          <button type="button" onclick="sendSingleWhatsapp()" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95"><i data-lucide="send" class="w-3.5 h-3.5"></i><span>Kirim via WA</span></button>
+        </div>
+      </section>
+
+      <!-- ==================== PANEL HASIL GENERATE MASSAL ==================== -->
+      <section id="bulkResultPanel" class="hidden bg-white dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[#E6DFD3] dark:border-charcoal-border space-y-3">
+        <h2 class="text-xs font-bold tracking-wider uppercase text-espresso dark:text-white">Hasil Generate Massal</h2>
+        <p id="bulkSummary" class="text-xs font-semibold text-espresso/80 dark:text-white/80"></p>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" onclick="copyAllBulkLinks()" class="px-3 py-2 rounded-xl border border-[#DCD3C2] dark:border-charcoal-border bg-ivory dark:bg-charcoal hover:bg-gold/15 text-espresso dark:text-white text-[11px] font-semibold flex items-center gap-1.5 transition active:scale-95"><i data-lucide="copy" class="w-3.5 h-3.5 text-gold-dark dark:text-gold"></i><span>Salin Semua Link</span></button>
+          <button type="button" onclick="downloadBulkCsv()" class="px-3 py-2 rounded-xl border border-[#DCD3C2] dark:border-charcoal-border bg-ivory dark:bg-charcoal hover:bg-gold/15 text-espresso dark:text-white text-[11px] font-semibold flex items-center gap-1.5 transition active:scale-95"><i data-lucide="download" class="w-3.5 h-3.5 text-gold-dark dark:text-gold"></i><span>Unduh CSV</span></button>
+        </div>
+        <div id="bulkResultList" class="space-y-2.5"></div>
+      </section>
+
       <!-- ==================== CARD 2: TEMPLATE & PRATINJAU WHATSAPP ==================== -->
       <section class="bg-white dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[#E6DFD3] dark:border-charcoal-border">
         <button
@@ -482,6 +514,8 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
           </div>
         </div>
 
+        <p class="text-[11px] text-espresso/55 dark:text-white/50 leading-relaxed">Tanda <strong>Sudah dikirim</strong> muncul saat tombol Kirim WA diklik, atau saat ditandai manual — pengiriman di dalam aplikasi WhatsApp sendiri tidak bisa dilacak dari sini.</p>
+
         <!-- Collapsible Legend Box (Keterangan Ikon Aksi) -->
         <div id="legendBox" class="p-3 rounded-xl bg-ivory dark:bg-charcoal border border-[#E5DEC9] dark:border-charcoal-border text-[11px] space-y-1.5 text-espresso/80 dark:text-white/80">
           <div class="flex items-center justify-between mb-1">
@@ -557,6 +591,8 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
 
     // Daftar tamu dari server (diisi loadGeneratorGuests saat halaman dibuka).
     let generatorGuests = [];
+    let bulkResults = [];
+    let currentSingleGuest = null; // {nama, slug, link, no_hp} tamu di panel hasil satuan
     let currentFilter = 'ALL'; // 'ALL' | 'UNSENT' | 'SENT'
     let editingGuestId = null;
     let pendingDeleteId = null;
@@ -591,6 +627,34 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
       var cleaned = String(rawPhone || '').replace(/[^0-9]/g, '');
       if (cleaned.charAt(0) === '0') cleaned = '62' + cleaned.slice(1);
       return cleaned;
+    }
+
+    // Waktu server disimpan dalam UTC (config Laravel: UTC), sementara
+    // kode lama menafsirkan "2026-10-26 08:30:00" sebagai waktu lokal,
+    // sehingga jamnya meleset 7 jam padahal tanggalnya tetap benar.
+    // Perbaikan: string tanpa zona dianggap UTC (tambah 'Z'), string
+    // berzona ISO dipakai apa adanya, lalu ditampilkan eksplisit WIB.
+    function parseServerTime(s) {
+      if (!s) return null;
+      var t = String(s).trim().replace(' ', 'T');
+      if (!/[Zz]$/.test(t) && !/[+-]\d{2}:?\d{2}$/.test(t)) t += 'Z';
+      var d = new Date(t);
+      return isNaN(d) ? null : d;
+    }
+
+    function formatWaDate(s) {
+      var d = parseServerTime(s);
+      if (!d) return '';
+      return d.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Badge Status WA ala versi lama (dipakai baris hasil massal).
+    function waBadgeHtml(g) {
+      if (g.wa_sent_at) {
+        return '<span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">SUDAH DIKIRIM</span>'
+          + '<div class="text-[10px] text-espresso/55 dark:text-white/50">' + escHtml(formatWaDate(g.wa_sent_at)) + '</div>';
+      }
+      return '<span class="text-[11px] font-bold text-espresso/40 dark:text-white/40">BELUM DIKIRIM</span>';
     }
 
     // Generate Teks Pesan WA Lengkap untuk Tamu Tertentu
@@ -716,13 +780,54 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
       }
     });
 
-    // Tamu sudah ada: tampilkan kartu lamanya di daftar (jangan dobel).
+    // Panel hasil satuan: tampilkan link + pesan WA tamu (baru maupun duplikat).
+    function showSingleResult(name, slug, phone) {
+      var link = baseUrl + '/' + invSlug + '?to=' + slug;
+      currentSingleGuest = { nama: name, slug: slug, link: link, no_hp: phone || '' };
+      document.getElementById('singleResultLink').value = link;
+      document.getElementById('singleResultMessage').value = buildWaMessage(name, link);
+      document.getElementById('singleResultPanel').classList.remove('hidden');
+      document.getElementById('singleResultPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function copySingleLink() {
+      if (!currentSingleGuest) return;
+      copyTextWithToast(currentSingleGuest.link, 'Link tersalin.');
+    }
+
+    function copySingleMessage() {
+      var v = document.getElementById('singleResultMessage').value;
+      if (v) copyTextWithToast(v, 'Pesan tersalin.');
+    }
+
+    async function sendSingleWhatsapp() {
+      if (!currentSingleGuest) return;
+      var msg = document.getElementById('singleResultMessage').value;
+      var waUrl = 'https://wa.me/';
+      var cleanPhone = normalizePhone(currentSingleGuest.no_hp);
+      if (cleanPhone) waUrl += cleanPhone;
+      waUrl += '?text=' + encodeURIComponent(msg);
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+      var r = await markWa(currentSingleGuest.slug, true);
+      if (r.ok) {
+        var g = generatorGuests.find(function (x) { return x.slug === currentSingleGuest.slug; });
+        if (g) g.wa_sent_at = r.wa_sent_at;
+        syncGuestWa(currentSingleGuest.slug, r.wa_sent_at);
+        syncBulkWa(currentSingleGuest.slug, r.wa_sent_at);
+        renderBulkResults();
+        refreshUI();
+      } else {
+        showToast(r.message);
+      }
+    }
+
+    // Tamu sudah ada: tampilkan kartu lamanya di daftar + panel hasil berisi link lama (jangan dobel).
     function showExistingGuest(name, slug) {
       document.getElementById('searchGuestInput').value = name;
       setStatusFilter('ALL');
       document.getElementById('guest-suggestions').classList.add('hidden');
-      var list = document.getElementById('guestCardsContainer');
-      if (list) list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      var known = generatorGuests.find(function (g) { return g.slug === slug; });
+      showSingleResult(name, slug, known ? (known.no_hp || '') : '');
       showToast('Tamu "' + name + '" sudah ada, menampilkan link lamanya');
     }
 
@@ -761,6 +866,7 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
         phoneInput.value = '';
         handleSingleNameInput();
         refreshUI();
+        showSingleResult(rawName, g.slug, phone);
         showToast('Link undangan untuk "' + rawName + '" berhasil dibuat!');
       } catch (err) {
         showToast('Terjadi kesalahan sistem. Pastikan server berjalan.');
@@ -811,8 +917,15 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
           return;
         }
         var results = data.data || [];
-        var addedCount = results.filter(function (r) { return !r.existed; }).length;
-        var skippedCount = results.length - addedCount;
+        bulkResults = results.map(function (r) {
+          return withLink({ id: r.id, nama: r.nama, slug: r.slug, no_hp: r.no_hp || '', wa_sent_at: r.wa_sent_at || null, existed: !!r.existed });
+        });
+        var addedCount = bulkResults.filter(function (r) { return !r.existed; }).length;
+        var skippedCount = bulkResults.length - addedCount;
+        document.getElementById('bulkSummary').textContent = 'Berhasil: ' + bulkResults.length + ' link (' + addedCount + ' baru, ' + skippedCount + ' sudah ada). Baris kosong dan nama dobel di dalam daftar dilewati.';
+        renderBulkResults();
+        document.getElementById('bulkResultPanel').classList.remove('hidden');
+        document.getElementById('bulkResultPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         textarea.value = '';
         await loadGeneratorGuests();
         showToast(addedCount + ' tamu baru ditambahkan' + (skippedCount > 0 ? ' (' + skippedCount + ' duplikat dilewati)' : ''));
@@ -942,7 +1055,7 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
     function getFilteredGuests() {
       var query = (document.getElementById('searchGuestInput') ? document.getElementById('searchGuestInput').value : '').toLowerCase();
       return generatorGuests.filter(function (g) {
-        var matchQuery = g.nama.toLowerCase().includes(query) || (g.no_hp && String(g.no_hp).includes(query));
+        var matchQuery = g.nama.toLowerCase().includes(query) || (g.no_hp && String(g.no_hp).includes(query)) || (g.slug && g.slug.toLowerCase().includes(query));
         if (!matchQuery) return false;
         if (currentFilter === 'SENT') return !!g.wa_sent_at;
         if (currentFilter === 'UNSENT') return !g.wa_sent_at;
@@ -977,7 +1090,7 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
             + '<p class="text-[10px] text-espresso/55 dark:text-white/50 font-mono">' + (g.no_hp ? '+' + escHtml(g.no_hp) : 'Tanpa nomor WA') + '</p></div>';
         }
         var statusPill = sent
-          ? '<span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-600/15 text-emerald-700 dark:text-emerald-400"><i data-lucide="check-check" class="w-3 h-3"></i> Sudah Dikirim</span>'
+          ? '<div class="shrink-0 text-right"><span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-600/15 text-emerald-700 dark:text-emerald-400"><i data-lucide="check-check" class="w-3 h-3"></i> Sudah Dikirim</span><div class="text-[10px] text-espresso/55 dark:text-white/50 mt-0.5">' + escHtml(formatWaDate(g.wa_sent_at)) + '</div></div>'
           : '<span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-600/15 text-amber-800 dark:text-amber-300">Belum Dikirim</span>';
         return '<div class="p-3.5 rounded-2xl bg-ivory/80 dark:bg-charcoal border border-[#E5DEC9] dark:border-charcoal-border transition hover:border-gold/50">'
           + '<div class="flex items-start justify-between gap-2 mb-2">'
@@ -1022,6 +1135,82 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
       a.click();
       URL.revokeObjectURL(a.href);
       showToast('CSV diunduh (' + rows.length + ' tamu).');
+    }
+
+    function syncBulkWa(slug, wa) {
+      var r = bulkResults.find(function (x) { return x.slug === slug; });
+      if (r) r.wa_sent_at = wa;
+    }
+
+    // Render Panel Hasil Massal (kartu per tamu, gaya prototipe)
+    function renderBulkResults() {
+      var container = document.getElementById('bulkResultList');
+      if (!container) return;
+      container.innerHTML = bulkResults.map(function (r, i) {
+        var link = r.link || guestLink(r);
+        return '<div class="p-3.5 rounded-2xl bg-ivory/80 dark:bg-charcoal border border-[#E5DEC9] dark:border-charcoal-border">'
+          + '<div class="flex items-start justify-between gap-2 mb-2">'
+          + '<div class="min-w-0"><p class="text-xs font-bold text-espresso dark:text-white truncate">' + escHtml(r.nama) + '</p>'
+          + '<p class="text-[10px] text-espresso/55 dark:text-white/50 font-mono">' + (r.no_hp ? '+' + escHtml(r.no_hp) : 'Tanpa nomor WA') + '</p></div>'
+          + (r.existed
+            ? '<span class="shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-600/15 text-amber-800 dark:text-amber-300">SUDAH ADA</span>'
+            : '<span class="shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-600/15 text-emerald-700 dark:text-emerald-400">BARU</span>')
+          + '</div>'
+          + '<div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white dark:bg-charcoal-card border border-[#E6DFD3] dark:border-charcoal-border mb-2.5">'
+          + '<i data-lucide="link-2" class="w-3.5 h-3.5 text-gold-dark dark:text-gold shrink-0"></i>'
+          + '<input type="text" readonly value="' + escHtml(link) + '" onclick="this.select()" class="w-full bg-transparent text-[11px] font-mono text-espresso/80 dark:text-white/80 focus:outline-none truncate" />'
+          + '</div>'
+          + '<div class="flex items-center justify-between gap-1.5">'
+          + '<div>' + waBadgeHtml(r) + '</div>'
+          + '<div class="flex items-center gap-1">'
+          + '<button onclick="copyBulkLink(' + i + ')" title="Salin link" class="p-2 rounded-xl border border-[#DCD3C2] dark:border-charcoal-border bg-white dark:bg-charcoal-card hover:bg-gold/15 text-espresso dark:text-white transition active:scale-95"><i data-lucide="copy" class="w-3.5 h-3.5 text-gold-dark dark:text-gold"></i></button>'
+          + '<button onclick="sendBulkWA(' + i + ')" title="Kirim WA" class="p-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition active:scale-95"><i data-lucide="send" class="w-3.5 h-3.5"></i></button>'
+          + '</div></div></div>';
+      }).join('');
+      refreshIcons();
+    }
+
+    function copyBulkLink(i) {
+      if (!bulkResults[i]) return;
+      copyTextWithToast(bulkResults[i].link || guestLink(bulkResults[i]), 'Link tersalin.');
+    }
+
+    async function sendBulkWA(i) {
+      var r = bulkResults[i];
+      if (!r) return;
+      window.open(bulkWaUrl(r.nama, r.link || guestLink(r), r.no_hp || ''), '_blank', 'noopener,noreferrer');
+      var res = await markWa(r.slug, true);
+      if (res.ok) {
+        r.wa_sent_at = res.wa_sent_at;
+        syncGuestWa(r.slug, res.wa_sent_at);
+        renderBulkResults();
+        refreshUI();
+      } else {
+        showToast(res.message);
+      }
+    }
+
+    function copyAllBulkLinks() {
+      if (!bulkResults.length) return;
+      copyTextWithToast(bulkResults.map(function (r) { return r.link || guestLink(r); }).join('\n'), 'Semua link tersalin (' + bulkResults.length + ' link).');
+    }
+
+    // Unduh CSV hasil massal saja (kolom versi lama: Nama;Link;Status).
+    function downloadBulkCsv() {
+      if (!bulkResults.length) { showToast('Tidak ada hasil massal untuk diunduh.'); return; }
+      var escCsv = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+      var rows = [['Nama', 'Link', 'Status']];
+      bulkResults.forEach(function (r) {
+        rows.push([r.nama, r.link || guestLink(r), r.existed ? 'Sudah ada' : 'Baru']);
+      });
+      var csv = '\uFEFF' + rows.map(function (r) { return r.map(escCsv).join(';'); }).join('\r\n');
+      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'link-tamu-' + invSlug + '.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('CSV hasil massal diunduh (' + bulkResults.length + ' tamu).');
     }
 
     // Salin Link ke Clipboard (clipboard API, fallback execCommand)
@@ -1085,6 +1274,8 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
       if (r.ok) {
         guest.wa_sent_at = r.wa_sent_at;
         syncGuestWa(guest.slug, r.wa_sent_at);
+        syncBulkWa(guest.slug, r.wa_sent_at);
+        renderBulkResults();
         refreshUI();
       } else {
         showToast(r.message);
@@ -1100,6 +1291,8 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
       if (!r.ok) { showToast(r.message); return; }
       guest.wa_sent_at = r.wa_sent_at;
       syncGuestWa(guest.slug, r.wa_sent_at);
+      syncBulkWa(guest.slug, r.wa_sent_at);
+      renderBulkResults();
       refreshUI();
       showToast(guest.wa_sent_at ? '"' + guest.nama + '" ditandai sudah dikirim' : 'Status kirim "' + guest.nama + '" dibatalkan');
     }
@@ -1142,6 +1335,12 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
           return;
         }
         guest.nama = newName;
+        var bulk = bulkResults.find(function (r) { return r.slug === guest.slug; });
+        if (bulk) { bulk.nama = newName; renderBulkResults(); }
+        if (currentSingleGuest && currentSingleGuest.slug === guest.slug) {
+          currentSingleGuest.nama = newName;
+          document.getElementById('singleResultMessage').value = buildWaMessage(newName, currentSingleGuest.link);
+        }
         editingGuestId = null;
         refreshUI();
         showToast('Nama & tautan tamu diperbarui');
@@ -1181,6 +1380,12 @@ $groomInitial = mb_strtoupper(mb_substr($groom, 0, 1));
           return;
         }
         generatorGuests = generatorGuests.filter(function (x) { return x.slug !== guest.slug; });
+        bulkResults = bulkResults.filter(function (r) { return r.slug !== guest.slug; });
+        renderBulkResults();
+        if (currentSingleGuest && currentSingleGuest.slug === guest.slug) {
+          currentSingleGuest = null;
+          document.getElementById('singleResultPanel').classList.add('hidden');
+        }
         if (editingGuestId === guest.id) editingGuestId = null;
         refreshUI();
         showToast('Tamu "' + guest.nama + '" berhasil dihapus');
