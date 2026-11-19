@@ -144,7 +144,6 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
   .progress .lbl .pct{color:var(--gen-pct);font-weight:700}
   .card{background:var(--gen-card);border:1px solid var(--gen-border);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
   .card h3{font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:var(--gen-accent-text);margin-bottom:12px}
-  .card h3 .pill{float:right;background:var(--gen-soft);border:1px solid var(--gen-border);color:var(--gen-inkSoft);border-radius:999px;padding:1px 8px;font-size:11px;letter-spacing:0;text-transform:none}
   #reader{border-radius:12px;overflow:hidden;background:#000;min-height:240px}
   #reader video{object-fit:cover}
   .scan-wrap{position:relative}
@@ -173,11 +172,15 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
   .guest-item{display:flex;align-items:center;gap:8px;padding:9px 2px;border-bottom:1px solid var(--gen-border);font-size:14px}
   .guest-item:last-child{border-bottom:none}
   .guest-item .gname{flex:1;min-width:0;overflow-wrap:anywhere}
+  .guest-item .gnum{flex-shrink:0;color:var(--gen-accent-text);font-weight:700;min-width:22px;font-variant-numeric:tabular-nums}
   .guest-item .gtime{color:var(--gen-inkSoft);font-size:11px;white-space:nowrap}
   .badge{flex-shrink:0;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;white-space:nowrap}
   .badge.in{background:#dcfce7;color:#166534}
   .badge.out{background:#fef3c7;color:#92400e}
   .count{font-size:12px;color:var(--gen-inkSoft);text-align:center;margin-top:8px}
+  .subtabs{display:flex;gap:6px;margin-bottom:10px}
+  .subtab{flex:1;padding:9px 6px;border-radius:999px;border:1px solid var(--gen-border);background:var(--gen-card);color:var(--gen-inkSoft);font-size:13px;font-weight:700;cursor:pointer}
+  .subtab.active{background:linear-gradient(135deg,var(--gen-btn-start),var(--gen-btn-end));color:var(--gen-btn-text);border-color:transparent}
   .pager{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
   .pager button{min-width:34px;padding:7px 10px;border-radius:999px;border:1px solid var(--gen-border);background:var(--gen-card);color:var(--gen-ink);font-size:13px;font-weight:700;cursor:pointer}
   .pager button.on{background:linear-gradient(135deg,var(--gen-btn-start),var(--gen-btn-end));color:var(--gen-btn-text);border-color:transparent}
@@ -299,15 +302,13 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
   <div class="card">
     <h3>Cari Tamu</h3>
     <input class="search" id="guest-search" type="search" placeholder="Cari nama tamu..." autocomplete="off" oninput="renderGuestSearch(true)">
+    <div class="subtabs">
+      <button type="button" class="subtab active" data-gf="hadir" onclick="setGuestFilter('hadir')">Hadir <span id="cnt-hadir"></span></button>
+      <button type="button" class="subtab" data-gf="belum" onclick="setGuestFilter('belum')">Belum Hadir <span id="cnt-belum"></span></button>
+    </div>
     <div id="guest-list"><div class="empty">Memuat daftar tamu...</div></div>
     <div class="pager" id="guest-pager" style="display:none"></div>
     <div class="count" id="guest-count"></div>
-  </div>
-
-  <div class="card">
-    <h3>Belum Hadir <span class="pill" id="pending-count"></span></h3>
-    <div id="pending-list"><div class="empty">Memuat daftar tamu...</div></div>
-    <button class="btn btn-ghost" id="btn-pending-more" style="display:none" onclick="togglePending()">Tampilkan semua</button>
   </div>
 
   <div class="card">
@@ -482,6 +483,7 @@ function playSound(kind){
 }
 
 function showRes(ok, title, sub){
+  clearTimeout(resultTimer);
   var r = document.getElementById('result');
   r.className = ok ? 'ok' : 'err';
   document.getElementById('res-title').textContent = title;
@@ -527,17 +529,13 @@ function manualGo(){
 }
 
 // --- Overlay animasi sukses (Lottie "Order Success" kiriman Fahmi) ---
-var successAnim = null, successTimer = null;
+var successAnim = null, successTimer = null, resultTimer = null;
 var lastCode = '', compVal = 0;
 
 // --- Stepper pendamping di overlay sukses ---
 function compStep(d){
   compVal = Math.max(0, Math.min(20, compVal + d));
   document.getElementById('comp-val').textContent = compVal;
-  // Petugas sedang mengisi: mundur ulang hitung 5 detik supaya overlay
-  // tidak menutup di tengah pengisian pendamping.
-  clearTimeout(successTimer);
-  successTimer = setTimeout(hideSuccessAnim, 5000);
 }
 async function saveCompanions(){
   if(!lastCode) return;
@@ -569,6 +567,13 @@ function loadLottie(cb){
 function hideSuccessAnim(){
   document.getElementById('success-overlay').classList.remove('show');
   clearTimeout(successTimer);
+  // Notif hijau (banner CHECK-IN BERHASIL) baru terlihat sesudah overlay
+  // menutup — tampil 4 detik sejak petugas mengonfirmasi pendamping
+  // (Simpan/Lewati/klik luar), lalu hilang sendiri.
+  clearTimeout(resultTimer);
+  resultTimer = setTimeout(function(){
+    document.getElementById('result').className = '';
+  }, 4000);
 }
 
 function showFallbackAnim(){
@@ -582,8 +587,8 @@ function showSuccessAnim(nama, already, companions, checkedInAt){
   document.getElementById('success-sub').textContent = already ? 'Sudah tercatat hadir' : 'Check-in berhasil';
   // Waktu check-in (dari server, zona acara) di bawah sub-teks overlay.
   document.getElementById('success-time').textContent = checkedInAt ? 'Waktu check-in: ' + formatEventTime(checkedInAt) : '';
-  // Stepper pendamping: tampil di setiap scan sukses; overlay menutup
-  // otomatis 5 detik sesudah tampil (hitung mundur diulang tiap ketuk +/-).
+  // Stepper pendamping: tampil di setiap scan sukses; overlay tidak
+  // menutup otomatis supaya petugas sempat mengisi lalu Simpan/Lewati.
   compVal = companions || 0;
   document.getElementById('comp-val').textContent = compVal;
   document.getElementById('comp-box').style.display = 'block';
@@ -612,7 +617,6 @@ function showSuccessAnim(nama, already, companions, checkedInAt){
     successAnim.addEventListener('data_failed', showFallbackAnim);
   });
   clearTimeout(successTimer);
-  successTimer = setTimeout(hideSuccessAnim, 5000);
 }
 
 function loadLib(cb){
@@ -684,7 +688,7 @@ function switchCamera(){
 }
 
 // --- Daftar tamu: dimuat sekali, difilter client-side ---
-var guestsCache = [], guestsSig = '', pendingExpanded = false;
+var guestsCache = [], guestsSig = '';
 var lastRecent = [];
 
 async function loadGuests(){
@@ -697,16 +701,15 @@ async function loadGuests(){
     guestsSig = sig;
     guestsCache = d.guests;
     renderGuestSearch();
-    renderPending();
   }catch(e){}
 }
 
-function guestRow(g){
+function guestRow(g, num){
   var done = !!g.checked_in_at;
   var badge = done
     ? '<span class="badge in">Hadir</span><span class="gtime">' + esc(formatEventTime(g.checked_in_at)) + (g.companions > 0 ? ' • +' + g.companions : '') + '</span>'
     : '<span class="badge out">Belum</span>';
-  return '<div class="guest-item"><span class="gname">' + esc(g.nama) + '</span>' + badge + '</div>';
+  return '<div class="guest-item"><span class="gnum">' + num + '.</span><span class="gname">' + esc(g.nama) + '</span>' + badge + '</div>';
 }
 
 var guestPage = 1;
@@ -732,51 +735,47 @@ function renderGuestPager(pages){
   pg.innerHTML = h;
 }
 
+var guestFilter = 'hadir';
+
+function setGuestFilter(f){
+  guestFilter = f;
+  guestPage = 1;
+  var tabs = document.querySelectorAll('#tab-guests .subtab');
+  for(var i = 0; i < tabs.length; i++){
+    tabs[i].classList.toggle('active', tabs[i].getAttribute('data-gf') === f);
+  }
+  renderGuestSearch();
+}
+
 function renderGuestSearch(resetPage){
   if(resetPage) guestPage = 1;
   var q = (document.getElementById('guest-search').value || '').trim().toLowerCase();
-  var list = guestsCache.filter(function(g){ return !q || String(g.nama).toLowerCase().indexOf(q) !== -1; });
+  var hadir = guestsCache.filter(function(g){ return !!g.checked_in_at; });
+  var belum = guestsCache.filter(function(g){ return !g.checked_in_at; });
+  document.getElementById('cnt-hadir').textContent = '(' + hadir.length + ')';
+  document.getElementById('cnt-belum').textContent = '(' + belum.length + ')';
+  var list = guestsCache.filter(function(g){
+    var okStatus = guestFilter === 'hadir' ? !!g.checked_in_at : !g.checked_in_at;
+    return okStatus && (!q || String(g.nama).toLowerCase().indexOf(q) !== -1);
+  });
   var pages = Math.max(1, Math.ceil(list.length / GUESTS_PER_PAGE));
   if(guestPage > pages) guestPage = pages;
   var box = document.getElementById('guest-list');
   if(!guestsCache.length){
     box.innerHTML = '<div class="empty">Belum ada tamu.</div>';
   }else if(!list.length){
-    box.innerHTML = '<div class="empty">Tidak ada tamu bernama "' + esc(q) + '".</div>';
+    box.innerHTML = '<div class="empty">' + (q ? 'Tidak ada tamu bernama "' + esc(q) + '".'
+      : guestFilter === 'hadir' ? 'Belum ada tamu yang hadir.' : 'Semua tamu sudah hadir.') + '</div>';
   }else{
     var from = (guestPage - 1) * GUESTS_PER_PAGE;
-    box.innerHTML = list.slice(from, from + GUESTS_PER_PAGE).map(guestRow).join('');
+    box.innerHTML = list.slice(from, from + GUESTS_PER_PAGE).map(function(g, i){
+      return guestRow(g, from + i + 1);
+    }).join('');
   }
   renderGuestPager(pages);
   document.getElementById('guest-count').textContent = guestsCache.length
     ? 'Menampilkan ' + (list.length ? ((guestPage - 1) * GUESTS_PER_PAGE + 1) + '\u2013' + Math.min(list.length, guestPage * GUESTS_PER_PAGE) : 0) + ' dari ' + list.length + ' hasil \u2022 ' + guestsCache.length + ' tamu'
     : '';
-}
-
-function renderPending(){
-  var pending = guestsCache.filter(function(g){ return !g.checked_in_at; });
-  document.getElementById('pending-count').textContent = pending.length + ' tamu';
-  var box = document.getElementById('pending-list');
-  if(!pending.length){
-    box.innerHTML = '<div class="empty">Semua tamu sudah hadir.</div>';
-  }else{
-    var shown = pendingExpanded ? pending : pending.slice(0, 20);
-    box.innerHTML = shown.map(function(g){
-      return '<div class="guest-item"><span class="gname">' + esc(g.nama) + '</span></div>';
-    }).join('');
-  }
-  var more = document.getElementById('btn-pending-more');
-  if(pending.length > 20){
-    more.style.display = 'block';
-    more.textContent = pendingExpanded ? 'Tampilkan lebih sedikit' : 'Tampilkan semua (' + pending.length + ' tamu)';
-  }else{
-    more.style.display = 'none';
-  }
-}
-
-function togglePending(){
-  pendingExpanded = !pendingExpanded;
-  renderPending();
 }
 
 async function refreshStats(){
