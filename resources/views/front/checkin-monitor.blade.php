@@ -176,7 +176,7 @@ $monPhotosJson = json_encode(array_values(array_unique($monPhotos)), JSON_HEX_TA
   .frame-head .live{display:flex;align-items:center;gap:8px}
   .frame-head .dot{width:8px;height:8px;border-radius:50%;background:#34d399;animation:pulse 2s infinite;flex-shrink:0}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-  #live-clock{position:absolute;right:0;font-family:ui-monospace,monospace;letter-spacing:.18em;background:rgba(0,0,0,.3);padding:4px 12px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gen-accent) 30%,transparent);color:#fff}
+  #live-clock{position:absolute;right:0;font-family:'Cormorant Garamond',Georgia,serif;letter-spacing:.18em;background:rgba(0,0,0,.3);padding:4px 12px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gen-accent) 30%,transparent);color:#fff}
   @media(max-width:639px){#live-clock{display:none}}
   .frame-foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;color:color-mix(in srgb,var(--gen-accent) 55%,#fff);font-size:10px;letter-spacing:.2em;text-transform:uppercase}
   @media(min-width:640px){.frame-foot{font-size:12px}}
@@ -184,6 +184,7 @@ $monPhotosJson = json_encode(array_values(array_unique($monPhotos)), JSON_HEX_TA
   .frame-foot .couple{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:.12em;text-transform:none;font-size:14px;color:color-mix(in srgb,var(--gen-accent) 45%,#fff)}
   @media(min-width:640px){.frame-foot .couple{font-size:16px}}
   .frame-foot .right{text-align:right;line-height:1.5}
+  #ev-date{font-family:'Cormorant Garamond',Georgia,serif}
   #queue-pill{display:none;align-items:center;gap:8px;padding:4px 14px;border-radius:999px;background:var(--gen-accent);color:var(--gen-on-accent);font-size:10px;letter-spacing:.08em;font-weight:600;border:1px solid color-mix(in srgb,var(--gen-accent) 45%,#fff)}
   #queue-pill.show{display:inline-flex}
   #queue-pill .qdot{width:8px;height:8px;border-radius:50%;background:#fcd34d;animation:pulse 1s infinite}
