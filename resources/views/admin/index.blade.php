@@ -34,12 +34,47 @@
         };
     </script>
     <script>
+        // Helper SweetAlert2 bertema emas & krem, ala prototipe v2.
+        function showSwalSuccess(title, text) {
+            return Swal.fire({
+                icon: 'success',
+                title: title,
+                text: text,
+                iconColor: '#10B981',
+                confirmButtonText: 'Selesai',
+                confirmButtonColor: '#7A5B1D',
+                timer: 2600,
+                timerProgressBar: true
+            });
+        }
+        function showSwalInfo(title, text) {
+            return Swal.fire({
+                icon: 'info',
+                title: title,
+                text: text,
+                iconColor: '#7A5B1D',
+                confirmButtonText: 'Mengerti',
+                confirmButtonColor: '#7A5B1D'
+            });
+        }
+    </script>
+    <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         primary: '#361f1a',
-                        secondary: '#775a19'
+                        secondary: '#775a19',
+                        cream: { 50: '#FDFCFA', 100: '#FAF8F5', 200: '#F3EFEA', 300: '#E6DFD5' },
+                        gold: { 50: '#FAF6EE', 100: '#F2E8D5', 200: '#E3CFA6', 500: '#9A7426', 600: '#7A5B1D', 700: '#624815', 800: '#4B360F' }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif']
+                    },
+                    boxShadow: {
+                        soft: '0 4px 24px -4px rgba(61, 47, 24, 0.06)',
+                        card: '0 2px 12px -2px rgba(61, 47, 24, 0.04)'
                     }
                 }
             }
@@ -48,6 +83,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:wght@700&family=Instrument+Serif&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
@@ -99,8 +135,7 @@
 
         .rsvp-field input:focus,
         .rsvp-field select:focus,
-        .rsvp-field textarea:focus,
-        #inv-selector:focus {
+        .rsvp-field textarea:focus {
             border-color: #775a19 !important;
             outline: none !important;
             box-shadow: 0 0 0 1px #775a19 !important;
@@ -108,8 +143,7 @@
 
         .rsvp-field input,
         .rsvp-field select,
-        .rsvp-field textarea,
-        #inv-selector {
+        .rsvp-field textarea {
             accent-color: #775a19;
         }
 
@@ -119,7 +153,7 @@
             color: #4e342e;
         }
 
-        /* Dropdown berikon di Data Utama (ikut pola #inv-selector):
+        /* Dropdown berikon di Data Utama:
            ikon kiri + chevron kanan, di luar <select> (option native tak bisa berikon).
            Select .rsvp-field punya padding atas 1.6rem / bawah 0.5rem, jadi ikon
            digeser 0.55rem dari tengah agar sejajar garis teks. */
@@ -270,6 +304,36 @@
                 overflow-y: auto;
             }
         }
+
+        /* === Admin v2 (prototipe Fahmi): palet krem/emas, font Plus Jakarta Sans === */
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #DDD5C9; border-radius: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #B8AC9B; }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: slideUpFade 0.25s ease-out forwards; }
+        .tab-btn.active:hover { background-color: #775a19; color: white; }
+
+        /* Input ala prototipe: membulat, krem, fokus emas (menimpa styles.css) */
+        .rsvp-field label { display: block; position: static; pointer-events: auto; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #78716C; margin-bottom: 6px; }
+        .rsvp-field input, .rsvp-field select, .rsvp-field textarea {
+            width: 100%; padding: 0.625rem 0.875rem; border-radius: 0.75rem;
+            background: rgba(250, 248, 245, 0.7); border: 1px solid #E6DFD5;
+            font-size: 0.875rem; font-weight: 500; color: #1C1917;
+        }
+        .rsvp-field input:focus, .rsvp-field select:focus, .rsvp-field textarea:focus {
+            background: #fff; border-color: #7A5B1D !important;
+            box-shadow: 0 0 0 3px rgba(122, 91, 29, 0.15) !important; outline: none !important;
+        }
+        /* Ikon select kini sejajar tengah (padding simetris, bukan 1.6rem atas) */
+        .select-icon-wrap .sel-ico, .select-icon-wrap .sel-chev { margin-top: 0; }
+        /* Kustomisasi tema SweetAlert2 agar menyatu dengan palet emas & krem (ala prototipe) */
+        .swal2-popup { font-family: 'Plus Jakarta Sans', sans-serif !important; border-radius: 1.5rem !important; background-color: #FDFCFA !important; border: 1px solid #E6DFD5 !important; color: #292524 !important; padding: 1.75rem !important; }
+        .swal2-title { font-weight: 700 !important; font-size: 1.25rem !important; color: #1C1917 !important; }
+        .swal2-html-container { font-size: 0.875rem !important; color: #57534E !important; }
+        .swal2-confirm { border-radius: 0.75rem !important; font-weight: 700 !important; font-size: 0.8125rem !important; padding: 0.65rem 1.35rem !important; box-shadow: 0 2px 6px rgba(122, 91, 29, 0.2) !important; }
+        .swal2-cancel { border-radius: 0.75rem !important; font-weight: 700 !important; font-size: 0.8125rem !important; padding: 0.65rem 1.35rem !important; }
     </style>
 </head>
 
@@ -278,267 +342,336 @@
         <button type="button" onclick="toggleAdminSidebar()" class="text-primary p-2" aria-label="Buka menu admin">
             <span class="material-symbols-outlined">menu</span>
         </button>
-        <span class="font-title-sm text-primary text-sm">Admin Panel</span>
+        <span id="mobileCurrentEvent" class="font-title-sm text-primary text-sm truncate">Admin Panel</span>
         <span class="w-10"></span>
     </div>
     <div class="admin-sidebar-backdrop" onclick="toggleAdminSidebar()"></div>
     <!-- Sidebar -->
-    <aside class="sidebar mobile-sidebar w-64 fixed h-full p-6 flex flex-col z-50">
-        <div class="mb-10 text-center">
-            <h2 class="font-display-lg text-xl text-primary mb-4">Admin Panel V2</h2>
-
-            <div class="space-y-3">
-                <div class="relative group">
-                    <select id="inv-selector" onchange="changeInvitation()"
-                        class="w-full bg-secondary/10 border border-secondary/20 rounded-xl px-4 py-3 text-xs font-bold text-primary outline-none appearance-none cursor-pointer">
-                    </select>
-                    <span
-                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-secondary pointer-events-none text-sm">expand_more</span>
+    <aside class="sidebar mobile-sidebar w-80 fixed h-full flex flex-col z-50">
+        <div class="px-5 pt-5 pb-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-600 to-gold-700 text-white flex items-center justify-center shadow-sm">
+                    <span class="material-symbols-outlined text-lg">auto_awesome</span>
                 </div>
+                <div>
+                    <h1 class="font-bold text-stone-900 text-base tracking-tight">Admin Panel V2</h1>
+                    <p class="text-[11px] text-stone-500 font-medium">Manajemen Undangan Digital</p>
+                </div>
+            </div>
+            <button type="button" onclick="toggleAdminSidebar()" class="lg:hidden p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-cream-200">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
 
-                <div class="flex gap-2">
-                    <button onclick="addNewInvitation()"
-                        class="flex-1 bg-secondary/5 hover:bg-secondary/10 border border-dashed border-secondary/30 rounded-lg py-2 text-[10px] font-bold text-secondary uppercase transition-all">+
-                        Baru</button>
-                    <button onclick="deleteInvitation()"
-                        class="px-3 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg py-2 text-red-500 transition-all">
+        <!-- Daftar Undangan (pengganti dropdown) -->
+        <div class="px-4 py-3 border-b border-cream-300/70 bg-cream-100/50">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm text-gold-600">layers</span>
+                    Daftar Undangan
+                </span>
+                <div class="flex items-center gap-1.5">
+                    <button onclick="addNewInvitation()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-gold-600 hover:bg-gold-700 text-white text-xs font-semibold shadow-sm transition cursor-pointer" title="Buat Undangan Baru">
+                        <span class="material-symbols-outlined text-sm">add</span>
+                        <span>Baru</span>
+                    </button>
+                    <button onclick="deleteInvitation()" class="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-200/70 transition cursor-pointer" title="Hapus Undangan Terpilih">
                         <span class="material-symbols-outlined text-sm">delete</span>
                     </button>
                 </div>
             </div>
+            <div class="space-y-2 mb-2.5">
+                <div class="relative">
+                    <span class="material-symbols-outlined text-sm text-stone-400 absolute left-2.5 top-1/2 -translate-y-1/2">search</span>
+                    <input type="text" id="inv-search" oninput="renderInvitationList()" placeholder="Cari nama mempelai..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-cream-300 rounded-lg focus:outline-none focus:border-gold-600 focus:ring-2 focus:ring-gold-600/15 placeholder:text-stone-400 transition">
+                </div>
+                <div class="grid grid-cols-3 gap-1 p-0.5 bg-cream-200/80 rounded-lg text-[11px] font-semibold">
+                    <button type="button" onclick="setInvFilter('all')" id="filter-all" class="py-1 rounded-md bg-white text-gold-700 shadow-sm transition cursor-pointer">Semua (0)</button>
+                    <button type="button" onclick="setInvFilter('active')" id="filter-active" class="py-1 rounded-md text-stone-600 hover:text-stone-900 transition cursor-pointer">Aktif (0)</button>
+                    <button type="button" onclick="setInvFilter('past')" id="filter-past" class="py-1 rounded-md text-stone-600 hover:text-stone-900 transition cursor-pointer">Selesai (0)</button>
+                </div>
+            </div>
+            <div id="invitationCardList" class="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar pr-1">
+            </div>
         </div>
 
-        <nav class="space-y-1 flex-1 overflow-y-auto">
+        <nav class="flex-1 overflow-y-auto custom-scrollbar px-3 py-3 space-y-1">
+            <div class="px-2.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">Pengaturan Konten</div>
             <button onclick="showTab('settings')"
-                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all active"
+                class="tab-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer active"
                 id="btn-settings">
                 <span class="material-symbols-outlined">settings</span> Data Utama
             </button>
             <button onclick="showTab('gallery')"
-                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
+                class="tab-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer"
                 id="btn-gallery">
                 <span class="material-symbols-outlined">image</span> Galeri Foto
             </button>
             <button onclick="showTab('guests')"
-                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
+                class="tab-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer"
                 id="btn-guests">
                 <span class="material-symbols-outlined">group</span> Daftar Tamu
             </button>
             <button onclick="showTab('checkin')"
-                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
+                class="tab-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer"
                 id="btn-checkin">
                 <span class="material-symbols-outlined">qr_code_scanner</span> Check-in Tamu
             </button>
             <button onclick="showTab('rsvp')"
-                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
+                class="tab-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer"
                 id="btn-rsvp">
                 <span class="material-symbols-outlined">how_to_reg</span> RSVP
             </button>
             <button onclick="showTab('messages')"
-                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
+                class="tab-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer"
                 id="btn-messages">
                 <span class="material-symbols-outlined">chat</span> Ucapan
             </button>
+            <div class="pt-2.5 pb-1 px-2.5 text-[10px] font-bold uppercase tracking-wider text-stone-400">Personalisasi</div>
             <button onclick="showTab('music')"
-                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
+                class="tab-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer"
                 id="btn-music">
                 <span class="material-symbols-outlined">music_note</span> Musik
             </button>
             <button onclick="showTab('stories')"
-                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
+                class="tab-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer"
                 id="btn-stories">
                 <span class="material-symbols-outlined">auto_stories</span> Kisah Kasih
             </button>
             <button onclick="showTab('theme')"
-                class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
+                class="tab-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer"
                 id="btn-theme">
                 <span class="material-symbols-outlined">palette</span> Tema Desain
             </button>
             <button onclick="openGenerator()"
-                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-secondary/10 hover:text-secondary text-gray-700">
+                class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer">
                 <span class="material-symbols-outlined">link</span> Link Generator
             </button>
         </nav>
 
-        <div class="pt-6 border-t border-outline-variant/30">
+        <div class="p-3 border-t border-cream-300/70 bg-cream-50">
             <a href="logout"
-                class="flex items-center gap-3 px-4 py-3 text-red-600 text-sm font-semibold hover:bg-red-50 rounded-xl transition-all">
+                class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-semibold text-red-600 hover:bg-red-50 transition cursor-pointer">
                 <span class="material-symbols-outlined">logout</span> Keluar
             </a>
         </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 md:ml-64 p-8">
-        <div class="max-w-4xl mx-auto">
+    <main class="flex-1 md:ml-80 p-4 sm:p-6 lg:p-8">
+        <div class="max-w-6xl mx-auto space-y-6">
 
             <!-- Statistik Dashboard -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-                <div class="data-card rounded-3xl p-5 flex items-center gap-4">
-                    <div class="w-11 h-11 rounded-2xl bg-green-100 text-green-700 flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined">celebration</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white rounded-2xl p-5 border border-cream-300/80 shadow-card flex items-center justify-between hover:border-emerald-300/80 transition">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-2xl">celebration</span>
+                        </div>
+                        <div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-2xl font-bold text-stone-900" id="stat-active">&ndash;</span>
+                                <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Tayang</span>
+                            </div>
+                            <p class="text-xs font-bold tracking-wider uppercase text-stone-500 mt-0.5">Undangan Aktif</p>
+                        </div>
                     </div>
-                    <div class="min-w-0">
-                        <div class="text-2xl font-bold text-primary leading-none" id="stat-active">&ndash;</div>
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Undangan Aktif</div>
-                    </div>
-                    <span class="ml-auto relative flex h-2.5 w-2.5 shrink-0">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-60"></span>
-                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                    <span class="relative flex h-3 w-3 shrink-0">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                     </span>
                 </div>
-                <div class="data-card rounded-3xl p-5 flex items-center gap-4">
-                    <div class="w-11 h-11 rounded-2xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined">mail</span>
+                <div class="bg-white rounded-2xl p-5 border border-cream-300/80 shadow-card flex items-center justify-between hover:border-gold-300 transition">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-gold-50 border border-gold-200/70 text-gold-600 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-2xl">mail</span>
+                        </div>
+                        <div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-2xl font-bold text-stone-900" id="stat-total">&ndash;</span>
+                                <span class="text-xs font-medium text-gold-700 bg-gold-100/80 px-2 py-0.5 rounded-full">Semua</span>
+                            </div>
+                            <p class="text-xs font-bold tracking-wider uppercase text-stone-500 mt-0.5">Total Undangan</p>
+                        </div>
                     </div>
-                    <div class="min-w-0">
-                        <div class="text-2xl font-bold text-primary leading-none" id="stat-total">&ndash;</div>
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Total Undangan</div>
+                    <span class="material-symbols-outlined text-gold-500/60">trending_up</span>
+                </div>
+                <div class="bg-white rounded-2xl p-5 border border-cream-300/80 shadow-card flex items-center justify-between hover:border-stone-300 transition">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-stone-100 border border-stone-200/80 text-stone-600 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-2xl">history</span>
+                        </div>
+                        <div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-2xl font-bold text-stone-900" id="stat-past">&ndash;</span>
+                                <span class="text-xs font-medium text-stone-600 bg-stone-100 px-2 py-0.5 rounded-full">Arsip</span>
+                            </div>
+                            <p class="text-xs font-bold tracking-wider uppercase text-stone-500 mt-0.5">Sudah Berlangsung</p>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-stone-400">check_circle</span>
+                </div>
+            </div>
+
+            <!-- Banner: undangan terpilih sudah lewat tanggal acara -->
+            <div id="pastEventBanner" class="hidden rounded-2xl bg-amber-50/90 border border-amber-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
+                <div class="flex items-start sm:items-center gap-3">
+                    <div class="p-2 rounded-xl bg-amber-100 text-amber-700 shrink-0">
+                        <span class="material-symbols-outlined">event_busy</span>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-amber-900">Acara Undangan Ini Telah Berlangsung</h3>
+                        <p class="text-xs text-amber-800/90 mt-0.5">Tanggal acara telah terlewati. Anda tetap dapat melihat riwayat data, ucapan, dan tamu, atau memperbarui tanggal jika acara dijadwalkan ulang.</p>
                     </div>
                 </div>
-                <div class="data-card rounded-3xl p-5 flex items-center gap-4">
-                    <div class="w-11 h-11 rounded-2xl bg-gray-100 text-gray-500 flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined">history</span>
-                    </div>
-                    <div class="min-w-0">
-                        <div class="text-2xl font-bold text-primary leading-none" id="stat-past">&ndash;</div>
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-secondary mt-1.5">Sudah Berlangsung</div>
-                    </div>
-                </div>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-stone-200/80 text-stone-700 self-start sm:self-center shrink-0">
+                    <span class="material-symbols-outlined text-sm">archive</span> Status: Selesai
+                </span>
             </div>
 
             <!-- Settings Tab -->
             <div id="tab-settings" class="tab-content">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="font-display-lg text-3xl text-primary">Pengaturan Undangan</h2>
-                    <button onclick="saveSettings()"
-                        class="btn-theme px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg">
-                        Simpan Perubahan
-                    </button>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2.5">
+                            <h2 class="font-serif text-3xl font-bold text-stone-900 tracking-tight">Pengaturan Undangan</h2>
+                            <span id="headerStatusBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Aktif</span>
+                        </div>
+                        <p class="text-sm text-stone-500 mt-1">Mengelola undangan untuk <strong id="headerCoupleSubtitle" class="text-stone-800 font-semibold">&mdash;</strong></p>
+                    </div>
+                    <div class="flex items-center gap-2.5 self-start md:self-auto">
+                        <button onclick="previewInvitation()"
+                            class="inline-flex items-center gap-2 px-4 py-3 rounded-full bg-white hover:bg-cream-200/60 text-stone-700 border border-cream-300 text-xs font-bold uppercase tracking-widest shadow-lg transition cursor-pointer">
+                            <span class="material-symbols-outlined text-base text-gold-600">open_in_new</span>
+                            <span>Preview Undangan</span>
+                        </button>
+                        <button onclick="saveSettings()"
+                            class="btn-theme px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg">
+                            Simpan Perubahan
+                        </button>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="data-card p-8 rounded-3xl space-y-6">
-                        <h3
-                            class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest">
-                            <span class="material-symbols-outlined">favorite</span> Mempelai
-                        </h3>
-
-                        <!-- Groom Info -->
-                        <div class="space-y-4">
-                            <div
-                                class="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider mb-2">
-                                <span class="material-symbols-outlined text-sm">man</span> Calon Pengantin Pria
-                            </div>
-                            <div class="flex gap-4 items-start">
-                                <div class="flex-1 space-y-4">
-                                    <div class="rsvp-field"><label>NAMA LENGKAP PRIA</label><input type="text"
-                                            id="set-groom_name"></div>
-                                    <div class="rsvp-field"><label>PANGGILAN PRIA</label><input type="text"
-                                            id="set-groom_nickname"></div>
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                    <!-- Mempelai -->
+                    <div class="xl:col-span-7 bg-white rounded-3xl border border-cream-300/80 shadow-soft p-5 sm:p-7 space-y-7">
+                        <div class="flex items-center justify-between border-b border-cream-200 pb-4">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-xl bg-gold-50 text-gold-600 flex items-center justify-center">
+                                    <span class="material-symbols-outlined">favorite</span>
                                 </div>
-                                <div class="w-24 text-center relative">
-                                    <label
-                                        class="block aspect-[3/4] bg-secondary/5 rounded-xl border border-dashed border-secondary/30 flex flex-col items-center justify-center cursor-pointer overflow-hidden group">
-                                        <img id="preview-groom_photo" src="cowok.jpeg"
-                                            class="w-full h-full object-cover hidden">
-                                        <div id="placeholder-groom_photo" class="text-secondary opacity-40">
-                                            <span class="material-symbols-outlined">add_a_photo</span>
-                                            <p class="text-[8px] font-bold">FOTO</p>
-                                        </div>
-                                        <input type="file" class="hidden" accept="image/*"
-                                            onchange="uploadProfilePhoto('groom')">
-                                        <input type="hidden" id="set-groom_photo">
-                                    </label>
-                                    <?php 
-                                    $groomPhoto = '';
-// Karena di Admin index kita tidak punya akses langsung ke settings di view ini, 
-// kita gunakan logika check existensi dari input hidden atau default.
-// Tombol hapus hanya muncul jika ada foto.
-                                    ?>
-                                    <button onclick="deletePhoto('groom')"
-                                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors z-10"
-                                        id="btn-delete-groom_photo" style="display:none;">
-                                        <span class="material-symbols-outlined text-sm">delete</span>
-                                    </button>
+                                <div>
+                                    <h3 class="text-base font-bold text-stone-900">Data Mempelai</h3>
+                                    <p class="text-xs text-stone-500">Informasi lengkap kedua calon pengantin</p>
                                 </div>
-                            </div>
-                            <div class="grid grid-cols-1 gap-4">
-                                <div class="rsvp-field"><label>URUTAN ANAK (PRIA)</label><input type="text"
-                                        id="set-groom_child_of" placeholder="Contoh: Putra Kedua dari"></div>
-                                <div class="rsvp-field"><label>NAMA ORANG TUA (PRIA)</label><input type="text"
-                                        id="set-groom_parents" placeholder="Contoh: Bapak ... & Ibu ..."></div>
-                                <div class="rsvp-field"><label>INSTAGRAM (PRIA) — OPSIONAL</label><input type="text"
-                                        id="set-groom_instagram" placeholder="Contoh: nama.username"></div>
                             </div>
                         </div>
 
-                        <hr class="opacity-10">
-
-                        <!-- Bride Info -->
+                        <!-- Calon Pengantin Pria -->
                         <div class="space-y-4">
-                            <div
-                                class="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider mb-2">
-                                <span class="material-symbols-outlined text-sm">woman</span> Calon Pengantin Wanita
+                            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-700">
+                                <span class="material-symbols-outlined text-base">man</span>
+                                <span>Calon Pengantin Pria</span>
                             </div>
-                            <div class="flex gap-4 items-start">
-                                <div class="flex-1 space-y-4">
-                                    <div class="rsvp-field"><label>NAMA LENGKAP WANITA</label><input type="text"
-                                            id="set-bride_name"></div>
-                                    <div class="rsvp-field"><label>PANGGILAN WANITA</label><input type="text"
-                                            id="set-bride_nickname"></div>
-                                </div>
-                                <div class="w-24 text-center relative">
-                                    <label
-                                        class="block aspect-[3/4] bg-secondary/5 rounded-xl border border-dashed border-secondary/30 flex flex-col items-center justify-center cursor-pointer overflow-hidden group">
-                                        <img id="preview-bride_photo" src="cewek.jpeg"
-                                            class="w-full h-full object-cover hidden">
-                                        <div id="placeholder-bride_photo" class="text-secondary opacity-40">
-                                            <span class="material-symbols-outlined">add_a_photo</span>
-                                            <p class="text-[8px] font-bold">FOTO</p>
+                            <div class="flex flex-col sm:flex-row gap-5 items-start">
+                                <div class="flex-1 w-full space-y-3.5">
+                                    <div class="rsvp-field"><label>NAMA LENGKAP PRIA</label><input type="text" id="set-groom_name"></div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                        <div class="rsvp-field"><label>PANGGILAN PRIA</label><input type="text" id="set-groom_nickname"></div>
+                                        <div class="rsvp-field"><label>URUTAN ANAK (PRIA)</label><input type="text" id="set-groom_child_of" placeholder="Contoh: Putra Kedua dari"></div>
+                                    </div>
+                                    <div class="rsvp-field"><label>NAMA ORANG TUA (PRIA)</label><input type="text" id="set-groom_parents" placeholder="Contoh: Bapak ... & Ibu ..."></div>
+                                    <div class="rsvp-field"><label>INSTAGRAM (PRIA) — OPSIONAL</label>
+                                        <div class="relative">
+                                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 text-sm font-medium">@</span>
+                                            <input type="text" id="set-groom_instagram" placeholder="Contoh: nama.username" class="!pl-8">
                                         </div>
-                                        <input type="file" class="hidden" accept="image/*"
-                                            onchange="uploadProfilePhoto('bride')">
-                                        <input type="hidden" id="set-bride_photo">
-                                    </label>
-                                    <button onclick="deletePhoto('bride')"
-                                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors z-10"
-                                        id="btn-delete-bride_photo" style="display:none;">
-                                        <span class="material-symbols-outlined text-sm">delete</span>
-                                    </button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="grid grid-cols-1 gap-4">
-                                <div class="rsvp-field"><label>URUTAN ANAK (WANITA)</label><input type="text"
-                                        id="set-bride_child_of" placeholder="Contoh: Putri Pertama dari"></div>
-                                <div class="rsvp-field"><label>NAMA ORANG TUA (WANITA)</label><input type="text"
-                                        id="set-bride_parents" placeholder="Contoh: Bapak ... & Ibu ..."></div>
-                                <div class="rsvp-field"><label>INSTAGRAM (WANITA) — OPSIONAL</label><input type="text"
-                                        id="set-bride_instagram" placeholder="Contoh: nama.username"></div>
+                                <div class="w-full sm:w-36 shrink-0 flex flex-row sm:flex-col items-center gap-3 bg-cream-100/70 p-3 rounded-2xl border border-cream-300/70">
+                                    <div class="relative w-24 h-28 sm:w-full sm:h-36">
+                                        <label class="block w-full h-full bg-secondary/5 rounded-xl border border-dashed border-secondary/30 flex flex-col items-center justify-center cursor-pointer overflow-hidden group">
+                                            <img id="preview-groom_photo" src="cowok.jpeg" class="w-full h-full object-cover hidden">
+                                            <div id="placeholder-groom_photo" class="text-secondary opacity-40 text-center">
+                                                <span class="material-symbols-outlined">add_a_photo</span>
+                                                <p class="text-[8px] font-bold">FOTO</p>
+                                            </div>
+                                            <input type="file" class="hidden" accept="image/*" onchange="uploadProfilePhoto('groom')">
+                                            <input type="hidden" id="set-groom_photo">
+                                        </label>
+                                        <button onclick="deletePhoto('groom')"
+                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors z-10"
+                                            id="btn-delete-groom_photo" style="display:none;">
+                                            <span class="material-symbols-outlined text-sm">delete</span>
+                                        </button>
+                                    </div>
+                                    <p class="text-[11px] font-semibold text-stone-700">Foto Mempelai Pria</p>
+                                </div>
                             </div>
                         </div>
 
-                        <hr class="opacity-10">
+                        <hr class="border-cream-200">
+
+                        <!-- Calon Pengantin Wanita -->
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-700">
+                                <span class="material-symbols-outlined text-base">woman</span>
+                                <span>Calon Pengantin Wanita</span>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-5 items-start">
+                                <div class="flex-1 w-full space-y-3.5">
+                                    <div class="rsvp-field"><label>NAMA LENGKAP WANITA</label><input type="text" id="set-bride_name"></div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                        <div class="rsvp-field"><label>PANGGILAN WANITA</label><input type="text" id="set-bride_nickname"></div>
+                                        <div class="rsvp-field"><label>URUTAN ANAK (WANITA)</label><input type="text" id="set-bride_child_of" placeholder="Contoh: Putri Pertama dari"></div>
+                                    </div>
+                                    <div class="rsvp-field"><label>NAMA ORANG TUA (WANITA)</label><input type="text" id="set-bride_parents" placeholder="Contoh: Bapak ... & Ibu ..."></div>
+                                    <div class="rsvp-field"><label>INSTAGRAM (WANITA) — OPSIONAL</label>
+                                        <div class="relative">
+                                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 text-sm font-medium">@</span>
+                                            <input type="text" id="set-bride_instagram" placeholder="Contoh: nama.username" class="!pl-8">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-full sm:w-36 shrink-0 flex flex-row sm:flex-col items-center gap-3 bg-cream-100/70 p-3 rounded-2xl border border-cream-300/70">
+                                    <div class="relative w-24 h-28 sm:w-full sm:h-36">
+                                        <label class="block w-full h-full bg-secondary/5 rounded-xl border border-dashed border-secondary/30 flex flex-col items-center justify-center cursor-pointer overflow-hidden group">
+                                            <img id="preview-bride_photo" src="cewek.jpeg" class="w-full h-full object-cover hidden">
+                                            <div id="placeholder-bride_photo" class="text-secondary opacity-40 text-center">
+                                                <span class="material-symbols-outlined">add_a_photo</span>
+                                                <p class="text-[8px] font-bold">FOTO</p>
+                                            </div>
+                                            <input type="file" class="hidden" accept="image/*" onchange="uploadProfilePhoto('bride')">
+                                            <input type="hidden" id="set-bride_photo">
+                                        </label>
+                                        <button onclick="deletePhoto('bride')"
+                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors z-10"
+                                            id="btn-delete-bride_photo" style="display:none;">
+                                            <span class="material-symbols-outlined text-sm">delete</span>
+                                        </button>
+                                    </div>
+                                    <p class="text-[11px] font-semibold text-stone-700">Foto Mempelai Wanita</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="border-cream-200">
 
                         <!-- Foto Preview (OG) -->
                         <div class="space-y-4">
-                            <div
-                                class="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider mb-2">
-                                <span class="material-symbols-outlined text-sm">share</span> Foto Preview (Link
-                                WhatsApp)
+                            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-700">
+                                <span class="material-symbols-outlined text-base">share</span>
+                                <span>Foto Preview (Link WhatsApp)</span>
                             </div>
-                            <div class="flex gap-4 items-start">
-                                <div class="w-48 text-center relative">
-                                    <label
-                                        class="block aspect-[120/63] bg-secondary/5 rounded-xl border border-dashed border-secondary/30 flex flex-col items-center justify-center cursor-pointer overflow-hidden group">
-                                        <img id="preview-og_preview_photo"
-                                            class="w-full h-full object-cover hidden">
-                                        <div id="placeholder-og_preview_photo" class="text-secondary opacity-40">
+                            <div class="flex flex-col sm:flex-row gap-4 items-start">
+                                <div class="w-full sm:w-48 shrink-0 relative">
+                                    <label class="block aspect-[120/63] bg-secondary/5 rounded-xl border border-dashed border-secondary/30 flex flex-col items-center justify-center cursor-pointer overflow-hidden group">
+                                        <img id="preview-og_preview_photo" class="w-full h-full object-cover hidden">
+                                        <div id="placeholder-og_preview_photo" class="text-secondary opacity-40 text-center">
                                             <span class="material-symbols-outlined">add_a_photo</span>
                                             <p class="text-[8px] font-bold">FOTO PREVIEW</p>
                                         </div>
-                                        <input type="file" class="hidden" accept="image/*"
-                                            onchange="uploadProfilePhoto('og_preview')">
+                                        <input type="file" class="hidden" accept="image/*" onchange="uploadProfilePhoto('og_preview')">
                                         <input type="hidden" id="set-og_preview_photo">
                                     </label>
                                     <button onclick="deletePhoto('og_preview')"
@@ -547,19 +680,25 @@
                                         <span class="material-symbols-outlined text-sm">delete</span>
                                     </button>
                                 </div>
-                                <p class="text-[11px] opacity-60 leading-relaxed flex-1">Foto ini yang tampil
-                                    saat link undangan dibagikan di WhatsApp. Unggah satu foto kedua mempelai
-                                    (disarankan 1200×630). Jika kosong, dipakai foto mempelai wanita, lalu foto
-                                    pria.</p>
+                                <p class="text-[11px] opacity-60 leading-relaxed flex-1">Foto ini yang tampil saat link undangan dibagikan di WhatsApp. Unggah satu foto kedua mempelai (disarankan 1200×630). Jika kosong, dipakai foto mempelai wanita, lalu foto pria.</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="data-card p-8 rounded-3xl space-y-6">
-                        <h3
-                            class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest">
-                            <span class="material-symbols-outlined">event</span> Jadwal
-                        </h3>
+                    <!-- Jadwal -->
+                    <div class="xl:col-span-5 bg-white rounded-3xl border border-cream-300/80 shadow-soft p-5 sm:p-7 space-y-5">
+                        <div class="flex items-center justify-between border-b border-cream-200 pb-4">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-xl bg-gold-50 text-gold-600 flex items-center justify-center">
+                                    <span class="material-symbols-outlined">event</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-stone-900">Jadwal Acara</h3>
+                                    <p class="text-xs text-stone-500">Tanggal, waktu &amp; lokasi pernikahan</p>
+                                </div>
+                            </div>
+                            <span id="daysCountdownChip" class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 whitespace-nowrap shrink-0"></span>
+                        </div>
                         <div class="rsvp-field">
                             <label>MODE LOKASI ACARA</label>
                             <div class="select-icon-wrap">
@@ -571,12 +710,10 @@
                                 <span class="material-symbols-outlined sel-chev">expand_more</span>
                             </div>
                         </div>
-                        <div class="rsvp-field"><label>TGL AKAD</label><input type="date" id="set-wedding_date"></div>
+                        <div class="rsvp-field"><label>TGL AKAD</label><input type="date" id="set-wedding_date" onchange="updateInvHeaderFromForm()"></div>
                         <div class="grid grid-cols-3 gap-2">
-                            <div class="rsvp-field"><label>MULAI (ANGKA)</label><input type="text"
-                                    id="set-wedding_time_start" placeholder="08:00"></div>
-                            <div class="rsvp-field"><label>SAMPAI (TEKS)</label><input type="text"
-                                    id="set-wedding_time_end" placeholder="10:00 atau Selesai"></div>
+                            <div class="rsvp-field"><label>MULAI (ANGKA)</label><input type="text" id="set-wedding_time_start" placeholder="08:00"></div>
+                            <div class="rsvp-field"><label>SAMPAI (TEKS)</label><input type="text" id="set-wedding_time_end" placeholder="10:00 atau Selesai"></div>
                             <div class="rsvp-field">
                                 <label>ZONA WAKTU</label>
                                 <div class="select-icon-wrap">
@@ -590,27 +727,27 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Lokasi Akad -->
                         <div class="rsvp-field">
                             <label>LOKASI AKAD</label>
                             <input type="text" id="set-wedding_location" placeholder="Contoh: Kediaman Mempelai Wanita">
                         </div>
                         <div class="rsvp-field">
                             <label>LINK GOOGLE MAPS AKAD</label>
-                            <input type="text" id="set-wedding_map_link"
-                                placeholder="Contoh: https://maps.app.goo.gl/xxxxx">
+                            <div class="flex gap-2">
+                                <input type="text" id="set-wedding_map_link" placeholder="Contoh: https://maps.app.goo.gl/xxxxx" class="flex-1 min-w-0">
+                                <button type="button" onclick="openMapsLink('set-wedding_map_link')" class="px-3 py-2.5 rounded-xl bg-white hover:bg-gold-50 text-gold-700 border border-cream-300 text-xs font-semibold shrink-0 transition cursor-pointer flex items-center gap-1" title="Uji Tautan Peta">
+                                    <span class="material-symbols-outlined text-base">navigation</span>
+                                    <span>Cek</span>
+                                </button>
+                            </div>
                         </div>
 
-                        <hr class="border-t border-dashed border-outline-variant/30 my-4">
+                        <hr class="border-t border-dashed border-cream-300">
 
-                        <div class="rsvp-field"><label>TGL RESEPSI</label><input type="date" id="set-reception_date">
-                        </div>
+                        <div class="rsvp-field"><label>TGL RESEPSI</label><input type="date" id="set-reception_date" onchange="updateInvHeaderFromForm()"></div>
                         <div class="grid grid-cols-3 gap-2">
-                            <div class="rsvp-field"><label>MULAI (ANGKA)</label><input type="text"
-                                    id="set-reception_time_start" placeholder="11:00"></div>
-                            <div class="rsvp-field"><label>SAMPAI (TEKS)</label><input type="text"
-                                    id="set-reception_time_end" placeholder="14:00 atau Selesai"></div>
+                            <div class="rsvp-field"><label>MULAI (ANGKA)</label><input type="text" id="set-reception_time_start" placeholder="11:00"></div>
+                            <div class="rsvp-field"><label>SAMPAI (TEKS)</label><input type="text" id="set-reception_time_end" placeholder="14:00 atau Selesai"></div>
                             <div class="rsvp-field">
                                 <label>ZONA WAKTU</label>
                                 <div class="select-icon-wrap">
@@ -624,16 +761,19 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Lokasi Resepsi -->
                         <div class="rsvp-field">
                             <label>LOKASI RESEPSI</label>
                             <input type="text" id="set-reception_location" placeholder="Contoh: Gedung Pernikahan ABC">
                         </div>
                         <div class="rsvp-field">
                             <label>LINK GOOGLE MAPS RESEPSI</label>
-                            <input type="text" id="set-reception_map_link"
-                                placeholder="Contoh: https://maps.app.goo.gl/xxxxx">
+                            <div class="flex gap-2">
+                                <input type="text" id="set-reception_map_link" placeholder="Contoh: https://maps.app.goo.gl/xxxxx" class="flex-1 min-w-0">
+                                <button type="button" onclick="openMapsLink('set-reception_map_link')" class="px-3 py-2.5 rounded-xl bg-white hover:bg-gold-50 text-gold-700 border border-cream-300 text-xs font-semibold shrink-0 transition cursor-pointer flex items-center gap-1" title="Uji Tautan Peta">
+                                    <span class="material-symbols-outlined text-base">navigation</span>
+                                    <span>Cek</span>
+                                </button>
+                            </div>
                         </div>
                         <div id="location-mode-status"
                             class="location-mode-status rounded-lg px-4 py-3 text-xs leading-relaxed">
@@ -641,17 +781,15 @@
                         </div>
                         <div class="rsvp-field pt-2">
                             <label>LINK LIVE STREAMING (OPSIONAL)</label>
-                            <input type="text" id="set-live_stream_link"
-                                placeholder="Contoh: https://youtube.com/live/xxxxx atau https://zoom.us/...">
+                            <input type="text" id="set-live_stream_link" placeholder="Contoh: https://youtube.com/live/xxxxx atau https://zoom.us/...">
                         </div>
-
                     </div>
 
-                    <div class="data-card p-8 rounded-3xl space-y-6 md:col-span-2">
+                    <!-- Gift & Alamat -->
+                    <div class="xl:col-span-12 bg-white rounded-3xl border border-cream-300/80 shadow-soft p-5 sm:p-7 space-y-6">
                         <div class="flex justify-between items-center">
-                            <h3
-                                class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest">
-                                <span class="material-symbols-outlined">payments</span> Gift & Alamat
+                            <h3 class="text-base font-bold text-stone-900 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-gold-600">payments</span> Gift &amp; Alamat
                             </h3>
                             <button onclick="addBankRow()"
                                 class="text-[10px] bg-secondary text-white px-3 py-1 rounded-full font-bold uppercase hover:bg-secondary/80 transition-all">+
@@ -663,14 +801,14 @@
                         </div>
 
                         <div class="border-t border-dashed border-secondary/30 pt-5 space-y-4">
-                            <h4 class="font-title-sm text-secondary flex items-center gap-2 uppercase text-[11px] tracking-widest">
-                                <span class="material-symbols-outlined">qr_code_2</span> QRIS (Opsional)
+                            <h4 class="text-stone-900 flex items-center gap-2 uppercase text-[11px] font-bold tracking-widest">
+                                <span class="material-symbols-outlined text-gold-600">qr_code_2</span> QRIS (Opsional)
                             </h4>
                             <div class="rsvp-field">
                                 <label>STATUS QRIS</label>
                                 <div class="select-icon-wrap">
                                     <span id="ico-gift_qris_enabled" class="material-symbols-outlined sel-ico">block</span>
-                                    <select id="set-gift_qris_enabled" class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm">
+                                    <select id="set-gift_qris_enabled">
                                         <option value="0">Nonaktif — hanya transfer bank</option>
                                         <option value="1">Aktif — tamu bisa memilih QRIS atau transfer</option>
                                     </select>
@@ -702,41 +840,36 @@
 
                         <div class="rsvp-field">
                             <label>NAMA PENERIMA HADIAH</label>
-                            <input type="text" id="set-gift_recipient_name" placeholder="Nama penerima hadiah"
-                                class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm mt-4">
+                            <input type="text" id="set-gift_recipient_name" placeholder="Nama penerima hadiah">
                         </div>
                         <div class="rsvp-field">
                             <label>ALAMAT PENGIRIMAN</label>
-                            <textarea id="set-gift_address" rows="3"
-                                class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm mt-4"></textarea>
+                            <textarea id="set-gift_address" rows="3"></textarea>
                         </div>
                         <div class="rsvp-field">
                             <label>LINK GOOGLE MAPS ALAMAT PENGIRIMAN</label>
-                            <input type="text" id="set-gift_maps_link"
-                                placeholder="Contoh: https://maps.app.goo.gl/xxxxx">
+                            <div class="flex gap-2">
+                                <input type="text" id="set-gift_maps_link" placeholder="Contoh: https://maps.app.goo.gl/xxxxx" class="flex-1 min-w-0">
+                                <button type="button" onclick="openMapsLink('set-gift_maps_link')" class="px-3 py-2.5 rounded-xl bg-white hover:bg-gold-50 text-gold-700 border border-cream-300 text-xs font-semibold shrink-0 transition cursor-pointer flex items-center gap-1" title="Uji Tautan Peta">
+                                    <span class="material-symbols-outlined text-base">navigation</span>
+                                    <span>Cek</span>
+                                </button>
+                            </div>
                         </div>
                         <div class="rsvp-field">
                             <label>NOMOR WHATSAPP RSVP</label>
-                            <input type="text" id="set-rsvp_whatsapp" placeholder="Contoh: 628123456789"
-                                class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm mt-4">
-                            <p class="text-[10px] opacity-50 mt-2 italic">*Nomor WhatsApp untuk menerima konfirmasi
-                                kehadiran tamu</p>
+                            <input type="text" id="set-rsvp_whatsapp" placeholder="Contoh: 628123456789">
+                            <p class="text-[10px] opacity-50 mt-2 italic">*Nomor WhatsApp untuk menerima konfirmasi kehadiran tamu</p>
                         </div>
                         <div class="rsvp-field">
                             <label>QUOTES (OPSIONAL)</label>
-                            <textarea id="set-quotes" rows="3"
-                                class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm mt-4"
-                                placeholder="Contoh: Allah akan memudahkan jalan bagi hamba-Nya yang bersungguh-sungguh"></textarea>
-                            <p class="text-[10px] opacity-50 mt-2 italic">*Quotes akan ditampilkan di halaman utama
-                                undangan dengan tanda — Hawa & Adam</p>
+                            <textarea id="set-quotes" rows="3" placeholder="Contoh: Allah akan memudahkan jalan bagi hamba-Nya yang bersungguh-sungguh"></textarea>
+                            <p class="text-[10px] opacity-50 mt-2 italic">*Quotes akan ditampilkan di halaman utama undangan dengan tanda — Hawa &amp; Adam</p>
                         </div>
                         <div class="rsvp-field">
                             <label>TEMPLATE PESAN WHATSAPP</label>
-                            <textarea id="set-wa_template" rows="4"
-                                class="w-full bg-transparent border-b border-outline-variant py-2 outline-none text-sm mt-4"
-                                placeholder="Halo [nama], kami mengundang Anda ke pernikahan kami. Cek undangan di: [link]"></textarea>
-                            <p class="text-[10px] opacity-50 mt-2 italic">*Gunakan [nama] untuk nama tamu dan [link]
-                                untuk link undangan.</p>
+                            <textarea id="set-wa_template" rows="4" placeholder="Halo [nama], kami mengundang Anda ke pernikahan kami. Cek undangan di: [link]"></textarea>
+                            <p class="text-[10px] opacity-50 mt-2 italic">*Gunakan [nama] untuk nama tamu dan [link] untuk link undangan.</p>
                         </div>
                     </div>
                 </div>
@@ -1263,30 +1396,188 @@
             } catch (e) { /* statistik gagal dimuat, abaikan */ }
         }
 
+        // --- Daftar Undangan ala prototipe v2 (kartu, bukan dropdown) ---
+        // Tanggal acara per undangan diambil lewat endpoint get_settings yang
+        // sudah ada (tanpa mengubah backend) untuk status Aktif/Selesai.
+        let invitationsCache = [];
+        let invDates = {}; // inv_id -> tanggal acara (reception_date || wedding_date)
+        let invGuestCounts = {}; // inv_id -> jumlah tamu (via get_guests)
+        let invFilter = 'all';
+
+        function todayStr(){
+            const d = new Date();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return d.getFullYear() + '-' + m + '-' + day;
+        }
+        function isEventPast(dateStr){ return !!dateStr && dateStr < todayStr(); }
+        function formatIndoDate(dateStr){
+            if (!dateStr) return '-';
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return dateStr;
+            return parseInt(parts[2], 10) + ' ' + months[parseInt(parts[1], 10) - 1] + ' ' + parts[0];
+        }
+        function getDaysDiffText(dateStr){
+            if (!dateStr) return '';
+            const today = new Date(todayStr() + 'T00:00:00');
+            const target = new Date(dateStr + 'T00:00:00');
+            const diffDays = Math.round((target - today) / 86400000);
+            if (diffDays > 0) return diffDays + ' hari lagi';
+            if (diffDays === 0) return 'Hari ini!';
+            return Math.abs(diffDays) + ' hari lalu';
+        }
+
         async function loadInvitations() {
             loadStats();
             const res = await fetch('api/admin_api?action=get_invitations');
             const data = await res.json();
-            const selector = document.getElementById('inv-selector');
+            invitationsCache = data.data || [];
 
-            // Check if saved ID still exists, if not fallback to first
-            if (!data.data.find(inv => inv.id == currentInvId)) {
-                currentInvId = data.data[0]?.id || 1;
+            if (!invitationsCache.find(inv => inv.id == currentInvId)) {
+                currentInvId = invitationsCache[0]?.id || 1;
             }
+            const sel = invitationsCache.find(inv => inv.id == currentInvId);
+            currentSlug = sel ? sel.slug : '';
 
-            selector.innerHTML = data.data.map(inv => `<option value="${inv.id}" data-slug="${inv.slug}" ${inv.id == currentInvId ? 'selected' : ''}>${inv.title}</option>`).join('');
-
-            const selectedOpt = selector.options[selector.selectedIndex];
-            currentSlug = selectedOpt ? selectedOpt.dataset.slug : '';
+            await Promise.all(invitationsCache.map(async (inv) => {
+                try {
+                    const r = await fetch(`api/admin_api?action=get_settings&inv_id=${inv.id}`);
+                    const d = await r.json();
+                    invDates[inv.id] = (d.data && (d.data.reception_date || d.data.wedding_date)) || '';
+                } catch (e) { invDates[inv.id] = ''; }
+                try {
+                    const r = await fetch(`api/admin_api?action=get_guests&inv_id=${inv.id}`);
+                    const d = await r.json();
+                    invGuestCounts[inv.id] = Array.isArray(d.data) ? d.data.length : 0;
+                } catch (e) { invGuestCounts[inv.id] = 0; }
+            }));
+            renderInvitationList();
+            updateInvBanner();
         }
 
-        function changeInvitation() {
-            const sel = document.getElementById('inv-selector');
-            currentInvId = sel.value;
-            currentSlug = sel.options[sel.selectedIndex].dataset.slug;
+        function setInvFilter(status){
+            invFilter = status;
+            ['all', 'active', 'past'].forEach(key => {
+                const btn = document.getElementById('filter-' + key);
+                if (!btn) return;
+                btn.className = key === status
+                    ? 'py-1 rounded-md bg-white text-gold-700 shadow-sm transition cursor-pointer'
+                    : 'py-1 rounded-md text-stone-600 hover:text-stone-900 transition cursor-pointer';
+            });
+            renderInvitationList();
+        }
+
+        function renderInvitationList(){
+            const container = document.getElementById('invitationCardList');
+            if (!container) return;
+            const query = (document.getElementById('inv-search')?.value || '').toLowerCase().trim();
+            const total = invitationsCache.length;
+            const pastCount = invitationsCache.filter(inv => isEventPast(invDates[inv.id] || '')).length;
+            const activeCount = total - pastCount;
+            const setLbl = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+            setLbl('filter-all', 'Semua (' + total + ')');
+            setLbl('filter-active', 'Aktif (' + activeCount + ')');
+            setLbl('filter-past', 'Selesai (' + pastCount + ')');
+
+            const filtered = invitationsCache.filter(inv => {
+                const past = isEventPast(invDates[inv.id] || '');
+                const okFilter = invFilter === 'all' || (invFilter === 'active' && !past) || (invFilter === 'past' && past);
+                const okSearch = !query || String(inv.title || '').toLowerCase().includes(query) || String(inv.slug || '').toLowerCase().includes(query);
+                return okFilter && okSearch;
+            });
+
+            if (!filtered.length) {
+                container.innerHTML = '<div class="text-center py-5 px-3 rounded-xl border border-dashed border-cream-300 bg-white/60"><p class="text-xs font-medium text-stone-500">Tidak ada undangan ditemukan</p></div>';
+                return;
+            }
+
+            const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            container.innerHTML = filtered.map(inv => {
+                const past = isEventPast(invDates[inv.id] || '');
+                const isSelected = inv.id == currentInvId;
+                let cardStyle = '';
+                if (isSelected) {
+                    cardStyle = past ? 'bg-stone-100 border-stone-400 ring-2 ring-stone-400/20 shadow-sm' : 'bg-white border-gold-600 ring-2 ring-gold-600/20 shadow-sm';
+                } else {
+                    cardStyle = past ? 'bg-cream-200/40 border-cream-300/60 opacity-75 hover:opacity-100 hover:bg-stone-100/70' : 'bg-white/90 border-cream-300 hover:border-gold-300 hover:bg-white';
+                }
+                const statusBadge = past
+                    ? '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-stone-200 text-stone-600 shrink-0">Selesai</span>'
+                    : '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Aktif</span>';
+                return '<button type="button" onclick="selectInvitation(' + inv.id + ')" class="w-full text-left p-2.5 rounded-xl border transition-all flex items-center justify-between gap-2 cursor-pointer ' + cardStyle + '">'
+                    + '<span class="min-w-0 flex-1">'
+                    + '<span class="block text-xs font-bold truncate ' + (past ? 'text-stone-600' : 'text-stone-900') + '">' + esc(inv.title) + '</span>'
+                    + '<span class="flex items-center gap-1.5 mt-0.5 text-[11px] ' + (past ? 'text-stone-400' : 'text-stone-500') + '"><span>' + formatIndoDate(invDates[inv.id] || '') + '</span><span>\u2022</span><span>' + (invGuestCounts[inv.id] ?? 0) + ' tamu</span></span>'
+                    + '</span>'
+                    + '<span class="flex flex-col items-end gap-1 shrink-0">' + statusBadge + '</span>'
+                    + '</button>';
+            }).join('');
+        }
+
+        function selectInvitation(id) {
+            currentInvId = id;
+            const sel = invitationsCache.find(inv => inv.id == id);
+            currentSlug = sel ? sel.slug : '';
             localStorage.setItem('lastInvId', currentInvId);
+            const mob = document.getElementById('mobileCurrentEvent');
+            if (mob && sel) mob.textContent = sel.title;
+            renderInvitationList();
+            updateInvBanner();
             const activeTab = localStorage.getItem('activeTab') || 'settings';
             showTab(activeTab);
+        }
+
+        // Preview undangan: buka halaman publik undangan terpilih di tab baru.
+        function previewInvitation() {
+            if (!currentSlug) {
+                showSwalInfo('Belum Ada Undangan', 'Pilih undangan terlebih dahulu sebelum melihat pratinjau.');
+                return;
+            }
+            window.open('/' + currentSlug, '_blank', 'noopener');
+        }
+
+        // Uji tautan Google Maps: buka di tab baru, atau ingatkan bila kosong.
+        function openMapsLink(inputId) {
+            const url = (document.getElementById(inputId)?.value || '').trim();
+            if (url) {
+                window.open(url, '_blank', 'noopener');
+            } else {
+                showSwalInfo('Tautan Kosong', 'Masukkan tautan Google Maps terlebih dahulu sebelum mengecek lokasi.');
+            }
+        }
+
+        // Banner "telah berlangsung" di atas konten (tanggal acara dari cache;
+        // override = tanggal dari form yang sedang diedit).
+        function updateInvBanner(dateOverride){
+            const banner = document.getElementById('pastEventBanner');
+            if (!banner) return;
+            const date = (dateOverride !== undefined) ? dateOverride : (invDates[currentInvId] || '');
+            banner.classList.toggle('hidden', !isEventPast(date));
+        }
+
+        // Header Data Utama: badge status + subtitle + chip hitung mundur,
+        // dibaca dari nilai form yang sedang tampil.
+        function updateInvHeaderFromForm(){
+            const date = (document.getElementById('set-reception_date')?.value || document.getElementById('set-wedding_date')?.value || '');
+            const past = isEventPast(date);
+            const badge = document.getElementById('headerStatusBadge');
+            if (badge) {
+                badge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ' + (past ? 'bg-stone-200/80 text-stone-700 border border-stone-300' : 'bg-emerald-50 text-emerald-700 border border-emerald-200');
+                badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (past ? 'bg-stone-500' : 'bg-emerald-500') + '"></span> ' + (past ? 'Selesai' : 'Aktif') + (date ? ' \u2022 ' + formatIndoDate(date) : '');
+            }
+            const bride = document.getElementById('set-bride_name')?.value || '';
+            const groom = document.getElementById('set-groom_name')?.value || '';
+            const sub = document.getElementById('headerCoupleSubtitle');
+            if (sub) sub.textContent = (bride && groom) ? (bride + ' & ' + groom) : (invitationsCache.find(inv => inv.id == currentInvId)?.title || '\u2014');
+            const chip = document.getElementById('daysCountdownChip');
+            if (chip) {
+                chip.textContent = getDaysDiffText(date);
+                chip.className = 'text-[11px] font-semibold px-2 py-0.5 rounded-md whitespace-nowrap shrink-0 ' + (past ? 'bg-stone-200 text-stone-600' : 'bg-emerald-100 text-emerald-800');
+            }
+            updateInvBanner(date);
+            const mob = document.getElementById('mobileCurrentEvent');
+            if (mob) mob.textContent = invitationsCache.find(inv => inv.id == currentInvId)?.title || 'Admin Panel';
         }
 
         function addNewInvitation() {
@@ -1328,7 +1619,7 @@
 
         function deleteInvitation() {
             if (currentInvId == 1) {
-                alert('Undangan utama tidak dapat dihapus.');
+                showSwalInfo('Tidak Dapat Dihapus', 'Undangan utama tidak dapat dihapus.');
                 return;
             }
 
@@ -1351,10 +1642,10 @@
                     const res = await fetch(`api/admin_api?action=delete_invitation&id=${currentInvId}`);
                     const data = await res.json();
                     if (data.success) {
-                        alert('Undangan berhasil dihapus.');
+                        showSwalSuccess('Undangan Dihapus!', 'Undangan beserta datanya berhasil dihapus.');
                         currentInvId = 1;
                         await loadInvitations();
-                        changeInvitation();
+                        selectInvitation(1);
                     } else {
                         alert(data.message || 'Gagal menghapus undangan.');
                     }
@@ -1463,6 +1754,7 @@
 
             updateLocationModeStatus();
             updateQrisIcon();
+            updateInvHeaderFromForm();
         }
 
         function updateLocationModeStatus() {
@@ -1503,9 +1795,11 @@
             if (data.success) {
                 if (data.new_slug && data.new_slug !== currentSlug) {
                     currentSlug = data.new_slug;
-                    loadInvitations();
                 }
-                alert('Berhasil disimpan!');
+                // Segarkan daftar undangan (judul/tanggal bisa berubah) + header.
+                loadInvitations();
+                updateInvHeaderFromForm();
+                showSwalSuccess('Perubahan Disimpan!', 'Pengaturan undangan berhasil disimpan.');
             }
         }
 
