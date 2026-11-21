@@ -215,7 +215,7 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
   .hour-row .hh{width:44px;flex-shrink:0;font-variant-numeric:tabular-nums}
   .hour-row .track{flex:1;height:10px;border-radius:999px;background:var(--gen-soft);border:1px solid var(--gen-border);overflow:hidden}
   .hour-row .hbar{height:100%;background:var(--gen-pct-fill)}
-  .hour-row .cc{width:28px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+  .hour-row .cc{min-width:58px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;flex-shrink:0}
   /* Overlay animasi sukses (Lottie centang hijau) */
   #success-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
   #success-overlay.show{display:flex}
@@ -857,7 +857,7 @@ function renderReport(){
     var mx = 0;
     d.hourly_buckets.forEach(function(h){ if(h.count > mx) mx = h.count; });
     hr.innerHTML = d.hourly_buckets.map(function(h){
-      return '<div class="hour-row"><span class="hh">' + esc(h.hour) + '</span><span class="track"><span class="hbar" style="display:block;width:' + Math.round(h.count / mx * 100) + '%"></span></span><span class="cc">' + h.count + '</span></div>';
+      return '<div class="hour-row"><span class="hh">' + esc(h.hour) + '</span><span class="track"><span class="hbar" style="display:block;width:' + Math.round(h.count / mx * 100) + '%"></span></span><span class="cc">' + h.count + ' tamu</span></div>';
     }).join('');
   }else{
     hr.innerHTML = '<div class="empty">Belum ada check-in.</div>';

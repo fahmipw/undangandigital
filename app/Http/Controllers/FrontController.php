@@ -167,6 +167,21 @@ class FrontController extends Controller
         $bride = !empty($settings['bride_nickname']) ? $settings['bride_nickname'] : (!empty($settings['bride_name']) ? $settings['bride_name'] : 'Mempelai Wanita');
         $groom = !empty($settings['groom_nickname']) ? $settings['groom_nickname'] : (!empty($settings['groom_name']) ? $settings['groom_name'] : 'Mempelai Pria');
 
+        // Foto slideshow latar welcome screen: foto galeri dulu
+        // (urut sort_order), fallback foto preview + mempelai bila kosong.
+        $galleryQuery = $invitation->galleries();
+        if (Schema::hasColumn('galleries', 'sort_order')) {
+            $galleryQuery->orderBy('sort_order', 'ASC');
+        }
+        $monPhotos = $galleryQuery->orderBy('created_at', 'ASC')->pluck('image_path')->toArray();
+        if (empty($monPhotos)) {
+            $monPhotos = array_values(array_filter([
+                $settings['og_preview_photo'] ?? '',
+                $settings['bride_photo'] ?? '',
+                $settings['groom_photo'] ?? '',
+            ]));
+        }
+
         return view('front.checkin-monitor', [
             'inv_id' => $invitation->id,
             'title' => $groom . ' & ' . $bride,
@@ -175,6 +190,8 @@ class FrontController extends Controller
             'event_date' => $settings['wedding_date'] ?? ($settings['reception_date'] ?? ''),
             'slug' => $slug,
             'token' => $token,
+            // Foto slideshow latar welcome screen (foto galeri, fallback preview + mempelai).
+            'photos' => $monPhotos,
         ]);
     }
 

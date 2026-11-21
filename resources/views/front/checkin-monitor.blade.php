@@ -2,8 +2,11 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Monitor Check-in — {{ $title }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 @php
 // Palet Link Generator per tema (diturunkan dari palet tema undangan).
 // Kunci: $theme dari FrontController::generator; tak dikenal -> 'default'.
@@ -100,6 +103,19 @@ foreach([$gen['onAccent'], $gen['onAccent'] === '#ffffff' ? '#1b1c1a' : '#ffffff
 $genBtnText = $genBtnPick[1]; $genBtnStart = $genBtnPick[2]; $genBtnEnd = $genBtnPick[3];
 // Amber stat Belum di atas kartu (cermin skema hijau: terang/gelap).
 $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
+
+// Monogram segel + foto slideshow (welcome screen monitor).
+$monParts = array_map('trim', explode('&', $title));
+$coupleA = $monParts[0] ?? '';
+$coupleB = isset($monParts[1]) ? $monParts[1] : '';
+$monogram = ($coupleB !== '') ? mb_substr($coupleA, 0, 1) . '&' . mb_substr($coupleB, 0, 1) : mb_substr($title, 0, 2);
+$monPhotos = [];
+foreach (($photos ?? []) as $mp) {
+    $mp = trim((string) $mp);
+    if ($mp === '') continue;
+    $monPhotos[] = (str_starts_with($mp, 'http') || str_starts_with($mp, '/')) ? $mp : asset(ltrim($mp, '/'));
+}
+$monPhotosJson = json_encode(array_values(array_unique($monPhotos)));
 @endphp
 <style>
   :root{
@@ -124,92 +140,274 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
     --gen-amber:{{ $genAmber }};
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--gen-bg);color:var(--gen-ink);min-height:100vh;padding-bottom:40px}
-  .top{background:var(--gen-top-bg);color:var(--gen-on-accent);padding:22px 18px;text-align:center}
-  .top small{letter-spacing:.25em;font-size:10px;text-transform:uppercase}
-  .top h1{font-size:20px;margin-top:6px}
-  .topline{display:flex;justify-content:center;align-items:baseline;gap:6px;flex-wrap:wrap;font-size:13px;margin-top:6px;font-variant-numeric:tabular-nums}
-  .topline .clock b{font-weight:700}
-  .topline .sep{opacity:.6}
-  .top-actions{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-  .top-pill{display:inline-block;background:transparent;color:inherit;border:1px solid currentColor;border-radius:999px;padding:6px 12px;font-size:12px;cursor:pointer;text-decoration:none}
-  .top-pill:hover{opacity:1}
-  .wrap{max-width:480px;margin:0 auto;padding:16px}
-  .stats{display:flex;gap:10px;margin:16px 0 10px}
-  .stat{flex:1;background:var(--gen-card);border:1px solid var(--gen-border);border-radius:14px;padding:14px 8px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-  .stat b{font-size:24px;display:block}
-  .stat svg{display:block;margin:0 auto 6px;width:26px;height:26px}
-  .stat span{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--gen-inkSoft)}
-  .progress{margin:0 0 16px}
-  .progress .bar{height:10px;border-radius:999px;background:var(--gen-soft);border:1px solid var(--gen-border);overflow:hidden}
-  .progress .fill{height:100%;width:0%;background:var(--gen-pct-fill);transition:width .4s ease}
-  .progress .lbl{font-size:12px;color:var(--gen-inkSoft);text-align:center;margin-top:6px}
-  .progress .lbl .pct{color:var(--gen-pct);font-weight:700}
-  .card{background:var(--gen-card);border:1px solid var(--gen-border);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-  .card h3{font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:var(--gen-accent);margin-bottom:12px}
-  .recent-item{display:flex;justify-content:space-between;gap:8px;padding:10px 2px;border-bottom:1px solid var(--gen-border);font-size:14px}
-  .recent-item:last-child{border-bottom:none}
-  .recent-item small{color:var(--gen-inkSoft);font-size:11px;white-space:nowrap}
-  .empty{color:var(--gen-inkSoft);font-style:italic;font-size:13px;text-align:center;padding:12px}
-  .people-lbl{font-size:12px;color:var(--gen-inkSoft);text-align:center;margin-top:4px}
-  .recent-meta{font-size:11px;color:var(--gen-inkSoft);margin-top:2px}
+  html,body{height:100%}
+  body{font-family:'Plus Jakarta Sans',-apple-system,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,var(--gen-bg),color-mix(in srgb,var(--gen-bg) 55%,#000));color:var(--gen-ink);height:100vh;height:100svh;width:100vw;overflow:hidden;position:relative;user-select:none}
+  .hidden{display:none!important}
+  /* --- latar slideshow foto galeri (bila ada) --- */
+  #slideshow-layer{position:absolute;inset:0;z-index:0;overflow:hidden}
+  .bg-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1.05);transition:opacity 1.8s ease-in-out,transform 10s ease-out}
+  .bg-slide.on{opacity:1;transform:scale(1.08)}
+  .bg-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(18,12,7,.88),rgba(22,15,9,.8) 50%,rgba(14,9,5,.95))}
+  /* --- bingkai emas tipis + ornamen sudut --- */
+  .frame{position:absolute;inset:12px;border:1px solid color-mix(in srgb,var(--gen-accent) 38%,transparent);pointer-events:none;z-index:10;display:flex;flex-direction:column;justify-content:space-between;padding:14px 16px 64px}
+  @media(min-width:640px){.frame{inset:24px;padding:24px 28px 68px}}
+  @media(min-width:1024px){.frame{inset:36px;padding:32px 32px 76px}}
+  .corner{position:absolute;width:clamp(14px,1.8vw,22px);height:clamp(14px,1.8vw,22px);border-color:color-mix(in srgb,var(--gen-accent) 55%,#fff)}
+  .corner.tl{top:-1px;left:-1px;border-top:2px solid;border-left:2px solid}
+  .corner.tr{top:-1px;right:-1px;border-top:2px solid;border-right:2px solid}
+  .corner.bl{bottom:-1px;left:-1px;border-bottom:2px solid;border-left:2px solid}
+  .corner.br{bottom:-1px;right:-1px;border-bottom:2px solid;border-right:2px solid}
+  .frame-head{position:relative;display:flex;align-items:center;justify-content:center;min-height:28px;color:color-mix(in srgb,var(--gen-accent) 55%,#fff);font-size:10px;letter-spacing:.25em;text-transform:uppercase;font-weight:500}
+  @media(min-width:640px){.frame-head{font-size:12px}}
+  @media(min-width:1024px){.frame-head{font-size:14px}}
+  .frame-head .live{display:flex;align-items:center;gap:8px}
+  .frame-head .dot{width:8px;height:8px;border-radius:50%;background:#34d399;animation:pulse 2s infinite;flex-shrink:0}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  #live-clock{position:absolute;right:0;font-family:ui-monospace,monospace;letter-spacing:.18em;background:rgba(0,0,0,.3);padding:4px 12px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gen-accent) 30%,transparent);color:#fff}
+  @media(max-width:639px){#live-clock{display:none}}
+  .frame-foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;color:color-mix(in srgb,var(--gen-accent) 55%,#fff);font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+  @media(min-width:640px){.frame-foot{font-size:12px}}
+  @media(min-width:1024px){.frame-foot{font-size:14px}}
+  .frame-foot .couple{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:.12em;text-transform:none;font-size:14px;color:color-mix(in srgb,var(--gen-accent) 45%,#fff)}
+  @media(min-width:640px){.frame-foot .couple{font-size:16px}}
+  .frame-foot .right{text-align:right;line-height:1.5}
+  #att-count{display:block;letter-spacing:.14em;color:rgba(255,255,255,.75);text-transform:none;font-size:11px}
+  #queue-pill{display:none;align-items:center;gap:8px;padding:4px 14px;border-radius:999px;background:var(--gen-accent);color:var(--gen-on-accent);font-size:10px;letter-spacing:.08em;font-weight:600;border:1px solid color-mix(in srgb,var(--gen-accent) 45%,#fff)}
+  #queue-pill.show{display:inline-flex}
+  #queue-pill .qdot{width:8px;height:8px;border-radius:50%;background:#fcd34d;animation:pulse 1s infinite}
+  /* --- viewport utama --- */
+  main{position:relative;z-index:20;height:100%;width:100%;display:flex;align-items:center;justify-content:center;padding:20px 20px 40px}
+  @media(min-width:640px){main{padding:40px 40px 64px}}
+  @media(min-width:1024px){main{padding:40px 64px}}
+  /* --- STATE A: standby --- */
+  #view-standby{text-align:center;max-width:900px;margin:0 auto}
+  #view-standby .eyebrow{color:color-mix(in srgb,var(--gen-accent) 45%,#fff);letter-spacing:.28em;text-transform:uppercase;font-size:11px;font-weight:500;margin-bottom:12px}
+  @media(min-width:640px){#view-standby .eyebrow{font-size:14px;letter-spacing:.38em;margin-bottom:16px}}
+  @media(min-width:1024px){#view-standby .eyebrow{font-size:16px}}
+  #view-standby h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;color:#fff;font-size:clamp(2.85rem,7.5vw,7.25rem);line-height:1;letter-spacing:.02em;text-shadow:0 2px 18px rgba(0,0,0,.45)}
+  #view-standby h1 .amp{font-style:italic;font-weight:400;color:color-mix(in srgb,var(--gen-accent) 45%,#fff);margin:0 .1em}
+  .divider{display:flex;align-items:center;justify-content:center;gap:16px;margin:20px 0}
+  @media(min-width:640px){.divider{margin:28px 0}}
+  .divider .line{width:56px;height:1px;background:linear-gradient(to right,transparent,color-mix(in srgb,var(--gen-accent) 60%,#fff))}
+  .divider .line.r{background:linear-gradient(to left,transparent,color-mix(in srgb,var(--gen-accent) 60%,#fff))}
+  .divider .dia{width:8px;height:8px;transform:rotate(45deg);border:1px solid color-mix(in srgb,var(--gen-accent) 60%,#fff)}
+  #view-standby .welcome-text{color:rgba(255,255,255,.88);font-size:12px;font-weight:300;line-height:1.7;max-width:640px;margin:0 auto;padding:0 8px}
+  @media(min-width:640px){#view-standby .welcome-text{font-size:16px}}
+  @media(min-width:1024px){#view-standby .welcome-text{font-size:20px}}
+  .scan-pill{margin-top:24px;display:inline-flex;align-items:center;gap:10px;padding:8px 16px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid color-mix(in srgb,var(--gen-accent) 40%,transparent);color:color-mix(in srgb,var(--gen-accent) 45%,#fff);font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+  @media(min-width:640px){.scan-pill{margin-top:40px;padding:10px 24px;font-size:12px}}
+  @media(min-width:1024px){.scan-pill{font-size:14px}}
+  .scan-pill svg{width:16px;height:16px;animation:pulse 2s infinite;flex-shrink:0}
+  @media(min-width:640px){.scan-pill svg{width:20px;height:20px}}
+  /* --- STATE B: kartu sambutan --- */
+  #view-welcome{width:100%;max-width:900px;margin:0 auto;position:relative;padding-top:32px}
+  @media(min-width:640px){#view-welcome{padding-top:40px}}
+  .bokeh{pointer-events:none;position:absolute;inset:-48px;z-index:0;overflow:visible}
+  .bokeh span{position:absolute;border-radius:50%;animation:floatBokeh 4.5s ease-in-out infinite}
+  @keyframes floatBokeh{0%,100%{transform:translateY(0) scale(1);opacity:.35}50%{transform:translateY(-18px) scale(1.2);opacity:.85}}
+  #welcome-card{position:relative;z-index:10;background:var(--gen-card);color:var(--gen-ink);border:1px solid color-mix(in srgb,var(--gen-accent) 55%,transparent);border-radius:44px 44px 28px 28px;box-shadow:0 32px 90px -10px rgba(0,0,0,.82),0 0 50px color-mix(in srgb,var(--gen-accent) 18%,transparent)}
+  @media(min-width:640px){#welcome-card{border-radius:60px 60px 36px 36px}}
+  .crest{position:absolute;top:-32px;left:50%;transform:translateX(-50%);z-index:30;display:flex;align-items:center;justify-content:center;gap:8px}
+  @media(min-width:640px){.crest{top:-40px;gap:12px}}
+  .crest svg{width:48px;height:32px;color:color-mix(in srgb,var(--gen-accent) 45%,#fff);filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
+  @media(min-width:640px){.crest svg{width:64px;height:40px}}
+  .crest svg.flip{transform:scaleX(-1)}
+  .wax-seal{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:6px;border:1px solid rgba(248,229,190,.8);background:radial-gradient(circle at 30% 26%,color-mix(in srgb,var(--gen-accent) 55%,#fff) 0%,var(--gen-accent) 46%,var(--gen-accent-dark) 90%,color-mix(in srgb,var(--gen-accent-dark) 80%,#000) 100%);box-shadow:0 12px 28px -4px rgba(54,36,11,.5),0 0 0 4px color-mix(in srgb,var(--gen-card) 85%,transparent),inset 0 2px 5px rgba(255,249,234,.75),inset 0 -3px 7px rgba(52,34,9,.6);flex-shrink:0}
+  @media(min-width:640px){.wax-seal{width:80px;height:80px}}
+  .wax-seal .inner{width:100%;height:100%;border-radius:50%;border:1px solid rgba(78,53,16,.35);display:flex;align-items:center;justify-content:center}
+  .wax-seal span{font-family:'Cinzel',Georgia,serif;font-weight:700;color:var(--gen-on-accent);font-size:16px;letter-spacing:-.02em;text-shadow:0 1px 2px rgba(58,36,8,.8)}
+  @media(min-width:640px){.wax-seal span{font-size:20px}}
+  @media(min-width:1024px){.wax-seal span{font-size:24px}}
+  .card-clip{position:relative;overflow:hidden;border-radius:44px 44px 28px 28px;padding:40px 24px 56px;text-align:center;max-height:85vh;display:flex;flex-direction:column;justify-content:center}
+  @media(min-width:640px){.card-clip{border-radius:60px 60px 36px 36px;padding:52px 48px 60px}}
+  @media(min-width:1024px){.card-clip{padding:60px 64px}}
+  .foil{pointer-events:none;position:absolute;inset:0;overflow:hidden;z-index:0}
+  .foil div{width:33%;height:100%;background:linear-gradient(to right,transparent,rgba(255,255,255,.65),transparent);animation:foilSweep 4.2s cubic-bezier(.25,1,.5,1) .3s infinite}
+  @keyframes foilSweep{0%{transform:translateX(-160%) skewX(-24deg)}50%,100%{transform:translateX(260%) skewX(-24deg)}}
+  .watermark{pointer-events:none;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:0;overflow:hidden}
+  .watermark span{font-family:'Cinzel',Georgia,serif;font-weight:600;font-size:clamp(7rem,17vw,14rem);letter-spacing:.1em;line-height:1;color:color-mix(in srgb,var(--gen-accent) 6%,transparent)}
+  .hairline{pointer-events:none;position:absolute;inset:10px;border:1px solid color-mix(in srgb,var(--gen-accent) 40%,transparent);border-radius:36px 36px 22px 22px;z-index:10}
+  @media(min-width:640px){.hairline{inset:16px;border-radius:48px 48px 28px 28px}}
+  .hairline div{position:absolute;inset:4px;border:1px solid color-mix(in srgb,var(--gen-accent) 22%,transparent);border-radius:32px 32px 18px 18px}
+  @media(min-width:640px){.hairline div{border-radius:44px 44px 24px 24px}}
+  .filigree{pointer-events:none;position:absolute;width:32px;height:32px;color:color-mix(in srgb,var(--gen-accent) 65%,transparent);z-index:10}
+  @media(min-width:640px){.filigree{width:44px;height:44px}}
+  .filigree.tl{top:16px;left:16px}
+  .filigree.tr{top:16px;right:16px;transform:rotate(90deg)}
+  .filigree.bl{bottom:16px;left:16px;transform:rotate(-90deg)}
+  .filigree.br{bottom:16px;right:16px;transform:rotate(180deg)}
+  @media(min-width:640px){.filigree.tl,.filigree.tr{top:24px}.filigree.tl,.filigree.bl{left:24px}.filigree.tr,.filigree.br{right:24px}.filigree.bl,.filigree.br{bottom:24px}}
+  .card-body{position:relative;z-index:20;padding-top:12px}
+  @media(min-width:640px){.card-body{padding-top:16px}}
+  .card-eyebrow{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px}
+  @media(min-width:640px){.card-eyebrow{gap:16px;margin-bottom:8px}}
+  .card-eyebrow .ln{width:32px;height:1px;background:color-mix(in srgb,var(--gen-accent) 50%,transparent)}
+  @media(min-width:640px){.card-eyebrow .ln{width:48px}}
+  .card-eyebrow p{font-family:'Cinzel',Georgia,serif;color:var(--gen-accent-text);text-transform:uppercase;letter-spacing:.2em;font-size:10px;font-weight:600}
+  @media(min-width:640px){.card-eyebrow p{letter-spacing:.3em;font-size:12px}}
+  @media(min-width:1024px){.card-eyebrow p{font-size:14px}}
+  #guest-name{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,4.5vw,4.25rem);line-height:1.12;margin:6px 0 10px;padding:0 12px;word-break:break-word;background:linear-gradient(135deg,var(--gen-ink) 0%,var(--gen-accent-text) 52%,var(--gen-ink) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  @media(min-width:640px){#guest-name{margin:10px 0}}
+  .card-divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0}
+  @media(min-width:640px){.card-divider{margin:16px 0}}
+  .card-divider .ln{width:56px;height:1px;background:linear-gradient(to right,transparent,color-mix(in srgb,var(--gen-accent) 85%,transparent))}
+  @media(min-width:640px){.card-divider .ln{width:112px}}
+  .card-divider .ln.r{background:linear-gradient(to left,transparent,color-mix(in srgb,var(--gen-accent) 85%,transparent))}
+  .card-divider svg{width:16px;height:16px;color:var(--gen-accent-text)}
+  @media(min-width:640px){.card-divider svg{width:20px;height:20px}}
+  .guest-meta{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;color:var(--gen-ink-soft);font-size:14px}
+  @media(min-width:640px){.guest-meta{gap:12px;font-size:18px}}
+  @media(min-width:1024px){.guest-meta{font-size:20px}}
+  #guest-note{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:16px;color:var(--gen-ink-soft)}
+  @media(min-width:640px){#guest-note{font-size:20px}}
+  @media(min-width:1024px){#guest-note{font-size:24px}}
+  .guest-meta .sep{color:color-mix(in srgb,var(--gen-accent) 70%,transparent)}
+  #guest-pax{display:inline-flex;align-items:center;gap:6px;font-weight:500;color:var(--gen-accent-text);background:color-mix(in srgb,var(--gen-accent) 8%,transparent);border:1px solid color-mix(in srgb,var(--gen-accent) 30%,transparent);padding:2px 12px;border-radius:999px;font-size:12px}
+  @media(min-width:640px){#guest-pax{padding:4px 16px;font-size:14px}}
+  @media(min-width:1024px){#guest-pax{font-size:16px}}
+  #guest-pax svg{width:14px;height:14px;color:var(--gen-accent-text)}
+  @media(min-width:640px){#guest-pax svg{width:16px;height:16px}}
+  .card-quote{margin-top:12px;max-width:640px;margin-left:auto;margin-right:auto;padding:0 8px;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;color:var(--gen-ink-soft);font-size:14px;line-height:1.6}
+  @media(min-width:640px){.card-quote{margin-top:16px;font-size:18px}}
+  @media(min-width:1024px){.card-quote{font-size:19px}}
+  .card-sign{margin-top:16px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--gen-accent) 20%,transparent);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--gen-ink-soft);font-size:11px}
+  @media(min-width:640px){.card-sign{margin-top:24px;padding-top:14px;font-size:14px}}
+  .card-sign .lbl{letter-spacing:.14em;text-transform:uppercase;font-size:10px}
+  @media(min-width:640px){.card-sign .lbl{font-size:12px}}
+  .card-sign .names{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:18px;color:var(--gen-ink);font-weight:600}
+  @media(min-width:640px){.card-sign .names{font-size:24px}}
+  #display-progress-bar{position:absolute;bottom:0;left:0;right:0;height:6px;background:linear-gradient(to right,var(--gen-accent),var(--gen-accent-dark),var(--gen-accent));z-index:20}
+  @keyframes modalReveal{0%{opacity:0;transform:translateY(28px) scale(.94)}100%{opacity:1;transform:translateY(0) scale(1)}}
+  .animate-modal-in{animation:modalReveal .85s cubic-bezier(.16,1,.3,1) forwards}
+  @keyframes modalDismiss{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-18px) scale(.96)}}
+  .animate-modal-out{animation:modalDismiss .45s cubic-bezier(.4,0,1,1) forwards}
+  @keyframes itemFadeUp{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:translateY(0)}}
+  .stagger-1{opacity:0;animation:itemFadeUp .65s cubic-bezier(.16,1,.3,1) .12s forwards}
+  .stagger-2{opacity:0;animation:itemFadeUp .65s cubic-bezier(.16,1,.3,1) .24s forwards}
+  .stagger-3{opacity:0;animation:itemFadeUp .7s cubic-bezier(.16,1,.3,1) .34s forwards}
+  .stagger-4{opacity:0;animation:itemFadeUp .65s cubic-bezier(.16,1,.3,1) .46s forwards}
+  .stagger-5{opacity:0;animation:itemFadeUp .65s cubic-bezier(.16,1,.3,1) .56s forwards}
+  /* --- pil kontrol (kanan bawah, redup) --- */
+  .controls{position:fixed;bottom:12px;right:12px;z-index:50;display:flex;flex-wrap:wrap;align-items:center;gap:4px;opacity:.35;transition:opacity .3s;background:rgba(26,19,12,.85);padding:6px 10px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gen-accent) 30%,transparent);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .controls:hover,.controls:focus-within{opacity:1}
+  @media(min-width:640px){.controls{bottom:16px;right:16px;gap:6px}}
+  .controls button,.controls a{font-size:10px;font-weight:500;padding:4px 10px;border-radius:999px;border:none;background:transparent;cursor:pointer;text-decoration:none;font-family:inherit}
+  @media(min-width:640px){.controls button,.controls a{font-size:12px}}
+  .controls .sep{color:rgba(255,255,255,.2);font-size:12px}
+  #btn-test{color:#6ee7b7}
+  #btn-test:hover{color:#a7f3d0;background:rgba(255,255,255,.1)}
+  #btn-sound{color:#d6d3d1;display:flex;align-items:center;gap:4px}
+  #btn-sound:hover{color:#fff;background:rgba(255,255,255,.1)}
+  #btn-fullscreen{color:color-mix(in srgb,var(--gen-accent) 45%,#fff)}
+  #btn-fullscreen:hover{color:#fff;background:rgba(255,255,255,.1)}
+  #link-panitia{color:#d6d3d1}
+  #link-panitia:hover{color:#fff;background:rgba(255,255,255,.1)}
+  @media (prefers-reduced-motion: reduce){
+    .bg-slide,.foil div,.bokeh span,.frame-head .dot,.scan-pill svg,#queue-pill .qdot{animation:none!important;transition:none!important}
+    .animate-modal-in,.animate-modal-out,.stagger-1,.stagger-2,.stagger-3,.stagger-4,.stagger-5{animation:none!important;opacity:1!important}
+  }
 </style>
 </head>
 <body>
-<div class="top">
-  <small>Monitor Check-in</small>
-  <h1>{{ $title }}</h1>
-  <div class="topline"><span id="ev-date"></span><span class="sep">&bull;</span><span class="clock" id="clock">—</span></div>
-  <div class="top-actions">
-    <a class="top-pill" href="/checkin/{{ $slug }}/{{ $token }}">Kembali ke Check-in Panitia</a>
+<!-- 1. Latar slideshow foto galeri -->
+<div id="slideshow-layer" class="hidden">
+  <div class="bg-overlay"></div>
+</div>
+
+<!-- 2. Bingkai emas + jam live -->
+<div class="frame">
+  <div class="corner tl"></div><div class="corner tr"></div>
+  <div class="corner bl"></div><div class="corner br"></div>
+  <div class="frame-head">
+    <div class="live"><span class="dot"></span><span>The Wedding Reception</span></div>
+    <span id="live-clock">—</span>
+  </div>
+  <div class="frame-foot">
+    <span class="couple">{{ $coupleA }} &amp; {{ $coupleB }}</span>
+    <div id="queue-pill"><span class="qdot"></span><span id="queue-count-text">+1 Tamu dalam Antrean</span></div>
+    <span class="right"><span id="ev-date"></span><span id="att-count"></span></span>
   </div>
 </div>
-<div class="wrap">
-  <div class="stats">
-    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gen-accent)"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><b id="st-total">–</b><span>Total Tamu</span></div>
-    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gen-pct)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><b id="st-in" style="color:var(--gen-pct)">–</b><span>Hadir</span></div>
-    <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gen-amber)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><b id="st-out" style="color:var(--gen-amber)">–</b><span>Belum</span></div>
-  </div>
-  <div class="progress">
-    <div class="bar"><div class="fill" id="prog-fill"></div></div>
-    <div class="lbl" id="prog-lbl">—</div>
-    <div class="people-lbl" id="people-lbl"></div>
-  </div>
 
-  <div class="card">
-    <h3>Baru Saja Hadir</h3>
-    <div id="recent"><div class="empty">Belum ada check-in.</div></div>
-  </div>
+<!-- 3. Viewport utama -->
+<main>
+  <!-- STATE A: standby -->
+  <section id="view-standby">
+    <p class="eyebrow">Selamat Datang di Resepsi Pernikahan</p>
+    <h1>{{ $coupleA }} <span class="amp">&amp;</span> {{ $coupleB }}</h1>
+    <div class="divider"><div class="line"></div><div class="dia"></div><div class="line r"></div></div>
+    <p class="welcome-text">Merupakan suatu kehormatan dan kebahagiaan bagi kami atas kehadiran Bapak/Ibu/Saudara/i untuk memberikan doa restu kepada kedua mempelai.</p>
+    <div class="scan-pill">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+      <span>Silakan Pindai QR Code Undangan Anda</span>
+    </div>
+  </section>
+
+  <!-- STATE B: kartu sambutan tamu -->
+  <section id="view-welcome" class="hidden">
+    <div class="bokeh" aria-hidden="true">
+      <span style="top:16px;left:32px;width:10px;height:10px;background:color-mix(in srgb,var(--gen-accent) 60%,#fff);animation-delay:0s"></span>
+      <span style="top:48px;right:40px;width:12px;height:12px;background:color-mix(in srgb,var(--gen-accent) 50%,#fff);animation-delay:1.1s"></span>
+      <span style="bottom:40px;left:48px;width:8px;height:8px;background:#fde68a;animation-delay:2.1s"></span>
+      <span style="bottom:24px;right:56px;width:14px;height:14px;background:color-mix(in srgb,var(--gen-accent) 45%,#fff);animation-delay:.7s"></span>
+      <span style="top:50%;left:-16px;width:8px;height:8px;background:color-mix(in srgb,var(--gen-accent) 65%,#fff);animation-delay:1.6s"></span>
+      <span style="top:33%;right:-16px;width:8px;height:8px;background:color-mix(in srgb,var(--gen-accent) 65%,#fff);animation-delay:2.6s"></span>
+    </div>
+    <div id="welcome-card">
+      <div class="crest">
+        <svg class="flip" viewBox="0 0 64 40" fill="none"><path d="M58 32C44 30 30 22 18 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M46 28C43 22 38 19 33 20C36 25 41 28 46 28Z" fill="currentColor" fill-opacity="0.85"/><path d="M35 22C32 16 27 13 22 14C25 19 30 22 35 22Z" fill="currentColor" fill-opacity="0.85"/><path d="M24 15C21 9 16 6 11 7C14 12 19 15 24 15Z" fill="currentColor" fill-opacity="0.85"/><path d="M40 29C37 34 31 36 26 34C30 30 35 28 40 29Z" fill="currentColor" fill-opacity="0.65"/><path d="M29 22C26 27 20 29 15 27C19 23 24 21 29 22Z" fill="currentColor" fill-opacity="0.65"/></svg>
+        <div class="wax-seal"><div class="inner"><span>{{ $monogram }}</span></div></div>
+        <svg viewBox="0 0 64 40" fill="none"><path d="M58 32C44 30 30 22 18 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M46 28C43 22 38 19 33 20C36 25 41 28 46 28Z" fill="currentColor" fill-opacity="0.85"/><path d="M35 22C32 16 27 13 22 14C25 19 30 22 35 22Z" fill="currentColor" fill-opacity="0.85"/><path d="M24 15C21 9 16 6 11 7C14 12 19 15 24 15Z" fill="currentColor" fill-opacity="0.85"/><path d="M40 29C37 34 31 36 26 34C30 30 35 28 40 29Z" fill="currentColor" fill-opacity="0.65"/><path d="M29 22C26 27 20 29 15 27C19 23 24 21 29 22Z" fill="currentColor" fill-opacity="0.65"/></svg>
+      </div>
+      <div class="card-clip">
+        <div class="foil"><div></div></div>
+        <div class="watermark" aria-hidden="true"><span>{{ $monogram }}</span></div>
+        <div class="hairline"><div></div></div>
+        <svg class="filigree tl" viewBox="0 0 44 44" fill="none"><path d="M3 41V17C3 9.26801 9.26801 3 17 3H41" stroke="currentColor" stroke-width="1.2"/><path d="M8 35V19C8 12.9249 12.9249 8 19 8H35" stroke="currentColor" stroke-width="0.75" stroke-dasharray="2 2"/><path d="M15 15C19 15 21 12 21 9C18 9 15 11 15 15Z" fill="currentColor" fill-opacity="0.75"/><path d="M15 15C15 19 12 21 9 21C9 18 11 15 15 15Z" fill="currentColor" fill-opacity="0.75"/><circle cx="13.5" cy="13.5" r="1.8" fill="currentColor"/></svg>
+        <svg class="filigree tr" viewBox="0 0 44 44" fill="none"><path d="M3 41V17C3 9.26801 9.26801 3 17 3H41" stroke="currentColor" stroke-width="1.2"/><path d="M8 35V19C8 12.9249 12.9249 8 19 8H35" stroke="currentColor" stroke-width="0.75" stroke-dasharray="2 2"/><path d="M15 15C19 15 21 12 21 9C18 9 15 11 15 15Z" fill="currentColor" fill-opacity="0.75"/><path d="M15 15C15 19 12 21 9 21C9 18 11 15 15 15Z" fill="currentColor" fill-opacity="0.75"/><circle cx="13.5" cy="13.5" r="1.8" fill="currentColor"/></svg>
+        <svg class="filigree bl" viewBox="0 0 44 44" fill="none"><path d="M3 41V17C3 9.26801 9.26801 3 17 3H41" stroke="currentColor" stroke-width="1.2"/><path d="M8 35V19C8 12.9249 12.9249 8 19 8H35" stroke="currentColor" stroke-width="0.75" stroke-dasharray="2 2"/><path d="M15 15C19 15 21 12 21 9C18 9 15 11 15 15Z" fill="currentColor" fill-opacity="0.75"/><path d="M15 15C15 19 12 21 9 21C9 18 11 15 15 15Z" fill="currentColor" fill-opacity="0.75"/><circle cx="13.5" cy="13.5" r="1.8" fill="currentColor"/></svg>
+        <svg class="filigree br" viewBox="0 0 44 44" fill="none"><path d="M3 41V17C3 9.26801 9.26801 3 17 3H41" stroke="currentColor" stroke-width="1.2"/><path d="M8 35V19C8 12.9249 12.9249 8 19 8H35" stroke="currentColor" stroke-width="0.75" stroke-dasharray="2 2"/><path d="M15 15C19 15 21 12 21 9C18 9 15 11 15 15Z" fill="currentColor" fill-opacity="0.75"/><path d="M15 15C15 19 12 21 9 21C9 18 11 15 15 15Z" fill="currentColor" fill-opacity="0.75"/><circle cx="13.5" cy="13.5" r="1.8" fill="currentColor"/></svg>
+        <div class="card-body">
+          <div class="stagger-1 card-eyebrow"><span class="ln"></span><p>Selamat Datang &amp; Kehormatan Bagi Kami</p><span class="ln"></span></div>
+          <h2 id="guest-name" class="stagger-2">Tamu Undangan</h2>
+          <div class="stagger-3 card-divider"><div class="ln"></div><svg viewBox="0 0 24 24" fill="none"><path d="M12 3L14.5 9.5L21 12L14.5 14.5L12 21L9.5 14.5L3 12L9.5 9.5L12 3Z" stroke="currentColor" stroke-width="1.2" fill="currentColor" fill-opacity="0.18"/></svg><div class="ln r"></div></div>
+          <div class="stagger-4 guest-meta">
+            <span id="guest-note">Tamu Kehormatan</span>
+            <span class="sep" id="pax-sep">&bull;</span>
+            <span id="guest-pax"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg><span>2 Orang Hadir</span></span>
+          </div>
+          <p class="stagger-4 card-quote">&ldquo;Terima kasih yang tulus atas kehadiran serta doa restu yang telah diberikan. Semoga langkah kami senantiasa diberkahi kebahagiaan, cinta, dan keberkahan.&rdquo;</p>
+          <div class="stagger-5 card-sign"><span class="lbl">Dengan penuh rasa syukur &amp; cinta,</span><span class="names">{{ $coupleA }} &amp; {{ $coupleB }}</span></div>
+        </div>
+        <div id="display-progress-bar"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- 4. Pil kontrol -->
+<div class="controls">
+  <button type="button" id="btn-test" onclick="testWelcome()">Tes Tampilan</button>
+  <span class="sep">|</span>
+  <button type="button" id="btn-sound" onclick="toggleSound()"><span id="sound-icon">&#128263;</span><span id="sound-label">Chime: Off</span></button>
+  <span class="sep">|</span>
+  <button type="button" id="btn-fullscreen" onclick="toggleFullscreen()">Fullscreen</button>
+  <span class="sep">|</span>
+  <a id="link-panitia" href="/checkin/{{ $slug }}/{{ $token }}">&larr; Panitia</a>
 </div>
 
 <script>
 var INV_ID = {{ (int)$inv_id }};
-// Token check-in dari URL halaman (sudah lolos checkinMonitorPage());
-// dikirim di tiap request API dan dicocokkan server dengan
-// settings.checkin_token.
+// Token check-in dari URL halaman (sudah lolos checkinMonitorPage()).
 var CHECKIN_TOKEN = "{{ $token }}";
 // Zona waktu acara dari Data Utama (WIB/WITA/WIT, default WIB).
 var EVENT_TZ_LABEL = "{{ $event_timezone ?? 'WIB' }}";
 var EVENT_TZ_IANA = {WIB: 'Asia/Jakarta', WITA: 'Asia/Makassar', WIT: 'Asia/Jayapura'}[EVENT_TZ_LABEL] || 'Asia/Jakarta';
 var EVENT_DATE = "{{ $event_date ?? '' }}";
+// Foto slideshow latar (foto galeri; fallback preview + mempelai).
+var MON_PHOTOS = {{ $monPhotosJson }};
 
-function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-
-// Server menyimpan waktu dalam UTC; string tanpa zona harus dibaca sebagai
-// UTC (bukan waktu lokal) lalu ditampilkan dalam zona waktu acara.
-function parseServerTime(s){
-  if(!s) return null;
-  var t = String(s).trim().replace(' ', 'T');
-  if(!/[+-]\d{2}:?\d{2}$/.test(t) && t.slice(-1) !== 'Z') t += 'Z';
-  var d = new Date(t);
-  return isNaN(d.getTime()) ? null : d;
-}
-function formatEventTime(s){
-  var d = parseServerTime(s);
-  if(!d) return s || '';
-  return d.toLocaleString('id-ID', {timeZone:EVENT_TZ_IANA, day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '') + ' ' + EVENT_TZ_LABEL;
-}
-// Tanggal acara (YYYY-MM-DD dari Data Utama) ditampilkan dalam zona acara.
+// Tanggal acara (YYYY-MM-DD dari Data Utama) dalam zona acara.
 function formatEventDate(s){
   if(!s) return '';
   var p = String(s).split('-');
@@ -224,42 +422,227 @@ document.getElementById('ev-date').textContent = formatEventDate(EVENT_DATE);
 function tickClock(){
   var now = new Date();
   var timeStr = now.toLocaleTimeString('id-ID', {timeZone:EVENT_TZ_IANA, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
-  document.getElementById('clock').innerHTML = '<b>' + esc(timeStr) + ' ' + esc(EVENT_TZ_LABEL) + '</b>';
+  document.getElementById('live-clock').textContent = timeStr + ' ' + EVENT_TZ_LABEL;
 }
 tickClock();
 setInterval(tickClock, 1000);
 
+// --- Slideshow latar: foto galeri, crossfade 7 detik + slow-zoom ---
+var slides = [], activeSlideIndex = 0, slideTimer = null;
+function initSlideshow(urls){
+  var layer = document.getElementById('slideshow-layer');
+  layer.querySelectorAll('.bg-slide').forEach(function(el){ el.remove(); });
+  slides = []; activeSlideIndex = 0;
+  if(slideTimer){ clearInterval(slideTimer); slideTimer = null; }
+  if(!urls || !urls.length){ layer.classList.add('hidden'); return; }
+  layer.classList.remove('hidden');
+  urls.forEach(function(u, i){
+    var d = document.createElement('div');
+    d.className = 'bg-slide' + (i === 0 ? ' on' : '');
+    d.style.backgroundImage = 'url("' + u + '")';
+    layer.insertBefore(d, layer.firstChild);
+    slides.push(d);
+  });
+  if(slides.length > 1){
+    slideTimer = setInterval(function(){
+      slides[activeSlideIndex].classList.remove('on');
+      activeSlideIndex = (activeSlideIndex + 1) % slides.length;
+      slides[activeSlideIndex].classList.add('on');
+    }, 7000);
+  }
+}
+initSlideshow(MON_PHOTOS);
+
+// --- Chime sambutan (Web Audio, default mati; perlu ketukan tombol) ---
+var soundEnabled = false, audioCtx = null;
+function toggleSound(){
+  soundEnabled = !soundEnabled;
+  var icon = document.getElementById('sound-icon');
+  var label = document.getElementById('sound-label');
+  if(soundEnabled){
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if(audioCtx.state === 'suspended') audioCtx.resume();
+    }catch(e){}
+    icon.textContent = '\uD83D\uDD14';
+    label.textContent = 'Chime: On';
+    playWelcomeChime();
+  }else{
+    icon.textContent = '\uD83D\uDD07';
+    label.textContent = 'Chime: Off';
+  }
+}
+function playWelcomeChime(){
+  if(!soundEnabled || !audioCtx) return;
+  try{
+    var now = audioCtx.currentTime;
+    var notes = [587.33, 880, 1174.66];
+    notes.forEach(function(freq, idx){
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.11);
+      gain.gain.setValueAtTime(0.0001, now + idx * 0.11);
+      gain.gain.exponentialRampToValueAtTime(0.08, now + idx * 0.11 + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.11 + 1.1);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now + idx * 0.11); osc.stop(now + idx * 0.11 + 1.15);
+    });
+  }catch(e){}
+}
+
+// --- Antrean sambutan: tiap tamu tampil 6 detik ---
+var guestQueue = [];
+var isDisplaying = false;
+var DISPLAY_DURATION_MS = 6000;
+var viewStandby = document.getElementById('view-standby');
+var viewWelcome = document.getElementById('view-welcome');
+var welcomeCard = document.getElementById('welcome-card');
+var progressBar = document.getElementById('display-progress-bar');
+var queuePill = document.getElementById('queue-pill');
+var queueCountText = document.getElementById('queue-count-text');
+
+function updateQueueIndicator(){
+  if(guestQueue.length > 0){
+    queueCountText.textContent = '+' + guestQueue.length + ' Tamu dalam Antrean';
+    queuePill.classList.add('show');
+  }else{
+    queuePill.classList.remove('show');
+  }
+}
+function restartStaggeredAnimations(){
+  welcomeCard.querySelectorAll('.stagger-1, .stagger-2, .stagger-3, .stagger-4, .stagger-5').forEach(function(el){
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = '';
+  });
+}
+function enqueueGuest(guest){
+  if(!guest || !guest.name) return;
+  guestQueue.push(guest);
+  updateQueueIndicator();
+  processQueue();
+}
+function processQueue(){
+  if(isDisplaying || guestQueue.length === 0) return;
+  isDisplaying = true;
+  var g = guestQueue.shift();
+  updateQueueIndicator();
+  playWelcomeChime();
+  document.getElementById('guest-name').textContent = g.name;
+  document.getElementById('guest-note').textContent = g.category || 'Tamu Kehormatan';
+  var paxCount = 1 + (Number(g.companions) || 0);
+  var paxPill = document.getElementById('guest-pax');
+  var paxSep = document.getElementById('pax-sep');
+  if(paxCount >= 3){
+    paxPill.querySelector('span').textContent = 'Beserta Rombongan';
+    paxPill.classList.remove('hidden'); paxSep.classList.remove('hidden');
+  }else if(paxCount === 2){
+    paxPill.querySelector('span').textContent = 'Beserta Pendamping';
+    paxPill.classList.remove('hidden'); paxSep.classList.remove('hidden');
+  }else{
+    paxPill.classList.add('hidden'); paxSep.classList.add('hidden');
+  }
+  viewStandby.classList.add('hidden');
+  viewWelcome.classList.remove('hidden');
+  welcomeCard.classList.remove('animate-modal-out', 'animate-modal-in');
+  void welcomeCard.offsetWidth;
+  welcomeCard.classList.add('animate-modal-in');
+  restartStaggeredAnimations();
+  progressBar.style.transition = 'none';
+  progressBar.style.width = '100%';
+  void progressBar.offsetWidth;
+  progressBar.style.transition = 'width ' + DISPLAY_DURATION_MS + 'ms linear';
+  progressBar.style.width = '0%';
+  setTimeout(function(){
+    welcomeCard.classList.remove('animate-modal-in');
+    welcomeCard.classList.add('animate-modal-out');
+    setTimeout(function(){
+      isDisplaying = false;
+      if(guestQueue.length > 0){
+        processQueue();
+      }else{
+        viewWelcome.classList.add('hidden');
+        viewStandby.classList.remove('hidden');
+      }
+    }, 420);
+  }, DISPLAY_DURATION_MS - 420);
+}
+// Pratinjau kartu tanpa scan sungguhan.
+function testWelcome(){
+  enqueueGuest({name: 'Tamu Undangan', companions: 0, category: null});
+}
+
+// --- Polling: kedatangan baru masuk antrean sambutan ---
+var seenKeys = {};
+var firstPoll = true;
+function guestKey(r){ return (r.nama || '') + '|' + (r.checked_in_at || ''); }
+function parseServerTime(s){
+  if(!s) return null;
+  var t = String(s).trim().replace(' ', 'T');
+  if(!/[+-]\d{2}:?\d{2}$/.test(t) && t.slice(-1) !== 'Z') t += 'Z';
+  var d = new Date(t);
+  return isNaN(d.getTime()) ? null : d;
+}
 async function refreshStats(){
   try{
     var res = await fetch('/api/checkin_stats?inv_id=' + INV_ID + '&token=' + encodeURIComponent(CHECKIN_TOKEN));
     var d = await res.json();
     if(!d.success) return;
-    document.getElementById('st-total').textContent = d.total;
-    document.getElementById('st-in').textContent = d.checked_in;
-    document.getElementById('st-out').textContent = d.total - d.checked_in;
-    var pct = d.total ? Math.round(d.checked_in / d.total * 100) : 0;
-    document.getElementById('prog-fill').style.width = pct + '%';
-    document.getElementById('prog-lbl').innerHTML = '<span class="pct">' + pct + '%</span> (' + d.checked_in + ' dari ' + d.total + ' tamu sudah hadir)';
-    var tp = (typeof d.total_people === 'number') ? d.total_people : d.checked_in;
-    document.getElementById('people-lbl').textContent = 'Total orang hadir: ' + tp + ' orang' + (tp > d.checked_in ? ' (termasuk ' + (tp - d.checked_in) + ' pendamping)' : '');
-    document.getElementById('recent').innerHTML = d.recent.length
-      ? d.recent.map(function(r,i){
-          var meta = [];
-          if(r.companions > 0) meta.push('+' + r.companions + ' pendamping');
-          if(r.checked_in_by) meta.push('Petugas: ' + r.checked_in_by);
-          return '<div class="recent-item"><span><b style="color:var(--gen-accent-text);margin-right:6px">' + (i+1) + '.</b>' + esc(r.nama) + (meta.length ? '<div class="recent-meta">' + esc(meta.join(' • ')) + '</div>' : '') + '</span><small>' + esc(formatEventTime(r.checked_in_at)) + '</small></div>';
-        }).join('')
-      : '<div class="empty">Belum ada check-in.</div>';
+    document.getElementById('att-count').textContent = 'Hadir ' + d.checked_in + ' dari ' + d.total + ' tamu';
+    var recent = d.recent || [];
+    var fresh = [];
+    recent.forEach(function(r){
+      var k = guestKey(r);
+      if(!seenKeys[k]){
+        seenKeys[k] = true;
+        fresh.push(r);
+      }
+    });
+    // Muat pertama: jangan putar ulang riwayat; hanya tamu yang baru saja
+    // scan (<=30 detik lalu) yang ikut ditampilkan sekali.
+    if(firstPoll){
+      firstPoll = false;
+      var now = Date.now();
+      var latest = null, latestTs = 0;
+      fresh.forEach(function(r){
+        var t = parseServerTime(r.checked_in_at);
+        if(t && t.getTime() > latestTs){ latestTs = t.getTime(); latest = r; }
+      });
+      fresh = (latest && (now - latestTs) <= 30000) ? [latest] : [];
+    }
+    // recent dari API urut terbaru dulu; antrekan dari yang paling awal.
+    fresh.reverse().forEach(function(r){
+      enqueueGuest({name: r.nama, companions: r.companions || 0, category: r.category || null});
+    });
   }catch(e){}
 }
-
-// Polling tiap 5 detik saat halaman aktif (tab tersembunyi dijeda).
 function tick(){
   if(document.hidden) return;
   refreshStats();
 }
 refreshStats();
 setInterval(tick, 5000);
+
+// --- Fullscreen + wake lock ---
+var wakeLock = null;
+async function toggleFullscreen(){
+  var btn = document.getElementById('btn-fullscreen');
+  try{
+    if(!document.fullscreenElement){
+      await document.documentElement.requestFullscreen();
+      btn.textContent = 'Exit Fullscreen';
+      if('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
+    }else{
+      await document.exitFullscreen();
+      btn.textContent = 'Fullscreen';
+      if(wakeLock){ await wakeLock.release(); wakeLock = null; }
+    }
+  }catch(err){}
+}
+document.addEventListener('fullscreenchange', function(){
+  document.getElementById('btn-fullscreen').textContent = document.fullscreenElement ? 'Exit Fullscreen' : 'Fullscreen';
+});
 </script>
 </body>
 </html>

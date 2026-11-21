@@ -18,12 +18,12 @@ class Guest extends Model
     }
 
     /**
-     * Generate kode QR unik per undangan (10 karakter alfanumerik).
+     * Generate kode QR unik per undangan (5 karakter alfanumerik).
      */
     public static function newQrCode($invitationId)
     {
         do {
-            $code = strtoupper(\Illuminate\Support\Str::random(10));
+            $code = strtoupper(\Illuminate\Support\Str::random(5));
             $exists = static::where('invitation_id', $invitationId)
                 ->where('qr_code', $code)->exists();
         } while ($exists);

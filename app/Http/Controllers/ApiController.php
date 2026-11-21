@@ -143,14 +143,17 @@ class ApiController extends Controller
         $checked = \App\Models\Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')->count();
         // Total orang yang benar-benar hadir = tamu + pendamping mereka.
         $totalPeople = $this->checkinPeopleTotal($inv_id);
+        $recentCols = ['nama', 'checked_in_at', 'companions', 'checked_in_by'];
+        if (\Illuminate\Support\Facades\Schema::hasColumn('guests', 'category')) $recentCols[] = 'category';
         $recent = \App\Models\Guest::where('invitation_id', $inv_id)->whereNotNull('checked_in_at')
-            ->orderBy('checked_in_at', 'DESC')->limit(20)->get(['nama', 'checked_in_at', 'companions', 'checked_in_by'])
+            ->orderBy('checked_in_at', 'DESC')->limit(20)->get($recentCols)
             ->map(function ($g) {
                 return [
                     'nama' => $g->nama,
                     'checked_in_at' => $this->waIso($g->checked_in_at),
                     'companions' => (int) ($g->companions ?? 0),
                     'checked_in_by' => $g->checked_in_by,
+                    'category' => isset($g->category) ? $g->category : null,
                 ];
             })->values();
 
