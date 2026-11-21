@@ -116,6 +116,19 @@ foreach (($photos ?? []) as $mp) {
     $monPhotos[] = (str_starts_with($mp, 'http') || str_starts_with($mp, '/')) ? $mp : asset(ltrim($mp, '/'));
 }
 $monPhotosJson = json_encode(array_values(array_unique($monPhotos)));
+
+// Monogram segel + foto slideshow (welcome screen monitor).
+$monParts = array_map('trim', explode('&', $title));
+$coupleA = $monParts[0] ?? '';
+$coupleB = isset($monParts[1]) ? $monParts[1] : '';
+$monogram = ($coupleB !== '') ? mb_substr($coupleA, 0, 1) . '&' . mb_substr($coupleB, 0, 1) : mb_substr($title, 0, 2);
+$monPhotos = [];
+foreach (($photos ?? []) as $mp) {
+    $mp = trim((string) $mp);
+    if ($mp === '') continue;
+    $monPhotos[] = (str_starts_with($mp, 'http') || str_starts_with($mp, '/')) ? $mp : asset(ltrim($mp, '/'));
+}
+$monPhotosJson = json_encode(array_values(array_unique($monPhotos)), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 @endphp
 <style>
   :root{
@@ -171,7 +184,6 @@ $monPhotosJson = json_encode(array_values(array_unique($monPhotos)));
   .frame-foot .couple{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:.12em;text-transform:none;font-size:14px;color:color-mix(in srgb,var(--gen-accent) 45%,#fff)}
   @media(min-width:640px){.frame-foot .couple{font-size:16px}}
   .frame-foot .right{text-align:right;line-height:1.5}
-  #att-count{display:block;letter-spacing:.14em;color:rgba(255,255,255,.75);text-transform:none;font-size:11px}
   #queue-pill{display:none;align-items:center;gap:8px;padding:4px 14px;border-radius:999px;background:var(--gen-accent);color:var(--gen-on-accent);font-size:10px;letter-spacing:.08em;font-weight:600;border:1px solid color-mix(in srgb,var(--gen-accent) 45%,#fff)}
   #queue-pill.show{display:inline-flex}
   #queue-pill .qdot{width:8px;height:8px;border-radius:50%;background:#fcd34d;animation:pulse 1s infinite}
@@ -287,21 +299,9 @@ $monPhotosJson = json_encode(array_values(array_unique($monPhotos)));
   .stagger-3{opacity:0;animation:itemFadeUp .7s cubic-bezier(.16,1,.3,1) .34s forwards}
   .stagger-4{opacity:0;animation:itemFadeUp .65s cubic-bezier(.16,1,.3,1) .46s forwards}
   .stagger-5{opacity:0;animation:itemFadeUp .65s cubic-bezier(.16,1,.3,1) .56s forwards}
-  /* --- pil kontrol (kanan bawah, redup) --- */
-  .controls{position:fixed;bottom:12px;right:12px;z-index:50;display:flex;flex-wrap:wrap;align-items:center;gap:4px;opacity:.35;transition:opacity .3s;background:rgba(26,19,12,.85);padding:6px 10px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gen-accent) 30%,transparent);box-shadow:0 8px 24px rgba(0,0,0,.35)}
-  .controls:hover,.controls:focus-within{opacity:1}
-  @media(min-width:640px){.controls{bottom:16px;right:16px;gap:6px}}
-  .controls button,.controls a{font-size:10px;font-weight:500;padding:4px 10px;border-radius:999px;border:none;background:transparent;cursor:pointer;text-decoration:none;font-family:inherit}
-  @media(min-width:640px){.controls button,.controls a{font-size:12px}}
-  .controls .sep{color:rgba(255,255,255,.2);font-size:12px}
-  #btn-test{color:#6ee7b7}
-  #btn-test:hover{color:#a7f3d0;background:rgba(255,255,255,.1)}
-  #btn-sound{color:#d6d3d1;display:flex;align-items:center;gap:4px}
-  #btn-sound:hover{color:#fff;background:rgba(255,255,255,.1)}
-  #btn-fullscreen{color:color-mix(in srgb,var(--gen-accent) 45%,#fff)}
-  #btn-fullscreen:hover{color:#fff;background:rgba(255,255,255,.1)}
-  #link-panitia{color:#d6d3d1}
-  #link-panitia:hover{color:#fff;background:rgba(255,255,255,.1)}
+  /* --- ikon fullscreen (pojok kanan atas) --- */
+  #btn-fs{position:fixed;top:12px;right:12px;z-index:60;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.25);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:.7;transition:opacity .3s,background .3s}
+  #btn-fs:hover{opacity:1;background:rgba(0,0,0,.55)}
   @media (prefers-reduced-motion: reduce){
     .bg-slide,.foil div,.bokeh span,.frame-head .dot,.scan-pill svg,#queue-pill .qdot{animation:none!important;transition:none!important}
     .animate-modal-in,.animate-modal-out,.stagger-1,.stagger-2,.stagger-3,.stagger-4,.stagger-5{animation:none!important;opacity:1!important}
@@ -309,6 +309,9 @@ $monPhotosJson = json_encode(array_values(array_unique($monPhotos)));
 </style>
 </head>
 <body>
+<!-- Ikon fullscreen (pojok kanan atas) -->
+<button type="button" id="btn-fs" onclick="toggleFullscreen()" title="Fullscreen" aria-label="Fullscreen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/></svg></button>
+
 <!-- 1. Latar slideshow foto galeri -->
 <div id="slideshow-layer" class="hidden">
   <div class="bg-overlay"></div>
@@ -325,7 +328,7 @@ $monPhotosJson = json_encode(array_values(array_unique($monPhotos)));
   <div class="frame-foot">
     <span class="couple">{{ $coupleA }} &amp; {{ $coupleB }}</span>
     <div id="queue-pill"><span class="qdot"></span><span id="queue-count-text">+1 Tamu dalam Antrean</span></div>
-    <span class="right"><span id="ev-date"></span><span id="att-count"></span></span>
+    <span class="right"><span id="ev-date"></span></span>
   </div>
 </div>
 
@@ -385,17 +388,6 @@ $monPhotosJson = json_encode(array_values(array_unique($monPhotos)));
   </section>
 </main>
 
-<!-- 4. Pil kontrol -->
-<div class="controls">
-  <button type="button" id="btn-test" onclick="testWelcome()">Tes Tampilan</button>
-  <span class="sep">|</span>
-  <button type="button" id="btn-sound" onclick="toggleSound()"><span id="sound-icon">&#128263;</span><span id="sound-label">Chime: Off</span></button>
-  <span class="sep">|</span>
-  <button type="button" id="btn-fullscreen" onclick="toggleFullscreen()">Fullscreen</button>
-  <span class="sep">|</span>
-  <a id="link-panitia" href="/checkin/{{ $slug }}/{{ $token }}">&larr; Panitia</a>
-</div>
-
 <script>
 var INV_ID = {{ (int)$inv_id }};
 // Token check-in dari URL halaman (sudah lolos checkinMonitorPage()).
@@ -405,7 +397,7 @@ var EVENT_TZ_LABEL = "{{ $event_timezone ?? 'WIB' }}";
 var EVENT_TZ_IANA = {WIB: 'Asia/Jakarta', WITA: 'Asia/Makassar', WIT: 'Asia/Jayapura'}[EVENT_TZ_LABEL] || 'Asia/Jakarta';
 var EVENT_DATE = "{{ $event_date ?? '' }}";
 // Foto slideshow latar (foto galeri; fallback preview + mempelai).
-var MON_PHOTOS = {{ $monPhotosJson }};
+var MON_PHOTOS = {!! $monPhotosJson !!};
 
 // Tanggal acara (YYYY-MM-DD dari Data Utama) dalam zona acara.
 function formatEventDate(s){
@@ -589,7 +581,6 @@ async function refreshStats(){
     var res = await fetch('/api/checkin_stats?inv_id=' + INV_ID + '&token=' + encodeURIComponent(CHECKIN_TOKEN));
     var d = await res.json();
     if(!d.success) return;
-    document.getElementById('att-count').textContent = 'Hadir ' + d.checked_in + ' dari ' + d.total + ' tamu';
     var recent = d.recent || [];
     var fresh = [];
     recent.forEach(function(r){
@@ -624,25 +615,19 @@ function tick(){
 refreshStats();
 setInterval(tick, 5000);
 
-// --- Fullscreen + wake lock ---
+// --- Fullscreen + wake lock (ikon pojok kanan atas) ---
 var wakeLock = null;
 async function toggleFullscreen(){
-  var btn = document.getElementById('btn-fullscreen');
   try{
     if(!document.fullscreenElement){
       await document.documentElement.requestFullscreen();
-      btn.textContent = 'Exit Fullscreen';
       if('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
     }else{
       await document.exitFullscreen();
-      btn.textContent = 'Fullscreen';
       if(wakeLock){ await wakeLock.release(); wakeLock = null; }
     }
   }catch(err){}
 }
-document.addEventListener('fullscreenchange', function(){
-  document.getElementById('btn-fullscreen').textContent = document.fullscreenElement ? 'Exit Fullscreen' : 'Fullscreen';
-});
 </script>
 </body>
 </html>
