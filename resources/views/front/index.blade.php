@@ -1643,33 +1643,6 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         <!-- Message list -->
         <div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;padding:4px 14px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.14em;opacity:.85"><span id="wish-total">0</span> Ucapan</span></div>
         <div id="message-list" class="space-y-4 reveal-stagger">
-          <!-- Seed messages -->
-          <div class="message-card p-5 border-l-2 border-secondary bg-surface-container-low rounded-r-xl">
-            <div class="flex justify-between items-start mb-2">
-              <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-full bg-secondary/20 flex items-center justify-center">
-                  <span class="text-xs font-bold text-secondary">B</span>
-                </div>
-                <h4 class="font-title-sm text-sm text-primary">Budi Santoso</h4>
-              </div>
-              <span class="text-[10px] font-label-caps text-outline">2 JAM LALU</span>
-            </div>
-            <p class="font-body-md text-sm text-on-surface-variant italic">"Selamat menempuh hidup baru Adam & Hawa.
-              Semoga menjadi keluarga yang sakinah, mawaddah, wa rahmah. Amin."</p>
-          </div>
-          <div class="message-card p-5 border-l-2 border-outline-variant bg-surface-container-low rounded-r-xl">
-            <div class="flex justify-between items-start mb-2">
-              <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-full bg-secondary/20 flex items-center justify-center">
-                  <span class="text-xs font-bold text-secondary">L</span>
-                </div>
-                <h4 class="font-title-sm text-sm text-primary">Larasati Putri</h4>
-              </div>
-              <span class="text-[10px] font-label-caps text-outline">5 JAM LALU</span>
-            </div>
-            <p class="font-body-md text-sm text-on-surface-variant italic">"Turut berbahagia untuk kalian berdua! Semoga
-              lancar sampai hari H ya. See you there!"</p>
-          </div>
         </div>
       </section>
 
@@ -2011,15 +1984,19 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             .then(function (res) { return res.json(); })
             .then(function (data) {
               var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=(data.data||[]).length;
-              if (!data.success || !data.data.length) return;
               var list = document.getElementById("message-list");
-              list.innerHTML = ""; // hapus seed messages
+              if (!data.success || !data.data.length) {
+                list.innerHTML = '<p id="wish-empty" class="text-center font-body-md text-sm text-on-surface-variant italic py-4">Belum ada ucapan. Jadilah yang pertama!</p>';
+                return;
+              }
+              list.innerHTML = ""; // hapus pesan lama
               data.data.forEach(function (item) {
                 list.appendChild(renderCard(item, false));
               });
             })
             .catch(function () {
-              // Jika API belum siap, seed messages tetap tampil
+              var list = document.getElementById("message-list");
+              list.innerHTML = '<p id="wish-empty" class="text-center font-body-md text-sm text-on-surface-variant italic py-4">Gagal memuat ucapan.</p>';
             });
         }
 
@@ -2039,6 +2016,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             .then(function (data) {
               if (data.success) {
                 var list = document.getElementById("message-list");
+                var _we=document.getElementById('wish-empty'); if(_we) _we.remove();
                 var card = renderCard(data.data, true);
                 list.insertBefore(card, list.firstChild);
                 var _wt=document.getElementById('wish-total');if(_wt)_wt.textContent=(parseInt(_wt.textContent||'0',10)||0)+1;
