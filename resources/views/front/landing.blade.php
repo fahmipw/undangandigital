@@ -1,0 +1,347 @@
+@php
+// Harga paket — ubah di sini saja bila berubah.
+$harga = ['basic' => 'Rp 89.000', 'premium' => 'Rp 149.000', 'eksklusif' => 'Rp 299.000'];
+$waText = fn($msg) => 'https://wa.me/' . $waNumber . '?text=' . urlencode($msg);
+@endphp
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>undangankamu — Undangan Digital Pernikahan</title>
+<meta name="description" content="Undangan digital pernikahan: 35 tema cantik, RSVP, galeri, musik, gift QRIS, dan check-in QR untuk panitia. Pesan mudah lewat WhatsApp.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: { ivory: '#FDFBF7', cream: '#F5EFE3', pine: '#1E4D33', pinedark: '#143826', gold: '#C9A227', goldsoft: '#E7D9A8' },
+    fontFamily: { serif: ['"Playfair Display"', 'Georgia', 'serif'], sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'] }
+  } }
+};
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: "Plus Jakarta Sans", system-ui, sans-serif; }
+  .gold-grad { background: linear-gradient(135deg, #C9A227, #E7D9A8 55%, #C9A227); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .filter-pill.active { background: #1E4D33; color: #fff; border-color: #1E4D33; }
+</style>
+</head>
+<body class="bg-ivory text-stone-800 antialiased">
+
+<!-- ============ NAV ============ -->
+<header class="sticky top-0 z-50 bg-ivory/90 backdrop-blur border-b border-stone-200/70">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <a href="#beranda" class="flex items-center gap-2">
+      <span class="w-9 h-9 rounded-full bg-pine text-goldsoft flex items-center justify-center font-serif font-bold text-lg">U</span>
+      <span class="font-serif font-bold text-xl text-pinedark">undangankamu</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-7 text-sm font-semibold text-stone-600">
+      <a href="#katalog" class="hover:text-pine">Katalog</a>
+      <a href="#harga" class="hover:text-pine">Harga</a>
+      <a href="#fitur" class="hover:text-pine">Fitur</a>
+      <a href="#cara-pesan" class="hover:text-pine">Cara Pesan</a>
+      <a href="#faq" class="hover:text-pine">FAQ</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href="{{ $waText('Halo, saya mau pesan undangan digital.') }}" target="_blank" rel="noopener" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-pine text-white text-sm font-bold hover:bg-pinedark transition">Pesan Sekarang</a>
+      <button type="button" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="md:hidden p-2 rounded-lg text-stone-600 hover:bg-cream" aria-label="Menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobileMenu" class="hidden md:hidden border-t border-stone-200/70 px-4 py-3 space-y-1 text-sm font-semibold">
+    <a href="#katalog" class="block py-2">Katalog</a>
+    <a href="#harga" class="block py-2">Harga</a>
+    <a href="#fitur" class="block py-2">Fitur</a>
+    <a href="#cara-pesan" class="block py-2">Cara Pesan</a>
+    <a href="#faq" class="block py-2">FAQ</a>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section id="beranda" class="relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-b from-cream via-ivory to-ivory"></div>
+  <div class="relative max-w-6xl mx-auto px-4 pt-14 pb-16 md:pt-20 md:pb-24 grid md:grid-cols-2 gap-10 items-center">
+    <div>
+      <p class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pine/10 text-pine text-xs font-bold tracking-wide">UNDANGAN DIGITAL PERNIKAHAN</p>
+      <h1 class="font-serif font-bold text-4xl md:text-5xl leading-tight text-pinedark mt-4">Undangan cantik, <span class="gold-grad">tanpa ribet.</span></h1>
+      <p class="text-stone-600 leading-relaxed mt-4">Pilih dari 35 tema — Jawa klasik sampai game — lengkap dengan RSVP, galeri foto, musik, amplop digital, sampai check-in QR untuk panitia. Jadi dalam hitungan jam, bukan minggu.</p>
+      <div class="flex flex-wrap gap-3 mt-7">
+        <a href="#katalog" class="px-6 py-3 rounded-full bg-pine text-white font-bold text-sm hover:bg-pinedark transition">Lihat Katalog Tema</a>
+        <a href="{{ $waText('Halo, saya mau pesan undangan digital.') }}" target="_blank" rel="noopener" class="px-6 py-3 rounded-full border-2 border-pine text-pine font-bold text-sm hover:bg-pine hover:text-white transition">Pesan via WhatsApp</a>
+      </div>
+      <p class="text-xs text-stone-500 mt-4">Mulai {{ $harga['basic'] }} &bull; Tanpa perlu install aplikasi &bull; Dibuka lewat link</p>
+    </div>
+    <div class="relative mx-auto w-full max-w-[320px]">
+      <div class="rounded-[2rem] border-[10px] border-stone-900 bg-stone-900 shadow-2xl overflow-hidden">
+        <div class="relative bg-gradient-to-b from-[#3E2618] to-[#120b06] aspect-[3/4] flex items-center justify-center text-center px-4">
+          <img src="{{ asset('images/landing/themes/jawa-klasik.jpg') }}" alt="Contoh undangan tema Jawa Klasik" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.remove()">
+          <div class="relative">
+            <p class="text-[10px] tracking-[0.35em] text-goldsoft">THE WEDDING OF</p>
+            <p class="font-serif text-3xl text-[#fdf6dd] mt-2">Farza &amp; Delia</p>
+            <p class="text-xs text-[#fdf6dd]/70 mt-2">Minggu, 29 Maret 2026</p>
+          </div>
+        </div>
+      </div>
+      <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg px-4 py-3 text-xs font-semibold flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 35 tema siap pakai
+      </div>
+      <div class="absolute -top-3 -right-3 bg-white rounded-2xl shadow-lg px-4 py-3 text-xs font-semibold">Check-in QR panitia</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="border-y border-stone-200/70 bg-white">
+  <div class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+    <div><p class="font-serif font-bold text-3xl text-pinedark">{{ count($themes) }}</p><p class="text-xs text-stone-500 mt-1">Tema undangan</p></div>
+    <div><p class="font-serif font-bold text-3xl text-pinedark">4</p><p class="text-xs text-stone-500 mt-1">Tema video opening</p></div>
+    <div><p class="font-serif font-bold text-3xl text-pinedark">QR</p><p class="text-xs text-stone-500 mt-1">Check-in + monitor panitia</p></div>
+    <div><p class="font-serif font-bold text-3xl text-pinedark">1 hari</p><p class="text-xs text-stone-500 mt-1">Undangan jadi*</p></div>
+  </div>
+  <p class="text-center text-[11px] text-stone-400 pb-4 px-4">*Setelah data dan pembayaran lengkap.</p>
+</section>
+
+<!-- ============ KATALOG ============ -->
+<section id="katalog" class="max-w-6xl mx-auto px-4 py-16">
+  <div class="text-center max-w-2xl mx-auto">
+    <h2 class="font-serif font-bold text-3xl md:text-4xl text-pinedark">Katalog Tema</h2>
+    <p class="text-stone-600 mt-3">Klik gambar untuk melihat lebih besar. Semua tema sudah termasuk RSVP, ucapan, galeri, musik, dan amplop digital.</p>
+  </div>
+
+  <div class="flex flex-wrap justify-center gap-2 mt-8" id="filterBar">
+    @foreach (['Semua', 'Jawa', 'Nusantara', 'Islami', 'Alam', 'Modern', 'Game', 'Video Opening'] as $f)
+      <button type="button" data-filter="{{ $f }}" class="filter-pill px-4 py-1.5 rounded-full border border-stone-300 bg-white text-xs font-bold hover:border-pine transition {{ $f === 'Semua' ? 'active' : '' }}">{{ $f }}</button>
+    @endforeach
+  </div>
+
+  <div id="themeGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 mt-8">
+    @foreach ($themes as $t)
+      <article class="theme-card bg-white rounded-2xl overflow-hidden border border-stone-200/80 shadow-sm hover:shadow-lg transition" data-cat="{{ $t['cat'] }}" data-video="{{ $t['video'] ? '1' : '0' }}">
+        <div class="relative cursor-pointer bg-gradient-to-b from-pine to-pinedark aspect-[3/4]" onclick="openLightbox('{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}', '{{ $t['name'] }}')">
+          <img src="{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}" alt="Tema {{ $t['name'] }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.remove()">
+          <div class="absolute inset-0 flex items-end p-3 pointer-events-none">
+            <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-black/45 text-white backdrop-blur-sm">{{ $t['cat'] }}</span>
+            @if ($t['video'])
+              <span class="ml-1.5 text-[10px] font-bold px-2 py-1 rounded-full bg-gold text-pinedark">Video Opening</span>
+            @endif
+          </div>
+        </div>
+        <div class="p-3.5">
+          <h3 class="font-bold text-sm text-stone-900 leading-snug">{{ $t['name'] }}</h3>
+          <p class="text-[11px] text-stone-500 mt-0.5">Tema {{ $t['cat'] }}{{ $t['video'] ? ' • Video opening' : '' }}</p>
+          <a href="{{ $waText('Halo, saya mau pesan undangan digital tema ' . $t['name'] . ' (Paket Premium).') }}" target="_blank" rel="noopener" class="mt-3 block text-center px-3 py-2 rounded-full bg-pine text-white text-xs font-bold hover:bg-pinedark transition">Pesan Tema Ini</a>
+        </div>
+      </article>
+    @endforeach
+  </div>
+  <p id="noResult" class="hidden text-center text-sm text-stone-500 py-10">Tidak ada tema pada kategori ini.</p>
+</section>
+
+<!-- Lightbox preview -->
+<div id="lightbox" class="hidden fixed inset-0 z-[90] bg-black/85 items-center justify-center p-4" onclick="closeLightbox()">
+  <figure class="max-w-[420px] w-full" onclick="event.stopPropagation()">
+    <img id="lightboxImg" src="" alt="" class="w-full rounded-2xl shadow-2xl">
+    <figcaption class="flex items-center justify-between mt-3">
+      <span id="lightboxCap" class="text-white font-bold text-sm"></span>
+      <button type="button" onclick="closeLightbox()" class="px-4 py-1.5 rounded-full bg-white text-stone-900 text-xs font-bold">Tutup</button>
+    </figcaption>
+  </figure>
+</div>
+
+<!-- ============ HARGA ============ -->
+<section id="harga" class="bg-cream/60 border-y border-stone-200/70">
+  <div class="max-w-6xl mx-auto px-4 py-16">
+    <div class="text-center max-w-2xl mx-auto">
+      <h2 class="font-serif font-bold text-3xl md:text-4xl text-pinedark">Harga Paket</h2>
+      <p class="text-stone-600 mt-3">Sekali bayar, undangan aktif sampai acara selesai. Tidak ada biaya bulanan.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-5 mt-10 items-stretch">
+      <!-- Basic -->
+      <div class="bg-white rounded-3xl border border-stone-200 p-6 flex flex-col">
+        <h3 class="font-bold text-lg">Basic</h3>
+        <p class="font-serif font-bold text-4xl text-pinedark mt-3">{{ $harga['basic'] }}</p>
+        <p class="text-xs text-stone-500 mt-1">per undangan</p>
+        <ul class="text-sm text-stone-600 space-y-2.5 mt-6 flex-1">
+          <li>✓ 1 tema standar (non-video)</li>
+          <li>✓ RSVP &amp; ucapan tamu</li>
+          <li>✓ Galeri foto + musik latar</li>
+          <li>✓ Amplop digital / gift &amp; QRIS</li>
+          <li>✓ Link undangan + nama tamu</li>
+        </ul>
+        <a href="{{ $waText('Halo, saya mau pesan undangan digital Paket Basic (' . $harga['basic'] . ').') }}" target="_blank" rel="noopener" class="mt-7 block text-center px-4 py-3 rounded-full border-2 border-pine text-pine font-bold text-sm hover:bg-pine hover:text-white transition">Pesan Basic</a>
+      </div>
+      <!-- Premium -->
+      <div class="bg-pinedark text-white rounded-3xl p-6 flex flex-col relative shadow-xl md:-translate-y-2">
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gold text-pinedark text-[11px] font-bold">PALING LARIS</span>
+        <h3 class="font-bold text-lg">Premium</h3>
+        <p class="font-serif font-bold text-4xl text-goldsoft mt-3">{{ $harga['premium'] }}</p>
+        <p class="text-xs text-white/60 mt-1">per undangan</p>
+        <ul class="text-sm text-white/85 space-y-2.5 mt-6 flex-1">
+          <li>✓ Semua di paket Basic</li>
+          <li>✓ Semua 35 tema, termasuk 4 tema video opening</li>
+          <li>✓ Check-in QR + monitor panitia</li>
+          <li>✓ Link generator + kirim WA massal</li>
+          <li>✓ Hitung mundur &amp; live streaming</li>
+        </ul>
+        <a href="{{ $waText('Halo, saya mau pesan undangan digital Paket Premium (' . $harga['premium'] . ').') }}" target="_blank" rel="noopener" class="mt-7 block text-center px-4 py-3 rounded-full bg-gold text-pinedark font-bold text-sm hover:brightness-110 transition">Pesan Premium</a>
+      </div>
+      <!-- Eksklusif -->
+      <div class="bg-white rounded-3xl border border-stone-200 p-6 flex flex-col">
+        <h3 class="font-bold text-lg">Eksklusif</h3>
+        <p class="font-serif font-bold text-4xl text-pinedark mt-3">{{ $harga['eksklusif'] }}</p>
+        <p class="text-xs text-stone-500 mt-1">per undangan</p>
+        <ul class="text-sm text-stone-600 space-y-2.5 mt-6 flex-1">
+          <li>✓ Semua di paket Premium</li>
+          <li>✓ Video opening custom (pakai video/foto sendiri)</li>
+          <li>✓ Penyesuaian warna &amp; detail tema</li>
+          <li>✓ Prioritas pengerjaan</li>
+          <li>✓ Konsultasi sampai hari H</li>
+        </ul>
+        <a href="{{ $waText('Halo, saya mau pesan undangan digital Paket Eksklusif (' . $harga['eksklusif'] . ').') }}" target="_blank" rel="noopener" class="mt-7 block text-center px-4 py-3 rounded-full border-2 border-pine text-pine font-bold text-sm hover:bg-pine hover:text-white transition">Pesan Eksklusif</a>
+      </div>
+    </div>
+    <p class="text-center text-xs text-stone-500 mt-6">Harga dapat berubah — hubungi kami untuk penawaran terbaru dan promo.</p>
+  </div>
+</section>
+
+<!-- ============ FITUR ============ -->
+<section id="fitur" class="max-w-6xl mx-auto px-4 py-16">
+  <div class="text-center max-w-2xl mx-auto">
+    <h2 class="font-serif font-bold text-3xl md:text-4xl text-pinedark">Fitur Lengkap</h2>
+    <p class="text-stone-600 mt-3">Bukan sekadar kartu online — satu sistem untuk undangan dan panitia.</p>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+    @foreach ([
+      ['RSVP & Ucapan', 'Tamu konfirmasi hadir & kirim doa, langsung masuk WhatsApp mempelai.'],
+      ['Galeri & Video', 'Galeri foto, video prewedding, dan 4 tema video opening sinematik.'],
+      ['Musik Latar', 'Musik pengiring yang menyala saat undangan dibuka.'],
+      ['Amplop Digital', 'Gift transfer bank & QRIS, lengkap dengan tombol salin rekening.'],
+      ['Check-in QR', 'Panitia scan QR tamu di pintu masuk, tercatat otomatis.'],
+      ['Monitor Panitia', 'Layar sambutan + kartu tamu saat check-in, lengkap dengan foto galeri.'],
+      ['Link Generator', 'Buat link personal per tamu + kirim WA massal sekali klik.'],
+      ['Hitung Mundur', 'Countdown acara mengikuti zona waktu (WIB/WITA/WIT).'],
+    ] as $f)
+      <div class="bg-white rounded-2xl border border-stone-200/80 p-5">
+        <h3 class="font-bold text-sm text-pinedark">{{ $f[0] }}</h3>
+        <p class="text-xs text-stone-600 leading-relaxed mt-1.5">{{ $f[1] }}</p>
+      </div>
+    @endforeach
+  </div>
+</section>
+
+<!-- ============ CARA PESAN ============ -->
+<section id="cara-pesan" class="bg-cream/60 border-y border-stone-200/70">
+  <div class="max-w-6xl mx-auto px-4 py-16">
+    <div class="text-center max-w-2xl mx-auto">
+      <h2 class="font-serif font-bold text-3xl md:text-4xl text-pinedark">Cara Pesan</h2>
+      <p class="text-stone-600 mt-3">Empat langkah, undanganmu siap dibagikan.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+      @foreach ([
+        ['1', 'Pilih Tema', 'Pilih tema favoritmu dari katalog di atas.'],
+        ['2', 'Chat WhatsApp', 'Klik Pesan — kirim nama mempelai, tanggal, dan tema pilihan.'],
+        ['3', 'Isi Data & Bayar', 'Lengkapi data acara, foto, dan lakukan pembayaran.'],
+        ['4', 'Undangan Jadi', 'Terima link undangan, bagikan ke tamu lewat WhatsApp.'],
+      ] as $s)
+        <div class="bg-white rounded-2xl border border-stone-200/80 p-5 text-center">
+          <p class="w-10 h-10 mx-auto rounded-full bg-pine text-white font-serif font-bold text-lg flex items-center justify-center">{{ $s[0] }}</p>
+          <h3 class="font-bold text-sm mt-3">{{ $s[1] }}</h3>
+          <p class="text-xs text-stone-600 leading-relaxed mt-1.5">{{ $s[2] }}</p>
+        </div>
+      @endforeach
+    </div>
+    <div class="text-center mt-10">
+      <a href="{{ $waText('Halo, saya mau pesan undangan digital.') }}" target="_blank" rel="noopener" class="inline-block px-8 py-3.5 rounded-full bg-pine text-white font-bold text-sm hover:bg-pinedark transition">Mulai Pesan Sekarang</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq" class="max-w-3xl mx-auto px-4 py-16">
+  <h2 class="font-serif font-bold text-3xl md:text-4xl text-pinedark text-center">Pertanyaan Umum</h2>
+  <div class="space-y-3 mt-8">
+    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
+      <summary class="font-bold text-sm cursor-pointer">Berapa lama undangan saya jadi?</summary>
+      <p class="text-sm text-stone-600 leading-relaxed mt-2">Umumnya 1 hari setelah data dan pembayaran lengkap. Paket Eksklusif dengan video custom menyesuaikan antrean.</p>
+    </details>
+    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
+      <summary class="font-bold text-sm cursor-pointer">Apakah bisa revisi setelah jadi?</summary>
+      <p class="text-sm text-stone-600 leading-relaxed mt-2">Bisa — perbaikan data (nama, tanggal, foto) dilayani selama masa aktif undangan. Ganti tema bisa dibicarakan saat pemesanan.</p>
+    </details>
+    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
+      <summary class="font-bold text-sm cursor-pointer">Bagaimana tamu menerima undangan?</summary>
+      <p class="text-sm text-stone-600 leading-relaxed mt-2">Tamu menerima link personal lewat WhatsApp — dibuka di browser HP, tanpa install aplikasi. Nama tamu tampil otomatis di undangan.</p>
+    </details>
+    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
+      <summary class="font-bold text-sm cursor-pointer">Apa itu check-in QR?</summary>
+      <p class="text-sm text-stone-600 leading-relaxed mt-2">Panitia di pintu masuk cukup scan QR di undangan tamu (atau ketik kode undangan). Kehadiran tercatat otomatis dan tampil di layar monitor acara.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-pinedark text-white">
+  <div class="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-8">
+    <div>
+      <p class="font-serif font-bold text-2xl">undangankamu</p>
+      <p class="text-sm text-white/70 leading-relaxed mt-2">Undangan digital pernikahan — cantik, praktis, dan lengkap dengan sistem check-in panitia.</p>
+    </div>
+    <div>
+      <p class="font-bold text-sm">Menu</p>
+      <ul class="text-sm text-white/70 space-y-2 mt-3">
+        <li><a href="#katalog" class="hover:text-white">Katalog Tema</a></li>
+        <li><a href="#harga" class="hover:text-white">Harga</a></li>
+        <li><a href="#fitur" class="hover:text-white">Fitur</a></li>
+        <li><a href="#cara-pesan" class="hover:text-white">Cara Pesan</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="font-bold text-sm">Pesan Sekarang</p>
+      <p class="text-sm text-white/70 mt-3">Klik tombol di bawah untuk chat WhatsApp — sebutkan tema dan paket pilihanmu.</p>
+      <a href="{{ $waText('Halo, saya mau pesan undangan digital.') }}" target="_blank" rel="noopener" class="inline-block mt-4 px-5 py-2.5 rounded-full bg-gold text-pinedark font-bold text-sm hover:brightness-110 transition">Chat WhatsApp</a>
+    </div>
+  </div>
+  <div class="border-t border-white/10 py-4 text-center text-xs text-white/50">&copy; {{ date('Y') }} undangankamu — Undangan Digital Pernikahan.</div>
+</footer>
+
+<!-- Tombol WA melayang -->
+<a href="{{ $waText('Halo, saya mau pesan undangan digital.') }}" target="_blank" rel="noopener" aria-label="Chat WhatsApp" class="fixed bottom-5 right-5 z-[80] w-14 h-14 rounded-full bg-[#25D366] text-white shadow-xl flex items-center justify-center hover:scale-105 transition">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.6.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.2-.8l.4-.5c.1-.2.1-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1.1 2.7c.1.2 1.9 2.9 4.5 4 .6.3 1.1.4 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0-.1-.2-.2-.5-.3Z"/></svg>
+</a>
+
+<script>
+// Filter katalog
+document.querySelectorAll('#filterBar .filter-pill').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('#filterBar .filter-pill').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    var f = btn.dataset.filter;
+    var shown = 0;
+    document.querySelectorAll('#themeGrid .theme-card').forEach(function(card){
+      var ok = (f === 'Semua') || (f === 'Video Opening' ? card.dataset.video === '1' : card.dataset.cat === f);
+      card.style.display = ok ? '' : 'none';
+      if (ok) shown++;
+    });
+    document.getElementById('noResult').classList.toggle('hidden', shown > 0);
+  });
+});
+// Lightbox preview
+function openLightbox(src, name){
+  var lb = document.getElementById('lightbox');
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxImg').alt = 'Tema ' + name;
+  document.getElementById('lightboxCap').textContent = 'Tema ' + name;
+  lb.classList.remove('hidden'); lb.classList.add('flex');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(){
+  var lb = document.getElementById('lightbox');
+  lb.classList.add('hidden'); lb.classList.remove('flex');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLightbox(); });
+</script>
+</body>
+</html>

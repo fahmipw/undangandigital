@@ -107,6 +107,57 @@ class FrontController extends Controller
     }
 
     /**
+     * Landing page penjualan "undangankamu" — katalog tema + harga.
+     * URL: / (root). Undangan default tetap bisa dibuka lewat /hawa-adam,
+     * jadi tidak ada tautan tamu yang rusak.
+     */
+    public function landing()
+    {
+        // Nomor WA pemesanan undangankamu (Fahmi, 088210841990).
+        $waNumber = '6288210841990';
+        // Katalog tema: slug, nama tampil, kategori, video-opening?
+        // (tema yang di-skip tidak ikut dijual.)
+        $themes = [
+            ['slug' => 'default', 'name' => 'Klasik Emas', 'cat' => 'Modern', 'video' => false],
+            ['slug' => 'minecraft', 'name' => 'Minecraft', 'cat' => 'Game', 'video' => false],
+            ['slug' => 'minecraft-adventure', 'name' => 'Minecraft Petualangan', 'cat' => 'Game', 'video' => false],
+            ['slug' => 'royal-emerald', 'name' => 'Royal Emerald', 'cat' => 'Modern', 'video' => false],
+            ['slug' => 'jawa-premium', 'name' => 'Jawa Premium', 'cat' => 'Jawa', 'video' => false],
+            ['slug' => 'islamic-elegance', 'name' => 'Islamic Elegance', 'cat' => 'Islami', 'video' => false],
+            ['slug' => 'sakura-dream', 'name' => 'Sakura Dream', 'cat' => 'Alam', 'video' => false],
+            ['slug' => 'midnight-galaxy', 'name' => 'Midnight Galaxy', 'cat' => 'Modern', 'video' => false],
+            ['slug' => 'rustic-boho', 'name' => 'Rustic Boho', 'cat' => 'Modern', 'video' => false],
+            ['slug' => 'minang-gadang', 'name' => 'Minang Gadang', 'cat' => 'Nusantara', 'video' => false],
+            ['slug' => 'taman-janur', 'name' => 'Taman Janur', 'cat' => 'Jawa', 'video' => false],
+            ['slug' => 'senja-pesisir', 'name' => 'Senja Pesisir', 'cat' => 'Alam', 'video' => false],
+            ['slug' => 'empat-musim', 'name' => 'Empat Musim', 'cat' => 'Alam', 'video' => false],
+            ['slug' => 'bawah-laut', 'name' => 'Bawah Laut', 'cat' => 'Alam', 'video' => false],
+            ['slug' => 'gunung-berkabut', 'name' => 'Gunung Berkabut', 'cat' => 'Alam', 'video' => false],
+            ['slug' => 'sogan-parallax', 'name' => 'Sogan Parallax', 'cat' => 'Jawa', 'video' => false],
+            ['slug' => 'rimba-watercolor', 'name' => 'Rimba Watercolor', 'cat' => 'Alam', 'video' => false],
+            ['slug' => 'neon-metropolis', 'name' => 'Neon Metropolis', 'cat' => 'Modern', 'video' => false],
+            ['slug' => 'arabian-nights', 'name' => 'Arabian Nights', 'cat' => 'Modern', 'video' => false],
+            ['slug' => 'origami-dreams', 'name' => 'Origami Dreams', 'cat' => 'Modern', 'video' => false],
+            ['slug' => 'galaksi-cinta', 'name' => 'Galaksi Cinta', 'cat' => 'Modern', 'video' => false],
+            ['slug' => 'winter-aurora', 'name' => 'Winter Aurora', 'cat' => 'Modern', 'video' => false],
+            ['slug' => 'stardew-valley', 'name' => 'Stardew Valley', 'cat' => 'Game', 'video' => false],
+            ['slug' => 'stardew-adventure', 'name' => 'Stardew Adventure', 'cat' => 'Game', 'video' => false],
+            ['slug' => 'jawa-cinematic', 'name' => 'Jawa Cinematic', 'cat' => 'Jawa', 'video' => false],
+            ['slug' => 'jawa-arunika', 'name' => 'Jawa Arunika', 'cat' => 'Jawa', 'video' => false],
+            ['slug' => 'jawa-klasik', 'name' => 'Jawa Klasik', 'cat' => 'Jawa', 'video' => false],
+            ['slug' => 'jawa-pendopo', 'name' => 'Jawa Pendopo', 'cat' => 'Jawa', 'video' => true],
+            ['slug' => 'jawa-gerbang', 'name' => 'Jawa Gerbang', 'cat' => 'Jawa', 'video' => true],
+            ['slug' => 'betawi', 'name' => 'Betawi', 'cat' => 'Nusantara', 'video' => true],
+            ['slug' => 'jawa-gunungan', 'name' => 'Jawa Gunungan', 'cat' => 'Jawa', 'video' => true],
+            ['slug' => 'taman-surga', 'name' => 'Taman Surga', 'cat' => 'Alam', 'video' => false],
+            ['slug' => 'jawa-biru', 'name' => 'Jawa Biru', 'cat' => 'Jawa', 'video' => false],
+            ['slug' => 'jawa-puspa', 'name' => 'Jawa Puspa', 'cat' => 'Jawa', 'video' => false],
+            ['slug' => 'pixel-quest', 'name' => 'Pixel Quest', 'cat' => 'Game', 'video' => false],
+        ];
+        return view('front.landing', compact('waNumber', 'themes'));
+    }
+
+    /**
      * Halaman check-in khusus panitia (tanpa login admin).
      * URL: /checkin/{slug}/{token} — token disimpan di setting checkin_token.
      */

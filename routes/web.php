@@ -52,6 +52,7 @@ Route::post('api/delete_generator_guest', [ApiController::class, 'deleteGenerato
 Route::get('/checkin/{slug}/{token}', [FrontController::class, 'checkinPage']);
 Route::get('/checkin/{slug}/{token}/monitor', [FrontController::class, 'checkinMonitorPage']);
 
-// --- Frontend Routes ---
-Route::get('/', [FrontController::class, 'index']);
+// --- Landing page penjualan "undangankamu" (katalog + harga) ---
+// Undangan default tetap bisa dibuka lewat /hawa-adam.
+Route::get('/', [FrontController::class, 'landing']);
 Route::get('/{slug}', [FrontController::class, 'index']);
