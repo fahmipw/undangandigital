@@ -251,6 +251,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 </head>
 <body>
 <div class="pbar"><i id="pbarFill"></i></div>
+<canvas id="petals"></canvas>
 <!-- ======== DEFS: filter cat air, pinus, pakis, eucalyptus, bingkai heksagon ======== -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <defs>
