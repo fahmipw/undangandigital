@@ -143,7 +143,7 @@ tailwind.config = {
             <span class="text-xs text-stone-400 line-through">{{ $t['video'] ? $hargaCoret['premium'] : $hargaCoret['basic'] }}</span>
           </p>
           <div class="border-t border-stone-200/80 mt-3 pt-3 space-y-2">
-            <a href="/hawa-adam?tema={{ $t['slug'] }}" target="_blank" rel="noopener" class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-white border border-stone-300 text-stone-700 text-xs font-bold hover:border-pine transition">
+            <a href="/hawa-adam?tema={{ $t['slug'] }}&to=tamu-demo" target="_blank" rel="noopener" class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-white border border-stone-300 text-stone-700 text-xs font-bold hover:border-pine transition">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
               Demo
             </a>

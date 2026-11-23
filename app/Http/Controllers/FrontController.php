@@ -88,6 +88,14 @@ class FrontController extends Controller
                 $guestQrCode = $guest->qr_code;
             } else {
                 $guestName = htmlspecialchars(str_replace(['+', '-'], ' ', $guestSlug));
+                // Tamu demo untuk tombol Demo di landing (?to=tamu-demo): nama +
+                // kode QR contoh TANPA menulis ke database. Bila Fahmi nanti
+                // membuat tamu sungguhan berslug tamu-demo di admin, tamu itu
+                // yang dipakai (pencarian DB di atas menang).
+                if ($guestSlug === 'tamu-demo') {
+                    $guestName = 'Tamu Demo';
+                    $guestQrCode = 'DEMO1';
+                }
             }
         }
 

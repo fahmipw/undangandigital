@@ -77,6 +77,9 @@ $gen = $genPalettes[$theme ?? 'default'] ?? $genPalettes['default'];
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- SweetAlert2 (notifikasi sukses edit/hapus tamu) -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -1520,7 +1523,7 @@ $gen = $genPalettes[$theme ?? 'default'] ?? $genPalettes['default'];
         }
         editingGuestId = null;
         refreshUI();
-        showToast('Nama & tautan tamu diperbarui');
+        showSwalNotif('Nama & tautan tamu diperbarui');
       } catch (e) {
         showToast('Terjadi kesalahan sistem.');
       }
@@ -1565,11 +1568,21 @@ $gen = $genPalettes[$theme ?? 'default'] ?? $genPalettes['default'];
         }
         if (editingGuestId === guest.id) editingGuestId = null;
         refreshUI();
-        showToast('Tamu "' + guest.nama + '" berhasil dihapus');
+        showSwalNotif('Tamu "' + guest.nama + '" berhasil dihapus');
       } catch (e) {
         showToast('Terjadi kesalahan sistem.');
       }
       closeDeleteModal();
+    }
+
+    // Notifikasi sukses SweetAlert (edit/hapus tamu): popup otomatis tutup
+    // 2 detik, tanpa tombol. Bila Swal gagal dimuat (offline), jatuh ke toast.
+    function showSwalNotif(msg) {
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({ text: msg, icon: 'success', timer: 2000, showConfirmButton: false, customClass: { popup: 'rounded-2xl' } });
+      } else {
+        showToast(msg);
+      }
     }
 
     // Toast Notification Helper

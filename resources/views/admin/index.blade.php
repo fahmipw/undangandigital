@@ -2005,7 +2005,7 @@
                     '<td class="px-4 py-2"><select class="lt-cat border border-gray-200 rounded-lg px-2 py-1.5 text-sm bg-white" data-slug="' + th.slug + '">' + cats.map(function (c) { return '<option value="' + c + '"' + (c === th.cat ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></td>' +
                     '<td class="px-4 py-2"><select class="lt-badge border border-gray-200 rounded-lg px-2 py-1.5 text-sm bg-white" data-slug="' + th.slug + '">' + badges.map(function (b) { return '<option value="' + b + '"' + (b === (th.badge || '') ? ' selected' : '') + '>' + (b || '—') + '</option>'; }).join('') + '</select></td>' +
                     '<td class="px-4 py-2 text-center"><input type="checkbox" class="lt-visible w-4 h-4" data-slug="' + th.slug + '"' + (th.visible ? ' checked' : '') + '></td>' +
-                    '<td class="px-4 py-2"><a href="/hawa-adam?tema=' + th.slug + '" target="_blank" rel="noopener" class="text-secondary underline text-xs">Demo</a></td>' +
+                    '<td class="px-4 py-2"><a href="/hawa-adam?tema=' + th.slug + '&to=tamu-demo" target="_blank" rel="noopener" class="text-secondary underline text-xs">Demo</a></td>' +
                     '</tr>';
             }).join('');
         }
