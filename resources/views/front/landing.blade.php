@@ -5,8 +5,18 @@
 $filterCounts = ['Semua' => count($themes)];
 foreach ($themes as $th) {
     $filterCounts[$th['cat']] = ($filterCounts[$th['cat']] ?? 0) + 1;
-    if ($th['video']) $filterCounts['Video Opening'] = ($filterCounts['Video Opening'] ?? 0) + 1;
+    if ($th['video']) $filterCounts['Motion'] = ($filterCounts['Motion'] ?? 0) + 1;
 }
+// Urutan pill: kategori baku dulu, lalu kategori baru (urutan kemunculan),
+// lalu Motion. Kategori baru yang dibuat dari admin otomatis dapat pill.
+$filterOrder = ['Semua'];
+foreach (['Jawa', 'Nusantara', 'Islami', 'Alam', 'Modern', 'Game'] as $c) {
+    if (isset($filterCounts[$c])) $filterOrder[] = $c;
+}
+foreach ($themes as $th) {
+    if (!in_array($th['cat'], $filterOrder, true)) $filterOrder[] = $th['cat'];
+}
+$filterOrder[] = 'Motion';
 $waText = fn($msg) => 'https://wa.me/' . $waNumber . '?text=' . urlencode($msg);
 @endphp
 <!DOCTYPE html>
@@ -33,6 +43,11 @@ tailwind.config = {
   .filter-pill.active { background: #1E4D33; color: #fff; border-color: #1E4D33; }
   .pill-count { background: #F5EFE3; color: #1E4D33; }
   .filter-pill.active .pill-count { background: #C9A227; color: #143826; }
+  /* Marquee tema di hero: gambar bergulir, jeda saat disentuh/hover */
+  @keyframes marquee-x { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .marquee-track { display: flex; gap: 0.75rem; width: max-content; animation: marquee-x 70s linear infinite; }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
 </style>
 </head>
 <body class="bg-ivory text-stone-800 antialiased">
@@ -50,6 +65,7 @@ tailwind.config = {
       <a href="#fitur" class="hover:text-pine">Fitur</a>
       <a href="#cara-pesan" class="hover:text-pine">Cara Pesan</a>
       <a href="#faq" class="hover:text-pine">FAQ</a>
+      <a href="#syarat" class="hover:text-pine">S&amp;K</a>
     </nav>
     <div class="flex items-center gap-2">
       <a href="{{ $waText('Halo, saya mau pesan undangan digital.') }}" target="_blank" rel="noopener" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-pine text-white text-sm font-bold hover:bg-pinedark transition">Pesan Sekarang</a>
@@ -64,6 +80,7 @@ tailwind.config = {
     <a href="#fitur" class="block py-2">Fitur</a>
     <a href="#cara-pesan" class="block py-2">Cara Pesan</a>
     <a href="#faq" class="block py-2">FAQ</a>
+    <a href="#syarat" class="block py-2">S&amp;K</a>
   </div>
 </header>
 
@@ -98,13 +115,23 @@ tailwind.config = {
       <div class="absolute -top-3 -right-3 bg-white rounded-2xl shadow-lg px-4 py-3 text-xs font-semibold">Check-in QR panitia</div>
     </div>
   </div>
+  <!-- Marquee semua tema: gambar bergulir otomatis, klik gambar buka demonya -->
+  <div class="marquee relative pb-10 overflow-hidden" aria-label="Semua tema">
+    <div class="marquee-track">
+      @foreach (array_merge($themes, $themes) as $t)
+        <a href="/hawa-adam?tema={{ $t['slug'] }}&to=tamu-demo" target="_blank" rel="noopener" class="shrink-0 w-20 md:w-24 block rounded-xl overflow-hidden border border-stone-200/80 shadow-sm bg-white" title="Demo tema {{ $t['name'] }}">
+          <img src="{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}" alt="Tema {{ $t['name'] }}" loading="lazy" class="w-full aspect-[3/4] object-cover object-top" onerror="this.remove()">
+        </a>
+      @endforeach
+    </div>
+  </div>
 </section>
 
 <!-- ============ STATS ============ -->
 <section class="border-y border-stone-200/70 bg-white">
   <div class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
     <div><p class="font-serif font-bold text-3xl text-pinedark">{{ count($themes) }}</p><p class="text-xs text-stone-500 mt-1">Tema undangan</p></div>
-    <div><p class="font-serif font-bold text-3xl text-pinedark">{{ $videoCount }}</p><p class="text-xs text-stone-500 mt-1">Tema video opening</p></div>
+    <div><p class="font-serif font-bold text-3xl text-pinedark">{{ $videoCount }}</p><p class="text-xs text-stone-500 mt-1">Tema motion</p></div>
     <div><p class="font-serif font-bold text-3xl text-pinedark">QR</p><p class="text-xs text-stone-500 mt-1">Check-in + monitor panitia</p></div>
     <div><p class="font-serif font-bold text-3xl text-pinedark">1 hari</p><p class="text-xs text-stone-500 mt-1">Undangan jadi*</p></div>
   </div>
@@ -116,11 +143,11 @@ tailwind.config = {
   <div class="max-w-2xl">
     <p class="text-xs font-extrabold tracking-[0.25em] text-gold">KOLEKSI TEMA</p>
     <h2 class="font-sans font-extrabold text-3xl md:text-4xl text-pinedark mt-2">Buka demonya dulu, baru pilih</h2>
-    <p class="text-stone-600 mt-3">Setiap tema punya demo yang bisa kamu buka seperti tamu membukanya. Harga sudah termasuk semua fitur. Klik gambar untuk melihat lebih besar.</p>
+    <p class="text-stone-600 mt-3">Setiap tema punya demo yang bisa kamu buka seperti tamu membukanya. Harga sudah termasuk semua fitur. Klik gambar untuk membuka demonya.</p>
   </div>
 
   <div class="flex flex-wrap gap-2 mt-8" id="filterBar">
-    @foreach (['Semua', 'Jawa', 'Nusantara', 'Islami', 'Alam', 'Modern', 'Game', 'Video Opening'] as $f)
+    @foreach ($filterOrder as $f)
       <button type="button" data-filter="{{ $f }}" class="filter-pill px-4 py-1.5 rounded-full border border-stone-300 bg-white text-xs font-bold hover:border-pine transition {{ $f === 'Semua' ? 'active' : '' }}">{{ $f }} <span class="pill-count ml-1 px-1.5 py-0.5 rounded-full text-[10px]">{{ $filterCounts[$f] ?? 0 }}</span></button>
     @endforeach
   </div>
@@ -128,12 +155,12 @@ tailwind.config = {
   <div id="themeGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 mt-8">
     @foreach ($themes as $t)
       <article class="theme-card bg-white rounded-[20px] overflow-hidden border border-stone-200/80 shadow-sm hover:shadow-xl transition" data-cat="{{ $t['cat'] }}" data-video="{{ $t['video'] ? '1' : '0' }}">
-        <div class="relative cursor-pointer bg-gradient-to-b from-pine to-pinedark aspect-[3/4]" onclick="openLightbox('{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}', '{{ $t['name'] }}')">
+        <a href="/hawa-adam?tema={{ $t['slug'] }}&to=tamu-demo" target="_blank" rel="noopener" class="relative block bg-gradient-to-b from-pine to-pinedark aspect-[3/4]" title="Buka demo tema {{ $t['name'] }}">
           <img src="{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}" alt="Tema {{ $t['name'] }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.remove()">
           @if ($t['badge'])
             <span class="absolute top-3 right-3 text-[10px] font-bold px-2 py-1 rounded-full bg-pinedark/85 text-goldsoft backdrop-blur-sm">{{ $t['badge'] }}</span>
           @endif
-        </div>
+        </a>
         <div class="p-4">
           <h3 class="font-bold text-[15px] text-stone-900 leading-snug">{{ $t['name'] }}</h3>
           <p class="text-[11px] text-stone-500 mt-0.5">Tema {{ $t['cat'] }}</p>
@@ -162,17 +189,6 @@ tailwind.config = {
   <p id="noResult" class="hidden text-center text-sm text-stone-500 py-10">Tidak ada tema pada kategori ini.</p>
 </section>
 
-<!-- Lightbox preview -->
-<div id="lightbox" class="hidden fixed inset-0 z-[90] bg-black/85 items-center justify-center p-4" onclick="closeLightbox()">
-  <figure class="max-w-[420px] w-full" onclick="event.stopPropagation()">
-    <img id="lightboxImg" src="" alt="" class="w-full rounded-2xl shadow-2xl">
-    <figcaption class="flex items-center justify-between mt-3">
-      <span id="lightboxCap" class="text-white font-bold text-sm"></span>
-      <button type="button" onclick="closeLightbox()" class="px-4 py-1.5 rounded-full bg-white text-stone-900 text-xs font-bold">Tutup</button>
-    </figcaption>
-  </figure>
-</div>
-
 <!-- ============ HARGA ============ -->
 <section id="harga" class="bg-cream/60 border-y border-stone-200/70">
   <div class="max-w-6xl mx-auto px-4 py-16">
@@ -187,7 +203,7 @@ tailwind.config = {
         <p class="font-serif font-bold text-4xl text-pinedark mt-3">{{ $harga['basic'] }}</p>
         <p class="text-xs text-stone-500 mt-1">per undangan</p>
         <ul class="text-sm text-stone-600 space-y-2.5 mt-6 flex-1">
-          <li>✓ 1 tema standar (non-video)</li>
+          <li>✓ 1 tema standar (non-motion)</li>
           <li>✓ RSVP &amp; ucapan tamu</li>
           <li>✓ Galeri foto + musik latar</li>
           <li>✓ Amplop digital / gift &amp; QRIS</li>
@@ -203,7 +219,7 @@ tailwind.config = {
         <p class="text-xs text-white/60 mt-1">per undangan</p>
         <ul class="text-sm text-white/85 space-y-2.5 mt-6 flex-1">
           <li>✓ Semua di paket Basic</li>
-          <li>✓ Semua {{ count($themes) }} tema, termasuk {{ $videoCount }} tema video opening</li>
+          <li>✓ Semua {{ count($themes) }} tema, termasuk {{ $videoCount }} tema motion</li>
           <li>✓ Check-in QR + monitor panitia</li>
           <li>✓ Link generator + kirim WA massal</li>
           <li>✓ Hitung mundur &amp; live streaming</li>
@@ -217,7 +233,7 @@ tailwind.config = {
         <p class="text-xs text-stone-500 mt-1">per undangan</p>
         <ul class="text-sm text-stone-600 space-y-2.5 mt-6 flex-1">
           <li>✓ Semua di paket Premium</li>
-          <li>✓ Video opening custom (pakai video/foto sendiri)</li>
+          <li>✓ Motion opening custom (pakai video/foto sendiri)</li>
           <li>✓ Penyesuaian warna &amp; detail tema</li>
           <li>✓ Prioritas pengerjaan</li>
           <li>✓ Konsultasi sampai hari H</li>
@@ -238,7 +254,7 @@ tailwind.config = {
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
     @foreach ([
       ['RSVP & Ucapan', 'Tamu konfirmasi hadir & kirim doa, langsung masuk WhatsApp mempelai.'],
-      ['Galeri & Video', 'Galeri foto, video prewedding, dan 4 tema video opening sinematik.'],
+      ['Galeri & Motion', 'Galeri foto, video prewedding, dan 4 tema motion sinematik.'],
       ['Musik Latar', 'Musik pengiring yang menyala saat undangan dibuka.'],
       ['Amplop Digital', 'Gift transfer bank & QRIS, lengkap dengan tombol salin rekening.'],
       ['Check-in QR', 'Panitia scan QR tamu di pintu masuk, tercatat otomatis.'],
@@ -287,7 +303,7 @@ tailwind.config = {
   <div class="space-y-3 mt-8">
     <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
       <summary class="font-bold text-sm cursor-pointer">Berapa lama undangan saya jadi?</summary>
-      <p class="text-sm text-stone-600 leading-relaxed mt-2">Umumnya 1 hari setelah data dan pembayaran lengkap. Paket Eksklusif dengan video custom menyesuaikan antrean.</p>
+      <p class="text-sm text-stone-600 leading-relaxed mt-2">Umumnya 1 hari setelah data dan pembayaran lengkap. Paket Eksklusif dengan motion custom menyesuaikan antrean.</p>
     </details>
     <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
       <summary class="font-bold text-sm cursor-pointer">Apakah bisa revisi setelah jadi?</summary>
@@ -304,6 +320,23 @@ tailwind.config = {
   </div>
 </section>
 
+<!-- ============ SYARAT & KETENTUAN ============ -->
+<section id="syarat" class="max-w-3xl mx-auto px-4 py-16">
+  <h2 class="font-serif font-bold text-3xl md:text-4xl text-pinedark text-center">Syarat &amp; Ketentuan</h2>
+  <p class="text-stone-600 mt-3 text-center text-sm">Dengan memesan undangan di undangankamu, kamu menyetujui ketentuan berikut.</p>
+  <ol class="list-decimal list-outside ml-5 mt-8 space-y-4 text-sm text-stone-700 leading-relaxed">
+    <li><b class="text-pinedark">Pemesanan.</b> Pesan lewat WhatsApp dengan menyebutkan tema dan paket pilihan. Data acara (nama mempelai, tanggal, foto, dan lain-lain) dikirim oleh pemesan.</li>
+    <li><b class="text-pinedark">Pembayaran.</b> Harga sekali bayar per undangan, sesuai paket yang dipilih. Pembayaran lunas sebelum pengerjaan dimulai. Harga dapat berubah — harga yang berlaku adalah yang disepakati saat pemesanan.</li>
+    <li><b class="text-pinedark">Pengerjaan.</b> Umumnya 1 hari setelah data dan pembayaran lengkap. Paket Eksklusif dengan motion custom menyesuaikan antrean.</li>
+    <li><b class="text-pinedark">Revisi.</b> Perbaikan data (nama, tanggal, foto) dilayani selama masa aktif undangan. Ganti tema dibicarakan saat pemesanan.</li>
+    <li><b class="text-pinedark">Masa aktif.</b> Undangan aktif sampai acara selesai, sesuai paket yang dipilih.</li>
+    <li><b class="text-pinedark">Pembatalan.</b> Bila pesanan dibatalkan setelah pengerjaan dimulai, pembayaran tidak dapat dikembalikan.</li>
+    <li><b class="text-pinedark">Konten.</b> Foto, musik, dan data yang dikirim adalah milik pemesan; pemesan menjamin konten tersebut tidak melanggar hak cipta atau hukum yang berlaku.</li>
+    <li><b class="text-pinedark">Layanan.</b> Dukungan selama masa aktif lewat WhatsApp. Fitur yang didapat mengikuti paket yang dipilih (mis. check-in QR dan link generator hanya di paket Premium dan Eksklusif).</li>
+  </ol>
+  <p class="text-xs text-stone-500 mt-8 text-center">Ada yang kurang jelas? Tanyakan langsung lewat WhatsApp sebelum memesan.</p>
+</section>
+
 <!-- ============ FOOTER ============ -->
 <footer class="bg-pinedark text-white">
   <div class="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-8">
@@ -318,6 +351,7 @@ tailwind.config = {
         <li><a href="#harga" class="hover:text-white">Harga</a></li>
         <li><a href="#fitur" class="hover:text-white">Fitur</a></li>
         <li><a href="#cara-pesan" class="hover:text-white">Cara Pesan</a></li>
+        <li><a href="#syarat" class="hover:text-white">Syarat &amp; Ketentuan</a></li>
       </ul>
     </div>
     <div>
@@ -340,7 +374,7 @@ var SHOW_STEP = 8, showLimit = 8, currentFilter = 'Semua', matchingCount = 0;
 function applyCatalog(){
   var matching = [];
   document.querySelectorAll('#themeGrid .theme-card').forEach(function(card){
-    var ok = (currentFilter === 'Semua') || (currentFilter === 'Video Opening' ? card.dataset.video === '1' : card.dataset.cat === currentFilter);
+    var ok = (currentFilter === 'Semua') || (currentFilter === 'Motion' ? card.dataset.video === '1' : card.dataset.cat === currentFilter);
     if (ok) matching.push(card);
   });
   matchingCount = matching.length;
@@ -373,21 +407,6 @@ document.getElementById('showMoreBtn').addEventListener('click', function(){
   applyCatalog();
 });
 applyCatalog();
-// Lightbox preview
-function openLightbox(src, name){
-  var lb = document.getElementById('lightbox');
-  document.getElementById('lightboxImg').src = src;
-  document.getElementById('lightboxImg').alt = 'Tema ' + name;
-  document.getElementById('lightboxCap').textContent = 'Tema ' + name;
-  lb.classList.remove('hidden'); lb.classList.add('flex');
-  document.body.style.overflow = 'hidden';
-}
-function closeLightbox(){
-  var lb = document.getElementById('lightbox');
-  lb.classList.add('hidden'); lb.classList.remove('flex');
-  document.body.style.overflow = '';
-}
-document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLightbox(); });
 </script>
 </body>
 </html>

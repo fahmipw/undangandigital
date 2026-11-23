@@ -124,6 +124,88 @@ class LegacyApiController extends Controller
                     'wa' => $eff['wa'],
                 ]]);
 
+            case 'upload_landing_theme_photo':
+                // Foto preview katalog landing: potong tengah jadi rasio 3:4
+                // (seperti kartu katalog), maks 780x1040, timpa file lama
+                // public/images/landing/themes/<slug>.jpg.
+                $slug = (string) $request->input('slug', '');
+                $catalogSlugs = array_map(function ($t) { return $t['slug']; }, \App\Http\Controllers\FrontController::catalogThemes(false));
+                if (!in_array($slug, $catalogSlugs, true)) {
+                    return response()->json(['success' => false, 'message' => 'Tema tidak dikenal.'], 400);
+                }
+                if (!$request->hasFile('photo')) {
+                    return response()->json(['success' => false, 'message' => 'No file uploaded'], 400);
+                }
+                $file = $request->file('photo');
+                if ($file->getSize() > 5 * 1024 * 1024) {
+                    return response()->json(['success' => false, 'message' => 'Ukuran file maksimal 5MB'], 400);
+                }
+                $ext = strtolower($file->getClientOriginalExtension());
+                if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                    return response()->json(['success' => false, 'message' => 'Tipe file tidak didukung. Pakai JPG/PNG/GIF/WebP.'], 400);
+                }
+                $srcPath = $file->getRealPath();
+                $src = false;
+                if (in_array($ext, ['jpg', 'jpeg'])) $src = @imagecreatefromjpeg($srcPath);
+                elseif ($ext === 'png') $src = @imagecreatefrompng($srcPath);
+                elseif ($ext === 'gif') $src = @imagecreatefromgif($srcPath);
+                elseif ($ext === 'webp' && function_exists('imagecreatefromwebp')) $src = @imagecreatefromwebp($srcPath);
+                if ($src === false) {
+                    return response()->json(['success' => false, 'message' => 'File gambar tidak dapat dibaca.'], 400);
+                }
+                $w = imagesx($src); $h = imagesy($src);
+                $scale = max(780 / $w, 1040 / $h);
+                if ($scale > 1) $scale = 1; // jangan perbesar foto kecil
+                $resized = imagescale($src, (int) round($w * $scale), (int) round($h * $scale));
+                imagedestroy($src);
+                if ($resized === false) {
+                    return response()->json(['success' => false, 'message' => 'Gagal memproses gambar.'], 400);
+                }
+                $sw = imagesx($resized); $sh = imagesy($resized);
+                if ($sw / $sh > 3 / 4) { $ch = $sh; $cw = (int) round($sh * 3 / 4); }
+                else { $cw = $sw; $ch = (int) round($sw * 4 / 3); }
+                $crop = imagecreatetruecolor($cw, $ch);
+                imagecopy($crop, $resized, 0, 0, (int) (($sw - $cw) / 2), (int) (($sh - $ch) / 2), $cw, $ch);
+                imagedestroy($resized);
+                $dir = public_path('images/landing/themes');
+                if (!file_exists($dir)) mkdir($dir, 0777, true);
+                $ok = imagejpeg($crop, $dir . '/' . $slug . '.jpg', 82);
+                imagedestroy($crop);
+                if (!$ok) {
+                    return response()->json(['success' => false, 'message' => 'Gagal menyimpan gambar.'], 400);
+                }
+                return response()->json(['success' => true, 'path' => 'images/landing/themes/' . $slug . '.jpg']);
+
+            case 'upload_landing_theme_music':
+                // Musik demo per tema: file audio disimpan di uploads/ dan
+                // path-nya dicatat di landing_themes[slug].music oleh admin
+                // (saveLanding). File musik tema lama dihapus saat diganti.
+                $slug = (string) $request->input('slug', '');
+                $catalogSlugs = array_map(function ($t) { return $t['slug']; }, \App\Http\Controllers\FrontController::catalogThemes(false));
+                if (!in_array($slug, $catalogSlugs, true)) {
+                    return response()->json(['success' => false, 'message' => 'Tema tidak dikenal.'], 400);
+                }
+                if (!$request->hasFile('music')) {
+                    return response()->json(['success' => false, 'message' => 'No file uploaded'], 400);
+                }
+                $file = $request->file('music');
+                $allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/m4a'];
+                if (!in_array($file->getMimeType(), $allowedTypes) && !in_array($file->getClientMimeType(), $allowedTypes)) {
+                    return response()->json(['success' => false, 'message' => 'Tipe file tidak didukung.'], 400);
+                }
+                if ($file->getSize() > 10 * 1024 * 1024) {
+                    return response()->json(['success' => false, 'message' => 'Ukuran file maksimal 10MB'], 400);
+                }
+                if (!file_exists(public_path('uploads'))) {
+                    mkdir(public_path('uploads'), 0777, true);
+                }
+                foreach (glob(public_path('uploads/music_theme_' . $slug . '_*')) as $old) {
+                    @unlink($old);
+                }
+                $filename = 'music_theme_' . $slug . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads'), $filename);
+                return response()->json(['success' => true, 'path' => 'uploads/' . $filename]);
+
             case 'update_settings':
                 $postData = $request->all();
                 unset($postData['action'], $postData['inv_id']);

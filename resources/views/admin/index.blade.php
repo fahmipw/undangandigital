@@ -440,15 +440,15 @@
                 id="btn-theme">
                 <span class="material-symbols-outlined">palette</span> Tema Desain
             </button>
+            <button onclick="openGenerator()"
+                class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer">
+                <span class="material-symbols-outlined">link</span> Link Generator
+            </button>
             <div class="pt-2.5 pb-1 px-2.5 text-[10px] font-bold uppercase tracking-wider text-stone-400">Penjualan</div>
             <button onclick="showTab('landing')"
                 class="tab-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer"
                 id="btn-landing">
                 <span class="material-symbols-outlined">storefront</span> Landing Page
-            </button>
-            <button onclick="openGenerator()"
-                class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer">
-                <span class="material-symbols-outlined">link</span> Link Generator
             </button>
         </nav>
 
@@ -1206,10 +1206,10 @@
                             <option value="jawa-cinematic">Premium — Jawa Cinematic (Mewah)</option>
                             <option value="jawa-arunika">Premium — Jawa Arunika</option>
                             <option value="jawa-klasik">Premium — Jawa Klasik</option>
-                            <option value="jawa-pendopo">Premium — Jawa Pendopo (Video Opening)</option>
-                            <option value="jawa-gerbang">Premium — Jawa Gerbang (Video Opening)</option>
-                            <option value="betawi">Premium — Betawi (Video Opening)</option>
-                            <option value="jawa-gunungan">Premium — Jawa Gunungan (Video Opening)</option>
+                            <option value="jawa-pendopo">Premium — Jawa Pendopo (Motion)</option>
+                            <option value="jawa-gerbang">Premium — Jawa Gerbang (Motion)</option>
+                            <option value="betawi">Premium — Betawi (Motion)</option>
+                            <option value="jawa-gunungan">Premium — Jawa Gunungan (Motion)</option>
                             <option value="taman-surga">Premium — Taman Surga (Garden Heaven)</option>
                             <option value="jawa-biru">Premium — Jawa Biru (Blue Java)</option>
                             <option value="jawa-puspa">Premium — Jawa Puspa (Klasik Terang)</option>
@@ -1310,7 +1310,7 @@
                                 <input type="number" id="landing-harga-eksklusif" min="0" step="1000" value="299000">
                             </div>
                         </div>
-                        <p class="text-xs text-gray-500">Harga coret di kartu otomatis 2× harga (diskon 50%). Harga kartu video ikut Paket Premium, non-video ikut Paket Basic.</p>
+                        <p class="text-xs text-gray-500">Harga coret di kartu otomatis 2× harga (diskon 50%). Harga kartu motion ikut Paket Premium, non-motion ikut Paket Basic.</p>
                     </div>
 
                     <!-- Hero + WA -->
@@ -1353,7 +1353,8 @@
                             <button type="button" onclick="resetLandingThemes()"
                                 class="border border-gray-200 rounded-2xl px-4 py-3 text-sm bg-white hover:border-secondary">Reset Tampilan Tema</button>
                         </div>
-                        <p class="text-xs text-gray-500">Urutan = angka kecil tampil duluan. Badge kosong berarti: VIDEO untuk tema video, tanpa badge untuk lainnya. Tema yang disembunyikan tidak tampil di landing.</p>
+                        <p class="text-xs text-gray-500">Urutan = angka kecil tampil duluan. Badge kosong berarti: MOTION untuk tema motion, tanpa badge untuk lainnya. Tema yang disembunyikan tidak tampil di landing. Foto preview diunggah per tema (dipotong jadi 3:4, maks 780×1040) dan langsung menimpa foto lama. Musik per tema hanya berbunyi di demo katalog, bukan di undangan pembeli.</p>
+                        <datalist id="lt-cat-list"></datalist>
                         <div class="table-scroll bg-white rounded-3xl shadow-sm">
                             <table class="w-full text-left text-sm">
                                 <thead class="bg-secondary/5 text-secondary font-label-caps">
@@ -1362,6 +1363,8 @@
                                         <th class="px-4 py-3">Nama Tema</th>
                                         <th class="px-4 py-3">Kategori</th>
                                         <th class="px-4 py-3">Badge</th>
+                                        <th class="px-4 py-3">Foto</th>
+                                        <th class="px-4 py-3">Musik</th>
                                         <th class="px-4 py-3">Tampil</th>
                                         <th class="px-4 py-3">Demo</th>
                                     </tr>
@@ -1966,6 +1969,16 @@
             document.getElementById('landing-hero-subtitle').value = d.hero_subtitle;
             document.getElementById('landing-wa').value = d.wa;
             landingThemes = d.themes || [];
+            // Datalist kategori: baku + kategori yang sudah dipakai (termasuk
+            // kategori baru buatan sendiri) — input tetap teks bebas.
+            const baseCats = ['Jawa', 'Nusantara', 'Islami', 'Alam', 'Modern', 'Game'];
+            const allCats = baseCats.slice();
+            landingThemes.forEach(function (t) {
+                if (t.cat && allCats.indexOf(t.cat) === -1) allCats.push(t.cat);
+            });
+            document.getElementById('lt-cat-list').innerHTML = allCats.map(function (c) {
+                return '<option value="' + c.replace(/"/g, '&quot;') + '">';
+            }).join('');
             // Kosongkan baris lama DULU: renderLandingRows() menyalin isi DOM
             // ke landingThemes (sync) — tanpa ini, edit lama menimpa data baru.
             document.getElementById('landing-theme-rows').innerHTML = '';
@@ -1994,27 +2007,84 @@
             syncLandingRows();
             const q = (document.getElementById('landing-theme-search').value || '').toLowerCase();
             const tbody = document.getElementById('landing-theme-rows');
-            const cats = ['Jawa', 'Nusantara', 'Islami', 'Alam', 'Modern', 'Game'];
-            const badges = ['', 'VIDEO', 'BARU', 'HOT', 'POPULER'];
+            const badges = ['', 'MOTION', 'BARU', 'HOT', 'POPULER'];
             tbody.innerHTML = landingThemes.map(function (th) {
                 if (q && th.name.toLowerCase().indexOf(q) === -1 && th.slug.indexOf(q) === -1) return '';
                 const escName = th.name.replace(/"/g, '&quot;');
+                const escCat = (th.cat || '').replace(/"/g, '&quot;');
+                const musicName = th.music ? th.music.split('/').pop() : '';
+                const escMusic = musicName.replace(/"/g, '&quot;');
                 return '<tr class="border-t border-stone-200/60">' +
                     '<td class="px-4 py-2"><input type="number" class="lt-order w-16 border border-gray-200 rounded-lg px-2 py-1.5 text-sm" data-slug="' + th.slug + '" value="' + th.order + '" min="0"></td>' +
-                    '<td class="px-4 py-2"><input type="text" class="lt-name w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm" data-slug="' + th.slug + '" value="' + escName + '"><span class="text-xs text-gray-400">' + th.slug + '</span></td>' +
-                    '<td class="px-4 py-2"><select class="lt-cat border border-gray-200 rounded-lg px-2 py-1.5 text-sm bg-white" data-slug="' + th.slug + '">' + cats.map(function (c) { return '<option value="' + c + '"' + (c === th.cat ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></td>' +
+                    '<td class="px-4 py-2"><input type="text" class="lt-name w-full min-w-[160px] border border-gray-200 rounded-lg px-2 py-1.5 text-sm" data-slug="' + th.slug + '" value="' + escName + '"><span class="text-xs text-gray-400">' + th.slug + '</span></td>' +
+                    '<td class="px-4 py-2"><input type="text" list="lt-cat-list" class="lt-cat w-28 border border-gray-200 rounded-lg px-2 py-1.5 text-sm bg-white" data-slug="' + th.slug + '" value="' + escCat + '" placeholder="Kategori baru…"></td>' +
                     '<td class="px-4 py-2"><select class="lt-badge border border-gray-200 rounded-lg px-2 py-1.5 text-sm bg-white" data-slug="' + th.slug + '">' + badges.map(function (b) { return '<option value="' + b + '"' + (b === (th.badge || '') ? ' selected' : '') + '>' + (b || '—') + '</option>'; }).join('') + '</select></td>' +
+                    '<td class="px-4 py-2"><div class="flex items-center gap-2">' +
+                        '<img class="lt-photo w-10 h-[52px] object-cover object-top rounded-lg border border-gray-200 bg-gray-100" data-slug="' + th.slug + '" src="/images/landing/themes/' + th.slug + '.jpg" alt="">' +
+                        '<label class="px-2 py-1.5 rounded-lg border border-gray-200 text-xs cursor-pointer hover:border-secondary whitespace-nowrap">Ganti<input type="file" accept="image/*" class="hidden" onchange="uploadLandingPhoto(this, \'' + th.slug + '\')"></label>' +
+                    '</div></td>' +
+                    '<td class="px-4 py-2"><div class="flex items-center gap-2">' +
+                        '<span class="lt-music-name text-xs text-gray-500 truncate max-w-[110px]" title="' + escMusic + '">' + (musicName || '—') + '</span>' +
+                        '<label class="px-2 py-1.5 rounded-lg border border-gray-200 text-xs cursor-pointer hover:border-secondary whitespace-nowrap">Unggah<input type="file" accept="audio/*" class="hidden" onchange="uploadLandingMusic(this, \'' + th.slug + '\')"></label>' +
+                        (th.music ? '<button type="button" onclick="clearLandingMusic(\'' + th.slug + '\')" class="text-red-500 text-xs px-1" title="Hapus musik tema">×</button>' : '') +
+                    '</div></td>' +
                     '<td class="px-4 py-2 text-center"><input type="checkbox" class="lt-visible w-4 h-4" data-slug="' + th.slug + '"' + (th.visible ? ' checked' : '') + '></td>' +
                     '<td class="px-4 py-2"><a href="/hawa-adam?tema=' + th.slug + '&to=tamu-demo" target="_blank" rel="noopener" class="text-secondary underline text-xs">Demo</a></td>' +
                     '</tr>';
             }).join('');
         }
 
+        // Upload foto preview katalog per tema (langsung menimpa file lama).
+        async function uploadLandingPhoto(input, slug) {
+            const file = input.files && input.files[0];
+            if (!file) return;
+            const fd = new FormData();
+            fd.append('photo', file);
+            fd.append('slug', slug);
+            const res = await fetch('api/admin_api?action=upload_landing_theme_photo', { method: 'POST', body: fd });
+            const data = await res.json().catch(function () { return {}; });
+            if (data.success) {
+                const img = document.querySelector('.lt-photo[data-slug="' + slug + '"]');
+                if (img) img.src = '/images/landing/themes/' + slug + '.jpg?t=' + Date.now();
+                showSwalSuccess('Foto Tema Diperbarui!', 'Foto preview tema berhasil diunggah.');
+            } else {
+                showSwalInfo('Gagal Mengunggah', data.message || 'Foto gagal diunggah.');
+            }
+            input.value = '';
+        }
+
+        // Upload musik demo per tema — path dicatat di landingThemes, baru
+        // tersimpan permanen setelah "Simpan Landing" ditekan.
+        async function uploadLandingMusic(input, slug) {
+            const file = input.files && input.files[0];
+            if (!file) return;
+            const fd = new FormData();
+            fd.append('music', file);
+            fd.append('slug', slug);
+            const res = await fetch('api/admin_api?action=upload_landing_theme_music', { method: 'POST', body: fd });
+            const data = await res.json().catch(function () { return {}; });
+            if (data.success) {
+                const th = landingThemes.find(function (t) { return t.slug === slug; });
+                if (th) th.music = data.path;
+                renderLandingRows();
+                showSwalSuccess('Musik Tema Diunggah!', 'Musik demo tema berhasil diunggah — tekan Simpan Landing untuk menyimpannya.');
+            } else {
+                showSwalInfo('Gagal Mengunggah', data.message || 'Musik gagal diunggah.');
+            }
+            input.value = '';
+        }
+
+        function clearLandingMusic(slug) {
+            const th = landingThemes.find(function (t) { return t.slug === slug; });
+            if (th) th.music = '';
+            renderLandingRows();
+        }
+
         async function saveLanding() {
             syncLandingRows();
             const over = {};
             landingThemes.forEach(function (th) {
-                over[th.slug] = { name: th.name, cat: th.cat, order: th.order, badge: th.badge || '', visible: !!th.visible };
+                over[th.slug] = { name: th.name, cat: th.cat, order: th.order, badge: th.badge || '', music: th.music || '', visible: !!th.visible };
             });
             const payload = {
                 landing_harga_basic: document.getElementById('landing-harga-basic').value,
@@ -2044,7 +2114,7 @@
             const data = await res.json();
             if (data.success) {
                 await loadLanding();
-                showSwalSuccess('Tampilan Tema Direset!', 'Nama, kategori, urutan, badge, dan tampilan tema kembali ke default.');
+                showSwalSuccess('Tampilan Tema Direset!', 'Nama, kategori, urutan, badge, musik, dan tampilan tema kembali ke default.');
             }
         }
 

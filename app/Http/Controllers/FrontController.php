@@ -120,6 +120,23 @@ class FrontController extends Controller
         if ($demoTheme === 'default' || isset($themeViews[$demoTheme])) {
             $theme = $demoTheme;
         }
+        // Demo landing: musik per tema (diatur dari tab Landing admin) menimpa
+        // musik undangan hawa-adam — HANYA saat demo (?tema=), tamu biasa
+        // yang buka /{slug} tanpa ?tema= tetap mendengar musik undangan itu.
+        // Tema memakai $musicRecord->file_path (stardew-valley: file_path ?? url).
+        if ($demoTheme !== '' && $theme === $demoTheme) {
+            $landingOver = [];
+            $landingRaw = self::landingSettings()['landing_themes'] ?? null;
+            if ($landingRaw) {
+                $landingDecoded = json_decode($landingRaw, true);
+                if (is_array($landingDecoded)) $landingOver = $landingDecoded;
+            }
+            $demoMusic = trim((string) ($landingOver[$theme]['music'] ?? ''));
+            if ($demoMusic !== '') {
+                $musicRecord = (object) ['file_path' => $demoMusic];
+                $viewData['musicRecord'] = $musicRecord;
+            }
+        }
         if (isset($themeViews[$theme])) {
             return view($themeViews[$theme], $viewData);
         }
@@ -210,7 +227,7 @@ class FrontController extends Controller
      * tema yang di-skip) + tema default, digabung override admin dari settings
      * undangan utama (landing_themes JSON: nama/kategori/urutan/badge/tampil).
      * Tema baru yang didaftarkan otomatis muncul di katalog (kategori
-     * default Modern, tanpa badge video) sampai diatur dari admin.
+     * default Modern, tanpa badge motion) sampai diatur dari admin.
      * Dipakai landing() dan admin (get_landing_themes).
      */
     public static function catalogThemes($onlyVisible = true)
@@ -286,7 +303,9 @@ class FrontController extends Controller
             if (isset($o['order'])) $t['order'] = (int) $o['order'];
             if (isset($o['badge'])) $t['badge'] = (string) $o['badge'];
             if (array_key_exists('visible', $o)) $t['visible'] = (bool) $o['visible'];
-            if (!isset($t['badge'])) $t['badge'] = !empty($t['video']) ? 'VIDEO' : '';
+            if (isset($o['music'])) $t['music'] = (string) $o['music'];
+            if (!isset($t['badge'])) $t['badge'] = !empty($t['video']) ? 'MOTION' : '';
+            if (!isset($t['music'])) $t['music'] = '';
             if (!isset($t['visible'])) $t['visible'] = true;
         }
         unset($t);
