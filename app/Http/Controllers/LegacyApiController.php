@@ -91,6 +91,15 @@ class LegacyApiController extends Controller
                 Invitation::destroy($id);
                 return response()->json(['success' => true]);
 
+            case 'update_invitation':
+                $id = $request->input('id');
+                $title = trim((string) $request->input('title', ''));
+                if (!$id || $title === '') {
+                    return response()->json(['success' => false, 'message' => 'Nama undangan harus diisi'], 400);
+                }
+                Invitation::where('id', $id)->update(['title' => $title]);
+                return response()->json(['success' => true]);
+
             case 'get_settings':
                 $settings = Setting::where('invitation_id', $inv_id)->get();
                 $data = [];

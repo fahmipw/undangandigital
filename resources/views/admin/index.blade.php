@@ -375,9 +375,6 @@
                         <span class="material-symbols-outlined text-sm">add</span>
                         <span>Baru</span>
                     </button>
-                    <button onclick="deleteInvitation()" class="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-200/70 transition cursor-pointer" title="Hapus Undangan Terpilih">
-                        <span class="material-symbols-outlined text-sm">delete</span>
-                    </button>
                 </div>
             </div>
             <div class="space-y-2 mb-2.5">
@@ -1505,13 +1502,17 @@
                 const statusBadge = past
                     ? '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-stone-200 text-stone-600 shrink-0">Selesai</span>'
                     : '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Aktif</span>';
-                return '<button type="button" onclick="selectInvitation(' + inv.id + ')" class="w-full text-left p-2.5 rounded-xl border transition-all flex items-center justify-between gap-2 cursor-pointer ' + cardStyle + '">'
-                    + '<span class="min-w-0 flex-1">'
+                return '<div class="inv-card w-full text-left p-2.5 rounded-xl border transition-all flex items-center justify-between gap-2 ' + cardStyle + '">'
+                    + '<button type="button" onclick="selectInvitation(' + inv.id + ')" class="inv-card-select min-w-0 flex-1 text-left cursor-pointer">'
                     + '<span class="block text-xs font-bold truncate ' + (past ? 'text-stone-600' : 'text-stone-900') + '">' + esc(inv.title) + '</span>'
                     + '<span class="flex items-center gap-1.5 mt-0.5 text-[11px] ' + (past ? 'text-stone-400' : 'text-stone-500') + '"><span>' + formatIndoDate(invDates[inv.id] || '') + '</span><span>\u2022</span><span>' + (invGuestCounts[inv.id] ?? 0) + ' tamu</span></span>'
-                    + '</span>'
-                    + '<span class="flex flex-col items-end gap-1 shrink-0">' + statusBadge + '</span>'
-                    + '</button>';
+                    + '</button>'
+                    + '<span class="flex flex-col items-end gap-1 shrink-0">' + statusBadge
+                    + '<span class="flex items-center gap-1">'
+                    + '<button type="button" onclick="editInvitation(' + inv.id + ')" class="p-1 rounded-md text-stone-400 hover:text-gold-700 hover:bg-cream-200 transition cursor-pointer" title="Edit nama undangan"><span class="material-symbols-outlined text-sm">edit</span></button>'
+                    + '<button type="button" onclick="deleteInvitationById(' + inv.id + ')" class="p-1 rounded-md text-stone-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer" title="Hapus undangan"><span class="material-symbols-outlined text-sm">delete</span></button>'
+                    + '</span></span>'
+                    + '</div>';
             }).join('');
         }
 
@@ -1617,8 +1618,48 @@
             }
         }
 
-        function deleteInvitation() {
-            if (currentInvId == 1) {
+        // Edit nama undangan (judul saja; slug tidak berubah supaya tautan
+        // tamu yang sudah terkirim tetap jalan).
+        async function editInvitation(id) {
+            const inv = invitationsCache.find(v => v.id == id);
+            if (!inv) return;
+            const { value: title } = await Swal.fire({
+                title: 'Edit Nama Undangan',
+                input: 'text',
+                inputValue: inv.title || '',
+                inputPlaceholder: 'Nama undangan',
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#775a19',
+                inputValidator: (v) => { if (!v || !v.trim()) return 'Nama undangan harus diisi!'; },
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase',
+                    cancelButton: 'px-6 py-2 rounded-xl text-sm font-bold uppercase'
+                }
+            });
+            if (title === undefined) return;
+            const res = await fetch('api/admin_api?action=update_invitation', {
+                method: 'POST',
+                body: JSON.stringify({ id: id, title: title.trim() })
+            });
+            const data = await res.json();
+            if (data.success) {
+                inv.title = title.trim();
+                renderInvitationList();
+                if (id == currentInvId) {
+                    const mob = document.getElementById('mobileCurrentEvent');
+                    if (mob) mob.textContent = inv.title;
+                }
+                showSwalSuccess('Nama Diubah!', 'Nama undangan berhasil diperbarui.');
+            } else {
+                alert(data.message || 'Gagal mengubah nama undangan.');
+            }
+        }
+
+        function deleteInvitationById(id) {
+            if (id == 1) {
                 showSwalInfo('Tidak Dapat Dihapus', 'Undangan utama tidak dapat dihapus.');
                 return;
             }
@@ -1639,13 +1680,14 @@
                 }
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    const res = await fetch(`api/admin_api?action=delete_invitation&id=${currentInvId}`);
+                    const res = await fetch(`api/admin_api?action=delete_invitation&id=${id}`);
                     const data = await res.json();
                     if (data.success) {
                         showSwalSuccess('Undangan Dihapus!', 'Undangan beserta datanya berhasil dihapus.');
-                        currentInvId = 1;
+                        const wasCurrent = (id == currentInvId);
+                        if (wasCurrent) currentInvId = 1;
                         await loadInvitations();
-                        selectInvitation(1);
+                        if (wasCurrent) selectInvitation(1);
                     } else {
                         alert(data.message || 'Gagal menghapus undangan.');
                     }

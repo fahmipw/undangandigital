@@ -205,6 +205,43 @@ $ASSET = 'https://tibrainvitation.id/wp-content/uploads/2026/02/';
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="is-locked bg-[#120b06] text-klasik-cream font-sans antialiased">
+<!-- Daun melati berjatuhan (khusus tema Jawa Klasik) -->
+<div id="melatiFall" aria-hidden="true"></div>
+<style>
+  #melatiFall{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:40}
+  #melatiFall .ml{position:absolute;top:-8vh;will-change:transform;animation:ml-fall linear infinite}
+  #melatiFall .ml-sw{display:block;width:100%;height:100%;animation:ml-sway ease-in-out infinite alternate}
+  #melatiFall .ml i{display:block;width:100%;height:100%;border-radius:0 100% 0 100%;animation:ml-spin linear infinite}
+  #melatiFall .ml.w i{background:linear-gradient(135deg,#fffdf4,#efe6c8)}
+  #melatiFall .ml.g i{background:linear-gradient(135deg,#d3e2ba,#9db98a)}
+  @keyframes ml-fall{to{transform:translateY(118vh)}}
+  @keyframes ml-sway{from{transform:translateX(-16px)}to{transform:translateX(16px)}}
+  @keyframes ml-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){#melatiFall{display:none}}
+</style>
+<script>
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var box=document.getElementById('melatiFall'); if(!box) return;
+  var N=14;
+  for(var k=0;k<N;k++){
+    var leaf=document.createElement('span');
+    leaf.className='ml '+((k%3===0)?'g':'w');
+    var size=10+Math.random()*8;
+    leaf.style.left=(Math.random()*100)+'vw';
+    leaf.style.width=size+'px'; leaf.style.height=size+'px';
+    var fall=16+Math.random()*10;
+    leaf.style.animationDuration=fall+'s';
+    leaf.style.animationDelay=(-Math.random()*fall)+'s';
+    leaf.style.opacity=(0.45+Math.random()*0.35).toFixed(2);
+    var sw=document.createElement('span'); sw.className='ml-sw';
+    sw.style.animationDuration=(2.6+Math.random()*2.4)+'s';
+    var inner=document.createElement('i');
+    inner.style.animationDuration=(5+Math.random()*6)+'s';
+    sw.appendChild(inner); leaf.appendChild(sw); box.appendChild(leaf);
+  }
+})();
+</script>
 <!-- Amplop pembuka Jawa: depan tertutup rapat (sisi alamat), dibuka dari belakang -->
 <div id="envOverlay" aria-hidden="true">
   <div class="env-scene">
