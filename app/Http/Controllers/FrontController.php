@@ -12,6 +12,49 @@ use Illuminate\Support\Facades\Schema;
 
 class FrontController extends Controller
 {
+    /**
+     * Peta tema terdaftar (dipakai index() + katalog landing).
+     */
+    private function themeViews()
+    {
+        return [
+            'minecraft'           => 'front.themes.minecraft',
+            'minecraft-adventure' => 'front.themes.minecraft-adventure',
+            'royal-emerald'       => 'front.themes.royal-emerald',
+            'jawa-premium'        => 'front.themes.jawa-premium',
+            'islamic-elegance'    => 'front.themes.islamic-elegance',
+            'sakura-dream'        => 'front.themes.sakura-dream',
+            'midnight-galaxy'     => 'front.themes.midnight-galaxy',
+            'rustic-boho'         => 'front.themes.rustic-boho',
+            'minang-gadang'       => 'front.themes.minang-gadang',
+            'taman-janur'         => 'front.themes.taman-janur',
+            'senja-pesisir'       => 'front.themes.senja-pesisir',
+            'empat-musim'         => 'front.themes.empat-musim',
+            'bawah-laut'          => 'front.themes.bawah-laut',
+            'gunung-berkabut'     => 'front.themes.gunung-berkabut',
+            'sogan-parallax'      => 'front.themes.sogan-parallax',
+            'rimba-watercolor'    => 'front.themes.rimba-watercolor',
+            'neon-metropolis'     => 'front.themes.neon-metropolis',
+            'arabian-nights'      => 'front.themes.arabian-nights',
+            'origami-dreams'      => 'front.themes.origami-dreams',
+            'galaksi-cinta'       => 'front.themes.galaksi-cinta',
+            'winter-aurora'       => 'front.themes.winter-aurora',
+            'stardew-valley'      => 'front.themes.stardew-valley',
+            'stardew-adventure'   => 'front.themes.stardew-adventure',
+            'jawa-cinematic'        => 'front.themes.jawa-cinematic',
+            'jawa-arunika'          => 'front.themes.jawa-arunika',
+            'jawa-klasik'           => 'front.themes.jawa-klasik',
+            'jawa-pendopo'          => 'front.themes.jawa-pendopo',
+            'jawa-gerbang'         => 'front.themes.jawa-gerbang',
+            'betawi'                => 'front.themes.betawi',
+            'jawa-gunungan'         => 'front.themes.jawa-gunungan',
+            'taman-surga'           => 'front.themes.taman-surga',
+            'jawa-biru'             => 'front.themes.jawa-biru',
+            'jawa-puspa'            => 'front.themes.jawa-puspa',
+            'pixel-quest'           => 'front.themes.pixel-quest',
+        ];
+    }
+
     public function index(Request $request, $slug = 'hawa-adam')
     {
         $guestSlug = $request->query('to', '');
@@ -62,42 +105,7 @@ class FrontController extends Controller
 
         // Pilihan tema via settings: 'theme' => key di bawah.
         // Tema default (front.index) tetap dipakai bila key 'theme' kosong / tidak dikenal.
-        $themeViews = [
-            'minecraft'           => 'front.themes.minecraft',
-            'minecraft-adventure' => 'front.themes.minecraft-adventure',
-            'royal-emerald'       => 'front.themes.royal-emerald',
-            'jawa-premium'        => 'front.themes.jawa-premium',
-            'islamic-elegance'    => 'front.themes.islamic-elegance',
-            'sakura-dream'        => 'front.themes.sakura-dream',
-            'midnight-galaxy'     => 'front.themes.midnight-galaxy',
-            'rustic-boho'         => 'front.themes.rustic-boho',
-            'minang-gadang'       => 'front.themes.minang-gadang',
-            'taman-janur'         => 'front.themes.taman-janur',
-            'senja-pesisir'       => 'front.themes.senja-pesisir',
-            'empat-musim'         => 'front.themes.empat-musim',
-            'bawah-laut'          => 'front.themes.bawah-laut',
-            'gunung-berkabut'     => 'front.themes.gunung-berkabut',
-            'sogan-parallax'      => 'front.themes.sogan-parallax',
-            'rimba-watercolor'    => 'front.themes.rimba-watercolor',
-            'neon-metropolis'     => 'front.themes.neon-metropolis',
-            'arabian-nights'      => 'front.themes.arabian-nights',
-            'origami-dreams'      => 'front.themes.origami-dreams',
-            'galaksi-cinta'       => 'front.themes.galaksi-cinta',
-            'winter-aurora'       => 'front.themes.winter-aurora',
-            'stardew-valley'      => 'front.themes.stardew-valley',
-            'stardew-adventure'   => 'front.themes.stardew-adventure',
-            'jawa-cinematic'        => 'front.themes.jawa-cinematic',
-            'jawa-arunika'          => 'front.themes.jawa-arunika',
-            'jawa-klasik'           => 'front.themes.jawa-klasik',
-            'jawa-pendopo'          => 'front.themes.jawa-pendopo',
-            'jawa-gerbang'         => 'front.themes.jawa-gerbang',
-            'betawi'                => 'front.themes.betawi',
-            'jawa-gunungan'         => 'front.themes.jawa-gunungan',
-            'taman-surga'           => 'front.themes.taman-surga',
-            'jawa-biru'             => 'front.themes.jawa-biru',
-            'jawa-puspa'            => 'front.themes.jawa-puspa',
-            'pixel-quest'           => 'front.themes.pixel-quest',
-        ];
+        $themeViews = $this->themeViews();
         $theme = $settings['theme'] ?? 'default';
         // Demo tema dari katalog landing: /{slug}?tema={key} — hanya key terdaftar yang berlaku.
         $demoTheme = $request->query('tema', '');
@@ -115,14 +123,91 @@ class FrontController extends Controller
      * Landing page penjualan "undangankamu" — katalog tema + harga.
      * URL: / (root). Undangan default tetap bisa dibuka lewat /hawa-adam,
      * jadi tidak ada tautan tamu yang rusak.
+     * Harga, hero, nomor WA, dan tampilan tema diatur dari tab "Landing Page"
+     * di admin (disimpan di settings undangan utama/ID 1).
      */
     public function landing()
     {
-        // Nomor WA pemesanan undangankamu (Fahmi, 088210841990).
-        $waNumber = '6288210841990';
-        // Katalog tema: slug, nama tampil, kategori, video-opening?
-        // (tema yang di-skip tidak ikut dijual.)
-        $themes = [
+        $themes = self::catalogThemes();
+        $eff = self::landingSettingsEffective($themes);
+        $waNumber = $eff['wa'];
+        $hargaNum = [
+            'basic' => $eff['harga_basic'],
+            'premium' => $eff['harga_premium'],
+            'eksklusif' => $eff['harga_eksklusif'],
+        ];
+        $fmt = function ($n) { return 'Rp ' . number_format($n, 0, ',', '.'); };
+        $harga = [
+            'basic' => $fmt($hargaNum['basic']),
+            'premium' => $fmt($hargaNum['premium']),
+            'eksklusif' => $fmt($hargaNum['eksklusif']),
+        ];
+        $hargaCoret = [
+            'basic' => $fmt($hargaNum['basic'] * 2),
+            'premium' => $fmt($hargaNum['premium'] * 2),
+            'eksklusif' => $fmt($hargaNum['eksklusif'] * 2),
+        ];
+        $hero = [
+            'title' => $eff['hero_title'],
+            'highlight' => $eff['hero_highlight'],
+            'subtitle' => $eff['hero_subtitle'],
+        ];
+        $videoCount = $eff['video_count'];
+        return view('front.landing', compact('waNumber', 'themes', 'harga', 'hargaNum', 'hargaCoret', 'hero', 'videoCount'));
+    }
+
+    /**
+     * Settings landing page (disimpan di undangan utama/ID 1): key => value.
+     * Kosong bila undangan 1 belum ada — pemanggil memakai fallback.
+     */
+    public static function landingSettings()
+    {
+        $inv = Invitation::with('settings')->find(1);
+        $settings = [];
+        if ($inv) {
+            foreach ($inv->settings as $s) {
+                $settings[$s->key_name] = $s->key_value;
+            }
+        }
+        return $settings;
+    }
+
+
+    /**
+     * Nilai EFEKTIF pengaturan landing (harga/hero/WA/video): settings
+     * undangan 1 bila terisi, kalau kosong pakai default. Dipakai landing()
+     * dan admin (get_landing_themes) — satu sumber kebenaran.
+     */
+    public static function landingSettingsEffective($themes = null)
+    {
+        $s = self::landingSettings();
+        if ($themes === null) $themes = self::catalogThemes();
+        $num = function ($k, $d) use ($s) { $v = (int) ($s[$k] ?? 0); return $v > 0 ? $v : $d; };
+        $video = 0;
+        foreach ($themes as $th) { if (!empty($th['video'])) $video++; }
+        return [
+            'wa' => !empty($s['landing_wa']) ? $s['landing_wa'] : '6288210841990',
+            'harga_basic' => $num('landing_harga_basic', 89000),
+            'harga_premium' => $num('landing_harga_premium', 149000),
+            'harga_eksklusif' => $num('landing_harga_eksklusif', 299000),
+            'hero_title' => !empty($s['landing_hero_title']) ? $s['landing_hero_title'] : 'Undangan cantik,',
+            'hero_highlight' => !empty($s['landing_hero_highlight']) ? $s['landing_hero_highlight'] : 'tanpa ribet.',
+            'hero_subtitle' => !empty($s['landing_hero_subtitle']) ? $s['landing_hero_subtitle'] : 'Pilih dari ' . count($themes) . ' tema — Jawa klasik sampai game — lengkap dengan RSVP, galeri foto, musik, amplop digital, sampai check-in QR untuk panitia. Jadi dalam hitungan jam, bukan minggu.',
+            'video_count' => $video,
+        ];
+    }
+
+    /**
+     * Katalog tema landing: semua tema terdaftar (ikut themeViews, tanpa
+     * tema yang di-skip) + tema default, digabung override admin dari settings
+     * undangan utama (landing_themes JSON: nama/kategori/urutan/badge/tampil).
+     * Tema baru yang didaftarkan otomatis muncul di katalog (kategori
+     * default Modern, tanpa badge video) sampai diatur dari admin.
+     * Dipakai landing() dan admin (get_landing_themes).
+     */
+    public static function catalogThemes($onlyVisible = true)
+    {
+        $defaults = [
             ['slug' => 'default', 'name' => 'Klasik Emas', 'cat' => 'Modern', 'video' => false],
             ['slug' => 'minecraft', 'name' => 'Minecraft', 'cat' => 'Game', 'video' => false],
             ['slug' => 'minecraft-adventure', 'name' => 'Minecraft Petualangan', 'cat' => 'Game', 'video' => false],
@@ -159,7 +244,49 @@ class FrontController extends Controller
             ['slug' => 'jawa-puspa', 'name' => 'Jawa Puspa', 'cat' => 'Jawa', 'video' => false],
             ['slug' => 'pixel-quest', 'name' => 'Pixel Quest', 'cat' => 'Game', 'video' => false],
         ];
-        return view('front.landing', compact('waNumber', 'themes'));
+        $bySlug = [];
+        foreach ($defaults as $i => $d) {
+            $d['order'] = $i;
+            $bySlug[$d['slug']] = $d;
+        }
+        $slugs = array_merge(['default'], array_keys((new static)->themeViews()));
+        $list = [];
+        foreach ($slugs as $slug) {
+            if ($slug === 'ruang-jawa') continue;
+            if (isset($bySlug[$slug])) {
+                $list[] = $bySlug[$slug];
+            } else {
+                $list[] = [
+                    'slug' => $slug,
+                    'name' => ucwords(str_replace('-', ' ', $slug)),
+                    'cat' => 'Modern',
+                    'video' => false,
+                    'order' => 1000,
+                ];
+            }
+        }
+        $over = [];
+        $raw = self::landingSettings()['landing_themes'] ?? null;
+        if ($raw) {
+            $decoded = json_decode($raw, true);
+            if (is_array($decoded)) $over = $decoded;
+        }
+        foreach ($list as &$t) {
+            $o = $over[$t['slug']] ?? [];
+            if (!empty($o['name'])) $t['name'] = $o['name'];
+            if (!empty($o['cat'])) $t['cat'] = $o['cat'];
+            if (isset($o['order'])) $t['order'] = (int) $o['order'];
+            if (isset($o['badge'])) $t['badge'] = (string) $o['badge'];
+            if (array_key_exists('visible', $o)) $t['visible'] = (bool) $o['visible'];
+            if (!isset($t['badge'])) $t['badge'] = !empty($t['video']) ? 'VIDEO' : '';
+            if (!isset($t['visible'])) $t['visible'] = true;
+        }
+        unset($t);
+        if ($onlyVisible) {
+            $list = array_values(array_filter($list, function ($t) { return $t['visible']; }));
+        }
+        usort($list, function ($a, $b) { return $a['order'] <=> $b['order']; });
+        return $list;
     }
 
     /**

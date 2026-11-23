@@ -1,8 +1,6 @@
 @php
-// Harga paket — ubah di sini saja bila berubah.
-$harga = ['basic' => 'Rp 89.000', 'premium' => 'Rp 149.000', 'eksklusif' => 'Rp 299.000'];
-// Harga coret kartu (diskon 50% dari harga paket).
-$hargaCoret = ['basic' => 'Rp 178.000', 'premium' => 'Rp 298.000'];
+// Harga paket ($harga, $hargaCoret) + hero ($hero) + $videoCount datang dari
+// FrontController::landing() — diatur lewat tab "Landing Page" di admin.
 // Jumlah tema per filter katalog.
 $filterCounts = ['Semua' => count($themes)];
 foreach ($themes as $th) {
@@ -75,8 +73,8 @@ tailwind.config = {
   <div class="relative max-w-6xl mx-auto px-4 pt-14 pb-16 md:pt-20 md:pb-24 grid md:grid-cols-2 gap-10 items-center">
     <div>
       <p class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pine/10 text-pine text-xs font-bold tracking-wide">UNDANGAN DIGITAL PERNIKAHAN</p>
-      <h1 class="font-serif font-bold text-4xl md:text-5xl leading-tight text-pinedark mt-4">Undangan cantik, <span class="gold-grad">tanpa ribet.</span></h1>
-      <p class="text-stone-600 leading-relaxed mt-4">Pilih dari 35 tema — Jawa klasik sampai game — lengkap dengan RSVP, galeri foto, musik, amplop digital, sampai check-in QR untuk panitia. Jadi dalam hitungan jam, bukan minggu.</p>
+      <h1 class="font-serif font-bold text-4xl md:text-5xl leading-tight text-pinedark mt-4">{{ $hero['title'] }} <span class="gold-grad">{{ $hero['highlight'] }}</span></h1>
+      <p class="text-stone-600 leading-relaxed mt-4">{{ $hero['subtitle'] }}</p>
       <div class="flex flex-wrap gap-3 mt-7">
         <a href="#katalog" class="px-6 py-3 rounded-full bg-pine text-white font-bold text-sm hover:bg-pinedark transition">Lihat Katalog Tema</a>
         <a href="{{ $waText('Halo, saya mau pesan undangan digital.') }}" target="_blank" rel="noopener" class="px-6 py-3 rounded-full border-2 border-pine text-pine font-bold text-sm hover:bg-pine hover:text-white transition">Pesan via WhatsApp</a>
@@ -95,7 +93,7 @@ tailwind.config = {
         </div>
       </div>
       <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg px-4 py-3 text-xs font-semibold flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 35 tema siap pakai
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> {{ count($themes) }} tema siap pakai
       </div>
       <div class="absolute -top-3 -right-3 bg-white rounded-2xl shadow-lg px-4 py-3 text-xs font-semibold">Check-in QR panitia</div>
     </div>
@@ -106,7 +104,7 @@ tailwind.config = {
 <section class="border-y border-stone-200/70 bg-white">
   <div class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
     <div><p class="font-serif font-bold text-3xl text-pinedark">{{ count($themes) }}</p><p class="text-xs text-stone-500 mt-1">Tema undangan</p></div>
-    <div><p class="font-serif font-bold text-3xl text-pinedark">4</p><p class="text-xs text-stone-500 mt-1">Tema video opening</p></div>
+    <div><p class="font-serif font-bold text-3xl text-pinedark">{{ $videoCount }}</p><p class="text-xs text-stone-500 mt-1">Tema video opening</p></div>
     <div><p class="font-serif font-bold text-3xl text-pinedark">QR</p><p class="text-xs text-stone-500 mt-1">Check-in + monitor panitia</p></div>
     <div><p class="font-serif font-bold text-3xl text-pinedark">1 hari</p><p class="text-xs text-stone-500 mt-1">Undangan jadi*</p></div>
   </div>
@@ -132,8 +130,8 @@ tailwind.config = {
       <article class="theme-card bg-white rounded-[20px] overflow-hidden border border-stone-200/80 shadow-sm hover:shadow-xl transition" data-cat="{{ $t['cat'] }}" data-video="{{ $t['video'] ? '1' : '0' }}">
         <div class="relative cursor-pointer bg-gradient-to-b from-pine to-pinedark aspect-[3/4]" onclick="openLightbox('{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}', '{{ $t['name'] }}')">
           <img src="{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}" alt="Tema {{ $t['name'] }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.remove()">
-          @if ($t['video'])
-            <span class="absolute top-3 right-3 text-[10px] font-bold px-2 py-1 rounded-full bg-pinedark/85 text-goldsoft backdrop-blur-sm">VIDEO</span>
+          @if ($t['badge'])
+            <span class="absolute top-3 right-3 text-[10px] font-bold px-2 py-1 rounded-full bg-pinedark/85 text-goldsoft backdrop-blur-sm">{{ $t['badge'] }}</span>
           @endif
         </div>
         <div class="p-4">
@@ -157,6 +155,9 @@ tailwind.config = {
         </div>
       </article>
     @endforeach
+  </div>
+  <div class="text-center mt-8">
+    <button id="showMoreBtn" type="button" class="px-8 py-3 rounded-full bg-pine text-white text-sm font-bold hover:bg-pinedark transition">Tampilkan Lainnya</button>
   </div>
   <p id="noResult" class="hidden text-center text-sm text-stone-500 py-10">Tidak ada tema pada kategori ini.</p>
 </section>
@@ -202,7 +203,7 @@ tailwind.config = {
         <p class="text-xs text-white/60 mt-1">per undangan</p>
         <ul class="text-sm text-white/85 space-y-2.5 mt-6 flex-1">
           <li>✓ Semua di paket Basic</li>
-          <li>✓ Semua 35 tema, termasuk 4 tema video opening</li>
+          <li>✓ Semua {{ count($themes) }} tema, termasuk {{ $videoCount }} tema video opening</li>
           <li>✓ Check-in QR + monitor panitia</li>
           <li>✓ Link generator + kirim WA massal</li>
           <li>✓ Hitung mundur &amp; live streaming</li>
@@ -334,21 +335,44 @@ tailwind.config = {
 </a>
 
 <script>
-// Filter katalog
+// Filter katalog + Tampilkan Lainnya (8 awal, +8 per klik, hormat filter)
+var SHOW_STEP = 8, showLimit = 8, currentFilter = 'Semua', matchingCount = 0;
+function applyCatalog(){
+  var matching = [];
+  document.querySelectorAll('#themeGrid .theme-card').forEach(function(card){
+    var ok = (currentFilter === 'Semua') || (currentFilter === 'Video Opening' ? card.dataset.video === '1' : card.dataset.cat === currentFilter);
+    if (ok) matching.push(card);
+  });
+  matchingCount = matching.length;
+  matching.forEach(function(card, i){ card.style.display = i < showLimit ? '' : 'none'; });
+  document.querySelectorAll('#themeGrid .theme-card').forEach(function(card){
+    if (matching.indexOf(card) === -1) card.style.display = 'none';
+  });
+  document.getElementById('noResult').classList.toggle('hidden', matchingCount > 0);
+  var btn = document.getElementById('showMoreBtn');
+  if (matchingCount <= SHOW_STEP) {
+    btn.classList.add('hidden');
+  } else {
+    btn.classList.remove('hidden');
+    btn.textContent = showLimit >= matchingCount
+      ? 'Tampilkan Lebih Sedikit'
+      : 'Tampilkan Lainnya (' + (matchingCount - showLimit) + ' lagi)';
+  }
+}
 document.querySelectorAll('#filterBar .filter-pill').forEach(function(btn){
   btn.addEventListener('click', function(){
     document.querySelectorAll('#filterBar .filter-pill').forEach(function(b){ b.classList.remove('active'); });
     btn.classList.add('active');
-    var f = btn.dataset.filter;
-    var shown = 0;
-    document.querySelectorAll('#themeGrid .theme-card').forEach(function(card){
-      var ok = (f === 'Semua') || (f === 'Video Opening' ? card.dataset.video === '1' : card.dataset.cat === f);
-      card.style.display = ok ? '' : 'none';
-      if (ok) shown++;
-    });
-    document.getElementById('noResult').classList.toggle('hidden', shown > 0);
+    currentFilter = btn.dataset.filter;
+    showLimit = SHOW_STEP;
+    applyCatalog();
   });
 });
+document.getElementById('showMoreBtn').addEventListener('click', function(){
+  showLimit = showLimit >= matchingCount ? SHOW_STEP : showLimit + SHOW_STEP;
+  applyCatalog();
+});
+applyCatalog();
 // Lightbox preview
 function openLightbox(src, name){
   var lb = document.getElementById('lightbox');

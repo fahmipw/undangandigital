@@ -440,6 +440,12 @@
                 id="btn-theme">
                 <span class="material-symbols-outlined">palette</span> Tema Desain
             </button>
+            <div class="pt-2.5 pb-1 px-2.5 text-[10px] font-bold uppercase tracking-wider text-stone-400">Penjualan</div>
+            <button onclick="showTab('landing')"
+                class="tab-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer"
+                id="btn-landing">
+                <span class="material-symbols-outlined">storefront</span> Landing Page
+            </button>
             <button onclick="openGenerator()"
                 class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-stone-600 hover:bg-cream-200/70 hover:text-stone-900 transition cursor-pointer">
                 <span class="material-symbols-outlined">link</span> Link Generator
@@ -1270,6 +1276,102 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Landing Page Tab -->
+            <div id="tab-landing" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="font-display-lg text-3xl text-primary">Landing Page Penjualan</h2>
+                    <button onclick="saveLanding()"
+                        class="btn-theme px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg">
+                        Simpan Landing
+                    </button>
+                </div>
+
+                <p class="text-xs text-gray-500 mb-6">Pengaturan ini berlaku untuk semua pengunjung landing page (undangankamu) dan disimpan di undangan utama (ID 1). Tema baru yang didaftarkan di sistem otomatis muncul di katalog — atur nama, kategori, urutan, badge, dan tampilannya di bawah.</p>
+
+                <div class="space-y-8">
+                    <!-- Harga Paket -->
+                    <div class="data-card p-8 rounded-3xl space-y-4">
+                        <h3
+                            class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
+                            <span class="material-symbols-outlined">payments</span> Harga Paket (Rp)
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rsvp-field">
+                                <label>BASIC</label>
+                                <input type="number" id="landing-harga-basic" min="0" step="1000" value="89000">
+                            </div>
+                            <div class="rsvp-field">
+                                <label>PREMIUM</label>
+                                <input type="number" id="landing-harga-premium" min="0" step="1000" value="149000">
+                            </div>
+                            <div class="rsvp-field">
+                                <label>EKSKLUSIF</label>
+                                <input type="number" id="landing-harga-eksklusif" min="0" step="1000" value="299000">
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500">Harga coret di kartu otomatis 2× harga (diskon 50%). Harga kartu video ikut Paket Premium, non-video ikut Paket Basic.</p>
+                    </div>
+
+                    <!-- Hero + WA -->
+                    <div class="data-card p-8 rounded-3xl space-y-4">
+                        <h3
+                            class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
+                            <span class="material-symbols-outlined">campaign</span> Hero &amp; WhatsApp
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rsvp-field">
+                                <label>JUDUL</label>
+                                <input type="text" id="landing-hero-title" value="Undangan cantik,">
+                            </div>
+                            <div class="rsvp-field">
+                                <label>JUDUL EMAS (SOROT)</label>
+                                <input type="text" id="landing-hero-highlight" value="tanpa ribet.">
+                            </div>
+                        </div>
+                        <div class="rsvp-field">
+                            <label>SUBJUDUL</label>
+                            <textarea id="landing-hero-subtitle" rows="2"></textarea>
+                        </div>
+                        <div class="rsvp-field">
+                            <label>NOMOR WHATSAPP PEMESANAN</label>
+                            <input type="text" id="landing-wa" value="6288210841990">
+                        </div>
+                        <p class="text-xs text-gray-500">Nomor WA diawali kode negara, tanpa tanda + (contoh: 6288210841990).</p>
+                    </div>
+
+                    <!-- Katalog Tema -->
+                    <div class="data-card p-8 rounded-3xl space-y-4">
+                        <h3
+                            class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
+                            <span class="material-symbols-outlined">grid_view</span> Katalog Tema
+                        </h3>
+                        <div class="flex gap-2">
+                            <input type="text" id="landing-theme-search" autocomplete="off" placeholder="Cari nama tema…"
+                                oninput="renderLandingRows()"
+                                class="flex-1 border border-gray-200 rounded-2xl px-4 py-3 text-sm bg-white focus:border-secondary focus:outline-none">
+                            <button type="button" onclick="resetLandingThemes()"
+                                class="border border-gray-200 rounded-2xl px-4 py-3 text-sm bg-white hover:border-secondary">Reset Tampilan Tema</button>
+                        </div>
+                        <p class="text-xs text-gray-500">Urutan = angka kecil tampil duluan. Badge kosong berarti: VIDEO untuk tema video, tanpa badge untuk lainnya. Tema yang disembunyikan tidak tampil di landing.</p>
+                        <div class="table-scroll bg-white rounded-3xl shadow-sm">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-secondary/5 text-secondary font-label-caps">
+                                    <tr>
+                                        <th class="px-4 py-3">Urutan</th>
+                                        <th class="px-4 py-3">Nama Tema</th>
+                                        <th class="px-4 py-3">Kategori</th>
+                                        <th class="px-4 py-3">Badge</th>
+                                        <th class="px-4 py-3">Tampil</th>
+                                        <th class="px-4 py-3">Demo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="landing-theme-rows"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -1720,6 +1822,7 @@
             if (btnEl) btnEl.classList.add('active');
 
             if (tabId === 'settings' || tabId === 'theme') loadSettings();
+            if (tabId === 'landing') loadLanding();
             if (tabId === 'gallery') loadGallery();
             if (tabId === 'guests') loadGuests();
             if (tabId === 'rsvp') loadRSVP();
@@ -1844,6 +1947,107 @@
                 showSwalSuccess('Perubahan Disimpan!', 'Pengaturan undangan berhasil disimpan.');
             }
         }
+        // ===== Landing Page (tab Penjualan) =====
+        // Pengaturan landing disimpan di undangan utama (ID 1), bukan di
+        // undangan yang sedang dipilih. Input memakai prefix "landing-"
+        // (bukan "set-") supaya saveSettings() tidak ikut menyimpannya.
+        let landingThemes = [];
+
+        async function loadLanding() {
+            const res = await fetch('api/admin_api?action=get_landing_themes');
+            const data = await res.json();
+            if (!data.success) return;
+            const d = data.data;
+            document.getElementById('landing-harga-basic').value = d.harga_basic;
+            document.getElementById('landing-harga-premium').value = d.harga_premium;
+            document.getElementById('landing-harga-eksklusif').value = d.harga_eksklusif;
+            document.getElementById('landing-hero-title').value = d.hero_title;
+            document.getElementById('landing-hero-highlight').value = d.hero_highlight;
+            document.getElementById('landing-hero-subtitle').value = d.hero_subtitle;
+            document.getElementById('landing-wa').value = d.wa;
+            landingThemes = d.themes || [];
+            // Kosongkan baris lama DULU: renderLandingRows() menyalin isi DOM
+            // ke landingThemes (sync) — tanpa ini, edit lama menimpa data baru.
+            document.getElementById('landing-theme-rows').innerHTML = '';
+            renderLandingRows();
+        }
+
+        // Salin isi input baris yang sedang tampil ke landingThemes, supaya
+        // edit yang belum disimpan tidak hilang saat pencarian me-render ulang.
+        function syncLandingRows() {
+            landingThemes.forEach(function (th) {
+                const nameEl = document.querySelector('.lt-name[data-slug="' + th.slug + '"]');
+                if (!nameEl) return;
+                th.name = nameEl.value;
+                const orderEl = document.querySelector('.lt-order[data-slug="' + th.slug + '"]');
+                if (orderEl) th.order = parseInt(orderEl.value, 10) || 0;
+                const catEl = document.querySelector('.lt-cat[data-slug="' + th.slug + '"]');
+                if (catEl) th.cat = catEl.value;
+                const badgeEl = document.querySelector('.lt-badge[data-slug="' + th.slug + '"]');
+                if (badgeEl) th.badge = badgeEl.value;
+                const visEl = document.querySelector('.lt-visible[data-slug="' + th.slug + '"]');
+                if (visEl) th.visible = visEl.checked;
+            });
+        }
+
+        function renderLandingRows() {
+            syncLandingRows();
+            const q = (document.getElementById('landing-theme-search').value || '').toLowerCase();
+            const tbody = document.getElementById('landing-theme-rows');
+            const cats = ['Jawa', 'Nusantara', 'Islami', 'Alam', 'Modern', 'Game'];
+            const badges = ['', 'VIDEO', 'BARU', 'HOT', 'POPULER'];
+            tbody.innerHTML = landingThemes.map(function (th) {
+                if (q && th.name.toLowerCase().indexOf(q) === -1 && th.slug.indexOf(q) === -1) return '';
+                const escName = th.name.replace(/"/g, '&quot;');
+                return '<tr class="border-t border-stone-200/60">' +
+                    '<td class="px-4 py-2"><input type="number" class="lt-order w-16 border border-gray-200 rounded-lg px-2 py-1.5 text-sm" data-slug="' + th.slug + '" value="' + th.order + '" min="0"></td>' +
+                    '<td class="px-4 py-2"><input type="text" class="lt-name w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm" data-slug="' + th.slug + '" value="' + escName + '"><span class="text-xs text-gray-400">' + th.slug + '</span></td>' +
+                    '<td class="px-4 py-2"><select class="lt-cat border border-gray-200 rounded-lg px-2 py-1.5 text-sm bg-white" data-slug="' + th.slug + '">' + cats.map(function (c) { return '<option value="' + c + '"' + (c === th.cat ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></td>' +
+                    '<td class="px-4 py-2"><select class="lt-badge border border-gray-200 rounded-lg px-2 py-1.5 text-sm bg-white" data-slug="' + th.slug + '">' + badges.map(function (b) { return '<option value="' + b + '"' + (b === (th.badge || '') ? ' selected' : '') + '>' + (b || '—') + '</option>'; }).join('') + '</select></td>' +
+                    '<td class="px-4 py-2 text-center"><input type="checkbox" class="lt-visible w-4 h-4" data-slug="' + th.slug + '"' + (th.visible ? ' checked' : '') + '></td>' +
+                    '<td class="px-4 py-2"><a href="/hawa-adam?tema=' + th.slug + '" target="_blank" rel="noopener" class="text-secondary underline text-xs">Demo</a></td>' +
+                    '</tr>';
+            }).join('');
+        }
+
+        async function saveLanding() {
+            syncLandingRows();
+            const over = {};
+            landingThemes.forEach(function (th) {
+                over[th.slug] = { name: th.name, cat: th.cat, order: th.order, badge: th.badge || '', visible: !!th.visible };
+            });
+            const payload = {
+                landing_harga_basic: document.getElementById('landing-harga-basic').value,
+                landing_harga_premium: document.getElementById('landing-harga-premium').value,
+                landing_harga_eksklusif: document.getElementById('landing-harga-eksklusif').value,
+                landing_hero_title: document.getElementById('landing-hero-title').value,
+                landing_hero_highlight: document.getElementById('landing-hero-highlight').value,
+                landing_hero_subtitle: document.getElementById('landing-hero-subtitle').value,
+                landing_wa: document.getElementById('landing-wa').value,
+                landing_themes: JSON.stringify(over),
+            };
+            const res = await fetch('api/admin_api?action=update_settings&inv_id=1', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.success) {
+                showSwalSuccess('Landing Disimpan!', 'Pengaturan landing page berhasil disimpan.');
+            }
+        }
+
+        async function resetLandingThemes() {
+            const res = await fetch('api/admin_api?action=update_settings&inv_id=1', {
+                method: 'POST',
+                body: JSON.stringify({ landing_themes: '{}' })
+            });
+            const data = await res.json();
+            if (data.success) {
+                await loadLanding();
+                showSwalSuccess('Tampilan Tema Direset!', 'Nama, kategori, urutan, badge, dan tampilan tema kembali ke default.');
+            }
+        }
+
 
         async function loadGallery() {
             const res = await fetch(`api/admin_api?action=get_gallery&inv_id=${currentInvId}`);

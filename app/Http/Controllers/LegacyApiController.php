@@ -108,6 +108,22 @@ class LegacyApiController extends Controller
                 }
                 return response()->json(['success' => true, 'data' => $data]);
 
+            case 'get_landing_themes':
+                // Katalog landing untuk tab "Landing Page" di admin: SEMUA tema
+                // (termasuk yang disembunyikan) + pengaturan landing efektif.
+                $themes = \App\Http\Controllers\FrontController::catalogThemes(false);
+                $eff = \App\Http\Controllers\FrontController::landingSettingsEffective($themes);
+                return response()->json(['success' => true, 'data' => [
+                    'themes' => $themes,
+                    'harga_basic' => (string) $eff['harga_basic'],
+                    'harga_premium' => (string) $eff['harga_premium'],
+                    'harga_eksklusif' => (string) $eff['harga_eksklusif'],
+                    'hero_title' => $eff['hero_title'],
+                    'hero_highlight' => $eff['hero_highlight'],
+                    'hero_subtitle' => $eff['hero_subtitle'],
+                    'wa' => $eff['wa'],
+                ]]);
+
             case 'update_settings':
                 $postData = $request->all();
                 unset($postData['action'], $postData['inv_id']);
