@@ -43,11 +43,22 @@ tailwind.config = {
   .filter-pill.active { background: #1E4D33; color: #fff; border-color: #1E4D33; }
   .pill-count { background: #F5EFE3; color: #1E4D33; }
   .filter-pill.active .pill-count { background: #C9A227; color: #143826; }
-  /* Marquee tema di hero: gambar bergulir, jeda saat disentuh/hover */
-  @keyframes marquee-x { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  .marquee-track { display: flex; gap: 0.75rem; width: max-content; animation: marquee-x 70s linear infinite; }
-  .marquee:hover .marquee-track { animation-play-state: paused; }
-  @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+  /* Foto hero bergulir slow seperti running text: 70 foto (35 x 2), geser -50% mulus */
+  #heroStage { overflow: hidden; }
+  .hero-track { position: absolute; inset: 0; display: flex; align-items: center; width: max-content; animation: hero-scroll 120s linear infinite; }
+  .hero-photo { flex-shrink: 0; width: 272px; height: 347px; padding-right: 12px; }
+  .hero-photo-box { position: relative; display: block; width: 260px; height: 347px; border-radius: 14px; overflow: hidden; background: linear-gradient(160deg, #1E4D33, #3E2618); }
+  .hero-photo-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; -webkit-user-drag: none; user-select: none; }
+  @keyframes hero-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .hero-fallback-name { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1rem; font-family: "Playfair Display", Georgia, serif; font-weight: 700; font-size: 1.1rem; color: #E7D9A8; }
+  /* Running text tanpa jeda: 2 bagian identik, geser -50% lalu mengulang mulus */
+  .rt-track { display: flex; width: max-content; animation: rt-x 30s linear infinite; }
+  .rt-half { display: flex; flex-shrink: 0; align-items: center; }
+  .rt-item { margin: 0 1rem; font-size: .875rem; font-weight: 700; letter-spacing: .05em; white-space: nowrap; }
+  .rt-star { color: #C9A227; }
+  @keyframes rt-x { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .rt-track { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .hero-track { animation: none; } }
 </style>
 </head>
 <body class="bg-ivory text-stone-800 antialiased">
@@ -99,33 +110,36 @@ tailwind.config = {
       <p class="text-xs text-stone-500 mt-4">Mulai {{ $harga['basic'] }} &bull; Tanpa perlu install aplikasi &bull; Dibuka lewat link</p>
     </div>
     <div class="relative mx-auto w-full max-w-[320px]">
-      <div class="rounded-[2rem] border-[10px] border-stone-900 bg-stone-900 shadow-2xl overflow-hidden">
-        <div class="relative bg-gradient-to-b from-[#3E2618] to-[#120b06] aspect-[3/4] flex items-center justify-center text-center px-4">
-          <img src="{{ asset('images/landing/themes/jawa-klasik.jpg') }}" alt="Contoh undangan tema Jawa Klasik" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.remove()">
-          <div class="relative">
-            <p class="text-[10px] tracking-[0.35em] text-goldsoft">THE WEDDING OF</p>
-            <p class="font-serif text-3xl text-[#fdf6dd] mt-2">Farza &amp; Delia</p>
-            <p class="text-xs text-[#fdf6dd]/70 mt-2">Minggu, 29 Maret 2026</p>
+      <div class="relative">
+        <div class="rounded-[2rem] border-[10px] border-stone-900 bg-stone-900 shadow-2xl overflow-hidden">
+          <div id="heroStage" class="relative aspect-[3/4] bg-gradient-to-b from-[#3E2618] to-[#120b06]">
+            <div class="hero-track">
+              @foreach (array_merge($themes, $themes) as $t)
+                <a href="/hawa-adam?tema={{ $t['slug'] }}&to=tamu-demo" target="_blank" rel="noopener" class="hero-photo" title="Demo tema {{ $t['name'] }}">
+                  <span class="hero-photo-box">
+                    <span class="hero-fallback-name">{{ $t['name'] }}</span>
+                    <img src="{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}" alt="Tema {{ $t['name'] }}" draggable="false" onerror="this.remove()">
+                  </span>
+                </a>
+              @endforeach
+            </div>
           </div>
         </div>
+        <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg px-4 py-3 text-xs font-semibold flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> {{ count($themes) }} tema siap pakai
+        </div>
       </div>
-      <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg px-4 py-3 text-xs font-semibold flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> {{ count($themes) }} tema siap pakai
-      </div>
-      <div class="absolute -top-3 -right-3 bg-white rounded-2xl shadow-lg px-4 py-3 text-xs font-semibold">Check-in QR panitia</div>
-    </div>
-  </div>
-  <!-- Marquee semua tema: gambar bergulir otomatis, klik gambar buka demonya -->
-  <div class="marquee relative pb-10 overflow-hidden" aria-label="Semua tema">
-    <div class="marquee-track">
-      @foreach (array_merge($themes, $themes) as $t)
-        <a href="/hawa-adam?tema={{ $t['slug'] }}&to=tamu-demo" target="_blank" rel="noopener" class="shrink-0 w-20 md:w-24 block rounded-xl overflow-hidden border border-stone-200/80 shadow-sm bg-white" title="Demo tema {{ $t['name'] }}">
-          <img src="{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}" alt="Tema {{ $t['name'] }}" loading="lazy" class="w-full aspect-[3/4] object-cover object-top" onerror="this.remove()">
-        </a>
-      @endforeach
     </div>
   </div>
 </section>
+
+<!-- ============ RUNNING TEXT (tanpa jeda) ============ -->
+<div class="rt-strip bg-pine text-white overflow-hidden" aria-label="Fitur undangan">
+  <div class="rt-track">
+    <div class="rt-half"><span class="rt-item">Undangan Digital</span><span class="rt-star">✦</span><span class="rt-item">RSVP</span><span class="rt-star">✦</span><span class="rt-item">Galeri Foto</span><span class="rt-star">✦</span><span class="rt-item">Musik</span><span class="rt-star">✦</span><span class="rt-item">Amplop Digital</span><span class="rt-star">✦</span><span class="rt-item">Check-in QR</span><span class="rt-star">✦</span><span class="rt-item">Undangan Digital</span><span class="rt-star">✦</span><span class="rt-item">RSVP</span><span class="rt-star">✦</span><span class="rt-item">Galeri Foto</span><span class="rt-star">✦</span><span class="rt-item">Musik</span><span class="rt-star">✦</span><span class="rt-item">Amplop Digital</span><span class="rt-star">✦</span><span class="rt-item">Check-in QR</span><span class="rt-star">✦</span><span class="rt-item">Undangan Digital</span><span class="rt-star">✦</span><span class="rt-item">RSVP</span><span class="rt-star">✦</span><span class="rt-item">Galeri Foto</span><span class="rt-star">✦</span><span class="rt-item">Musik</span><span class="rt-star">✦</span><span class="rt-item">Amplop Digital</span><span class="rt-star">✦</span><span class="rt-item">Check-in QR</span><span class="rt-star">✦</span></div>
+    <div class="rt-half" aria-hidden="true"><span class="rt-item">Undangan Digital</span><span class="rt-star">✦</span><span class="rt-item">RSVP</span><span class="rt-star">✦</span><span class="rt-item">Galeri Foto</span><span class="rt-star">✦</span><span class="rt-item">Musik</span><span class="rt-star">✦</span><span class="rt-item">Amplop Digital</span><span class="rt-star">✦</span><span class="rt-item">Check-in QR</span><span class="rt-star">✦</span><span class="rt-item">Undangan Digital</span><span class="rt-star">✦</span><span class="rt-item">RSVP</span><span class="rt-star">✦</span><span class="rt-item">Galeri Foto</span><span class="rt-star">✦</span><span class="rt-item">Musik</span><span class="rt-star">✦</span><span class="rt-item">Amplop Digital</span><span class="rt-star">✦</span><span class="rt-item">Check-in QR</span><span class="rt-star">✦</span><span class="rt-item">Undangan Digital</span><span class="rt-star">✦</span><span class="rt-item">RSVP</span><span class="rt-star">✦</span><span class="rt-item">Galeri Foto</span><span class="rt-star">✦</span><span class="rt-item">Musik</span><span class="rt-star">✦</span><span class="rt-item">Amplop Digital</span><span class="rt-star">✦</span><span class="rt-item">Check-in QR</span><span class="rt-star">✦</span></div>
+  </div>
+</div>
 
 <!-- ============ STATS ============ -->
 <section class="border-y border-stone-200/70 bg-white">
@@ -400,6 +414,8 @@ document.querySelectorAll('#filterBar .filter-pill').forEach(function(btn){
     currentFilter = btn.dataset.filter;
     showLimit = SHOW_STEP;
     applyCatalog();
+
+
   });
 });
 document.getElementById('showMoreBtn').addEventListener('click', function(){
