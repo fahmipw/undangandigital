@@ -99,6 +99,11 @@ class FrontController extends Controller
             'pixel-quest'           => 'front.themes.pixel-quest',
         ];
         $theme = $settings['theme'] ?? 'default';
+        // Demo tema dari katalog landing: /{slug}?tema={key} — hanya key terdaftar yang berlaku.
+        $demoTheme = $request->query('tema', '');
+        if ($demoTheme === 'default' || isset($themeViews[$demoTheme])) {
+            $theme = $demoTheme;
+        }
         if (isset($themeViews[$theme])) {
             return view($themeViews[$theme], $viewData);
         }

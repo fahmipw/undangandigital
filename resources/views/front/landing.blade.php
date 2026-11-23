@@ -1,6 +1,14 @@
 @php
 // Harga paket — ubah di sini saja bila berubah.
 $harga = ['basic' => 'Rp 89.000', 'premium' => 'Rp 149.000', 'eksklusif' => 'Rp 299.000'];
+// Harga coret kartu (diskon 50% dari harga paket).
+$hargaCoret = ['basic' => 'Rp 178.000', 'premium' => 'Rp 298.000'];
+// Jumlah tema per filter katalog.
+$filterCounts = ['Semua' => count($themes)];
+foreach ($themes as $th) {
+    $filterCounts[$th['cat']] = ($filterCounts[$th['cat']] ?? 0) + 1;
+    if ($th['video']) $filterCounts['Video Opening'] = ($filterCounts['Video Opening'] ?? 0) + 1;
+}
 $waText = fn($msg) => 'https://wa.me/' . $waNumber . '?text=' . urlencode($msg);
 @endphp
 <!DOCTYPE html>
@@ -25,6 +33,8 @@ tailwind.config = {
   body { font-family: "Plus Jakarta Sans", system-ui, sans-serif; }
   .gold-grad { background: linear-gradient(135deg, #C9A227, #E7D9A8 55%, #C9A227); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .filter-pill.active { background: #1E4D33; color: #fff; border-color: #1E4D33; }
+  .pill-count { background: #F5EFE3; color: #1E4D33; }
+  .filter-pill.active .pill-count { background: #C9A227; color: #143826; }
 </style>
 </head>
 <body class="bg-ivory text-stone-800 antialiased">
@@ -105,33 +115,45 @@ tailwind.config = {
 
 <!-- ============ KATALOG ============ -->
 <section id="katalog" class="max-w-6xl mx-auto px-4 py-16">
-  <div class="text-center max-w-2xl mx-auto">
-    <h2 class="font-serif font-bold text-3xl md:text-4xl text-pinedark">Katalog Tema</h2>
-    <p class="text-stone-600 mt-3">Klik gambar untuk melihat lebih besar. Semua tema sudah termasuk RSVP, ucapan, galeri, musik, dan amplop digital.</p>
+  <div class="max-w-2xl">
+    <p class="text-xs font-extrabold tracking-[0.25em] text-gold">KOLEKSI TEMA</p>
+    <h2 class="font-sans font-extrabold text-3xl md:text-4xl text-pinedark mt-2">Buka demonya dulu, baru pilih</h2>
+    <p class="text-stone-600 mt-3">Setiap tema punya demo yang bisa kamu buka seperti tamu membukanya. Harga sudah termasuk semua fitur. Klik gambar untuk melihat lebih besar.</p>
   </div>
 
-  <div class="flex flex-wrap justify-center gap-2 mt-8" id="filterBar">
+  <div class="flex flex-wrap gap-2 mt-8" id="filterBar">
     @foreach (['Semua', 'Jawa', 'Nusantara', 'Islami', 'Alam', 'Modern', 'Game', 'Video Opening'] as $f)
-      <button type="button" data-filter="{{ $f }}" class="filter-pill px-4 py-1.5 rounded-full border border-stone-300 bg-white text-xs font-bold hover:border-pine transition {{ $f === 'Semua' ? 'active' : '' }}">{{ $f }}</button>
+      <button type="button" data-filter="{{ $f }}" class="filter-pill px-4 py-1.5 rounded-full border border-stone-300 bg-white text-xs font-bold hover:border-pine transition {{ $f === 'Semua' ? 'active' : '' }}">{{ $f }} <span class="pill-count ml-1 px-1.5 py-0.5 rounded-full text-[10px]">{{ $filterCounts[$f] ?? 0 }}</span></button>
     @endforeach
   </div>
 
   <div id="themeGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 mt-8">
     @foreach ($themes as $t)
-      <article class="theme-card bg-white rounded-2xl overflow-hidden border border-stone-200/80 shadow-sm hover:shadow-lg transition" data-cat="{{ $t['cat'] }}" data-video="{{ $t['video'] ? '1' : '0' }}">
+      <article class="theme-card bg-white rounded-[20px] overflow-hidden border border-stone-200/80 shadow-sm hover:shadow-xl transition" data-cat="{{ $t['cat'] }}" data-video="{{ $t['video'] ? '1' : '0' }}">
         <div class="relative cursor-pointer bg-gradient-to-b from-pine to-pinedark aspect-[3/4]" onclick="openLightbox('{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}', '{{ $t['name'] }}')">
           <img src="{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}" alt="Tema {{ $t['name'] }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.remove()">
-          <div class="absolute inset-0 flex items-end p-3 pointer-events-none">
-            <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-black/45 text-white backdrop-blur-sm">{{ $t['cat'] }}</span>
-            @if ($t['video'])
-              <span class="ml-1.5 text-[10px] font-bold px-2 py-1 rounded-full bg-gold text-pinedark">Video Opening</span>
-            @endif
-          </div>
+          @if ($t['video'])
+            <span class="absolute top-3 right-3 text-[10px] font-bold px-2 py-1 rounded-full bg-pinedark/85 text-goldsoft backdrop-blur-sm">VIDEO</span>
+          @endif
         </div>
-        <div class="p-3.5">
-          <h3 class="font-bold text-sm text-stone-900 leading-snug">{{ $t['name'] }}</h3>
-          <p class="text-[11px] text-stone-500 mt-0.5">Tema {{ $t['cat'] }}{{ $t['video'] ? ' • Video opening' : '' }}</p>
-          <a href="{{ $waText('Halo, saya mau pesan undangan digital tema ' . $t['name'] . ' (Paket Premium).') }}" target="_blank" rel="noopener" class="mt-3 block text-center px-3 py-2 rounded-full bg-pine text-white text-xs font-bold hover:bg-pinedark transition">Pesan Tema Ini</a>
+        <div class="p-4">
+          <h3 class="font-bold text-[15px] text-stone-900 leading-snug">{{ $t['name'] }}</h3>
+          <p class="text-[11px] text-stone-500 mt-0.5">Tema {{ $t['cat'] }}</p>
+          <p class="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <span class="font-extrabold text-lg text-stone-900">{{ $t['video'] ? $harga['premium'] : $harga['basic'] }}</span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-600">50%</span>
+            <span class="text-xs text-stone-400 line-through">{{ $t['video'] ? $hargaCoret['premium'] : $hargaCoret['basic'] }}</span>
+          </p>
+          <div class="border-t border-stone-200/80 mt-3 pt-3 space-y-2">
+            <a href="/hawa-adam?tema={{ $t['slug'] }}" target="_blank" rel="noopener" class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-white border border-stone-300 text-stone-700 text-xs font-bold hover:border-pine transition">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              Demo
+            </a>
+            <a href="{{ $waText('Halo, saya mau pesan undangan digital tema ' . $t['name'] . ' (Paket ' . ($t['video'] ? 'Premium' : 'Basic') . ').') }}" target="_blank" rel="noopener" class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-pine text-white text-xs font-bold hover:bg-pinedark transition">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18v14H3z"/><path d="m3 7 9 6 9-6"/></svg>
+              Pesan
+            </a>
+          </div>
         </div>
       </article>
     @endforeach
