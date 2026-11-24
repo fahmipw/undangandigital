@@ -122,6 +122,13 @@ class LegacyApiController extends Controller
                     'hero_highlight' => $eff['hero_highlight'],
                     'hero_subtitle' => $eff['hero_subtitle'],
                     'wa' => $eff['wa'],
+                    'pay_bank' => $eff['pay_bank'],
+                    'pay_bank_number' => $eff['pay_bank_number'],
+                    'pay_bank_holder' => $eff['pay_bank_holder'],
+                    'pay_qris' => $eff['pay_qris'],
+                    'pay_dana' => $eff['pay_dana'],
+                    'pay_gopay' => $eff['pay_gopay'],
+                    'pay_shopeepay' => $eff['pay_shopeepay'],
                 ]]);
 
             case 'upload_landing_theme_photo':

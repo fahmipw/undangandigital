@@ -43,22 +43,18 @@ tailwind.config = {
   .filter-pill.active { background: #1E4D33; color: #fff; border-color: #1E4D33; }
   .pill-count { background: #F5EFE3; color: #1E4D33; }
   .filter-pill.active .pill-count { background: #C9A227; color: #143826; }
-  /* Foto hero bergulir slow seperti running text: 70 foto (35 x 2), geser -50% mulus */
-  #heroStage { overflow: hidden; }
-  .hero-track { position: absolute; inset: 0; display: flex; align-items: center; width: max-content; animation: hero-scroll 120s linear infinite; }
-  .hero-photo { flex-shrink: 0; width: 272px; height: 347px; padding-right: 12px; }
-  .hero-photo-box { position: relative; display: block; width: 260px; height: 347px; border-radius: 14px; overflow: hidden; background: linear-gradient(160deg, #1E4D33, #3E2618); }
-  .hero-photo-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; -webkit-user-drag: none; user-select: none; }
-  @keyframes hero-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  /* Hero ala kekondangan: 2 kolom kartu tema bergulir vertikal, geser -50% mulus */
+  .hero-cols { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent); }
+  .hero-col { flex: 1; min-width: 0; overflow: hidden; }
+  .hero-col-track { display: flex; flex-direction: column; animation: hero-col-up 120s linear infinite; }
+  .hero-col-b { animation-duration: 150s; animation-direction: reverse; }
+  .hero-mini { display: block; padding-bottom: 1rem; }
+  .hero-mini-box { position: relative; display: block; width: 100%; aspect-ratio: 3/4; border-radius: 12px; overflow: hidden; background: linear-gradient(160deg, #1E4D33, #3E2618); }
+  .hero-mini-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; -webkit-user-drag: none; user-select: none; }
+  .hero-mini-name { display: block; margin-top: .45rem; font-size: .72rem; font-weight: 700; color: #E7E5E4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @keyframes hero-col-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
   .hero-fallback-name { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1rem; font-family: "Playfair Display", Georgia, serif; font-weight: 700; font-size: 1.1rem; color: #E7D9A8; }
-  /* Running text tanpa jeda: 2 bagian identik, geser -50% lalu mengulang mulus */
-  .rt-track { display: flex; width: max-content; animation: rt-x 30s linear infinite; }
-  .rt-half { display: flex; flex-shrink: 0; align-items: center; }
-  .rt-item { margin: 0 1rem; font-size: .875rem; font-weight: 700; letter-spacing: .05em; white-space: nowrap; }
-  .rt-star { color: #C9A227; }
-  @keyframes rt-x { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  @media (prefers-reduced-motion: reduce) { .rt-track { animation: none; } }
-  @media (prefers-reduced-motion: reduce) { .hero-track { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .hero-col-track { animation: none; } }
 </style>
 </head>
 <body class="bg-ivory text-stone-800 antialiased">
@@ -79,7 +75,7 @@ tailwind.config = {
       <a href="#syarat" class="hover:text-pine">S&amp;K</a>
     </nav>
     <div class="flex items-center gap-2">
-      <a href="{{ $waText('Halo, saya mau pesan undangan digital.') }}" target="_blank" rel="noopener" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-pine text-white text-sm font-bold hover:bg-pinedark transition">Pesan Sekarang</a>
+      <a href="/pesan" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-pine text-white text-sm font-bold hover:bg-pinedark transition">Pesan Sekarang</a>
       <button type="button" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="md:hidden p-2 rounded-lg text-stone-600 hover:bg-cream" aria-label="Menu">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -96,60 +92,50 @@ tailwind.config = {
 </header>
 
 <!-- ============ HERO ============ -->
-<section id="beranda" class="relative overflow-hidden">
-  <div class="absolute inset-0 bg-gradient-to-b from-cream via-ivory to-ivory"></div>
+<section id="beranda" class="relative overflow-hidden bg-[#1C2B21]">
   <div class="relative max-w-6xl mx-auto px-4 pt-14 pb-16 md:pt-20 md:pb-24 grid md:grid-cols-2 gap-10 items-center">
     <div>
-      <p class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pine/10 text-pine text-xs font-bold tracking-wide">UNDANGAN DIGITAL PERNIKAHAN</p>
-      <h1 class="font-serif font-bold text-4xl md:text-5xl leading-tight text-pinedark mt-4">{{ $hero['title'] }} <span class="gold-grad">{{ $hero['highlight'] }}</span></h1>
-      <p class="text-stone-600 leading-relaxed mt-4">{{ $hero['subtitle'] }}</p>
+      <p class="text-xs font-extrabold tracking-[0.25em] text-gold">UNDANGAN DIGITAL PERNIKAHAN</p>
+      <h1 class="font-serif font-bold text-4xl md:text-5xl leading-tight text-white mt-4">{{ $hero['title'] }} <span class="gold-grad">{{ $hero['highlight'] }}</span></h1>
+      <p class="text-stone-300 leading-relaxed mt-4">{{ $hero['subtitle'] }}</p>
       <div class="flex flex-wrap gap-3 mt-7">
-        <a href="#katalog" class="px-6 py-3 rounded-full bg-pine text-white font-bold text-sm hover:bg-pinedark transition">Lihat Katalog Tema</a>
-        <a href="{{ $waText('Halo, saya mau pesan undangan digital.') }}" target="_blank" rel="noopener" class="px-6 py-3 rounded-full border-2 border-pine text-pine font-bold text-sm hover:bg-pine hover:text-white transition">Pesan via WhatsApp</a>
+        <a href="#katalog" class="px-6 py-3 rounded-full bg-gold text-pinedark font-bold text-sm hover:brightness-110 transition">Pilih tema undangan &rarr;</a>
+        <a href="#cara-pesan" class="px-6 py-3 rounded-full border-2 border-white/25 text-white font-bold text-sm hover:border-white/60 transition">Cara pesan</a>
       </div>
-      <p class="text-xs text-stone-500 mt-4">Mulai {{ $harga['basic'] }} &bull; Tanpa perlu install aplikasi &bull; Dibuka lewat link</p>
+      <p class="text-xs text-stone-400 mt-6">Jawa &middot; Nusantara &middot; Islami &middot; Alam &middot; Modern &middot; Game &middot; Motion</p>
+      <p class="text-xs text-stone-400 mt-2">Mulai {{ $harga['basic'] }} &bull; Tanpa perlu install aplikasi &bull; Dibuka lewat link</p>
     </div>
-    <div class="relative mx-auto w-full max-w-[320px]">
-      <div class="relative">
-        <div class="rounded-[2rem] border-[10px] border-stone-900 bg-stone-900 shadow-2xl overflow-hidden">
-          <div id="heroStage" class="relative aspect-[3/4] bg-gradient-to-b from-[#3E2618] to-[#120b06]">
-            <div class="hero-track">
-              @foreach (array_merge($themes, $themes) as $t)
-                <a href="/hawa-adam?tema={{ $t['slug'] }}&to=tamu-demo" target="_blank" rel="noopener" class="hero-photo" title="Demo tema {{ $t['name'] }}">
-                  <span class="hero-photo-box">
-                    <span class="hero-fallback-name">{{ $t['name'] }}</span>
-                    <img src="{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}" alt="Tema {{ $t['name'] }}" draggable="false" onerror="this.remove()">
-                  </span>
-                </a>
-              @endforeach
-            </div>
+    <div class="hero-cols relative h-[420px] md:h-[540px] overflow-hidden">
+      <div class="flex gap-4 h-full">
+        <div class="hero-col">
+          <div class="hero-col-track hero-col-a">
+            @foreach (array_merge($themes, $themes) as $t)
+              <a href="/hawa-adam?tema={{ $t['slug'] }}&to=tamu-demo" target="_blank" rel="noopener" class="hero-mini" title="Demo tema {{ $t['name'] }}">
+                <span class="hero-mini-box">
+                  <span class="hero-fallback-name">{{ $t['name'] }}</span>
+                  <img src="{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}" alt="Tema {{ $t['name'] }}" draggable="false" onerror="this.remove()">
+                </span>
+                <span class="hero-mini-name">{{ $t['name'] }}</span>
+              </a>
+            @endforeach
           </div>
         </div>
-        <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg px-4 py-3 text-xs font-semibold flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> {{ count($themes) }} tema siap pakai
+        <div class="hero-col">
+          <div class="hero-col-track hero-col-b">
+            @foreach (array_merge($themes, $themes) as $t)
+              <a href="/hawa-adam?tema={{ $t['slug'] }}&to=tamu-demo" target="_blank" rel="noopener" class="hero-mini" title="Demo tema {{ $t['name'] }}">
+                <span class="hero-mini-box">
+                  <span class="hero-fallback-name">{{ $t['name'] }}</span>
+                  <img src="{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}" alt="Tema {{ $t['name'] }}" draggable="false" onerror="this.remove()">
+                </span>
+                <span class="hero-mini-name">{{ $t['name'] }}</span>
+              </a>
+            @endforeach
+          </div>
         </div>
       </div>
     </div>
   </div>
-</section>
-
-<!-- ============ RUNNING TEXT (tanpa jeda) ============ -->
-<div class="rt-strip bg-pine text-white overflow-hidden" aria-label="Fitur undangan">
-  <div class="rt-track">
-    <div class="rt-half"><span class="rt-item">Undangan Digital</span><span class="rt-star">✦</span><span class="rt-item">RSVP</span><span class="rt-star">✦</span><span class="rt-item">Galeri Foto</span><span class="rt-star">✦</span><span class="rt-item">Musik</span><span class="rt-star">✦</span><span class="rt-item">Amplop Digital</span><span class="rt-star">✦</span><span class="rt-item">Check-in QR</span><span class="rt-star">✦</span><span class="rt-item">Undangan Digital</span><span class="rt-star">✦</span><span class="rt-item">RSVP</span><span class="rt-star">✦</span><span class="rt-item">Galeri Foto</span><span class="rt-star">✦</span><span class="rt-item">Musik</span><span class="rt-star">✦</span><span class="rt-item">Amplop Digital</span><span class="rt-star">✦</span><span class="rt-item">Check-in QR</span><span class="rt-star">✦</span><span class="rt-item">Undangan Digital</span><span class="rt-star">✦</span><span class="rt-item">RSVP</span><span class="rt-star">✦</span><span class="rt-item">Galeri Foto</span><span class="rt-star">✦</span><span class="rt-item">Musik</span><span class="rt-star">✦</span><span class="rt-item">Amplop Digital</span><span class="rt-star">✦</span><span class="rt-item">Check-in QR</span><span class="rt-star">✦</span></div>
-    <div class="rt-half" aria-hidden="true"><span class="rt-item">Undangan Digital</span><span class="rt-star">✦</span><span class="rt-item">RSVP</span><span class="rt-star">✦</span><span class="rt-item">Galeri Foto</span><span class="rt-star">✦</span><span class="rt-item">Musik</span><span class="rt-star">✦</span><span class="rt-item">Amplop Digital</span><span class="rt-star">✦</span><span class="rt-item">Check-in QR</span><span class="rt-star">✦</span><span class="rt-item">Undangan Digital</span><span class="rt-star">✦</span><span class="rt-item">RSVP</span><span class="rt-star">✦</span><span class="rt-item">Galeri Foto</span><span class="rt-star">✦</span><span class="rt-item">Musik</span><span class="rt-star">✦</span><span class="rt-item">Amplop Digital</span><span class="rt-star">✦</span><span class="rt-item">Check-in QR</span><span class="rt-star">✦</span><span class="rt-item">Undangan Digital</span><span class="rt-star">✦</span><span class="rt-item">RSVP</span><span class="rt-star">✦</span><span class="rt-item">Galeri Foto</span><span class="rt-star">✦</span><span class="rt-item">Musik</span><span class="rt-star">✦</span><span class="rt-item">Amplop Digital</span><span class="rt-star">✦</span><span class="rt-item">Check-in QR</span><span class="rt-star">✦</span></div>
-  </div>
-</div>
-
-<!-- ============ STATS ============ -->
-<section class="border-y border-stone-200/70 bg-white">
-  <div class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-    <div><p class="font-serif font-bold text-3xl text-pinedark">{{ count($themes) }}</p><p class="text-xs text-stone-500 mt-1">Tema undangan</p></div>
-    <div><p class="font-serif font-bold text-3xl text-pinedark">{{ $videoCount }}</p><p class="text-xs text-stone-500 mt-1">Tema motion</p></div>
-    <div><p class="font-serif font-bold text-3xl text-pinedark">QR</p><p class="text-xs text-stone-500 mt-1">Check-in + monitor panitia</p></div>
-    <div><p class="font-serif font-bold text-3xl text-pinedark">1 hari</p><p class="text-xs text-stone-500 mt-1">Undangan jadi*</p></div>
-  </div>
-  <p class="text-center text-[11px] text-stone-400 pb-4 px-4">*Setelah data dan pembayaran lengkap.</p>
 </section>
 
 <!-- ============ KATALOG ============ -->
@@ -169,27 +155,32 @@ tailwind.config = {
   <div id="themeGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 mt-8">
     @foreach ($themes as $t)
       <article class="theme-card bg-white rounded-[20px] overflow-hidden border border-stone-200/80 shadow-sm hover:shadow-xl transition" data-cat="{{ $t['cat'] }}" data-video="{{ $t['video'] ? '1' : '0' }}">
-        <a href="/hawa-adam?tema={{ $t['slug'] }}&to=tamu-demo" target="_blank" rel="noopener" class="relative block bg-gradient-to-b from-pine to-pinedark aspect-[3/4]" title="Buka demo tema {{ $t['name'] }}">
-          <img src="{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}" alt="Tema {{ $t['name'] }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.remove()">
+        <a href="/hawa-adam?tema={{ $t['slug'] }}&to=tamu-demo" target="_blank" rel="noopener" class="relative block bg-gradient-to-b from-pine to-pinedark aspect-square" title="Buka demo tema {{ $t['name'] }}">
+          <img src="{{ asset('images/landing/themes/' . $t['slug'] . '.jpg') }}" alt="Tema {{ $t['name'] }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">
           @if ($t['badge'])
             <span class="absolute top-3 right-3 text-[10px] font-bold px-2 py-1 rounded-full bg-pinedark/85 text-goldsoft backdrop-blur-sm">{{ $t['badge'] }}</span>
           @endif
         </a>
         <div class="p-4">
-          <h3 class="font-bold text-[15px] text-stone-900 leading-snug">{{ $t['name'] }}</h3>
+          <div class="flex items-center gap-2">
+            <span class="card-cart shrink-0 w-7 h-7 rounded-lg bg-[#F5EFE3] flex items-center justify-center">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1E4D33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l2.4 12.4A2 2 0 0 0 9.36 17H18a2 2 0 0 0 1.96-1.6L21.5 8H6"/><circle cx="10" cy="21" r="1.6"/><circle cx="18" cy="21" r="1.6"/></svg>
+            </span>
+            <h3 class="font-bold text-[15px] text-stone-900 leading-snug">{{ $t['name'] }}</h3>
+          </div>
           <p class="text-[11px] text-stone-500 mt-0.5">Tema {{ $t['cat'] }}</p>
-          <p class="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <span class="font-extrabold text-lg text-stone-900">{{ $t['video'] ? $harga['premium'] : $harga['basic'] }}</span>
-            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-600">50%</span>
+          <p class="mt-2"><span class="font-extrabold text-lg text-stone-900">{{ $t['video'] ? $harga['premium'] : $harga['basic'] }}</span></p>
+          <p class="mt-1 flex items-center gap-2">
+            <span class="card-disc text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-600">50%</span>
             <span class="text-xs text-stone-400 line-through">{{ $t['video'] ? $hargaCoret['premium'] : $hargaCoret['basic'] }}</span>
           </p>
           <div class="border-t border-stone-200/80 mt-3 pt-3 space-y-2">
             <a href="/hawa-adam?tema={{ $t['slug'] }}&to=tamu-demo" target="_blank" rel="noopener" class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-white border border-stone-300 text-stone-700 text-xs font-bold hover:border-pine transition">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
               Demo
             </a>
-            <a href="{{ $waText('Halo, saya mau pesan undangan digital tema ' . $t['name'] . ' (Paket ' . ($t['video'] ? 'Premium' : 'Basic') . ').') }}" target="_blank" rel="noopener" class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-pine text-white text-xs font-bold hover:bg-pinedark transition">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18v14H3z"/><path d="m3 7 9 6 9-6"/></svg>
+            <a href="/pesan?tema={{ $t['slug'] }}&paket={{ $t['video'] ? 'Premium' : 'Basic' }}" class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-pine text-white text-xs font-bold hover:bg-pinedark transition">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M3 5h18v14H3z"/><path d="m3 7 9 6 9-6"/></svg>
               Pesan
             </a>
           </div>
@@ -223,7 +214,7 @@ tailwind.config = {
           <li>✓ Amplop digital / gift &amp; QRIS</li>
           <li>✓ Link undangan + nama tamu</li>
         </ul>
-        <a href="{{ $waText('Halo, saya mau pesan undangan digital Paket Basic (' . $harga['basic'] . ').') }}" target="_blank" rel="noopener" class="mt-7 block text-center px-4 py-3 rounded-full border-2 border-pine text-pine font-bold text-sm hover:bg-pine hover:text-white transition">Pesan Basic</a>
+        <a href="/pesan?paket=Basic" class="mt-7 block text-center px-4 py-3 rounded-full border-2 border-pine text-pine font-bold text-sm hover:bg-pine hover:text-white transition">Pesan Basic</a>
       </div>
       <!-- Premium -->
       <div class="bg-pinedark text-white rounded-3xl p-6 flex flex-col relative shadow-xl md:-translate-y-2">
@@ -238,7 +229,7 @@ tailwind.config = {
           <li>✓ Link generator + kirim WA massal</li>
           <li>✓ Hitung mundur &amp; live streaming</li>
         </ul>
-        <a href="{{ $waText('Halo, saya mau pesan undangan digital Paket Premium (' . $harga['premium'] . ').') }}" target="_blank" rel="noopener" class="mt-7 block text-center px-4 py-3 rounded-full bg-gold text-pinedark font-bold text-sm hover:brightness-110 transition">Pesan Premium</a>
+        <a href="/pesan?paket=Premium" class="mt-7 block text-center px-4 py-3 rounded-full bg-gold text-pinedark font-bold text-sm hover:brightness-110 transition">Pesan Premium</a>
       </div>
       <!-- Eksklusif -->
       <div class="bg-white rounded-3xl border border-stone-200 p-6 flex flex-col">
@@ -252,7 +243,7 @@ tailwind.config = {
           <li>✓ Prioritas pengerjaan</li>
           <li>✓ Konsultasi sampai hari H</li>
         </ul>
-        <a href="{{ $waText('Halo, saya mau pesan undangan digital Paket Eksklusif (' . $harga['eksklusif'] . ').') }}" target="_blank" rel="noopener" class="mt-7 block text-center px-4 py-3 rounded-full border-2 border-pine text-pine font-bold text-sm hover:bg-pine hover:text-white transition">Pesan Eksklusif</a>
+        <a href="/pesan?paket=Eksklusif" class="mt-7 block text-center px-4 py-3 rounded-full border-2 border-pine text-pine font-bold text-sm hover:bg-pine hover:text-white transition">Pesan Eksklusif</a>
       </div>
     </div>
     <p class="text-center text-xs text-stone-500 mt-6">Harga dapat berubah — hubungi kami untuk penawaran terbaru dan promo.</p>
@@ -294,7 +285,7 @@ tailwind.config = {
     <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-4 mt-10">
       @foreach ([
         ['1', 'Pilih Tema', 'Pilih tema favoritmu dari katalog di atas.'],
-        ['2', 'Chat WhatsApp', 'Klik Pesan — kirim nama mempelai, tanggal, dan tema pilihan.'],
+        ['2', 'Isi Form Pesanan', 'Klik Pesan — isi tema, paket, data mempelai, dan metode pembayaran.'],
         ['3', 'Isi Data & Bayar', 'Lengkapi data acara, foto, dan lakukan pembayaran.'],
         ['4', 'Undangan Jadi', 'Terima link undangan, bagikan ke tamu lewat WhatsApp.'],
       ] as $s)
@@ -306,7 +297,7 @@ tailwind.config = {
       @endforeach
     </div>
     <div class="text-center mt-10">
-      <a href="{{ $waText('Halo, saya mau pesan undangan digital.') }}" target="_blank" rel="noopener" class="inline-block px-8 py-3.5 rounded-full bg-pine text-white font-bold text-sm hover:bg-pinedark transition">Mulai Pesan Sekarang</a>
+      <a href="/pesan" class="inline-block px-8 py-3.5 rounded-full bg-pine text-white font-bold text-sm hover:bg-pinedark transition">Mulai Pesan Sekarang</a>
     </div>
   </div>
 </section>
@@ -328,6 +319,10 @@ tailwind.config = {
       <p class="text-sm text-stone-600 leading-relaxed mt-2">Tamu menerima link personal lewat WhatsApp — dibuka di browser HP, tanpa install aplikasi. Nama tamu tampil otomatis di undangan.</p>
     </details>
     <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
+      <summary class="font-bold text-sm cursor-pointer">Bagaimana cara pembayarannya?</summary>
+      <p class="text-sm text-stone-600 leading-relaxed mt-2">Pembayaran lunas di awal via <b class="text-stone-800">Transfer Bank, QRIS, DANA, GoPay, atau ShopeePay</b>. Pilih metodenya di halaman pesanan — detail rekening/nomor tampil di sana, atau dikirim via WhatsApp setelah pesanan dikonfirmasi.</p>
+    </details>
+    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
       <summary class="font-bold text-sm cursor-pointer">Apa itu check-in QR?</summary>
       <p class="text-sm text-stone-600 leading-relaxed mt-2">Panitia di pintu masuk cukup scan QR di undangan tamu (atau ketik kode undangan). Kehadiran tercatat otomatis dan tampil di layar monitor acara.</p>
     </details>
@@ -335,20 +330,63 @@ tailwind.config = {
 </section>
 
 <!-- ============ SYARAT & KETENTUAN ============ -->
-<section id="syarat" class="max-w-3xl mx-auto px-4 py-16">
-  <h2 class="font-serif font-bold text-3xl md:text-4xl text-pinedark text-center">Syarat &amp; Ketentuan</h2>
-  <p class="text-stone-600 mt-3 text-center text-sm">Dengan memesan undangan di undangankamu, kamu menyetujui ketentuan berikut.</p>
-  <ol class="list-decimal list-outside ml-5 mt-8 space-y-4 text-sm text-stone-700 leading-relaxed">
-    <li><b class="text-pinedark">Pemesanan.</b> Pesan lewat WhatsApp dengan menyebutkan tema dan paket pilihan. Data acara (nama mempelai, tanggal, foto, dan lain-lain) dikirim oleh pemesan.</li>
-    <li><b class="text-pinedark">Pembayaran.</b> Harga sekali bayar per undangan, sesuai paket yang dipilih. Pembayaran lunas sebelum pengerjaan dimulai. Harga dapat berubah — harga yang berlaku adalah yang disepakati saat pemesanan.</li>
-    <li><b class="text-pinedark">Pengerjaan.</b> Umumnya 1 hari setelah data dan pembayaran lengkap. Paket Eksklusif dengan motion custom menyesuaikan antrean.</li>
-    <li><b class="text-pinedark">Revisi.</b> Perbaikan data (nama, tanggal, foto) dilayani selama masa aktif undangan. Ganti tema dibicarakan saat pemesanan.</li>
-    <li><b class="text-pinedark">Masa aktif.</b> Undangan aktif sampai acara selesai, sesuai paket yang dipilih.</li>
-    <li><b class="text-pinedark">Pembatalan.</b> Bila pesanan dibatalkan setelah pengerjaan dimulai, pembayaran tidak dapat dikembalikan.</li>
-    <li><b class="text-pinedark">Konten.</b> Foto, musik, dan data yang dikirim adalah milik pemesan; pemesan menjamin konten tersebut tidak melanggar hak cipta atau hukum yang berlaku.</li>
-    <li><b class="text-pinedark">Layanan.</b> Dukungan selama masa aktif lewat WhatsApp. Fitur yang didapat mengikuti paket yang dipilih (mis. check-in QR dan link generator hanya di paket Premium dan Eksklusif).</li>
-  </ol>
-  <p class="text-xs text-stone-500 mt-8 text-center">Ada yang kurang jelas? Tanyakan langsung lewat WhatsApp sebelum memesan.</p>
+<section id="syarat" class="bg-[#E9EDE7]">
+  <div class="max-w-6xl mx-auto px-4 py-16">
+    <p class="text-xs font-extrabold tracking-[0.25em] text-gold">SYARAT &amp; KETENTUAN</p>
+    <h2 class="font-serif font-bold text-3xl md:text-4xl text-pinedark mt-2">Syarat &amp; Ketentuan</h2>
+    <p class="text-stone-600 mt-3 text-sm">Dengan memesan undangan di undangankamu, kamu menyetujui ketentuan berikut.</p>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-10">
+      <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
+        <div class="flex items-start justify-between gap-3">
+          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#E4EAE2] text-pinedark font-bold flex items-center justify-center">01</span>
+          <span class="text-[13px] font-medium text-stone-700 text-right">Masa Aktif &amp; Kuota</span>
+        </div>
+        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Ketentuan Umum &amp; Masa Aktif</h3>
+        <p class="text-sm text-stone-600 leading-relaxed mt-3">Masa aktif undangan <b class="text-stone-800">6 bulan (Basic)</b> sampai <b class="text-stone-800">1 (satu) tahun (Premium &amp; Eksklusif)</b> sejak tanggal pemesanan/aktivasi, dengan kuota sebar nama tamu <b class="text-stone-800">tanpa batas (unlimited)</b> serta kapasitas foto dan fitur sesuai paket yang dipilih — check-in QR dan Link Generator hanya untuk paket Premium dan Eksklusif.</p>
+      </article>
+      <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
+        <div class="flex items-start justify-between gap-3">
+          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#E4EAE2] text-pinedark font-bold flex items-center justify-center">02</span>
+          <span class="text-[13px] font-medium text-stone-700 text-right">Pengerjaan &amp; Revisi</span>
+        </div>
+        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Pemesanan &amp; Pengerjaan</h3>
+        <p class="text-sm text-stone-600 leading-relaxed mt-3">Pesan lewat halaman pesanan (diteruskan ke WhatsApp) dengan menyebutkan tema dan paket pilihan. Undangan dikerjakan dalam estimasi <b class="text-stone-800">1 hari</b> setelah data dan pembayaran lengkap (paket Eksklusif dengan motion custom menyesuaikan antrean), termasuk revisi minor &amp; mayor gratis dalam batas ketentuan selama masa aktif.</p>
+      </article>
+      <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
+        <div class="flex items-start justify-between gap-3">
+          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#E4EAE2] text-pinedark font-bold flex items-center justify-center">03</span>
+          <span class="text-[13px] font-medium text-stone-700 text-right">Tanggung Jawab Materi</span>
+        </div>
+        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Kelengkapan &amp; Akurasi Data</h3>
+        <p class="text-sm text-stone-600 leading-relaxed mt-3">Pemesan wajib memastikan kebenaran penulisan nama, gelar, tanggal, jam acara, titik koordinat Google Maps, serta resolusi foto sebelum undangan dipublikasikan atau diproses.</p>
+      </article>
+      <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
+        <div class="flex items-start justify-between gap-3">
+          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#E4EAE2] text-pinedark font-bold flex items-center justify-center">04</span>
+          <span class="text-[13px] font-medium text-stone-700 text-right">Perlindungan Data</span>
+        </div>
+        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Privasi &amp; Keamanan Data</h3>
+        <p class="text-sm text-stone-600 leading-relaxed mt-3">Kami menjamin kerahasiaan seluruh data pribadi mempelai, nomor rekening amplop digital, maupun daftar tamu undangan dan <b class="text-stone-800">tidak membagikannya ke pihak ketiga</b>.</p>
+      </article>
+      <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
+        <div class="flex items-start justify-between gap-3">
+          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#E4EAE2] text-pinedark font-bold flex items-center justify-center">05</span>
+          <span class="text-[13px] font-medium text-stone-700 text-right">Hak Cipta &amp; Etika</span>
+        </div>
+        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Kekayaan Intelektual &amp; Larangan</h3>
+        <p class="text-sm text-stone-600 leading-relaxed mt-3">Seluruh kode sumber, template, ilustrasi, dan animasi motion dilindungi hak cipta. Dilarang memperbanyak template atau mengunggah konten bermuatan SARA/ilegal. Foto, musik, dan data yang dikirim pemesan tetap menjadi milik pemesan.</p>
+      </article>
+      <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
+        <div class="flex items-start justify-between gap-3">
+          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#E4EAE2] text-pinedark font-bold flex items-center justify-center">06</span>
+          <span class="text-[13px] font-medium text-stone-700 text-right">Pembayaran &amp; Refund</span>
+        </div>
+        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Pembayaran &amp; Pengembalian Dana</h3>
+        <p class="text-sm text-stone-600 leading-relaxed mt-3">Pembayaran lunas di awal sebelum aktivasi atau pengerjaan dimulai. Dana yang telah dibayarkan tidak dapat dikembalikan <b class="text-stone-800">(non-refundable)</b> setelah layanan aktif/diproses. Harga dapat berubah — harga yang berlaku adalah yang disepakati saat pemesanan.</p>
+      </article>
+    </div>
+    <p class="text-xs text-stone-500 mt-8 text-center">Ada yang kurang jelas? Tanyakan langsung lewat WhatsApp sebelum memesan.</p>
+  </div>
 </section>
 
 <!-- ============ FOOTER ============ -->

@@ -55,4 +55,7 @@ Route::get('/checkin/{slug}/{token}/monitor', [FrontController::class, 'checkinM
 // --- Landing page penjualan "undangankamu" (katalog + harga) ---
 // Undangan default tetap bisa dibuka lewat /hawa-adam.
 Route::get('/', [FrontController::class, 'landing']);
+// --- Halaman pesanan (form -> WhatsApp) ---
+// HARUS di atas /{slug} supaya "pesan" tidak dibaca sebagai slug undangan.
+Route::get('/pesan', [FrontController::class, 'order']);
 Route::get('/{slug}', [FrontController::class, 'index']);

@@ -182,6 +182,66 @@ class FrontController extends Controller
     }
 
     /**
+     * Halaman pesanan "undangankamu" — form pilih tema + paket + data
+     * mempelai + metode pembayaran, lalu diteruskan ke WhatsApp pemesanan.
+     * URL: /pesan (preselect: ?tema={slug}&paket={Basic|Premium|Eksklusif}).
+     * Tanpa backend baru: pesanan TIDAK disimpan di database, hanya
+     * disusun jadi pesan WA. Detail rekening/QRIS/e-wallet diatur dari
+     * tab "Landing Page" di admin (kunci landing_pay_*).
+     */
+    public function order(Request $request)
+    {
+        $themes = self::catalogThemes();
+        $eff = self::landingSettingsEffective($themes);
+        $waNumber = $eff['wa'];
+        $hargaNum = [
+            'basic' => $eff['harga_basic'],
+            'premium' => $eff['harga_premium'],
+            'eksklusif' => $eff['harga_eksklusif'],
+        ];
+        $fmt = function ($n) { return 'Rp ' . number_format($n, 0, ',', '.'); };
+        $harga = [
+            'basic' => $fmt($hargaNum['basic']),
+            'premium' => $fmt($hargaNum['premium']),
+            'eksklusif' => $fmt($hargaNum['eksklusif']),
+        ];
+        $hargaCoret = [
+            'basic' => $fmt($hargaNum['basic'] * 2),
+            'premium' => $fmt($hargaNum['premium'] * 2),
+            'eksklusif' => $fmt($hargaNum['eksklusif'] * 2),
+        ];
+        // Tema terpilih: hanya slug katalog yang dikenal (default = Klasik Emas).
+        $selSlug = (string) $request->query('tema', 'default');
+        $selTheme = null;
+        foreach ($themes as $t) {
+            if ($t['slug'] === $selSlug) { $selTheme = $t; break; }
+        }
+        if ($selTheme === null) $selTheme = $themes[0];
+        // Paket terpilih: ?paket=; tanpa itu, tema motion -> Premium, lainnya Basic.
+        $paket = (string) $request->query('paket', '');
+        if (!in_array($paket, ['Basic', 'Premium', 'Eksklusif'], true)) {
+            $paket = !empty($selTheme['video']) ? 'Premium' : 'Basic';
+        }
+        // Detail pembayaran siap tampil ('' = belum diatur di admin — halaman
+        // menampilkan "detail dikirim via WhatsApp setelah pesanan dikonfirmasi").
+        $bankDetail = '';
+        if ($eff['pay_bank_number'] !== '') {
+            $bankDetail = trim($eff['pay_bank'] . ' — ' . $eff['pay_bank_number']);
+            if ($eff['pay_bank_holder'] !== '') $bankDetail .= ' a.n. ' . $eff['pay_bank_holder'];
+        } elseif ($eff['pay_bank'] !== '') {
+            $bankDetail = $eff['pay_bank'];
+        }
+        $pay = [
+            'bank' => $bankDetail,
+            'qris' => $eff['pay_qris'],
+            'dana' => $eff['pay_dana'],
+            'gopay' => $eff['pay_gopay'],
+            'shopeepay' => $eff['pay_shopeepay'],
+        ];
+        return view('front.order', compact('waNumber', 'themes', 'harga', 'hargaNum', 'hargaCoret', 'selTheme', 'paket', 'pay'));
+    }
+
+    /**
      * Settings landing page (disimpan di undangan utama/ID 1): key => value.
      * Kosong bila undangan 1 belum ada — pemanggil memakai fallback.
      */
@@ -219,6 +279,15 @@ class FrontController extends Controller
             'hero_highlight' => !empty($s['landing_hero_highlight']) ? $s['landing_hero_highlight'] : 'tanpa ribet.',
             'hero_subtitle' => !empty($s['landing_hero_subtitle']) ? $s['landing_hero_subtitle'] : 'Pilih dari ' . count($themes) . ' tema — Jawa klasik sampai game — lengkap dengan RSVP, galeri foto, musik, amplop digital, sampai check-in QR untuk panitia. Jadi dalam hitungan jam, bukan minggu.',
             'video_count' => $video,
+            // Metode pembayaran usaha (diatur dari tab Landing admin; kosong
+            // = belum diatur — halaman pesanan menampilkan catatan WA).
+            'pay_bank' => $s['landing_pay_bank'] ?? '',
+            'pay_bank_number' => $s['landing_pay_bank_number'] ?? '',
+            'pay_bank_holder' => $s['landing_pay_bank_holder'] ?? '',
+            'pay_qris' => $s['landing_pay_qris'] ?? '',
+            'pay_dana' => $s['landing_pay_dana'] ?? '',
+            'pay_gopay' => $s['landing_pay_gopay'] ?? '',
+            'pay_shopeepay' => $s['landing_pay_shopeepay'] ?? '',
         ];
     }
 
