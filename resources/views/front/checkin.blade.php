@@ -361,6 +361,7 @@ $ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
     <div class="card">
       <h3>RSVP</h3>
       <div id="rep-rsvp"><div class="empty">Memuat RSVP...</div></div>
+      <div class="pager" id="rsvp-pager" style="display:none"></div>
     </div>
     <div class="card">
       <h3>Per Petugas</h3>
@@ -916,6 +917,28 @@ function renderReport(){
   document.getElementById('rep-pending-count').textContent = pend.length ? pend.length + ' tamu belum hadir' : '';
 }
 // --- RSVP di Laporan (endpoint api/rsvp GET, daftar konfirmasi undangan) ---
+var RSVP_PER_PAGE = 10, rsvpPage = 1;
+
+function goRsvpPage(p){
+  rsvpPage = p;
+  renderRsvpReport();
+}
+
+function renderRsvpPager(pages){
+  var pg = document.getElementById('rsvp-pager');
+  if(!pg) return;
+  if(pages <= 1){ pg.style.display = 'none'; pg.innerHTML = ''; return; }
+  pg.style.display = 'flex';
+  var h = '<button type="button" onclick="goRsvpPage(' + (rsvpPage - 1) + ')"' + (rsvpPage <= 1 ? ' disabled' : '') + '>&#8249;</button>';
+  // Jendela nomor: maks 5 halaman di sekitar halaman aktif.
+  var start = Math.max(1, Math.min(rsvpPage - 2, pages - 4));
+  var end = Math.min(pages, start + 4);
+  for(var i = start; i <= end; i++){
+    h += '<button type="button" class="' + (i === rsvpPage ? 'on' : '') + '" onclick="goRsvpPage(' + i + ')">' + i + '</button>';
+  }
+  h += '<button type="button" onclick="goRsvpPage(' + (rsvpPage + 1) + ')"' + (rsvpPage >= pages ? ' disabled' : '') + '>&#8250;</button>';
+  pg.innerHTML = h;
+}
 function loadRsvpReport(){
   fetch('/api/rsvp?inv_id=' + INV_ID)
     .then(function(r){ return r.json(); })
@@ -929,19 +952,25 @@ function renderRsvpReport(){
   var box = document.getElementById('rep-rsvp');
   if(!box) return;
   var rows = rsvpData || [];
-  if(!rows.length){ box.innerHTML = '<div class="empty">Belum ada RSVP masuk.</div>'; return; }
+  if(!rows.length){ box.innerHTML = '<div class="empty">Belum ada RSVP masuk.</div>'; renderRsvpPager(1); return; }
   var hadir = rows.filter(function(r){ return r.status === 'hadir'; });
   var tidak = rows.filter(function(r){ return r.status !== 'hadir'; });
   var orang = 0;
   hadir.forEach(function(r){ orang += parseInt(r.jumlah_tamu, 10) || 1; });
   var html = '<div class="rep-summary" style="margin-bottom:8px"><b>' + rows.length + '</b> konfirmasi — Hadir: <b>' + hadir.length + '</b> (' + orang + ' orang) • Berhalangan: <b>' + tidak.length + '</b></div>';
-  html += hadir.map(function(r){
-    return '<div class="guest-item"><span class="gname">' + esc(r.nama) + '</span><span class="badge in">Hadir</span><span class="gtime">' + (parseInt(r.jumlah_tamu, 10) || 1) + ' orang</span></div>';
-  }).join('');
-  html += tidak.map(function(r){
+  // Urutan: Hadir dulu, lalu Berhalangan; paginasi 10 per halaman.
+  var ordered = hadir.concat(tidak);
+  var pages = Math.max(1, Math.ceil(ordered.length / RSVP_PER_PAGE));
+  if(rsvpPage > pages) rsvpPage = pages;
+  var slice = ordered.slice((rsvpPage - 1) * RSVP_PER_PAGE, rsvpPage * RSVP_PER_PAGE);
+  html += slice.map(function(r){
+    if(r.status === 'hadir'){
+      return '<div class="guest-item"><span class="gname">' + esc(r.nama) + '</span><span class="badge in">Hadir</span><span class="gtime">' + (parseInt(r.jumlah_tamu, 10) || 1) + ' orang</span></div>';
+    }
     return '<div class="guest-item"><span class="gname">' + esc(r.nama) + '</span><span class="badge out">Berhalangan</span><span class="gtime">' + (r.alasan ? 'Alasan: ' + esc(r.alasan) : '') + '</span></div>';
   }).join('');
   box.innerHTML = html;
+  renderRsvpPager(pages);
 }
 // --- Petugas aktif: dari laporan bila sudah dimuat, fallback dari recent ---
 function renderActiveOperators(){
