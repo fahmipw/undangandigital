@@ -268,17 +268,11 @@ tailwind.config = {
     <p class="text-stone-600 mt-3">Bukan sekadar kartu online — satu sistem untuk undangan dan panitia.</p>
   </div>
   <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-10">
-    <div class="bg-navydark text-white rounded-2xl p-5 md:col-span-2">
-      <span class="w-11 h-11 rounded-xl bg-gold text-navydark flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></span>
-      <h3 class="font-bold text-sm mt-3">Link Generator Tamu</h3>
-      <p class="text-xs text-white/70 leading-relaxed mt-1.5">Tautan undangan personal untuk setiap tamu — dibuat otomatis, siap disebar.</p>
-      <ul class="text-xs text-white/85 space-y-1.5 mt-3">
-        <li>✓ Nama tamu tampil otomatis saat undangan dibuka</li>
-        <li>✓ Buat link massal sekaligus, salin semua link, kirim via WhatsApp</li>
-        <li>✓ Lacak status kirim: terkirim / belum terkirim</li>
-        <li>✓ Edit nama tamu tanpa mengubah tautan</li>
-      </ul>
-      <p class="text-[11px] text-goldsoft font-bold mt-3">Khusus paket Premium &amp; Eksklusif</p>
+    <div class="bg-white rounded-2xl border border-stone-200/80 p-5">
+      <span class="w-11 h-11 rounded-xl bg-navy text-gold flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></span>
+      <h3 class="font-bold text-sm text-navydark mt-3">Link Generator Tamu</h3>
+      <p class="text-xs text-stone-600 leading-relaxed mt-1.5">Link undangan personal per tamu — dibuat massal, siap disebar via WhatsApp.</p>
+      <p class="inline-block text-[11px] font-bold px-2 py-1 rounded-full bg-gold/15 text-[#9A7B1E] mt-3">Khusus paket Premium &amp; Eksklusif</p>
     </div>
     @foreach ([
       ['RSVP & Ucapan', 'Tamu konfirmasi hadir & kirim doa, langsung masuk WhatsApp mempelai.', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/><path d="m9 12 2 2 4-4"/></svg>'],

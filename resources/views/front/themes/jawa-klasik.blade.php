@@ -1366,5 +1366,6 @@ document.querySelectorAll(".copy-btn").forEach(btn=>{
   }
 })();
 </script>
+<p class="uk-copyright" style="text-align:center;font-size:11px;line-height:1.6;opacity:.6;padding:14px 16px 96px;margin:0;">© 2026 UndanganKamu — Dibuat dengan ♥ untuk Momen Istimewa.</p>
 </body>
 </html>

@@ -1141,6 +1141,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
   <div id="mcLbCount" style="position:absolute;bottom:20px;left:0;right:0;text-align:center;color:rgba(255,255,255,.8);font-size:13px;letter-spacing:.2em"></div>
   <div style="position:absolute;bottom:48px;left:0;right:0;text-align:center;color:rgba(255,255,255,.7);font-size:12px;letter-spacing:.12em;pointer-events:none">&#8249; Geser untuk foto berikutnya &#8250;</div>
 </div>
+<p class="uk-copyright" style="text-align:center;font-size:11px;line-height:1.6;opacity:.6;padding:14px 16px 96px;margin:0;">© 2026 UndanganKamu — Dibuat dengan ♥ untuk Momen Istimewa.</p>
 </body>
 </script>
 </body>
