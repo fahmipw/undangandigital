@@ -1,6 +1,6 @@
 @php
 // Halaman pesanan "undangankamu" — form -> WhatsApp.
-// $themes, $harga, $hargaNum, $hargaCoret, $selTheme, $paket, $pay, $waNumber
+// $themes, $harga, $hargaNum, $hargaCoret, $selTheme, $paket, $waNumber
 // datang dari FrontController::order(). Pesanan TIDAK disimpan di database.
 $methods = [
     ['key' => 'bank', 'label' => 'Transfer Bank'],
@@ -59,7 +59,7 @@ tailwind.config = {
 
 <main class="max-w-3xl mx-auto px-4 py-10 md:py-14">
   <h1 class="font-serif font-bold text-3xl md:text-4xl text-pinedark">Pesan Undangan</h1>
-  <p class="text-stone-600 mt-3 text-sm leading-relaxed">Isi form di bawah ini, lalu pesananmu diteruskan ke WhatsApp kami. Pembayaran lunas di awal — detail rekening/nomor pembayaran tampil di bawah sesuai metode yang kamu pilih.</p>
+  <p class="text-stone-600 mt-3 text-sm leading-relaxed">Isi form di bawah ini, lalu pesananmu diteruskan ke WhatsApp kami. Pembayaran lunas di awal — detail rekening/nomor dikirim via WhatsApp setelah pesanan dikonfirmasi.</p>
 
   <form id="orderForm" class="mt-8 space-y-8" novalidate>
     <!-- 1. Tema -->
@@ -97,8 +97,8 @@ tailwind.config = {
             <span class="block font-extrabold text-pinedark mt-0.5">{{ $harga[$key] }}</span>
             <span class="block text-xs text-stone-400 line-through">{{ $hargaCoret[$key] }}</span>
             <span class="block text-[11px] text-stone-500 mt-1.5 leading-relaxed">
-              @if ($key === 'basic') Tema non-motion, fitur dasar.
-              @elseif ($key === 'premium') Tema motion + check-in QR.
+              @if ($key === 'basic') Semua 35 tema + fitur dasar.
+              @elseif ($key === 'premium') Semua tema + check-in QR &amp; Link Generator.
               @else Motion opening custom + semua fitur.
               @endif
             </span>
@@ -137,19 +137,12 @@ tailwind.config = {
     <!-- 4. Pembayaran -->
     <section class="bg-white rounded-3xl border border-stone-200/80 p-6">
       <h2 class="font-bold text-pinedark"><span class="inline-flex w-7 h-7 rounded-full bg-pine text-white text-sm items-center justify-center mr-2">4</span>Metode Pembayaran</h2>
-      <p class="text-xs text-stone-500 mt-2">Pembayaran lunas di awal. Pilih salah satu — detail rekening/nomor tampil di bawah.</p>
+      <p class="text-xs text-stone-500 mt-2">Pembayaran lunas di awal. Pilih salah satu — detail rekening/nomor dikirim via WhatsApp setelah pesanan dikonfirmasi.</p>
       <div class="space-y-3 mt-4">
         @foreach ($methods as $m)
-          <label class="pay-card flex items-start gap-3 border border-stone-200 rounded-2xl p-4 cursor-pointer transition">
-            <input type="radio" name="pay" value="{{ $m['label'] }}" class="accent-[#1E4D33] mt-1" required>
-            <span class="min-w-0">
-              <span class="block font-bold text-sm">{{ $m['label'] }}</span>
-              @if (!empty($pay[$m['key']]))
-                <span class="block text-xs text-stone-600 mt-0.5 break-words">{{ $m['key'] === 'qris' ? 'QRIS a.n. ' : '' }}{{ $pay[$m['key']] }}</span>
-              @else
-                <span class="block text-xs text-stone-500 mt-0.5">Detail dikirim via WhatsApp setelah pesanan dikonfirmasi.</span>
-              @endif
-            </span>
+          <label class="pay-card flex items-center gap-3 border border-stone-200 rounded-2xl p-4 cursor-pointer transition">
+            <input type="radio" name="pay" value="{{ $m['label'] }}" class="accent-[#1E4D33]" required>
+            <span class="font-bold text-sm">{{ $m['label'] }}</span>
           </label>
         @endforeach
       </div>

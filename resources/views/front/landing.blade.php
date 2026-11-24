@@ -169,17 +169,17 @@ tailwind.config = {
             <h3 class="font-bold text-[15px] text-stone-900 leading-snug">{{ $t['name'] }}</h3>
           </div>
           <p class="text-[11px] text-stone-500 mt-0.5">Tema {{ $t['cat'] }}</p>
-          <p class="mt-2"><span class="font-extrabold text-lg text-stone-900">{{ $t['video'] ? $harga['premium'] : $harga['basic'] }}</span></p>
+          <p class="mt-2"><span class="font-extrabold text-lg text-stone-900">{{ $harga['basic'] }}</span></p>
           <p class="mt-1 flex items-center gap-2">
             <span class="card-disc text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-600">50%</span>
-            <span class="text-xs text-stone-400 line-through">{{ $t['video'] ? $hargaCoret['premium'] : $hargaCoret['basic'] }}</span>
+            <span class="text-xs text-stone-400 line-through">{{ $hargaCoret['basic'] }}</span>
           </p>
           <div class="border-t border-stone-200/80 mt-3 pt-3 space-y-2">
             <a href="/hawa-adam?tema={{ $t['slug'] }}&to=tamu-demo" target="_blank" rel="noopener" class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-white border border-stone-300 text-stone-700 text-xs font-bold hover:border-pine transition">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
               Demo
             </a>
-            <a href="/pesan?tema={{ $t['slug'] }}&paket={{ $t['video'] ? 'Premium' : 'Basic' }}" class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-pine text-white text-xs font-bold hover:bg-pinedark transition">
+            <a href="/pesan?tema={{ $t['slug'] }}&paket=Basic" class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-pine text-white text-xs font-bold hover:bg-pinedark transition">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><path d="M3 5h18v14H3z"/><path d="m3 7 9 6 9-6"/></svg>
               Pesan
             </a>
@@ -208,11 +208,14 @@ tailwind.config = {
         <p class="font-serif font-bold text-4xl text-pinedark mt-3">{{ $harga['basic'] }}</p>
         <p class="text-xs text-stone-500 mt-1">per undangan</p>
         <ul class="text-sm text-stone-600 space-y-2.5 mt-6 flex-1">
-          <li>✓ 1 tema standar (non-motion)</li>
+          <li>✓ Semua 35 tema, termasuk 4 tema motion</li>
           <li>✓ RSVP &amp; ucapan tamu</li>
-          <li>✓ Galeri foto + musik latar</li>
-          <li>✓ Amplop digital / gift &amp; QRIS</li>
+          <li>✓ Galeri foto + video prewedding</li>
+          <li>✓ Musik latar</li>
+          <li>✓ Amplop digital (transfer &amp; QRIS)</li>
+          <li>✓ Hitung mundur (WIB/WITA/WIT) + live streaming</li>
           <li>✓ Link undangan + nama tamu</li>
+          <li>✓ Masa aktif 6 bulan</li>
         </ul>
         <a href="/pesan?paket=Basic" class="mt-7 block text-center px-4 py-3 rounded-full border-2 border-pine text-pine font-bold text-sm hover:bg-pine hover:text-white transition">Pesan Basic</a>
       </div>
@@ -224,10 +227,9 @@ tailwind.config = {
         <p class="text-xs text-white/60 mt-1">per undangan</p>
         <ul class="text-sm text-white/85 space-y-2.5 mt-6 flex-1">
           <li>✓ Semua di paket Basic</li>
-          <li>✓ Semua {{ count($themes) }} tema, termasuk {{ $videoCount }} tema motion</li>
           <li>✓ Check-in QR + monitor panitia</li>
-          <li>✓ Link generator + kirim WA massal</li>
-          <li>✓ Hitung mundur &amp; live streaming</li>
+          <li>✓ Link Generator tamu + kirim WA massal</li>
+          <li>✓ Masa aktif 1 tahun</li>
         </ul>
         <a href="/pesan?paket=Premium" class="mt-7 block text-center px-4 py-3 rounded-full bg-gold text-pinedark font-bold text-sm hover:brightness-110 transition">Pesan Premium</a>
       </div>
@@ -238,10 +240,11 @@ tailwind.config = {
         <p class="text-xs text-stone-500 mt-1">per undangan</p>
         <ul class="text-sm text-stone-600 space-y-2.5 mt-6 flex-1">
           <li>✓ Semua di paket Premium</li>
-          <li>✓ Motion opening custom (pakai video/foto sendiri)</li>
+          <li>✓ Motion opening custom (video pembuka dibuat khusus)</li>
           <li>✓ Penyesuaian warna &amp; detail tema</li>
           <li>✓ Prioritas pengerjaan</li>
           <li>✓ Konsultasi sampai hari H</li>
+          <li>✓ Masa aktif 1 tahun</li>
         </ul>
         <a href="/pesan?paket=Eksklusif" class="mt-7 block text-center px-4 py-3 rounded-full border-2 border-pine text-pine font-bold text-sm hover:bg-pine hover:text-white transition">Pesan Eksklusif</a>
       </div>
@@ -256,7 +259,18 @@ tailwind.config = {
     <h2 class="font-serif font-bold text-3xl md:text-4xl text-pinedark">Fitur Lengkap</h2>
     <p class="text-stone-600 mt-3">Bukan sekadar kartu online — satu sistem untuk undangan dan panitia.</p>
   </div>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-10">
+    <div class="bg-pinedark text-white rounded-2xl p-5 md:col-span-2">
+      <h3 class="font-bold text-sm">Link Generator Tamu</h3>
+      <p class="text-xs text-white/70 leading-relaxed mt-1.5">Tautan undangan personal untuk setiap tamu — dibuat otomatis, siap disebar.</p>
+      <ul class="text-xs text-white/85 space-y-1.5 mt-3">
+        <li>✓ Nama tamu tampil otomatis saat undangan dibuka</li>
+        <li>✓ Kirim undangan massal via WhatsApp sekali klik</li>
+        <li>✓ Lacak status kirim: terkirim / belum terkirim</li>
+        <li>✓ Edit nama tamu tanpa mengubah tautan</li>
+      </ul>
+      <p class="text-[11px] text-goldsoft font-bold mt-3">Khusus paket Premium &amp; Eksklusif</p>
+    </div>
     @foreach ([
       ['RSVP & Ucapan', 'Tamu konfirmasi hadir & kirim doa, langsung masuk WhatsApp mempelai.'],
       ['Galeri & Motion', 'Galeri foto, video prewedding, dan 4 tema motion sinematik.'],
@@ -264,7 +278,6 @@ tailwind.config = {
       ['Amplop Digital', 'Gift transfer bank & QRIS, lengkap dengan tombol salin rekening.'],
       ['Check-in QR', 'Panitia scan QR tamu di pintu masuk, tercatat otomatis.'],
       ['Monitor Panitia', 'Layar sambutan + kartu tamu saat check-in, lengkap dengan foto galeri.'],
-      ['Link Generator', 'Buat link personal per tamu + kirim WA massal sekali klik.'],
       ['Hitung Mundur', 'Countdown acara mengikuti zona waktu (WIB/WITA/WIT).'],
     ] as $f)
       <div class="bg-white rounded-2xl border border-stone-200/80 p-5">
@@ -320,7 +333,7 @@ tailwind.config = {
     </details>
     <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
       <summary class="font-bold text-sm cursor-pointer">Bagaimana cara pembayarannya?</summary>
-      <p class="text-sm text-stone-600 leading-relaxed mt-2">Pembayaran lunas di awal via <b class="text-stone-800">Transfer Bank, QRIS, DANA, GoPay, atau ShopeePay</b>. Pilih metodenya di halaman pesanan — detail rekening/nomor tampil di sana, atau dikirim via WhatsApp setelah pesanan dikonfirmasi.</p>
+      <p class="text-sm text-stone-600 leading-relaxed mt-2">Pembayaran lunas di awal via <b class="text-stone-800">Transfer Bank, QRIS, DANA, GoPay, atau ShopeePay</b>. Pilih metodenya di halaman pesanan — detail rekening/nomor dikirim via WhatsApp setelah pesanan dikonfirmasi.</p>
     </details>
     <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
       <summary class="font-bold text-sm cursor-pointer">Apa itu check-in QR?</summary>

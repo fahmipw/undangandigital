@@ -1299,18 +1299,18 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="rsvp-field">
                                 <label>BASIC</label>
-                                <input type="number" id="landing-harga-basic" min="0" step="1000" value="89000">
+                                <input type="number" id="landing-harga-basic" min="0" step="1000" value="15000">
                             </div>
                             <div class="rsvp-field">
                                 <label>PREMIUM</label>
-                                <input type="number" id="landing-harga-premium" min="0" step="1000" value="149000">
+                                <input type="number" id="landing-harga-premium" min="0" step="1000" value="45000">
                             </div>
                             <div class="rsvp-field">
                                 <label>EKSKLUSIF</label>
-                                <input type="number" id="landing-harga-eksklusif" min="0" step="1000" value="299000">
+                                <input type="number" id="landing-harga-eksklusif" min="0" step="1000" value="50000">
                             </div>
                         </div>
-                        <p class="text-xs text-gray-500">Harga coret di kartu otomatis 2× harga (diskon 50%). Harga kartu motion ikut Paket Premium, non-motion ikut Paket Basic.</p>
+                        <p class="text-xs text-gray-500">Harga coret di kartu otomatis 2× harga (diskon 50%). Semua tema tampil dengan harga Basic — semua paket sudah termasuk semua tema.</p>
                     </div>
 
                     <!-- Hero + WA -->
@@ -1338,47 +1338,6 @@
                             <input type="text" id="landing-wa" value="6288210841990">
                         </div>
                         <p class="text-xs text-gray-500">Nomor WA diawali kode negara, tanpa tanda + (contoh: 6288210841990).</p>
-                    </div>
-
-                    <!-- Metode Pembayaran -->
-                    <div class="data-card p-8 rounded-3xl space-y-4">
-                        <h3
-                            class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
-                            <span class="material-symbols-outlined">account_balance</span> Metode Pembayaran
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="rsvp-field">
-                                <label>BANK (TRANSFER)</label>
-                                <input type="text" id="landing-pay-bank" placeholder="BCA / BRI / Mandiri">
-                            </div>
-                            <div class="rsvp-field">
-                                <label>NOMOR REKENING</label>
-                                <input type="text" id="landing-pay-bank-number" placeholder="1234567890">
-                            </div>
-                            <div class="rsvp-field">
-                                <label>ATAS NAMA</label>
-                                <input type="text" id="landing-pay-bank-holder" placeholder="Nama pemilik rekening">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="rsvp-field">
-                                <label>QRIS (NAMA / NOMOR)</label>
-                                <input type="text" id="landing-pay-qris" placeholder="Nama merchant QRIS">
-                            </div>
-                            <div class="rsvp-field">
-                                <label>DANA (NOMOR)</label>
-                                <input type="text" id="landing-pay-dana" placeholder="08xxxxxxxxxx">
-                            </div>
-                            <div class="rsvp-field">
-                                <label>GOPAY (NOMOR)</label>
-                                <input type="text" id="landing-pay-gopay" placeholder="08xxxxxxxxxx">
-                            </div>
-                            <div class="rsvp-field">
-                                <label>SHOPEEPAY (NOMOR)</label>
-                                <input type="text" id="landing-pay-shopeepay" placeholder="08xxxxxxxxxx">
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-500">Detail yang terisi tampil di halaman pesanan di bawah metode yang dipilih. Yang dikosongkan menampilkan "Detail dikirim via WhatsApp setelah pesanan dikonfirmasi."</p>
                     </div>
 
                     <!-- Katalog Tema -->
@@ -2009,13 +1968,6 @@
             document.getElementById('landing-hero-highlight').value = d.hero_highlight;
             document.getElementById('landing-hero-subtitle').value = d.hero_subtitle;
             document.getElementById('landing-wa').value = d.wa;
-            document.getElementById('landing-pay-bank').value = d.pay_bank || '';
-            document.getElementById('landing-pay-bank-number').value = d.pay_bank_number || '';
-            document.getElementById('landing-pay-bank-holder').value = d.pay_bank_holder || '';
-            document.getElementById('landing-pay-qris').value = d.pay_qris || '';
-            document.getElementById('landing-pay-dana').value = d.pay_dana || '';
-            document.getElementById('landing-pay-gopay').value = d.pay_gopay || '';
-            document.getElementById('landing-pay-shopeepay').value = d.pay_shopeepay || '';
             landingThemes = d.themes || [];
             // Datalist kategori: baku + kategori yang sudah dipakai (termasuk
             // kategori baru buatan sendiri) — input tetap teks bebas.
@@ -2083,20 +2035,41 @@
         }
 
         // Upload foto preview katalog per tema (langsung menimpa file lama).
+        // Pre-check di sini supaya HEIC / file raksasa langsung ditolak
+        // dengan pesan jelas, tanpa menunggu server.
         async function uploadLandingPhoto(input, slug) {
             const file = input.files && input.files[0];
             if (!file) return;
+            const ext = (file.name.split('.').pop() || '').toLowerCase();
+            if (ext === 'heic' || ext === 'heif' || file.type === 'image/heic' || file.type === 'image/heif') {
+                showSwalInfo('Format Belum Didukung', 'Foto iPhone (HEIC) belum didukung. Ubah dulu ke JPG — di iPhone: Pengaturan > Kamera > Format > Paling Kompatibel, lalu foto ulang; atau konversi file ini ke JPG.');
+                input.value = '';
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                showSwalInfo('File Terlalu Besar', 'Ukuran file maksimal 5MB. Coba foto yang lebih kecil.');
+                input.value = '';
+                return;
+            }
             const fd = new FormData();
             fd.append('photo', file);
             fd.append('slug', slug);
-            const res = await fetch('api/admin_api?action=upload_landing_theme_photo', { method: 'POST', body: fd });
-            const data = await res.json().catch(function () { return {}; });
+            let res;
+            let data = {};
+            try {
+                res = await fetch('api/admin_api?action=upload_landing_theme_photo', { method: 'POST', body: fd });
+                data = await res.json().catch(function () { return {}; });
+            } catch (e) {
+                showSwalInfo('Gagal Mengunggah', 'Tidak dapat terhubung ke server. Periksa server Laravel masih jalan.');
+                input.value = '';
+                return;
+            }
             if (data.success) {
                 const img = document.querySelector('.lt-photo[data-slug="' + slug + '"]');
                 if (img) img.src = '/images/landing/themes/' + slug + '.jpg?t=' + Date.now();
                 showSwalSuccess('Foto Tema Diperbarui!', 'Foto preview tema berhasil diunggah.');
             } else {
-                showSwalInfo('Gagal Mengunggah', data.message || 'Foto gagal diunggah.');
+                showSwalInfo('Gagal Mengunggah', data.message || ('Foto gagal diunggah. (HTTP ' + res.status + ')'));
             }
             input.value = '';
         }
@@ -2142,13 +2115,6 @@
                 landing_hero_highlight: document.getElementById('landing-hero-highlight').value,
                 landing_hero_subtitle: document.getElementById('landing-hero-subtitle').value,
                 landing_wa: document.getElementById('landing-wa').value,
-                landing_pay_bank: document.getElementById('landing-pay-bank').value,
-                landing_pay_bank_number: document.getElementById('landing-pay-bank-number').value,
-                landing_pay_bank_holder: document.getElementById('landing-pay-bank-holder').value,
-                landing_pay_qris: document.getElementById('landing-pay-qris').value,
-                landing_pay_dana: document.getElementById('landing-pay-dana').value,
-                landing_pay_gopay: document.getElementById('landing-pay-gopay').value,
-                landing_pay_shopeepay: document.getElementById('landing-pay-shopeepay').value,
                 landing_themes: JSON.stringify(over),
             };
             const res = await fetch('api/admin_api?action=update_settings&inv_id=1', {

@@ -122,23 +122,35 @@ class LegacyApiController extends Controller
                     'hero_highlight' => $eff['hero_highlight'],
                     'hero_subtitle' => $eff['hero_subtitle'],
                     'wa' => $eff['wa'],
-                    'pay_bank' => $eff['pay_bank'],
-                    'pay_bank_number' => $eff['pay_bank_number'],
-                    'pay_bank_holder' => $eff['pay_bank_holder'],
-                    'pay_qris' => $eff['pay_qris'],
-                    'pay_dana' => $eff['pay_dana'],
-                    'pay_gopay' => $eff['pay_gopay'],
-                    'pay_shopeepay' => $eff['pay_shopeepay'],
                 ]]);
 
             case 'upload_landing_theme_photo':
                 // Foto preview katalog landing: potong tengah jadi rasio 3:4
                 // (seperti kartu katalog), maks 780x1040, timpa file lama
                 // public/images/landing/themes/<slug>.jpg.
+                // Bila POST kosong total, file melewati batas post_max_size
+                // PHP — PHP membuang seluruh body tanpa pesan, jadi beri
+                // tahu langsung (sebelum cek slug, karena slug ikut hilang).
+                if (empty($_FILES) && empty($_POST)) {
+                    return response()->json(['success' => false, 'message' => 'File tidak sampai ke server (kemungkinan melewati batas upload PHP). Coba foto di bawah 2MB, atau naikkan upload_max_filesize & post_max_size di php.ini Laragon lalu restart Apache.'], 400);
+                }
                 $slug = (string) $request->input('slug', '');
                 $catalogSlugs = array_map(function ($t) { return $t['slug']; }, \App\Http\Controllers\FrontController::catalogThemes(false));
                 if (!in_array($slug, $catalogSlugs, true)) {
                     return response()->json(['success' => false, 'message' => 'Tema tidak dikenal.'], 400);
+                }
+                // Kode error upload PHP (1 = melewati upload_max_filesize).
+                // Laravel hasFile() false untuk file error begini, jadi cek
+                // $_FILES langsung supaya pesannya tidak sekadar "No file".
+                $upErr = $_FILES['photo']['error'] ?? null;
+                if ($upErr !== null && $upErr !== UPLOAD_ERR_OK) {
+                    $msg = 'Upload gagal (kode ' . $upErr . ').';
+                    if ($upErr === UPLOAD_ERR_INI_SIZE || $upErr === UPLOAD_ERR_FORM_SIZE) {
+                        $msg = 'Foto terlalu besar untuk batas upload PHP. Coba foto di bawah 2MB, atau naikkan upload_max_filesize di php.ini Laragon lalu restart Apache.';
+                    } elseif ($upErr === UPLOAD_ERR_NO_FILE) {
+                        $msg = 'Tidak ada file yang dipilih.';
+                    }
+                    return response()->json(['success' => false, 'message' => $msg], 400);
                 }
                 if (!$request->hasFile('photo')) {
                     return response()->json(['success' => false, 'message' => 'No file uploaded'], 400);
@@ -148,38 +160,63 @@ class LegacyApiController extends Controller
                     return response()->json(['success' => false, 'message' => 'Ukuran file maksimal 5MB'], 400);
                 }
                 $ext = strtolower($file->getClientOriginalExtension());
+                if ($ext === 'heic' || $ext === 'heif') {
+                    return response()->json(['success' => false, 'message' => 'Foto iPhone (HEIC) belum didukung. Ubah dulu ke JPG — di iPhone: Pengaturan > Kamera > Format > Paling Kompatibel, lalu foto ulang; atau konversi file ini ke JPG.'], 400);
+                }
                 if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
                     return response()->json(['success' => false, 'message' => 'Tipe file tidak didukung. Pakai JPG/PNG/GIF/WebP.'], 400);
                 }
-                $srcPath = $file->getRealPath();
-                $src = false;
-                if (in_array($ext, ['jpg', 'jpeg'])) $src = @imagecreatefromjpeg($srcPath);
-                elseif ($ext === 'png') $src = @imagecreatefrompng($srcPath);
-                elseif ($ext === 'gif') $src = @imagecreatefromgif($srcPath);
-                elseif ($ext === 'webp' && function_exists('imagecreatefromwebp')) $src = @imagecreatefromwebp($srcPath);
-                if ($src === false) {
-                    return response()->json(['success' => false, 'message' => 'File gambar tidak dapat dibaca.'], 400);
-                }
-                $w = imagesx($src); $h = imagesy($src);
-                $scale = max(780 / $w, 1040 / $h);
-                if ($scale > 1) $scale = 1; // jangan perbesar foto kecil
-                $resized = imagescale($src, (int) round($w * $scale), (int) round($h * $scale));
-                imagedestroy($src);
-                if ($resized === false) {
-                    return response()->json(['success' => false, 'message' => 'Gagal memproses gambar.'], 400);
-                }
-                $sw = imagesx($resized); $sh = imagesy($resized);
-                if ($sw / $sh > 3 / 4) { $ch = $sh; $cw = (int) round($sh * 3 / 4); }
-                else { $cw = $sw; $ch = (int) round($sw * 4 / 3); }
-                $crop = imagecreatetruecolor($cw, $ch);
-                imagecopy($crop, $resized, 0, 0, (int) (($sw - $cw) / 2), (int) (($sh - $ch) / 2), $cw, $ch);
-                imagedestroy($resized);
+                // Tanpa GD, imagecreatefrom* tidak ada (fatal) — galeri
+                // selamat karena convertToWebp punya fallback, handler ini
+                // tidak (log: "Call to undefined function ...imagecreatefromjpeg()").
+                // Samakan: JPG langsung disimpan tanpa crop (katalog pakai
+                // object-cover, jadi tetap tampil benar); non-JPG ditolak
+                // dengan pesan jelas.
                 $dir = public_path('images/landing/themes');
                 if (!file_exists($dir)) mkdir($dir, 0777, true);
-                $ok = imagejpeg($crop, $dir . '/' . $slug . '.jpg', 82);
-                imagedestroy($crop);
-                if (!$ok) {
-                    return response()->json(['success' => false, 'message' => 'Gagal menyimpan gambar.'], 400);
+                if (!function_exists('imagecreatefromjpeg')) {
+                    if (in_array($ext, ['jpg', 'jpeg'])) {
+                        $file->move($dir, $slug . '.jpg');
+                        return response()->json(['success' => true, 'path' => 'images/landing/themes/' . $slug . '.jpg']);
+                    }
+                    return response()->json(['success' => false, 'message' => 'Ekstensi GD tidak aktif di PHP server, jadi foto ' . strtoupper($ext) . ' tidak bisa diubah ke JPG. Aktifkan GD di Laragon (PHP > Extensions > gd, lalu restart Apache), atau unggah file JPG.'], 400);
+                }
+                // GD yang mati / foto rusak / memori habis sebelumnya jadi
+                // 500 HTML tanpa pesan — tangkap jadi JSON supaya popup
+                // admin menampilkan penyebabnya.
+                try {
+                    $srcPath = $file->getRealPath();
+                    $src = false;
+                    if (in_array($ext, ['jpg', 'jpeg'])) $src = @imagecreatefromjpeg($srcPath);
+                    elseif ($ext === 'png') $src = @imagecreatefrompng($srcPath);
+                    elseif ($ext === 'gif') $src = @imagecreatefromgif($srcPath);
+                    elseif ($ext === 'webp' && function_exists('imagecreatefromwebp')) $src = @imagecreatefromwebp($srcPath);
+                    if ($src === false) {
+                        return response()->json(['success' => false, 'message' => 'File gambar tidak dapat dibaca.'], 400);
+                    }
+                    $w = imagesx($src); $h = imagesy($src);
+                    $scale = max(780 / $w, 1040 / $h);
+                    if ($scale > 1) $scale = 1; // jangan perbesar foto kecil
+                    $resized = imagescale($src, (int) round($w * $scale), (int) round($h * $scale));
+                    imagedestroy($src);
+                    if ($resized === false) {
+                        return response()->json(['success' => false, 'message' => 'Gagal memproses gambar.'], 400);
+                    }
+                    $sw = imagesx($resized); $sh = imagesy($resized);
+                    if ($sw / $sh > 3 / 4) { $ch = $sh; $cw = (int) round($sh * 3 / 4); }
+                    else { $cw = $sw; $ch = (int) round($sw * 4 / 3); }
+                    $crop = imagecreatetruecolor($cw, $ch);
+                    imagecopy($crop, $resized, 0, 0, (int) (($sw - $cw) / 2), (int) (($sh - $ch) / 2), $cw, $ch);
+                    imagedestroy($resized);
+                    $dir = public_path('images/landing/themes');
+                    if (!file_exists($dir)) mkdir($dir, 0777, true);
+                    $ok = imagejpeg($crop, $dir . '/' . $slug . '.jpg', 82);
+                    imagedestroy($crop);
+                    if (!$ok) {
+                        return response()->json(['success' => false, 'message' => 'Gagal menyimpan gambar.'], 400);
+                    }
+                } catch (\Throwable $e) {
+                    return response()->json(['success' => false, 'message' => 'Gagal memproses gambar di server (' . $e->getMessage() . '). Coba foto JPG yang lebih kecil, dan pastikan ekstensi GD aktif di PHP.'], 400);
                 }
                 return response()->json(['success' => true, 'path' => 'images/landing/themes/' . $slug . '.jpg']);
 

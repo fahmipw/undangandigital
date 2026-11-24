@@ -217,28 +217,12 @@ class FrontController extends Controller
             if ($t['slug'] === $selSlug) { $selTheme = $t; break; }
         }
         if ($selTheme === null) $selTheme = $themes[0];
-        // Paket terpilih: ?paket=; tanpa itu, tema motion -> Premium, lainnya Basic.
+        // Paket terpilih: ?paket=; tanpa itu, default Basic.
         $paket = (string) $request->query('paket', '');
         if (!in_array($paket, ['Basic', 'Premium', 'Eksklusif'], true)) {
-            $paket = !empty($selTheme['video']) ? 'Premium' : 'Basic';
+            $paket = 'Basic';
         }
-        // Detail pembayaran siap tampil ('' = belum diatur di admin — halaman
-        // menampilkan "detail dikirim via WhatsApp setelah pesanan dikonfirmasi").
-        $bankDetail = '';
-        if ($eff['pay_bank_number'] !== '') {
-            $bankDetail = trim($eff['pay_bank'] . ' — ' . $eff['pay_bank_number']);
-            if ($eff['pay_bank_holder'] !== '') $bankDetail .= ' a.n. ' . $eff['pay_bank_holder'];
-        } elseif ($eff['pay_bank'] !== '') {
-            $bankDetail = $eff['pay_bank'];
-        }
-        $pay = [
-            'bank' => $bankDetail,
-            'qris' => $eff['pay_qris'],
-            'dana' => $eff['pay_dana'],
-            'gopay' => $eff['pay_gopay'],
-            'shopeepay' => $eff['pay_shopeepay'],
-        ];
-        return view('front.order', compact('waNumber', 'themes', 'harga', 'hargaNum', 'hargaCoret', 'selTheme', 'paket', 'pay'));
+        return view('front.order', compact('waNumber', 'themes', 'harga', 'hargaNum', 'hargaCoret', 'selTheme', 'paket'));
     }
 
     /**
@@ -272,22 +256,13 @@ class FrontController extends Controller
         foreach ($themes as $th) { if (!empty($th['video'])) $video++; }
         return [
             'wa' => !empty($s['landing_wa']) ? $s['landing_wa'] : '6288210841990',
-            'harga_basic' => $num('landing_harga_basic', 89000),
-            'harga_premium' => $num('landing_harga_premium', 149000),
-            'harga_eksklusif' => $num('landing_harga_eksklusif', 299000),
+            'harga_basic' => $num('landing_harga_basic', 15000),
+            'harga_premium' => $num('landing_harga_premium', 45000),
+            'harga_eksklusif' => $num('landing_harga_eksklusif', 50000),
             'hero_title' => !empty($s['landing_hero_title']) ? $s['landing_hero_title'] : 'Undangan cantik,',
             'hero_highlight' => !empty($s['landing_hero_highlight']) ? $s['landing_hero_highlight'] : 'tanpa ribet.',
             'hero_subtitle' => !empty($s['landing_hero_subtitle']) ? $s['landing_hero_subtitle'] : 'Pilih dari ' . count($themes) . ' tema — Jawa klasik sampai game — lengkap dengan RSVP, galeri foto, musik, amplop digital, sampai check-in QR untuk panitia. Jadi dalam hitungan jam, bukan minggu.',
             'video_count' => $video,
-            // Metode pembayaran usaha (diatur dari tab Landing admin; kosong
-            // = belum diatur — halaman pesanan menampilkan catatan WA).
-            'pay_bank' => $s['landing_pay_bank'] ?? '',
-            'pay_bank_number' => $s['landing_pay_bank_number'] ?? '',
-            'pay_bank_holder' => $s['landing_pay_bank_holder'] ?? '',
-            'pay_qris' => $s['landing_pay_qris'] ?? '',
-            'pay_dana' => $s['landing_pay_dana'] ?? '',
-            'pay_gopay' => $s['landing_pay_gopay'] ?? '',
-            'pay_shopeepay' => $s['landing_pay_shopeepay'] ?? '',
         ];
     }
 
