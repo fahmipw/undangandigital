@@ -3,11 +3,11 @@
 // $themes, $harga, $hargaNum, $hargaCoret, $selTheme, $paket, $waNumber
 // datang dari FrontController::order(). Pesanan TIDAK disimpan di database.
 $methods = [
-    ['key' => 'bank', 'label' => 'Transfer Bank'],
-    ['key' => 'qris', 'label' => 'QRIS'],
-    ['key' => 'dana', 'label' => 'DANA'],
-    ['key' => 'gopay', 'label' => 'GoPay'],
-    ['key' => 'shopeepay', 'label' => 'ShopeePay'],
+    ['key' => 'bank', 'label' => 'Transfer Bank BCA', 'logo' => 'bca.svg'],
+    ['key' => 'qris', 'label' => 'QRIS', 'logo' => 'qris.svg'],
+    ['key' => 'dana', 'label' => 'DANA', 'logo' => 'dana.svg'],
+    ['key' => 'gopay', 'label' => 'GoPay', 'logo' => 'gopay.svg'],
+    ['key' => 'shopeepay', 'label' => 'ShopeePay', 'logo' => 'shopeepay.svg'],
 ];
 $paketList = ['basic' => 'Basic', 'premium' => 'Premium', 'eksklusif' => 'Eksklusif'];
 @endphp
@@ -52,7 +52,7 @@ tailwind.config = {
       <a href="/#faq" class="hover:text-gold">FAQ</a>
       <a href="/#syarat" class="hover:text-gold">S&amp;K</a>
     </nav>
-    <a href="/" class="text-sm font-bold text-goldsoft hover:text-gold">&larr; Kembali ke Beranda</a>
+    <a href="/" class="text-sm font-bold text-goldsoft hover:text-gold inline-flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Kembali ke Beranda</a>
   </div>
 </header>
 
@@ -128,7 +128,7 @@ tailwind.config = {
         </div>
         <div class="sm:col-span-2">
           <label class="ord-label" for="ordCatatan">Catatan (opsional)</label>
-          <textarea id="ordCatatan" rows="2" class="ord-field" placeholder="cth: warna tema mau disesuaikan, ada permintaan khusus…"></textarea>
+          <textarea id="ordCatatan" rows="2" class="ord-field" placeholder="cth: ada permintaan khusus…"></textarea>
         </div>
       </div>
     </section>
@@ -141,6 +141,7 @@ tailwind.config = {
         @foreach ($methods as $m)
           <label class="pay-card flex items-center gap-3 border border-stone-200 rounded-2xl p-4 cursor-pointer transition">
             <input type="radio" name="pay" value="{{ $m['label'] }}" class="accent-[#0E2244]" required>
+            <img src="{{ asset('images/payments/' . $m['logo']) }}" alt="{{ $m['key'] === 'bank' ? 'BCA' : $m['label'] }}" class="h-6 w-auto">
             <span class="font-bold text-sm">{{ $m['label'] }}</span>
           </label>
         @endforeach
@@ -163,7 +164,7 @@ tailwind.config = {
 </main>
 
 <footer class="border-t border-stone-200/70 py-8">
-  <p class="text-center text-xs text-stone-400">undangankamu — Undangan digital pernikahan.</p>
+  <p class="text-center text-xs text-stone-400">© 2026 undangankamu — Undangan Digital Pernikahan.</p>
 </footer>
 
 <script>
