@@ -1064,7 +1064,7 @@ window.prewedPauseMusic=prewedPauseMusic;
       document.getElementById('rsvp-msg').classList.remove('hidden');
       btn.textContent = 'TERKIRIM ✓';
       showToast('Konfirmasi kehadiran terkirim');
-      var waMsg='Yth. Bapak/Ibu,\n\n'+(rsvpStatus==='hadir'?'Dengan hormat, saya *'+name+'* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR\nJumlah Tamu: '+(parseInt(document.getElementById('rsvp-count').value || '1'))+' orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.':'Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR\nAlasan: '+alasan+'\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.');
+      var waMsg='Yth. Bapak/Ibu,\n\n'+(rsvpStatus==='hadir'?'Dengan hormat, saya *'+name+'* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR ✅\nJumlah Tamu: '+(parseInt(document.getElementById('rsvp-count').value || '1'))+' orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.':'Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR ❌\nAlasan: '+alasan+'\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.');
       var waNumber="{{ jgbGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
       window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
     } catch (err) {

@@ -1850,7 +1850,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
               btn.innerHTML = 'KIRIM KONFIRMASI';
               if (data.success) {
                 var statusTxt = attendance === "hadir" ? "HADIR ✅" : "TIDAK HADIR ❌";
-                var msg="Yth. Bapak/Ibu,\n\n"+(attendance==="hadir"?"Dengan hormat, saya *"+name+"* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR\nJumlah Tamu: "+count+" orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.":"Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR\nAlasan: "+alasan+"\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.");
+                var msg="Yth. Bapak/Ibu,\n\n"+(attendance==="hadir"?"Dengan hormat, saya *"+name+"* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR ✅\nJumlah Tamu: "+count+" orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.":"Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR ❌\nAlasan: "+alasan+"\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.");
                 var waNumber = "<?php echo getSet('rsvp_whatsapp', '6288210841990'); ?>".replace(/[^0-9]/g, '');
                 window.open("https://wa.me/" + waNumber + "?text=" + encodeURIComponent(msg), "_blank");
                 document.getElementById("rsvp-name").value = "";
