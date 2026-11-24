@@ -816,7 +816,7 @@ function wireRsvp(){
         body:JSON.stringify({invitation_id:MC.invId,nama,
           jumlah_tamu:parseInt($("#rj2").value)||1,status:$("#rh2").value,alasan:alasan})});
       const j=await r.json();if(!j.success)throw new Error(j.message||"Gagal");
-      var waMsg='Yth. Bapak/Ibu,\n\n'+($("#rh2").value==='hadir'?'Dengan hormat, saya *'+nama+'* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR ✅\nJumlah Tamu: '+(parseInt($("#rj2").value)||1)+' orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.':'Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR ❌\nAlasan: '+alasan+'\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.');
+      var waMsg='Yth. Bapak/Ibu,\n\n'+($("#rh2").value==='hadir'?'Dengan hormat, saya *'+nama+'* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR ✓\nJumlah Tamu: '+(parseInt($("#rj2").value)||1)+' orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.':'Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR ✗\nAlasan: '+alasan+'\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.');
       var waNumber="{{ mcaGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
       window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
       e.target.reset();levelUp();toast("RSVP TERSIMPAN!");load();
