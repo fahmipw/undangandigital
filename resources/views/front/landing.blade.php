@@ -208,13 +208,18 @@ tailwind.config = {
         <p class="font-serif font-bold text-4xl text-pinedark mt-3">{{ $harga['basic'] }}</p>
         <p class="text-xs text-stone-500 mt-1">per undangan</p>
         <ul class="text-sm text-stone-600 space-y-2.5 mt-6 flex-1">
-          <li>✓ Semua 35 tema, termasuk 4 tema motion</li>
+          <li>✓ Semua tema</li>
+          <li>✓ Kutipan atau ayat pembuka</li>
+          <li>✓ Detail acara: tanggal, jam, dan lokasi</li>
+          <li>✓ Profil mempelai</li>
+          <li>✓ Galeri sampai 5 foto (no video)</li>
+          <li>✓ Musik latar (bebas request)</li>
+          <li>✓ Tombol petunjuk arah ke lokasi acara</li>
+          <li>✓ Jadwal acara tanpa batas (akad dan resepsi)</li>
+          <li>✓ Amplop digital</li>
           <li>✓ RSVP &amp; ucapan tamu</li>
-          <li>✓ Galeri foto + video prewedding</li>
-          <li>✓ Musik latar</li>
-          <li>✓ Amplop digital (transfer &amp; QRIS)</li>
-          <li>✓ Hitung mundur (WIB/WITA/WIT) + live streaming</li>
-          <li>✓ Link undangan + nama tamu</li>
+          <li>✓ Link undangan manual</li>
+          <li>✓ Tamu Unlimited</li>
           <li>✓ Masa aktif 6 bulan</li>
         </ul>
         <a href="/pesan?paket=Basic" class="mt-7 block text-center px-4 py-3 rounded-full border-2 border-pine text-pine font-bold text-sm hover:bg-pine hover:text-white transition">Pesan Basic</a>
@@ -227,8 +232,10 @@ tailwind.config = {
         <p class="text-xs text-white/60 mt-1">per undangan</p>
         <ul class="text-sm text-white/85 space-y-2.5 mt-6 flex-1">
           <li>✓ Semua di paket Basic</li>
-          <li>✓ Check-in QR + monitor panitia</li>
-          <li>✓ Link Generator tamu + kirim WA massal</li>
+          <li>✓ 10 foto galeri</li>
+          <li>✓ Kisah perjalanan cinta</li>
+          <li>✓ Link Generator tamu otomatis + kirim WA massal</li>
+          <li>✓ Live streaming pernikahan</li>
           <li>✓ Masa aktif 1 tahun</li>
         </ul>
         <a href="/pesan?paket=Premium" class="mt-7 block text-center px-4 py-3 rounded-full bg-gold text-pinedark font-bold text-sm hover:brightness-110 transition">Pesan Premium</a>
@@ -240,8 +247,9 @@ tailwind.config = {
         <p class="text-xs text-stone-500 mt-1">per undangan</p>
         <ul class="text-sm text-stone-600 space-y-2.5 mt-6 flex-1">
           <li>✓ Semua di paket Premium</li>
-          <li>✓ Motion opening custom (video pembuka dibuat khusus)</li>
-          <li>✓ Penyesuaian warna &amp; detail tema</li>
+          <li>✓ 20 foto + 1 video</li>
+          <li>✓ Check-in QR tamu + monitor panitia realtime</li>
+          <li>✓ Laporan kehadiran tamu</li>
           <li>✓ Prioritas pengerjaan</li>
           <li>✓ Konsultasi sampai hari H</li>
           <li>✓ Masa aktif 1 tahun</li>
@@ -265,7 +273,7 @@ tailwind.config = {
       <p class="text-xs text-white/70 leading-relaxed mt-1.5">Tautan undangan personal untuk setiap tamu — dibuat otomatis, siap disebar.</p>
       <ul class="text-xs text-white/85 space-y-1.5 mt-3">
         <li>✓ Nama tamu tampil otomatis saat undangan dibuka</li>
-        <li>✓ Kirim undangan massal via WhatsApp sekali klik</li>
+        <li>✓ Buat link massal sekaligus, salin semua link, kirim via WhatsApp</li>
         <li>✓ Lacak status kirim: terkirim / belum terkirim</li>
         <li>✓ Edit nama tamu tanpa mengubah tautan</li>
       </ul>
@@ -332,6 +340,21 @@ tailwind.config = {
       <p class="text-sm text-stone-600 leading-relaxed mt-2">Tamu menerima link personal lewat WhatsApp — dibuka di browser HP, tanpa install aplikasi. Nama tamu tampil otomatis di undangan.</p>
     </details>
     <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
+      <summary class="font-bold text-sm cursor-pointer">Bagaimana cara membagikan undangan ke tamu (paket Basic)?</summary>
+      <p class="text-sm text-stone-600 leading-relaxed mt-2">Tambah nama tamu di panel admin (Daftar Tamu), lalu bagikan link per tamu dengan menambahkan <b class="text-stone-800">?to=nama-tamu</b> di belakang link undangan — contoh: /hawa-adam?to=Budi%20Santoso. Tamu yang membuka link itu disapa dengan namanya dan melihat kode QR-nya. Di paket Basic pengiriman dilakukan manual satu per satu lewat WhatsApp; pengiriman massal memakai Link Generator (Premium &amp; Eksklusif).</p>
+    </details>
+    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
+      <summary class="font-bold text-sm cursor-pointer">Apa itu Link Generator tamu (Premium &amp; Eksklusif)?</summary>
+      <p class="text-sm text-stone-600 leading-relaxed mt-2">Link Generator adalah halaman khusus untuk membuat link undangan personal untuk setiap tamu — tamu yang membuka linknya disapa dengan namanya sendiri, lengkap dengan kode QR-nya. Cara pakainya:</p>
+      <ul class="text-sm text-stone-600 leading-relaxed mt-2 ml-4 list-disc space-y-1">
+        <li><b class="text-stone-800">Tambah tamu:</b> satu per satu (nama + nomor WA + kategori opsional seperti Keluarga atau Sahabat) atau massal sekaligus — tempel daftar dengan format <i>Nama, nomor WA, kategori</i> per baris.</li>
+        <li><b class="text-stone-800">Pesan WhatsApp:</b> pakai template Sistem otomatis, atau tulis sendiri dengan kode [nama] dan [link] — ada pratinjau live sebelum dikirim.</li>
+        <li><b class="text-stone-800">Kirim:</b> semua link hasil generate massal bisa disalin sekaligus (Salin Semua Link) atau dikirim per tamu lewat WhatsApp dari kartu tamunya.</li>
+        <li><b class="text-stone-800">Lacak status:</b> jumlah Total Link, Terkirim, dan Belum Kirim tampil di atas halaman; tanggal kirim tercatat di bawah nama tamu.</li>
+        <li><b class="text-stone-800">Edit &amp; unduh:</b> nama tamu bisa diedit tanpa mengubah tautan lama, nama yang sama otomatis memakai link lama supaya tidak dobel, dan daftar tamu bisa dicari, difilter per kategori, serta diunduh sebagai CSV.</li>
+      </ul>
+    </details>
+    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
       <summary class="font-bold text-sm cursor-pointer">Bagaimana cara pembayarannya?</summary>
       <p class="text-sm text-stone-600 leading-relaxed mt-2">Pembayaran lunas di awal via <b class="text-stone-800">Transfer Bank, QRIS, DANA, GoPay, atau ShopeePay</b>. Pilih metodenya di halaman pesanan — detail rekening/nomor dikirim via WhatsApp setelah pesanan dikonfirmasi.</p>
     </details>
@@ -355,7 +378,7 @@ tailwind.config = {
           <span class="text-[13px] font-medium text-stone-700 text-right">Masa Aktif &amp; Kuota</span>
         </div>
         <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Ketentuan Umum &amp; Masa Aktif</h3>
-        <p class="text-sm text-stone-600 leading-relaxed mt-3">Masa aktif undangan <b class="text-stone-800">6 bulan (Basic)</b> sampai <b class="text-stone-800">1 (satu) tahun (Premium &amp; Eksklusif)</b> sejak tanggal pemesanan/aktivasi, dengan kuota sebar nama tamu <b class="text-stone-800">tanpa batas (unlimited)</b> serta kapasitas foto dan fitur sesuai paket yang dipilih — check-in QR dan Link Generator hanya untuk paket Premium dan Eksklusif.</p>
+        <p class="text-sm text-stone-600 leading-relaxed mt-3">Masa aktif undangan <b class="text-stone-800">6 bulan (Basic)</b> sampai <b class="text-stone-800">1 (satu) tahun (Premium &amp; Eksklusif)</b> sejak tanggal pemesanan/aktivasi, dengan kuota sebar nama tamu <b class="text-stone-800">tanpa batas (unlimited)</b> serta kapasitas foto dan fitur sesuai paket yang dipilih — Link Generator untuk paket Premium dan Eksklusif; check-in QR hanya untuk paket Eksklusif.</p>
       </article>
       <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
         <div class="flex items-start justify-between gap-3">

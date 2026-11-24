@@ -97,9 +97,9 @@ tailwind.config = {
             <span class="block font-extrabold text-pinedark mt-0.5">{{ $harga[$key] }}</span>
             <span class="block text-xs text-stone-400 line-through">{{ $hargaCoret[$key] }}</span>
             <span class="block text-[11px] text-stone-500 mt-1.5 leading-relaxed">
-              @if ($key === 'basic') Semua 35 tema + fitur dasar.
-              @elseif ($key === 'premium') Semua tema + check-in QR &amp; Link Generator.
-              @else Motion opening custom + semua fitur.
+              @if ($key === 'basic') Semua tema + galeri 5 foto + link manual.
+              @elseif ($key === 'premium') Semua di Basic + 10 foto, Kisah, Link Generator, live streaming.
+              @else Semua di Premium + 20 foto &amp; video, check-in QR, laporan.
               @endif
             </span>
           </label>
