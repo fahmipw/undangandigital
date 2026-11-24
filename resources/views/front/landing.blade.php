@@ -24,7 +24,9 @@ $waText = fn($msg) => 'https://wa.me/' . $waNumber . '?text=' . urlencode($msg);
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>undangankamu — Undangan Digital Pernikahan</title>
+<title>UndanganKamu | Solusi Undangan Pernikahan Digital Murah Modern.</title>
+<link rel="icon" type="image/png" href="{{ asset('images/landing/favicon.png') }}">
+<link rel="apple-touch-icon" href="{{ asset('images/landing/apple-touch-icon.png') }}">
 <meta name="description" content="Undangan digital pernikahan: 35 tema cantik, RSVP, galeri, musik, gift QRIS, dan check-in QR untuk panitia. Pesan mudah lewat WhatsApp.">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -337,7 +339,7 @@ tailwind.config = {
     </details>
     <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
       <summary class="font-bold text-sm cursor-pointer">Bagaimana cara membagikan undangan ke tamu (paket Basic)?</summary>
-      <p class="text-sm text-stone-600 leading-relaxed mt-2">Tambah nama tamu di panel admin (Daftar Tamu), lalu bagikan link per tamu dengan menambahkan <b class="text-stone-800">?to=nama-tamu</b> di belakang link undangan — contoh: /hawa-adam?to=Budi%20Santoso. Tamu yang membuka link itu disapa dengan namanya dan melihat kode QR-nya. Di paket Basic pengiriman dilakukan manual satu per satu lewat WhatsApp; pengiriman massal memakai Link Generator (Premium &amp; Eksklusif).</p>
+      <p class="text-sm text-stone-600 leading-relaxed mt-2">Tambahkan <b class="text-stone-800">?to=nama-tamu</b> di belakang link undangan — contoh: /hawa-adam?to=Budi%20Santoso. Tamu yang membuka link itu disapa dengan namanya.</p>
     </details>
     <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
       <summary class="font-bold text-sm cursor-pointer">Apa itu Link Generator tamu (Premium &amp; Eksklusif)?</summary>

@@ -243,15 +243,13 @@ $ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
   .success-sub{font-size:13px;color:var(--gen-inkSoft);margin-top:4px}
   .success-time{font-size:13px;color:var(--gen-inkSoft);margin-top:2px}
   /* Desktop (>=768px): halaman melebar, bukan kolom HP — tab Scan
-     berdampingan (kamera + petugas), daftar tamu 2 kolom. */
+     berdampingan (kamera + petugas); daftar tamu tetap 1 kolom ke bawah. */
   @media(min-width:768px){
     .wrap{max-width:960px}
     .top-in{padding:28px 24px 34px}
     .top h1{font-size:40px}
     #tab-scan.active{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;align-items:start}
     #tab-scan.active .card{margin-bottom:0}
-    #guest-list{display:grid;grid-template-columns:1fr 1fr;column-gap:28px}
-    #guest-list .empty{grid-column:1/-1}
   }
 </style>
 </head>
@@ -339,7 +337,8 @@ $ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
     <h3>Cari Tamu</h3>
     <input class="search" id="guest-search" type="search" placeholder="Cari nama tamu..." autocomplete="off" oninput="renderGuestSearch(true)">
     <div class="subtabs">
-      <button type="button" class="subtab active" data-gf="hadir" onclick="setGuestFilter('hadir')">Hadir <span id="cnt-hadir"></span></button>
+      <button type="button" class="subtab active" data-gf="semua" onclick="setGuestFilter('semua')">Semua <span id="cnt-semua"></span></button>
+      <button type="button" class="subtab" data-gf="hadir" onclick="setGuestFilter('hadir')">Hadir <span id="cnt-hadir"></span></button>
       <button type="button" class="subtab" data-gf="belum" onclick="setGuestFilter('belum')">Belum Hadir <span id="cnt-belum"></span></button>
     </div>
     <div id="guest-list"><div class="empty">Memuat daftar tamu...</div></div>
@@ -771,7 +770,7 @@ function renderGuestPager(pages){
   pg.innerHTML = h;
 }
 
-var guestFilter = 'hadir';
+var guestFilter = 'semua';
 
 function setGuestFilter(f){
   guestFilter = f;
@@ -788,10 +787,11 @@ function renderGuestSearch(resetPage){
   var q = (document.getElementById('guest-search').value || '').trim().toLowerCase();
   var hadir = guestsCache.filter(function(g){ return !!g.checked_in_at; });
   var belum = guestsCache.filter(function(g){ return !g.checked_in_at; });
+  document.getElementById('cnt-semua').textContent = '(' + guestsCache.length + ')';
   document.getElementById('cnt-hadir').textContent = '(' + hadir.length + ')';
   document.getElementById('cnt-belum').textContent = '(' + belum.length + ')';
   var list = guestsCache.filter(function(g){
-    var okStatus = guestFilter === 'hadir' ? !!g.checked_in_at : !g.checked_in_at;
+    var okStatus = guestFilter === 'semua' ? true : guestFilter === 'hadir' ? !!g.checked_in_at : !g.checked_in_at;
     return okStatus && (!q || String(g.nama).toLowerCase().indexOf(q) !== -1);
   });
   var pages = Math.max(1, Math.ceil(list.length / GUESTS_PER_PAGE));
@@ -801,6 +801,7 @@ function renderGuestSearch(resetPage){
     box.innerHTML = '<div class="empty">Belum ada tamu.</div>';
   }else if(!list.length){
     box.innerHTML = '<div class="empty">' + (q ? 'Tidak ada tamu bernama "' + esc(q) + '".'
+      : guestFilter === 'semua' ? 'Belum ada tamu.'
       : guestFilter === 'hadir' ? 'Belum ada tamu yang hadir.' : 'Semua tamu sudah hadir.') + '</div>';
   }else{
     var from = (guestPage - 1) * GUESTS_PER_PAGE;
