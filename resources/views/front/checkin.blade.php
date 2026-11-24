@@ -100,6 +100,9 @@ foreach([$gen['onAccent'], $gen['onAccent'] === '#ffffff' ? '#1b1c1a' : '#ffffff
 $genBtnText = $genBtnPick[1]; $genBtnStart = $genBtnPick[2]; $genBtnEnd = $genBtnPick[3];
 // Amber stat Belum di atas kartu (cermin skema hijau: terang/gelap).
 $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
+// Inisial monogram header (huruf pertama nama mempelai).
+$ckBrideInitial = mb_strtoupper(mb_substr($bride ?? '', 0, 1));
+$ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
 @endphp
 <style>
   :root{
@@ -125,11 +128,23 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--gen-bg);color:var(--gen-ink);min-height:100vh;padding-bottom:40px}
-  .top{background:var(--gen-top-bg);color:var(--gen-on-accent);padding:22px 18px;text-align:center}
-  .top small{letter-spacing:.25em;font-size:10px;text-transform:uppercase}
-  .top h1{font-size:20px;margin-top:6px}
-  .top .evdate{font-size:13px;margin-top:4px}
-  .top .clock{font-size:13px;margin-top:6px;font-variant-numeric:tabular-nums}
+  /* Header hero ala Link Generator: foto mempelai + gradasi gelap +
+     monogram + nama mempelai (bukan banner polos). */
+  .top{position:relative;overflow:hidden;text-align:center;color:#fff;background:#2C2115}
+  .top-bg{position:absolute;inset:0}
+  .top-bg img{width:100%;height:100%;object-fit:cover;object-position:center;opacity:.5;transform:scale(1.05)}
+  .top-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(28,20,13,.72) 0%,rgba(45,33,21,.86) 55%,rgba(28,20,13,.96) 100%)}
+  .top-orn{position:absolute;top:8px;width:64px;height:64px;color:color-mix(in srgb,var(--gen-accent) 45%,white);pointer-events:none}
+  .top-orn.l{left:8px}
+  .top-orn.r{right:8px;transform:rotate(90deg)}
+  .top-in{position:relative;z-index:1;padding:20px 18px 26px}
+  .mono{width:44px;height:44px;margin:0 auto 8px;border:1px solid color-mix(in srgb,var(--gen-accent) 45%,white);border-radius:50%;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px color-mix(in srgb,var(--gen-accent) 28%,transparent)}
+  .mono span{font-family:Georgia,'Times New Roman',serif;font-size:12px;font-weight:600;letter-spacing:.15em;color:color-mix(in srgb,var(--gen-accent) 45%,white)}
+  .mono i{font-style:italic;margin:0 2px}
+  .top-eyebrow{font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:color-mix(in srgb,var(--gen-accent) 45%,white);font-weight:700;margin-bottom:2px}
+  .top h1{font-family:Georgia,'Times New Roman',serif;font-size:32px;line-height:1.15;margin-top:2px}
+  .top .evdate{font-size:13px;margin-top:6px;color:rgba(255,255,255,.85)}
+  .top .clock{font-size:13px;margin-top:6px;font-variant-numeric:tabular-nums;color:rgba(255,255,255,.85)}
   .top .clock b{font-weight:700}
   .wrap{max-width:480px;margin:0 auto;padding:16px}
   .stats{display:flex;gap:10px;margin:16px 0 10px}
@@ -227,15 +242,37 @@ $genAmber = $genLum($gen['card']) < 0.25 ? '#fbbf24' : '#92400e';
   .success-name{font-size:20px;font-weight:800;color:var(--gen-pct);margin-top:4px}
   .success-sub{font-size:13px;color:var(--gen-inkSoft);margin-top:4px}
   .success-time{font-size:13px;color:var(--gen-inkSoft);margin-top:2px}
+  /* Desktop (>=768px): halaman melebar, bukan kolom HP — tab Scan
+     berdampingan (kamera + petugas), daftar tamu 2 kolom. */
+  @media(min-width:768px){
+    .wrap{max-width:960px}
+    .top-in{padding:28px 24px 34px}
+    .top h1{font-size:40px}
+    #tab-scan.active{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;align-items:start}
+    #tab-scan.active .card{margin-bottom:0}
+    #guest-list{display:grid;grid-template-columns:1fr 1fr;column-gap:28px}
+    #guest-list .empty{grid-column:1/-1}
+  }
 </style>
 </head>
 <body>
-<div class="top">
-  <small>Check-in Panitia</small>
-  <h1>{{ $title }}</h1>
-  <div class="evdate" id="ev-date"></div>
-  <div class="clock" id="clock">—</div>
-</div>
+<header class="top">
+  <div class="top-bg">
+    @if(!empty($hero_photo))
+    <img src="{{ $hero_photo }}" alt="{{ $bride }} &amp; {{ $groom }}">
+    @endif
+    <div class="top-shade"></div>
+  </div>
+  <svg class="top-orn l" viewBox="0 0 100 100" fill="none" aria-hidden="true"><path d="M5 5 C35 5, 55 25, 55 55 C25 55, 5 35, 5 5 Z" stroke="currentColor" stroke-width="1.2" /><circle cx="22" cy="22" r="2.5" fill="currentColor" /></svg>
+  <svg class="top-orn r" viewBox="0 0 100 100" fill="none" aria-hidden="true"><path d="M5 5 C35 5, 55 25, 55 55 C25 55, 5 35, 5 5 Z" stroke="currentColor" stroke-width="1.2" /><circle cx="22" cy="22" r="2.5" fill="currentColor" /></svg>
+  <div class="top-in">
+    <div class="mono"><span>{{ $ckBrideInitial }}<i>&amp;</i>{{ $ckGroomInitial }}</span></div>
+    <p class="top-eyebrow">Check-in Panitia</p>
+    <h1>{{ $bride }} &amp; {{ $groom }}</h1>
+    <div class="evdate" id="ev-date"></div>
+    <div class="clock" id="clock">—</div>
+  </div>
+</header>
 <div class="wrap">
   <div class="card" id="op-card" style="padding:14px 18px">
     <div id="op-form">

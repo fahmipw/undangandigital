@@ -183,7 +183,7 @@ $gen = $genPalettes[$theme ?? 'default'] ?? $genPalettes['default'];
 
 <body class="bg-[var(--gen-bg)] text-espresso dark:text-[#F3EFE6] min-h-screen transition-colors duration-300">
   <!-- Main Mobile-First App Shell -->
-  <div class="max-w-md mx-auto min-h-screen bg-ivory dark:bg-charcoal shadow-2xl relative flex flex-col transition-colors duration-300 pb-12">
+  <div class="max-w-md md:max-w-3xl lg:max-w-6xl mx-auto min-h-screen bg-ivory dark:bg-charcoal shadow-2xl relative flex flex-col transition-colors duration-300 pb-12">
 
     <!-- ==================== HERO BANNER HEADER ==================== -->
     <header class="relative overflow-hidden rounded-b-[2rem] shadow-lg">
@@ -253,10 +253,10 @@ $gen = $genPalettes[$theme ?? 'default'] ?? $genPalettes['default'];
     </header>
 
     <!-- ==================== MAIN CONTENT AREA ==================== -->
-    <main class="px-4 -mt-5 relative z-20 space-y-4 flex-1">
+    <main class="px-4 md:px-6 -mt-5 relative z-20 space-y-4 flex-1 lg:grid lg:grid-cols-5 lg:gap-5 lg:space-y-0">
 
       <!-- RINGKASAN STATUS PENGIRIMAN (FLOATING GLASS) -->
-      <section class="grid grid-cols-3 gap-2.5">
+      <section class="grid grid-cols-3 gap-2.5 lg:col-span-5">
         <div class="bg-card dark:bg-charcoal-card/95 backdrop-blur-md rounded-2xl p-3 text-center shadow-md border border-[var(--gen-border)] dark:border-charcoal-border border-t-[3px] border-t-gold">
           <div id="statTotalGuests" class="text-xl font-bold text-espresso dark:text-white leading-none">0</div>
           <div class="text-[10px] font-semibold tracking-wider uppercase text-espresso/60 dark:text-white/60 mt-1.5">
@@ -280,7 +280,7 @@ $gen = $genPalettes[$theme ?? 'default'] ?? $genPalettes['default'];
       </section>
 
       <!-- ==================== CARD 1: INPUT TAMU (SATUAN / MASSAL) ==================== -->
-      <section class="bg-card dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[var(--gen-border)] dark:border-charcoal-border">
+      <section class="bg-card dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[var(--gen-border)] dark:border-charcoal-border lg:col-start-1 lg:row-start-2 lg:col-span-2">
         <!-- Segmented Switch: Satuan vs Massal -->
         <div class="grid grid-cols-2 gap-1.5 bg-[var(--gen-soft)] dark:bg-charcoal p-1 rounded-xl mb-4">
           <button
@@ -412,7 +412,7 @@ $gen = $genPalettes[$theme ?? 'default'] ?? $genPalettes['default'];
       </section>
 
       <!-- ==================== PANEL HASIL GENERATE SATUAN ==================== -->
-      <section id="singleResultPanel" class="hidden bg-card dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[var(--gen-border)] dark:border-charcoal-border space-y-3">
+      <section id="singleResultPanel" class="hidden bg-card dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[var(--gen-border)] dark:border-charcoal-border space-y-3 lg:col-span-2">
         <h2 class="text-xs font-bold tracking-wider uppercase text-espresso dark:text-white">Hasil Generate</h2>
         <div>
           <label class="block text-[11px] font-bold tracking-wider uppercase text-espresso/75 dark:text-white/75 mb-1">Link Undangan</label>
@@ -433,7 +433,7 @@ $gen = $genPalettes[$theme ?? 'default'] ?? $genPalettes['default'];
       </section>
 
       <!-- ==================== PANEL HASIL GENERATE MASSAL ==================== -->
-      <section id="bulkResultPanel" class="hidden bg-card dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[var(--gen-border)] dark:border-charcoal-border space-y-3">
+      <section id="bulkResultPanel" class="hidden bg-card dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[var(--gen-border)] dark:border-charcoal-border space-y-3 lg:col-span-2">
         <h2 class="text-xs font-bold tracking-wider uppercase text-espresso dark:text-white">Hasil Generate Massal</h2>
         <p id="bulkSummary" class="text-xs font-semibold text-espresso/80 dark:text-white/80"></p>
         <div class="flex flex-wrap gap-2">
@@ -444,7 +444,7 @@ $gen = $genPalettes[$theme ?? 'default'] ?? $genPalettes['default'];
       </section>
 
       <!-- ==================== CARD 2: TEMPLATE & PRATINJAU WHATSAPP ==================== -->
-      <section class="bg-card dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[var(--gen-border)] dark:border-charcoal-border">
+      <section class="bg-card dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[var(--gen-border)] dark:border-charcoal-border lg:col-span-2">
         <button
           onclick="toggleTemplateSection()"
           class="w-full flex items-center justify-between text-left"
@@ -538,7 +538,7 @@ $gen = $genPalettes[$theme ?? 'default'] ?? $genPalettes['default'];
       </section>
 
       <!-- ==================== CARD 3: DAFTAR TAMU YANG SUDAH DIINPUT ==================== -->
-      <section class="bg-card dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[var(--gen-border)] dark:border-charcoal-border space-y-3">
+      <section class="bg-card dark:bg-charcoal-card rounded-2xl p-4 shadow-sm border border-[var(--gen-border)] dark:border-charcoal-border space-y-3 lg:col-start-3 lg:row-start-2 lg:row-span-4 lg:col-span-3">
         <!-- Header Daftar Tamu -->
         <div class="flex items-center justify-between gap-2">
           <div>
@@ -625,7 +625,7 @@ $gen = $genPalettes[$theme ?? 'default'] ?? $genPalettes['default'];
         <p class="text-[11px] text-espresso/55 dark:text-white/50 leading-relaxed">Tanda <strong>Sudah dikirim</strong> muncul saat tombol Kirim WA diklik, atau saat ditandai manual — pengiriman di dalam aplikasi WhatsApp sendiri tidak bisa dilacak dari sini.</p>
 
         <!-- Mobile-Friendly Guest Cards Container (scroll di dalam, halaman tidak memanjang) -->
-        <div id="guestCardsContainer" class="space-y-2.5 pt-1 pr-1 pb-1 max-h-[520px] overflow-y-auto guest-scroll"></div>
+        <div id="guestCardsContainer" class="space-y-2.5 md:space-y-0 md:grid md:grid-cols-2 md:gap-3 pt-1 pr-1 pb-1 max-h-[520px] lg:max-h-[720px] overflow-y-auto guest-scroll"></div>
       </section>
     </main>
   </div>

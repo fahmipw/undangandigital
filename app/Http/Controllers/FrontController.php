@@ -382,9 +382,17 @@ class FrontController extends Controller
         $bride = !empty($settings['bride_nickname']) ? $settings['bride_nickname'] : (!empty($settings['bride_name']) ? $settings['bride_name'] : 'Mempelai Wanita');
         $groom = !empty($settings['groom_nickname']) ? $settings['groom_nickname'] : (!empty($settings['groom_name']) ? $settings['groom_name'] : 'Mempelai Pria');
 
+        // Foto hero header (og_preview_photo -> bride_photo -> groom_photo,
+        // sama seperti generator); relatif -> asset(), absolut apa adanya.
+        $heroRaw = $settings['og_preview_photo'] ?? ($settings['bride_photo'] ?? ($settings['groom_photo'] ?? ''));
+        $heroPhoto = $heroRaw !== '' ? ((str_starts_with($heroRaw, 'http') || str_starts_with($heroRaw, '/')) ? $heroRaw : asset(ltrim($heroRaw, '/'))) : '';
+
         return view('front.checkin', [
             'inv_id' => $invitation->id,
             'title' => $groom . ' & ' . $bride,
+            'bride' => $bride,
+            'groom' => $groom,
+            'hero_photo' => $heroPhoto,
             // Zona waktu acara dari Data Utama (WIB/WITA/WIT); dipakai
             // halaman check-in untuk menampilkan jam, bukan hardcode WIB.
             'event_timezone' => $settings['wedding_timezone'] ?? 'WIB',
