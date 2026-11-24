@@ -481,7 +481,7 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
       </div>
     </div>
     <div class="field" id="alasanWrap" style="display:none"><label>Alasan</label><textarea id="rsvpAlasan" rows="2" placeholder="Alasan berhalangan..."></textarea></div>
-    <div class="field"><label>Jumlah Tamu</label><input type="number" id="rsvpCount" min="1" max="20" value="1"></div>
+    <div class="field" id="jumlahWrap"><label>Jumlah Tamu</label><input type="number" id="rsvpCount" min="1" max="20" value="1"></div>
     <button class="btn" type="submit" id="rsvpBtn">Kirim Konfirmasi</button>
   </form>
   </div>
@@ -932,6 +932,7 @@ function setAtt(v){
     b.classList.toggle('on', b.dataset.att === v);
   });
   document.getElementById('alasanWrap').style.display = (v === 'tidak') ? 'block' : 'none';
+  document.getElementById('jumlahWrap').style.display = (v === 'tidak') ? 'none' : 'block';
   document.getElementById('rsvpAlasan').required = (v === 'tidak');
 }
 async function sendRSVP(e){
@@ -948,11 +949,7 @@ async function sendRSVP(e){
       body: JSON.stringify({ invitation_id: INV_ID, nama: nama, jumlah_tamu: jumlah, status: __att, alasan: alasan }) });
     var j = await r.json();
     if(!j.success) throw new Error(j.message || 'Gagal menyimpan');
-    var msg = 'Halo, saya *' + nama + '* ingin mengkonfirmasi kehadiran saya.' + NL + NL
-      + 'Status : ' + (__att === 'hadir' ? 'HADIR ✅' : 'TIDAK HADIR ❌')
-      + (__att === 'hadir' ? NL + 'Jumlah Tamu : ' + jumlah + ' orang' : '')
-      + (alasan ? NL + 'Alasan : ' + alasan : '')
-      + NL + NL + 'Terima kasih atas undangannya 🙏🏻';
+    var msg='Yth. Bapak/Ibu,\n\n'+(__att==='hadir'?'Dengan hormat, saya *'+nama+'* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR\nJumlah Tamu: '+jumlah+' orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.':'Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR\nAlasan: '+alasan+'\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.');
     var waNumber = "{{ mcGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g, '');
     window.open('https://wa.me/' + waNumber + '?text=' + encodeURIComponent(msg), '_blank');
     document.getElementById('rsvpNama').value = '';

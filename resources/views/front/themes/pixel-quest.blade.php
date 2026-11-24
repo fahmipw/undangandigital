@@ -1023,11 +1023,11 @@ function openPanel(id){
         <option value="Hadir">Hadir</option>
         <option value="Tidak Hadir">Berhalangan</option></select>
       <label class="lbl">ALASAN BERHALANGAN</label><textarea class="pq-input" name="alasan" id="rsvpAlasan" rows="2" placeholder="Tulis alasan berhalangan..." style="display:none"></textarea>
-      <label class="lbl">JUMLAH TAMU</label><input class="pq-input" type="number" name="jumlah" min="1" max="10" value="1">
+      <div id="jumlahWrap"><label class="lbl">JUMLAH TAMU</label><input class="pq-input" type="number" name="jumlah" min="1" max="10" value="1"></div>
       <button type="submit" class="pq-btn green" style="width:100%;margin-top:18px">KIRIM RSVP</button>
     </form>`;
     $("#rsvpForm").addEventListener("submit",submitRsvp);
-    $("#rsvpForm select[name=kehadiran]").addEventListener("change",function(){ var show=this.value==="Tidak Hadir"; var ta=document.getElementById("rsvpAlasan"); ta.style.display=show?"block":"none"; ta.required=show; });
+    $("#rsvpForm select[name=kehadiran]").addEventListener("change",function(){ var show=this.value==="Tidak Hadir"; var ta=document.getElementById("rsvpAlasan"); ta.style.display=show?"block":"none"; ta.required=show; var jw=document.getElementById("jumlahWrap"); jw.style.display=show?"none":"block"; });
   }
   else if(id==="ucapan"){
     body.innerHTML=`<div class="ptitle">PAPAN UCAPAN</div><div class="psub">Tuliskan doa restu</div>
@@ -1174,10 +1174,7 @@ async function submitRsvp(e){
     const j=await r.json();
     toast(j&&j.message?j.message:"RSVP TERKIRIM!");
     if(j&&j.success){
-        var waMsg='Halo, saya *'+fd.get("nama")+'* ingin mengkonfirmasi kehadiran saya.\n\nStatus : '+(status==='hadir'?'HADIR ✅':'TIDAK HADIR ❌');
-        if(status==='hadir')waMsg+='\nJumlah Tamu : '+(parseInt(fd.get("jumlah"))||1)+' orang';
-        if(alasan)waMsg+='\nAlasan : '+(alasan);
-        waMsg+='\n\nTerima kasih atas undangannya 🙏🏻';
+        var waMsg='Yth. Bapak/Ibu,\n\n'+(status==='hadir'?'Dengan hormat, saya *'+fd.get("nama")+'* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR\nJumlah Tamu: '+(parseInt(fd.get("jumlah"))||1)+' orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.':'Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR\nAlasan: '+alasan+'\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.');
         var waNumber="{{ jklGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
         window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
     }

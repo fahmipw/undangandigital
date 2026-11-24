@@ -911,7 +911,8 @@ function withEnvelope(fn){
         <label class="block text-[10px] tracking-[0.25em] text-klasik-gold font-semibold mb-2">ALASAN BERHALANGAN</label>
         <textarea name="alasan" id="rsvpAlasan" rows="2" placeholder="Alasan berhalangan..." class="field-klasik"></textarea>
       </div>
-      <div>
+      <div id="jumlahWrap">
+<div>
         <label class="block text-[10px] tracking-[0.25em] text-klasik-gold font-semibold mb-2">JUMLAH TAMU</label>
         <input type="number" name="jumlah" min="1" max="10" placeholder="Jumlah tamu" class="field-klasik" />
       </div>
@@ -1165,7 +1166,7 @@ window.prewedPauseMusic=prewedPauseMusic;
 /* ---------- 8. RSVP ---------- */
 document.querySelector('#rsvpForm select[name="kehadiran"]').addEventListener("change",function(){
   var show=this.value==="Tidak Hadir";
-  var w=document.getElementById("rsvpAlasanWrap"); w.style.display=show?"block":"none"; var ta=document.getElementById("rsvpAlasan"); ta.required=show;
+  var w=document.getElementById("rsvpAlasanWrap"); w.style.display=show?"block":"none"; var ta=document.getElementById("rsvpAlasan"); ta.required=show; var jw=document.getElementById("jumlahWrap"); jw.style.display=show?"none":"block";
 });
 document.getElementById("rsvpForm").addEventListener("submit", async function(e){
   e.preventDefault();
@@ -1181,10 +1182,7 @@ document.getElementById("rsvpForm").addEventListener("submit", async function(e)
     const j=await r.json();
     toast(j&&j.message?j.message:"Terima kasih atas konfirmasinya!");
     if(j&&j.success){
-        var waMsg='Halo, saya *'+payload.nama+'* ingin mengkonfirmasi kehadiran saya.\n\nStatus : '+(payload.status==='hadir'?'HADIR ✅':'TIDAK HADIR ❌');
-        if(payload.status==='hadir')waMsg+='\nJumlah Tamu : '+(payload.jumlah_tamu)+' orang';
-        if(payload.alasan)waMsg+='\nAlasan : '+(payload.alasan);
-        waMsg+='\n\nTerima kasih atas undangannya 🙏🏻';
+        var waMsg='Yth. Bapak/Ibu,\n\n'+(payload.status==='hadir'?'Dengan hormat, saya *'+payload.nama+'* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR\nJumlah Tamu: '+(payload.jumlah_tamu)+' orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.':'Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR\nAlasan: '+payload.alasan+'\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.');
         var waNumber="{{ jklGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
         window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
     }

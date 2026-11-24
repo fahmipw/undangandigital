@@ -359,6 +359,10 @@ $ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
       <a id="report-csv" class="btn btn-gold" style="text-decoration:none;text-align:center;display:block" href="#">Unduh CSV</a>
     </div>
     <div class="card">
+      <h3>RSVP</h3>
+      <div id="rep-rsvp"><div class="empty">Memuat RSVP...</div></div>
+    </div>
+    <div class="card">
       <h3>Per Petugas</h3>
       <div id="rep-operators"><div class="empty">Memuat laporan...</div></div>
     </div>
@@ -863,8 +867,9 @@ function switchTab(name){
 }
 
 // --- Laporan kehadiran (endpoint checkin_report/checkin_export, token sama) ---
-var reportLoaded = false, reportData = null;
+var reportLoaded = false, reportData = null, rsvpData = null;
 function loadReport(){
+  loadRsvpReport();
   fetch('/api/checkin_report?inv_id=' + INV_ID + '&token=' + encodeURIComponent(CHECKIN_TOKEN))
     .then(function(r){ return r.json(); })
     .then(function(d){
@@ -909,6 +914,34 @@ function renderReport(){
     pd.innerHTML = '<div class="empty">Semua tamu sudah hadir.</div>';
   }
   document.getElementById('rep-pending-count').textContent = pend.length ? pend.length + ' tamu belum hadir' : '';
+}
+// --- RSVP di Laporan (endpoint api/rsvp GET, daftar konfirmasi undangan) ---
+function loadRsvpReport(){
+  fetch('/api/rsvp?inv_id=' + INV_ID)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.success) return;
+      rsvpData = d.data || [];
+      renderRsvpReport();
+    }).catch(function(){});
+}
+function renderRsvpReport(){
+  var box = document.getElementById('rep-rsvp');
+  if(!box) return;
+  var rows = rsvpData || [];
+  if(!rows.length){ box.innerHTML = '<div class="empty">Belum ada RSVP masuk.</div>'; return; }
+  var hadir = rows.filter(function(r){ return r.status === 'hadir'; });
+  var tidak = rows.filter(function(r){ return r.status !== 'hadir'; });
+  var orang = 0;
+  hadir.forEach(function(r){ orang += parseInt(r.jumlah_tamu, 10) || 1; });
+  var html = '<div class="rep-summary" style="margin-bottom:8px"><b>' + rows.length + '</b> konfirmasi — Hadir: <b>' + hadir.length + '</b> (' + orang + ' orang) • Berhalangan: <b>' + tidak.length + '</b></div>';
+  html += hadir.map(function(r){
+    return '<div class="guest-item"><span class="gname">' + esc(r.nama) + '</span><span class="badge in">Hadir</span><span class="gtime">' + (parseInt(r.jumlah_tamu, 10) || 1) + ' orang</span></div>';
+  }).join('');
+  html += tidak.map(function(r){
+    return '<div class="guest-item"><span class="gname">' + esc(r.nama) + '</span><span class="badge out">Berhalangan</span><span class="gtime">' + (r.alasan ? 'Alasan: ' + esc(r.alasan) : '') + '</span></div>';
+  }).join('');
+  box.innerHTML = html;
 }
 // --- Petugas aktif: dari laporan bila sudah dimuat, fallback dari recent ---
 function renderActiveOperators(){

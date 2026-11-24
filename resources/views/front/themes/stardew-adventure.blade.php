@@ -770,7 +770,7 @@ rsvp:()=>`<h2 class="ptitle">KANTOR POS</h2><p class="psub">Kirim surat konfirma
 <form id="rf2">
 <label class="lbl">NAMA LENGKAP</label><input class="sd-input" id="rn2" required maxlength="40" placeholder="Tulis namamu...">
 <label class="lbl">KEHADIRAN</label><select class="sd-input" id="rh2"><option value="hadir">Hadir, siap panen!</option><option value="tidak">Tidak bisa ikut</option></select><div id="raWrap" style="display:none"><label class="lbl">ALASAN BERHALANGAN</label><textarea class="sd-input" id="ra2" rows="2" placeholder="Tulis alasan berhalangan..."></textarea></div>
-<label class="lbl">JUMLAH TAMU</label><select class="sd-input" id="rj2"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+<div id="jumlahWrap"><label class="lbl">JUMLAH TAMU</label><select class="sd-input" id="rj2"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
 <div style="margin-top:14px"><button class="sd-btn green" type="submit" style="font-size:11px">KIRIM RSVP</button></div>
 </form>
 <div class="scoreboard"><h4>&#9733; DAFTAR PETANI HADIR</h4><div id="rl2"><div class="srow"><span style="color:#777">Memuat...</span></div></div></div>`,
@@ -912,7 +912,7 @@ function wireRsvp(){
     ).join(""):'<div class="srow"><span style="color:#777">Belum ada yang mendaftar.</span></div>';
   }catch(e){box.innerHTML='<div class="srow"><span style="color:#777">Gagal memuat.</span></div>';}};
   load();
-  $("#rh2").addEventListener("change",function(){ var show=this.value==="tidak"; var w=$("#raWrap"); w.style.display=show?"block":"none"; $("#ra2").required=show; });
+  $("#rh2").addEventListener("change",function(){ var show=this.value==="tidak"; var w=$("#raWrap"); w.style.display=show?"block":"none"; $("#ra2").required=show; var jw=$("#jumlahWrap"); jw.style.display=show?"none":"block"; });
   $("#rf2").onsubmit=async e=>{e.preventDefault();
     const nama=$("#rn2").value.trim();if(!nama){toast("Isi dulu namanya!");return;}
     const alasan=$("#rh2").value==="tidak"?$("#ra2").value.trim():"";if($("#rh2").value==="tidak"&&!alasan){toast("Mohon isi alasan berhalangan!");return;}
@@ -922,10 +922,7 @@ function wireRsvp(){
         body:JSON.stringify({invitation_id:MC.invId,nama,
           jumlah_tamu:parseInt($("#rj2").value)||1,status:$("#rh2").value,alasan:alasan})});
       const j=await r.json();if(!j.success)throw new Error(j.message||"Gagal");
-      var waMsg='Halo, saya *'+nama+'* ingin mengkonfirmasi kehadiran saya.\n\nStatus : '+($("#rh2").value==='hadir'?'HADIR ✅':'TIDAK HADIR ❌');
-      if($("#rh2").value==='hadir')waMsg+='\nJumlah Tamu : '+(parseInt($("#rj2").value)||1)+' orang';
-      if(alasan)waMsg+='\nAlasan : '+(alasan);
-      waMsg+='\n\nTerima kasih atas undangannya 🙏🏻';
+      var waMsg='Yth. Bapak/Ibu,\n\n'+($("#rh2").value==='hadir'?'Dengan hormat, saya *'+nama+'* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR\nJumlah Tamu: '+(parseInt($("#rj2").value)||1)+' orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.':'Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR\nAlasan: '+alasan+'\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.');
       var waNumber="{{ sdaGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
       window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
       e.target.reset();levelUp();toast("RSVP TERSIMPAN!");load();

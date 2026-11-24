@@ -663,7 +663,7 @@ if(window.QRCode){var qb=document.getElementById('qrModalBox');new QRCode(qb,{te
   </div>
   <form id="rsvpForm" class="formbox rv" onsubmit="return sendRSVP(event)">
     <div class="field"><label>Nama Lengkap</label><input required id="rsvpNama" placeholder="Nama Anda" autocomplete="name"></div>
-    <div class="field"><label>Jumlah Tamu</label>
+    <div class="field" id="jumlahWrap"><label>Jumlah Tamu</label>
       <select id="rsvpJumlah"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
     </div>
     <div class="field"><label>KONFIRMASI KEHADIRAN</label>
@@ -1002,6 +1002,7 @@ function setAtt(el){
   $$('.att').forEach(function(b){ b.classList.remove('sel-hadir','sel-tidak'); });
   el.classList.add(__att === 'hadir' ? 'sel-hadir' : 'sel-tidak');
   document.getElementById('alasanBox').style.display = __att === 'hadir' ? 'none' : 'block';
+  document.getElementById('jumlahWrap').style.display = __att === 'hadir' ? 'block' : 'none';
   document.getElementById('rsvpAlasan').required = (__att === 'tidak');
 }
 async function sendRSVP(e){
@@ -1017,11 +1018,7 @@ async function sendRSVP(e){
     var j = await r.json();
     if(!j.success) throw new Error(j.message || 'Gagal mengirim');
     var waNumber = "{{ mcGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g, '');
-    var msg = 'Halo, saya *' + nama + '* ingin mengkonfirmasi kehadiran saya.\n\n'
-      + 'Status : ' + (__att === 'hadir' ? 'HADIR ✅' : 'TIDAK HADIR ❌')
-      + (__att === 'hadir' ? '\nJumlah Tamu : ' + jumlah + ' orang' : '')
-      + (alasan ? '\nAlasan : ' + alasan : '')
-      + '\n\nTerima kasih atas undangannya 🙏🏻';
+    var msg='Yth. Bapak/Ibu,\n\n'+(__att==='hadir'?'Dengan hormat, saya *'+nama+'* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR\nJumlah Tamu: '+jumlah+' orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.':'Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR\nAlasan: '+alasan+'\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.');
     window.open('https://wa.me/' + waNumber + '?text=' + encodeURIComponent(msg), '_blank');
     document.getElementById('rsvpForm').reset();
     alert('RSVP terkirim! 🌱');

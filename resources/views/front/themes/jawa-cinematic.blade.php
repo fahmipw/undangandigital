@@ -715,10 +715,12 @@ function withEnvelope(fn){
         <label class="block text-[11px] tracking-[.25em] text-golddim font-semibold mb-2">ALASAN BERHALANGAN</label>
         <textarea id="rsvpAlasan" rows="2" placeholder="Tulis alasan berhalangan..." class="w-full bg-white/70 border border-mocha/25 rounded-xl px-4 py-3 mb-4 outline-none focus:border-gold"></textarea>
       </div>
+      <div id="jumlahWrap">
       <label class="block text-[11px] tracking-[.25em] text-golddim font-semibold mb-2">JUMLAH TAMU</label>
       <select id="rsvpJumlah" class="w-full bg-white/70 border border-mocha/25 rounded-xl px-4 py-3 mb-6 outline-none focus:border-gold">
         <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
       </select>
+      </div>
       <button type="submit" id="rsvpBtn" class="btn-gold w-full font-semibold tracking-[.2em] text-sm py-4 rounded-xl">KIRIM KONFIRMASI</button>
     </form>
 
@@ -1092,6 +1094,7 @@ document.querySelectorAll(".attend-btn").forEach(b=>b.addEventListener("click",(
     x.classList.toggle("text-mochadark",on);x.classList.toggle("border-mocha/25",!on);
     x.classList.toggle("text-mochadark/60",!on);
   var aw=document.getElementById("alasanWrap"); aw.style.display=(attendVal==="tidak")?"block":"none";
+  var jw=document.getElementById("jumlahWrap"); jw.style.display=(attendVal==="tidak")?"none":"block";
   document.getElementById("rsvpAlasan").required=(attendVal==="tidak");
   });
 }));
@@ -1105,10 +1108,7 @@ document.getElementById("rsvpForm").addEventListener("submit",async e=>{
     const r=await fetch("/api/rsvp",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({invitation_id:JC.invId,nama,jumlah_tamu:parseInt(document.getElementById("rsvpJumlah").value)||1,status:attendVal,alasan:attendVal==="tidak"?document.getElementById("rsvpAlasan").value.trim():""})});
     const j=await r.json();if(!j.success)throw new Error(j.message||"Gagal");
-    var waMsg='Halo, saya *'+nama+'* ingin mengkonfirmasi kehadiran saya.\n\nStatus : '+(attendVal==='hadir'?'HADIR ✅':'TIDAK HADIR ❌');
-    if(attendVal==='hadir')waMsg+='\nJumlah Tamu : '+(parseInt(document.getElementById("rsvpJumlah").value)||1)+' orang';
-    if(attendVal==="tidak"?document.getElementById("rsvpAlasan").value.trim():"")waMsg+='\nAlasan : '+(attendVal==="tidak"?document.getElementById("rsvpAlasan").value.trim():"");
-    waMsg+='\n\nTerima kasih atas undangannya 🙏🏻';
+    var waMsg='Yth. Bapak/Ibu,\n\n'+(attendVal==='hadir'?'Dengan hormat, saya *'+nama+'* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR\nJumlah Tamu: '+(parseInt(document.getElementById("rsvpJumlah").value)||1)+' orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.':'Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR\nAlasan: '+(attendVal==="tidak"?document.getElementById("rsvpAlasan").value.trim():"")+'\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.');
     var waNumber="{{ jwcGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
     window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
     e.target.reset();toast("Matur nuwun! Konfirmasi terkirim.");

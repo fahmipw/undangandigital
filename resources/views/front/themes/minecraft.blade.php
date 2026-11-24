@@ -465,10 +465,12 @@ body:not(.gate-open) #bottomNav{display:none!important}
         <label class="lbl" for="fAlasan">ALASAN BERHALANGAN</label>
         <textarea class="mc-input" id="fAlasan" rows="2" placeholder="Tulis alasan berhalangan..."></textarea>
         </div>
+        <div id="jumlahWrap">
         <label class="lbl" for="fJumlah">JUMLAH ROMBONGAN</label>
         <select class="mc-input" id="fJumlah">
           <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
         </select>
+        </div>
         <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
           <button type="submit" class="mc-btn green" style="font-size:11px">KIRIM RSVP</button>
         </div>
@@ -864,7 +866,7 @@ async function loadRsvp(){
     ).join(""):'<div class="score-empty">Belum ada yang mendaftar. Jadilah yang pertama!</div>';
   }catch(e){box.innerHTML='<div class="score-empty">Gagal memuat daftar.</div>';}
 }
-  $("#fHadir").addEventListener("change",function(){ var show=this.value==="tidak"; var w=$("#alasanWrap"); w.style.display=show?"block":"none"; $("#fAlasan").required=show; });
+  $("#fHadir").addEventListener("change",function(){ var show=this.value==="tidak"; var w=$("#alasanWrap"); w.style.display=show?"block":"none"; $("#fAlasan").required=show; var jw=$("#jumlahWrap"); jw.style.display=show?"none":"block"; });
 $("#rsvpForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const nama=$("#fNama").value.trim();
@@ -877,10 +879,7 @@ $("#rsvpForm").addEventListener("submit",async e=>{
         status:$("#fHadir").value,alasan:$("#fHadir").value==="tidak"?$("#fAlasan").value.trim():""})});
     const j=await r.json();
     if(!j.success)throw new Error(j.message||"Gagal");
-    var waMsg='Halo, saya *'+nama+'* ingin mengkonfirmasi kehadiran saya.\n\nStatus : '+($("#fHadir").value==='hadir'?'HADIR ✅':'TIDAK HADIR ❌');
-    if($("#fHadir").value==='hadir')waMsg+='\nJumlah Tamu : '+(parseInt($("#fJumlah").value)||1)+' orang';
-    if($("#fHadir").value==="tidak"?$("#fAlasan").value.trim():"")waMsg+='\nAlasan : '+($("#fHadir").value==="tidak"?$("#fAlasan").value.trim():"");
-    waMsg+='\n\nTerima kasih atas undangannya 🙏🏻';
+    var waMsg='Yth. Bapak/Ibu,\n\n'+($("#fHadir").value==='hadir'?'Dengan hormat, saya *'+nama+'* mengonfirmasi kehadiran pada acara pernikahan yang akan diselenggarakan.\n\nStatus: HADIR\nJumlah Tamu: '+(parseInt($("#fJumlah").value)||1)+' orang\n\nTerima kasih atas undangan yang diberikan. Semoga acara berjalan lancar dan penuh kebahagiaan.':'Dengan hormat, saya menyampaikan bahwa saya BERHALANGAN HADIR pada acara pernikahan tersebut.\n\nStatus: TIDAK HADIR\nAlasan: '+($("#fHadir").value==="tidak"?$("#fAlasan").value.trim():"")+'\n\nTerima kasih atas undangan yang diberikan. Mohon maaf atas ketidakhadiran saya. Semoga acara berjalan lancar dan penuh kebahagiaan.');
     var waNumber="{{ mcGet('rsvp_whatsapp','6288210841990') }}".replace(/[^0-9]/g,'');
     window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waMsg),'_blank');
     e.target.reset();levelUp();toast("RSVP TERSIMPAN!");loadRsvp();
