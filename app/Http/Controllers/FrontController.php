@@ -178,7 +178,12 @@ class FrontController extends Controller
             'subtitle' => $eff['hero_subtitle'],
         ];
         $videoCount = $eff['video_count'];
-        return view('front.landing', compact('waNumber', 'themes', 'harga', 'hargaNum', 'hargaCoret', 'hero', 'videoCount'));
+        $faqs = $eff['faqs'];
+        $terms = $eff['terms'];
+        $sections = $eff['sections'];
+        $packages = $eff['packages'];
+        $steps = $eff['steps'];
+        return view('front.landing', compact('waNumber', 'themes', 'harga', 'hargaNum', 'hargaCoret', 'hero', 'videoCount', 'faqs', 'terms', 'sections', 'packages', 'steps'));
     }
 
     /**
@@ -243,6 +248,192 @@ class FrontController extends Controller
 
 
     /**
+     * Default teks landing (FAQ, S&K, judul section, isi paket, cara pesan)
+     * — satu sumber kebenaran untuk Blade + QA (QA membaca JSON ini).
+     * Kunci JSON disimpan per kunci landing_* di settings undangan ID 1.
+     */
+    private static function landingTextDefaults()
+    {
+        static $d = null;
+        if ($d !== null) return $d;
+        $d = json_decode(<<<'JSON'
+{
+  "sections": {
+    "katalog_eyebrow": "KOLEKSI TEMA",
+    "katalog_title": "Buka demonya dulu, baru pilih",
+    "katalog_subtitle": "Setiap tema punya demo yang bisa kamu buka seperti tamu membukanya. Harga sudah termasuk semua fitur. Klik gambar untuk membuka demonya.",
+    "harga_title": "Harga Paket",
+    "harga_subtitle": "Sekali bayar, undangan aktif sampai acara selesai. Tidak ada biaya bulanan.",
+    "fitur_title": "Fitur Lengkap",
+    "fitur_subtitle": "Bukan sekadar kartu online — satu sistem untuk undangan dan panitia.",
+    "cara_title": "Cara Pesan",
+    "cara_subtitle": "Empat langkah, undanganmu siap dibagikan.",
+    "faq_title": "Pertanyaan Umum",
+    "syarat_title": "Syarat & Ketentuan",
+    "syarat_intro": "Dengan memesan undangan di undangankamu, kamu menyetujui ketentuan berikut."
+  },
+  "packages": {
+    "basic": [
+      "Semua tema",
+      "Kutipan atau ayat pembuka",
+      "Detail acara: tanggal, jam, dan lokasi",
+      "Profil mempelai",
+      "Galeri sampai 5 foto (no video)",
+      "Musik latar (bebas request)",
+      "Tombol petunjuk arah ke lokasi acara",
+      "Jadwal acara tanpa batas (akad dan resepsi)",
+      "Amplop digital",
+      "RSVP & ucapan tamu",
+      "Link undangan manual",
+      "Tamu Unlimited",
+      "Masa aktif 6 bulan"
+    ],
+    "premium": [
+      "Semua di paket Basic",
+      "10 foto galeri",
+      "Kisah perjalanan cinta",
+      "Link Generator tamu otomatis + kirim WA massal",
+      "Live streaming pernikahan",
+      "Masa aktif 1 tahun"
+    ],
+    "eksklusif": [
+      "Semua di paket Premium",
+      "20 foto + 1 video",
+      "Check-in QR tamu + monitor panitia realtime",
+      "Laporan kehadiran tamu",
+      "Prioritas pengerjaan",
+      "Konsultasi sampai hari H",
+      "Masa aktif 1 tahun"
+    ]
+  },
+  "steps": [
+    {
+      "title": "Pilih Tema",
+      "desc": "Pilih tema favoritmu dari katalog di atas."
+    },
+    {
+      "title": "Isi Form Pesanan",
+      "desc": "Klik Pesan — isi tema, paket, data mempelai, dan metode pembayaran."
+    },
+    {
+      "title": "Isi Data & Bayar",
+      "desc": "Lengkapi data acara, foto, dan lakukan pembayaran."
+    },
+    {
+      "title": "Undangan Jadi",
+      "desc": "Terima link undangan, bagikan ke tamu lewat WhatsApp."
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Berapa lama undangan saya jadi?",
+      "a": "<p class=\"text-sm text-stone-600 leading-relaxed mt-2\">Umumnya 1 hari setelah data dan pembayaran lengkap. Paket Eksklusif dengan motion custom menyesuaikan antrean.</p>"
+    },
+    {
+      "q": "Apakah bisa revisi setelah jadi?",
+      "a": "<p class=\"text-sm text-stone-600 leading-relaxed mt-2\">Bisa — perbaikan data (nama, tanggal, foto) dilayani selama masa aktif undangan. Ganti tema bisa dibicarakan saat pemesanan.</p>"
+    },
+    {
+      "q": "Bagaimana tamu menerima undangan?",
+      "a": "<p class=\"text-sm text-stone-600 leading-relaxed mt-2\">Tamu menerima link personal lewat WhatsApp — dibuka di browser HP, tanpa install aplikasi. Nama tamu tampil otomatis di undangan.</p>"
+    },
+    {
+      "q": "Bagaimana cara membagikan undangan ke tamu (paket Basic)?",
+      "a": "<p class=\"text-sm text-stone-600 leading-relaxed mt-2\">Tambahkan <b class=\"text-stone-800\">?to=nama-tamu</b> di belakang link undangan — contoh: /hawa-adam?to=Budi%20Santoso. Tamu yang membuka link itu disapa dengan namanya.</p>"
+    },
+    {
+      "q": "Apa itu Link Generator tamu (Premium & Eksklusif)?",
+      "a": "<p class=\"text-sm text-stone-600 leading-relaxed mt-2\">Link Generator adalah halaman khusus untuk membuat link undangan personal untuk setiap tamu — tamu yang membuka linknya disapa dengan namanya sendiri, lengkap dengan kode QR-nya. Cara pakainya:</p><ul class=\"text-sm text-stone-600 leading-relaxed mt-2 ml-4 list-disc space-y-1\"><li><b class=\"text-stone-800\">Tambah tamu:</b> satu per satu (nama + nomor WA + kategori opsional seperti Keluarga atau Sahabat) atau massal sekaligus — tempel daftar dengan format <i>Nama, nomor WA, kategori</i> per baris.</li><li><b class=\"text-stone-800\">Pesan WhatsApp:</b> pakai template Sistem otomatis, atau tulis sendiri dengan kode [nama] dan [link] — ada pratinjau live sebelum dikirim.</li><li><b class=\"text-stone-800\">Kirim:</b> semua link hasil generate massal bisa disalin sekaligus (Salin Semua Link) atau dikirim per tamu lewat WhatsApp dari kartu tamunya.</li><li><b class=\"text-stone-800\">Lacak status:</b> jumlah Total Link, Terkirim, dan Belum Kirim tampil di atas halaman; tanggal kirim tercatat di bawah nama tamu.</li><li><b class=\"text-stone-800\">Edit &amp; unduh:</b> nama tamu bisa diedit tanpa mengubah tautan lama, nama yang sama otomatis memakai link lama supaya tidak dobel, dan daftar tamu bisa dicari, difilter per kategori, serta diunduh sebagai CSV.</li></ul>"
+    },
+    {
+      "q": "Bagaimana cara pembayarannya?",
+      "a": "<p class=\"text-sm text-stone-600 leading-relaxed mt-2\">Pembayaran lunas di awal via <b class=\"text-stone-800\">Transfer Bank, QRIS, DANA, GoPay, atau ShopeePay</b>. Pilih metodenya di halaman pesanan — detail rekening/nomor dikirim via WhatsApp setelah pesanan dikonfirmasi.</p>"
+    },
+    {
+      "q": "Apa itu check-in QR?",
+      "a": "<p class=\"text-sm text-stone-600 leading-relaxed mt-2\">Panitia di pintu masuk cukup scan QR di undangan tamu (atau ketik kode undangan). Kehadiran tercatat otomatis dan tampil di layar monitor acara.</p>"
+    }
+  ],
+  "terms": [
+    {
+      "tag": "Masa Aktif & Kuota",
+      "title": "Ketentuan Umum & Masa Aktif",
+      "body": "Masa aktif undangan <b class=\"text-stone-800\">6 bulan (Basic)</b> sampai <b class=\"text-stone-800\">1 (satu) tahun (Premium &amp; Eksklusif)</b> sejak tanggal pemesanan/aktivasi, dengan kuota sebar nama tamu <b class=\"text-stone-800\">tanpa batas (unlimited)</b> serta kapasitas foto dan fitur sesuai paket yang dipilih — Link Generator untuk paket Premium dan Eksklusif; check-in QR hanya untuk paket Eksklusif."
+    },
+    {
+      "tag": "Pengerjaan & Revisi",
+      "title": "Pemesanan & Pengerjaan",
+      "body": "Pesan lewat halaman pesanan (diteruskan ke WhatsApp) dengan menyebutkan tema dan paket pilihan. Undangan dikerjakan dalam estimasi <b class=\"text-stone-800\">1 hari</b> setelah data dan pembayaran lengkap (paket Eksklusif dengan motion custom menyesuaikan antrean), termasuk revisi minor &amp; mayor gratis dalam batas ketentuan selama masa aktif."
+    },
+    {
+      "tag": "Tanggung Jawab Materi",
+      "title": "Kelengkapan & Akurasi Data",
+      "body": "Pemesan wajib memastikan kebenaran penulisan nama, gelar, tanggal, jam acara, titik koordinat Google Maps, serta resolusi foto sebelum undangan dipublikasikan atau diproses."
+    },
+    {
+      "tag": "Perlindungan Data",
+      "title": "Privasi & Keamanan Data",
+      "body": "Kami menjamin kerahasiaan seluruh data pribadi mempelai, nomor rekening amplop digital, maupun daftar tamu undangan dan <b class=\"text-stone-800\">tidak membagikannya ke pihak ketiga</b>."
+    },
+    {
+      "tag": "Hak Cipta & Etika",
+      "title": "Kekayaan Intelektual & Larangan",
+      "body": "Seluruh kode sumber, template, ilustrasi, dan animasi motion dilindungi hak cipta. Dilarang memperbanyak template atau mengunggah konten bermuatan SARA/ilegal. Foto, musik, dan data yang dikirim pemesan tetap menjadi milik pemesan."
+    },
+    {
+      "tag": "Pembayaran & Refund",
+      "title": "Pembayaran & Pengembalian Dana",
+      "body": "Pembayaran lunas di awal sebelum aktivasi atau pengerjaan dimulai. Dana yang telah dibayarkan tidak dapat dikembalikan <b class=\"text-stone-800\">(non-refundable)</b> setelah layanan aktif/diproses. Harga dapat berubah — harga yang berlaku adalah yang disepakati saat pemesanan."
+    }
+  ]
+}
+JSON, true);
+        return $d;
+    }
+
+    /** Nilai efektif satu kelompok teks landing: setting JSON bila valid,
+     * kalau kosong/rusak pakai default. Sections/packages digabung per
+     * kunci; faqs/terms/steps diganti utuh bila valid. */
+    private static function landingText($key, $name)
+    {
+        $s = self::landingSettings();
+        $def = self::landingTextDefaults()[$name];
+        $raw = $s[$key] ?? null;
+        if (!$raw) return $def;
+        $d = json_decode($raw, true);
+        if (!is_array($d)) return $def;
+        if ($name === 'sections') {
+            $out = $def;
+            foreach ($def as $k => $v) {
+                if (isset($d[$k]) && is_string($d[$k])) $out[$k] = $d[$k];
+            }
+            return $out;
+        }
+        if ($name === 'packages') {
+            $out = $def;
+            foreach (['basic', 'premium', 'eksklusif'] as $p) {
+                if (!empty($d[$p]) && is_array($d[$p])) {
+                    $items = array_values(array_filter(array_map('strval', $d[$p]), function ($x) { return trim($x) !== ''; }));
+                    if ($items) $out[$p] = $items;
+                }
+            }
+            return $out;
+        }
+        $fields = ['faqs' => ['q', 'a'], 'terms' => ['tag', 'title', 'body'], 'steps' => ['title', 'desc']][$name];
+        $rows = [];
+        foreach ($d as $row) {
+            if (!is_array($row)) continue;
+            $ok = true; $r = [];
+            foreach ($fields as $f) {
+                if (!isset($row[$f]) || !is_string($row[$f]) || trim($row[$f]) === '') { $ok = false; break; }
+                $r[$f] = $row[$f];
+            }
+            if ($ok) $rows[] = $r;
+        }
+        return $rows ?: $def;
+    }
+
+    /**
      * Nilai EFEKTIF pengaturan landing (harga/hero/WA/video): settings
      * undangan 1 bila terisi, kalau kosong pakai default. Dipakai landing()
      * dan admin (get_landing_themes) — satu sumber kebenaran.
@@ -263,6 +454,11 @@ class FrontController extends Controller
             'hero_highlight' => !empty($s['landing_hero_highlight']) ? $s['landing_hero_highlight'] : 'tanpa ribet.',
             'hero_subtitle' => !empty($s['landing_hero_subtitle']) ? $s['landing_hero_subtitle'] : 'Pilih dari ' . count($themes) . ' tema — Jawa klasik sampai game — lengkap dengan RSVP, galeri foto, musik, amplop digital, sampai check-in QR untuk panitia. Jadi dalam hitungan jam, bukan minggu.',
             'video_count' => $video,
+            'faqs' => self::landingText('landing_faqs', 'faqs'),
+            'terms' => self::landingText('landing_terms', 'terms'),
+            'sections' => self::landingText('landing_sections', 'sections'),
+            'packages' => self::landingText('landing_packages', 'packages'),
+            'steps' => self::landingText('landing_steps', 'steps'),
         ];
     }
 

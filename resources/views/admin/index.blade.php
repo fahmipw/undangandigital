@@ -1340,6 +1340,187 @@
                         <p class="text-xs text-gray-500">Nomor WA diawali kode negara, tanpa tanda + (contoh: 6288210841990).</p>
                     </div>
 
+                    <!-- Judul Section -->
+                    <div class="data-card p-8 rounded-3xl space-y-4">
+                        <h3
+                            class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
+                            <span class="material-symbols-outlined">title</span> Judul Section
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rsvp-field">
+                                <label>EYEBROW KATALOG</label>
+                                <input type="text" id="landing-sec-katalog-eyebrow" value="KOLEKSI TEMA">
+                            </div>
+                            <div class="rsvp-field">
+                                <label>JUDUL KATALOG</label>
+                                <input type="text" id="landing-sec-katalog-title" value="Buka demonya dulu, baru pilih">
+                            </div>
+                        </div>
+                        <div class="rsvp-field">
+                            <label>SUBJUDUL KATALOG</label>
+                            <textarea id="landing-sec-katalog-subtitle" rows="2"></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rsvp-field">
+                                <label>JUDUL HARGA</label>
+                                <input type="text" id="landing-sec-harga-title" value="Harga Paket">
+                            </div>
+                            <div class="rsvp-field">
+                                <label>SUBJUDUL HARGA</label>
+                                <input type="text" id="landing-sec-harga-subtitle">
+                            </div>
+                            <div class="rsvp-field">
+                                <label>JUDUL FITUR</label>
+                                <input type="text" id="landing-sec-fitur-title" value="Fitur Lengkap">
+                            </div>
+                            <div class="rsvp-field">
+                                <label>SUBJUDUL FITUR</label>
+                                <input type="text" id="landing-sec-fitur-subtitle">
+                            </div>
+                            <div class="rsvp-field">
+                                <label>JUDUL CARA PESAN</label>
+                                <input type="text" id="landing-sec-cara-title" value="Cara Pesan">
+                            </div>
+                            <div class="rsvp-field">
+                                <label>SUBJUDUL CARA PESAN</label>
+                                <input type="text" id="landing-sec-cara-subtitle">
+                            </div>
+                            <div class="rsvp-field">
+                                <label>JUDUL FAQ</label>
+                                <input type="text" id="landing-sec-faq-title" value="Pertanyaan Umum">
+                            </div>
+                            <div class="rsvp-field">
+                                <label>JUDUL S&amp;K</label>
+                                <input type="text" id="landing-sec-syarat-title" value="Syarat &amp; Ketentuan">
+                            </div>
+                        </div>
+                        <div class="rsvp-field">
+                            <label>PENGANTAR S&amp;K</label>
+                            <textarea id="landing-sec-syarat-intro" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Isi Paket -->
+                    <div class="data-card p-8 rounded-3xl space-y-4">
+                        <h3
+                            class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
+                            <span class="material-symbols-outlined">list</span> Isi Paket
+                        </h3>
+                        <p class="text-xs text-gray-500">Satu isi per baris — baris kosong diabaikan. Tanda centang (✓) ditambahkan otomatis di landing.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rsvp-field">
+                                <label>BASIC</label>
+                                <textarea id="landing-pkg-basic" rows="13"></textarea>
+                            </div>
+                            <div class="rsvp-field">
+                                <label>PREMIUM</label>
+                                <textarea id="landing-pkg-premium" rows="13"></textarea>
+                            </div>
+                            <div class="rsvp-field">
+                                <label>EKSKLUSIF</label>
+                                <textarea id="landing-pkg-eksklusif" rows="13"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cara Pesan -->
+                    <div class="data-card p-8 rounded-3xl space-y-4">
+                        <h3
+                            class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
+                            <span class="material-symbols-outlined">format_list_numbered</span> Cara Pesan
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="rsvp-field"><label>LANGKAH 1 — JUDUL</label><input type="text" id="landing-step-0-title"></div>
+                                <div class="rsvp-field"><label>DESKRIPSI</label><input type="text" id="landing-step-0-desc"></div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="rsvp-field"><label>LANGKAH 2 — JUDUL</label><input type="text" id="landing-step-1-title"></div>
+                                <div class="rsvp-field"><label>DESKRIPSI</label><input type="text" id="landing-step-1-desc"></div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="rsvp-field"><label>LANGKAH 3 — JUDUL</label><input type="text" id="landing-step-2-title"></div>
+                                <div class="rsvp-field"><label>DESKRIPSI</label><input type="text" id="landing-step-2-desc"></div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="rsvp-field"><label>LANGKAH 4 — JUDUL</label><input type="text" id="landing-step-3-title"></div>
+                                <div class="rsvp-field"><label>DESKRIPSI</label><input type="text" id="landing-step-3-desc"></div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500">Ikon tiap langkah tetap dari tema (tidak bisa diubah dari sini).</p>
+                    </div>
+
+                    <!-- FAQ -->
+                    <div class="data-card p-8 rounded-3xl space-y-4">
+                        <h3
+                            class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
+                            <span class="material-symbols-outlined">help</span> FAQ (Pertanyaan Umum)
+                        </h3>
+                        <p class="text-xs text-gray-500">Jawaban boleh memakai HTML sederhana (mis. &lt;b&gt;tebal&lt;/b&gt;, &lt;ul&gt;&lt;li&gt;daftar&lt;/li&gt;&lt;/ul&gt;). Baris dengan pertanyaan kosong tidak disimpan.</p>
+                        <div id="landing-faq-rows" class="space-y-4"></div>
+                        <button type="button" onclick="addLandingFaq()"
+                            class="border border-gray-200 rounded-2xl px-4 py-3 text-sm bg-white hover:border-secondary">+ Tambah FAQ</button>
+                    </div>
+
+                    <!-- Syarat & Ketentuan -->
+                    <div class="data-card p-8 rounded-3xl space-y-4">
+                        <h3
+                            class="font-title-sm text-secondary flex items-center gap-2 uppercase text-xs tracking-widest font-semibold">
+                            <span class="material-symbols-outlined">description</span> Syarat &amp; Ketentuan
+                        </h3>
+                        <p class="text-xs text-gray-500">Isi boleh memakai HTML sederhana (mis. &lt;b&gt;tebal&lt;/b&gt;). Nomor 01–06 mengikuti urutan kartu.</p>
+                        <div class="space-y-4">
+                            <div class="border border-gray-200 rounded-2xl p-4 space-y-3">
+                                <p class="text-xs font-bold text-secondary">KARTU 01</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="rsvp-field"><label>LABEL KECIL</label><input type="text" id="landing-term-0-tag"></div>
+                                    <div class="rsvp-field"><label>JUDUL</label><input type="text" id="landing-term-0-title"></div>
+                                </div>
+                                <div class="rsvp-field"><label>ISI</label><textarea id="landing-term-0-body" rows="3"></textarea></div>
+                            </div>
+                            <div class="border border-gray-200 rounded-2xl p-4 space-y-3">
+                                <p class="text-xs font-bold text-secondary">KARTU 02</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="rsvp-field"><label>LABEL KECIL</label><input type="text" id="landing-term-1-tag"></div>
+                                    <div class="rsvp-field"><label>JUDUL</label><input type="text" id="landing-term-1-title"></div>
+                                </div>
+                                <div class="rsvp-field"><label>ISI</label><textarea id="landing-term-1-body" rows="3"></textarea></div>
+                            </div>
+                            <div class="border border-gray-200 rounded-2xl p-4 space-y-3">
+                                <p class="text-xs font-bold text-secondary">KARTU 03</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="rsvp-field"><label>LABEL KECIL</label><input type="text" id="landing-term-2-tag"></div>
+                                    <div class="rsvp-field"><label>JUDUL</label><input type="text" id="landing-term-2-title"></div>
+                                </div>
+                                <div class="rsvp-field"><label>ISI</label><textarea id="landing-term-2-body" rows="3"></textarea></div>
+                            </div>
+                            <div class="border border-gray-200 rounded-2xl p-4 space-y-3">
+                                <p class="text-xs font-bold text-secondary">KARTU 04</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="rsvp-field"><label>LABEL KECIL</label><input type="text" id="landing-term-3-tag"></div>
+                                    <div class="rsvp-field"><label>JUDUL</label><input type="text" id="landing-term-3-title"></div>
+                                </div>
+                                <div class="rsvp-field"><label>ISI</label><textarea id="landing-term-3-body" rows="3"></textarea></div>
+                            </div>
+                            <div class="border border-gray-200 rounded-2xl p-4 space-y-3">
+                                <p class="text-xs font-bold text-secondary">KARTU 05</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="rsvp-field"><label>LABEL KECIL</label><input type="text" id="landing-term-4-tag"></div>
+                                    <div class="rsvp-field"><label>JUDUL</label><input type="text" id="landing-term-4-title"></div>
+                                </div>
+                                <div class="rsvp-field"><label>ISI</label><textarea id="landing-term-4-body" rows="3"></textarea></div>
+                            </div>
+                            <div class="border border-gray-200 rounded-2xl p-4 space-y-3">
+                                <p class="text-xs font-bold text-secondary">KARTU 06</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="rsvp-field"><label>LABEL KECIL</label><input type="text" id="landing-term-5-tag"></div>
+                                    <div class="rsvp-field"><label>JUDUL</label><input type="text" id="landing-term-5-title"></div>
+                                </div>
+                                <div class="rsvp-field"><label>ISI</label><textarea id="landing-term-5-body" rows="3"></textarea></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Katalog Tema -->
                     <div class="data-card p-8 rounded-3xl space-y-4">
                         <h3
@@ -1968,6 +2149,36 @@
             document.getElementById('landing-hero-highlight').value = d.hero_highlight;
             document.getElementById('landing-hero-subtitle').value = d.hero_subtitle;
             document.getElementById('landing-wa').value = d.wa;
+            // Teks landing (FAQ/S&K/judul/isi paket/cara pesan).
+            const sec = d.sections || {};
+            const secIds = ['katalog-eyebrow', 'katalog-title', 'katalog-subtitle', 'harga-title', 'harga-subtitle', 'fitur-title', 'fitur-subtitle', 'cara-title', 'cara-subtitle', 'faq-title', 'syarat-title', 'syarat-intro'];
+            secIds.forEach(function (k) {
+                const el = document.getElementById('landing-sec-' + k);
+                if (el && sec[k.replace(/-/g, '_')] !== undefined) el.value = sec[k.replace(/-/g, '_')];
+            });
+            const pkgs = d.packages || {};
+            ['basic', 'premium', 'eksklusif'].forEach(function (p) {
+                const el = document.getElementById('landing-pkg-' + p);
+                if (el) el.value = (pkgs[p] || []).join('\n');
+            });
+            const steps = d.steps || [];
+            for (let i = 0; i < 4; i++) {
+                const t = document.getElementById('landing-step-' + i + '-title');
+                const ds = document.getElementById('landing-step-' + i + '-desc');
+                if (t) t.value = (steps[i] && steps[i].title) || '';
+                if (ds) ds.value = (steps[i] && steps[i].desc) || '';
+            }
+            const terms = d.terms || [];
+            for (let i = 0; i < 6; i++) {
+                const tg = document.getElementById('landing-term-' + i + '-tag');
+                const tt = document.getElementById('landing-term-' + i + '-title');
+                const tb = document.getElementById('landing-term-' + i + '-body');
+                if (tg) tg.value = (terms[i] && terms[i].tag) || '';
+                if (tt) tt.value = (terms[i] && terms[i].title) || '';
+                if (tb) tb.value = (terms[i] && terms[i].body) || '';
+            }
+            landingFaqs = Array.isArray(d.faqs) ? d.faqs.map(function (f) { return { q: f.q || '', a: f.a || '' }; }) : [];
+            renderFaqRows();
             landingThemes = d.themes || [];
             // Datalist kategori: baku + kategori yang sudah dipakai (termasuk
             // kategori baru buatan sendiri) — input tetap teks bebas.
@@ -2101,12 +2312,84 @@
             renderLandingRows();
         }
 
+        // ===== FAQ landing: baris dinamis (DOM API — jawaban boleh berisi HTML) =====
+        var landingFaqs = [];
+        function renderFaqRows() {
+            const box = document.getElementById('landing-faq-rows');
+            if (!box) return;
+            box.innerHTML = '';
+            landingFaqs.forEach(function (f, i) {
+                const wrap = document.createElement('div');
+                wrap.className = 'border border-gray-200 rounded-2xl p-4 space-y-3';
+                const head = document.createElement('p');
+                head.className = 'text-xs font-bold text-secondary';
+                head.textContent = 'FAQ ' + (i + 1);
+                const qf = document.createElement('div');
+                qf.className = 'rsvp-field';
+                const ql = document.createElement('label');
+                ql.textContent = 'PERTANYAAN';
+                const qi = document.createElement('input');
+                qi.type = 'text';
+                qi.value = f.q || '';
+                qi.addEventListener('input', function () { landingFaqs[i].q = qi.value; });
+                qf.appendChild(ql); qf.appendChild(qi);
+                const af = document.createElement('div');
+                af.className = 'rsvp-field';
+                const al = document.createElement('label');
+                al.textContent = 'JAWABAN';
+                const at = document.createElement('textarea');
+                at.rows = 3;
+                at.value = f.a || '';
+                at.addEventListener('input', function () { landingFaqs[i].a = at.value; });
+                af.appendChild(al); af.appendChild(at);
+                const del = document.createElement('button');
+                del.type = 'button';
+                del.className = 'text-red-500 text-xs px-1';
+                del.textContent = 'Hapus FAQ ini';
+                del.addEventListener('click', function () { landingFaqs.splice(i, 1); renderFaqRows(); });
+                wrap.appendChild(head); wrap.appendChild(qf); wrap.appendChild(af); wrap.appendChild(del);
+                box.appendChild(wrap);
+            });
+        }
+        function addLandingFaq() {
+            landingFaqs.push({ q: '', a: '' });
+            renderFaqRows();
+        }
+        function collectLandingTexts() {
+            const sec = {};
+            ['katalog-eyebrow', 'katalog-title', 'katalog-subtitle', 'harga-title', 'harga-subtitle', 'fitur-title', 'fitur-subtitle', 'cara-title', 'cara-subtitle', 'faq-title', 'syarat-title', 'syarat-intro'].forEach(function (k) {
+                const el = document.getElementById('landing-sec-' + k);
+                sec[k.replace(/-/g, '_')] = el ? el.value : '';
+            });
+            const pkgs = {};
+            ['basic', 'premium', 'eksklusif'].forEach(function (p) {
+                const el = document.getElementById('landing-pkg-' + p);
+                pkgs[p] = el ? el.value.split('\n').map(function (x) { return x.trim(); }).filter(function (x) { return x !== ''; }) : [];
+            });
+            const steps = [];
+            for (let i = 0; i < 4; i++) {
+                const t = document.getElementById('landing-step-' + i + '-title');
+                const ds = document.getElementById('landing-step-' + i + '-desc');
+                steps.push({ title: t ? t.value : '', desc: ds ? ds.value : '' });
+            }
+            const terms = [];
+            for (let i = 0; i < 6; i++) {
+                const tg = document.getElementById('landing-term-' + i + '-tag');
+                const tt = document.getElementById('landing-term-' + i + '-title');
+                const tb = document.getElementById('landing-term-' + i + '-body');
+                terms.push({ tag: tg ? tg.value : '', title: tt ? tt.value : '', body: tb ? tb.value : '' });
+            }
+            const faqs = landingFaqs.filter(function (f) { return (f.q || '').trim() !== ''; });
+            return { sections: sec, packages: pkgs, steps: steps, terms: terms, faqs: faqs };
+        }
+
         async function saveLanding() {
             syncLandingRows();
             const over = {};
             landingThemes.forEach(function (th) {
                 over[th.slug] = { name: th.name, cat: th.cat, order: th.order, badge: th.badge || '', music: th.music || '', visible: !!th.visible };
             });
+            const lt = collectLandingTexts();
             const payload = {
                 landing_harga_basic: document.getElementById('landing-harga-basic').value,
                 landing_harga_premium: document.getElementById('landing-harga-premium').value,
@@ -2116,6 +2399,11 @@
                 landing_hero_subtitle: document.getElementById('landing-hero-subtitle').value,
                 landing_wa: document.getElementById('landing-wa').value,
                 landing_themes: JSON.stringify(over),
+                landing_faqs: JSON.stringify(lt.faqs),
+                landing_terms: JSON.stringify(lt.terms),
+                landing_sections: JSON.stringify(lt.sections),
+                landing_packages: JSON.stringify(lt.packages),
+                landing_steps: JSON.stringify(lt.steps),
             };
             const res = await fetch('api/admin_api?action=update_settings&inv_id=1', {
                 method: 'POST',

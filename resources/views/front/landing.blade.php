@@ -143,9 +143,9 @@ tailwind.config = {
 <!-- ============ KATALOG ============ -->
 <section id="katalog" class="max-w-6xl mx-auto px-4 py-16">
   <div class="max-w-2xl">
-    <p class="text-xs font-extrabold tracking-[0.25em] text-gold">KOLEKSI TEMA</p>
-    <h2 class="font-sans font-extrabold text-3xl md:text-4xl text-navydark mt-2">Buka demonya dulu, baru pilih</h2>
-    <p class="text-stone-600 mt-3">Setiap tema punya demo yang bisa kamu buka seperti tamu membukanya. Harga sudah termasuk semua fitur. Klik gambar untuk membuka demonya.</p>
+    <p class="text-xs font-extrabold tracking-[0.25em] text-gold">{{ $sections['katalog_eyebrow'] }}</p>
+    <h2 class="font-sans font-extrabold text-3xl md:text-4xl text-navydark mt-2">{{ $sections['katalog_title'] }}</h2>
+    <p class="text-stone-600 mt-3">{{ $sections['katalog_subtitle'] }}</p>
   </div>
 
   <div class="flex flex-wrap gap-2 mt-8" id="filterBar">
@@ -200,8 +200,8 @@ tailwind.config = {
 <section id="harga" class="bg-cream/60 border-y border-stone-200/70">
   <div class="max-w-6xl mx-auto px-4 py-16">
     <div class="text-center max-w-2xl mx-auto">
-      <h2 class="font-serif font-bold text-3xl md:text-4xl text-navydark">Harga Paket</h2>
-      <p class="text-stone-600 mt-3">Sekali bayar, undangan aktif sampai acara selesai. Tidak ada biaya bulanan.</p>
+      <h2 class="font-serif font-bold text-3xl md:text-4xl text-navydark">{{ $sections['harga_title'] }}</h2>
+      <p class="text-stone-600 mt-3">{{ $sections['harga_subtitle'] }}</p>
     </div>
     <div class="grid md:grid-cols-3 gap-5 mt-10 items-stretch">
       <!-- Basic -->
@@ -210,19 +210,9 @@ tailwind.config = {
         <p class="font-serif font-bold text-4xl text-navydark mt-3">{{ $harga['basic'] }}</p>
         <p class="text-xs text-stone-500 mt-1">per undangan</p>
         <ul class="text-sm text-stone-600 space-y-2.5 mt-6 flex-1">
-          <li>✓ Semua tema</li>
-          <li>✓ Kutipan atau ayat pembuka</li>
-          <li>✓ Detail acara: tanggal, jam, dan lokasi</li>
-          <li>✓ Profil mempelai</li>
-          <li>✓ Galeri sampai 5 foto (no video)</li>
-          <li>✓ Musik latar (bebas request)</li>
-          <li>✓ Tombol petunjuk arah ke lokasi acara</li>
-          <li>✓ Jadwal acara tanpa batas (akad dan resepsi)</li>
-          <li>✓ Amplop digital</li>
-          <li>✓ RSVP &amp; ucapan tamu</li>
-          <li>✓ Link undangan manual</li>
-          <li>✓ Tamu Unlimited</li>
-          <li>✓ Masa aktif 6 bulan</li>
+          @foreach ($packages['basic'] as $item)
+          <li>✓ {{ $item }}</li>
+          @endforeach
         </ul>
         <a href="/pesan?paket=Basic" class="mt-7 block text-center px-4 py-3 rounded-full border-2 border-navy text-navy font-bold text-sm hover:bg-navy hover:text-white transition">Pesan Basic</a>
       </div>
@@ -233,12 +223,9 @@ tailwind.config = {
         <p class="font-serif font-bold text-4xl text-goldsoft mt-3">{{ $harga['premium'] }}</p>
         <p class="text-xs text-white/60 mt-1">per undangan</p>
         <ul class="text-sm text-white/85 space-y-2.5 mt-6 flex-1">
-          <li>✓ Semua di paket Basic</li>
-          <li>✓ 10 foto galeri</li>
-          <li>✓ Kisah perjalanan cinta</li>
-          <li>✓ Link Generator tamu otomatis + kirim WA massal</li>
-          <li>✓ Live streaming pernikahan</li>
-          <li>✓ Masa aktif 1 tahun</li>
+          @foreach ($packages['premium'] as $item)
+          <li>✓ {{ $item }}</li>
+          @endforeach
         </ul>
         <a href="/pesan?paket=Premium" class="mt-7 block text-center px-4 py-3 rounded-full bg-gold text-navydark font-bold text-sm hover:brightness-110 transition">Pesan Premium</a>
       </div>
@@ -248,13 +235,9 @@ tailwind.config = {
         <p class="font-serif font-bold text-4xl text-navydark mt-3">{{ $harga['eksklusif'] }}</p>
         <p class="text-xs text-stone-500 mt-1">per undangan</p>
         <ul class="text-sm text-stone-600 space-y-2.5 mt-6 flex-1">
-          <li>✓ Semua di paket Premium</li>
-          <li>✓ 20 foto + 1 video</li>
-          <li>✓ Check-in QR tamu + monitor panitia realtime</li>
-          <li>✓ Laporan kehadiran tamu</li>
-          <li>✓ Prioritas pengerjaan</li>
-          <li>✓ Konsultasi sampai hari H</li>
-          <li>✓ Masa aktif 1 tahun</li>
+          @foreach ($packages['eksklusif'] as $item)
+          <li>✓ {{ $item }}</li>
+          @endforeach
         </ul>
         <a href="/pesan?paket=Eksklusif" class="mt-7 block text-center px-4 py-3 rounded-full border-2 border-navy text-navy font-bold text-sm hover:bg-navy hover:text-white transition">Pesan Eksklusif</a>
       </div>
@@ -266,8 +249,8 @@ tailwind.config = {
 <!-- ============ FITUR ============ -->
 <section id="fitur" class="max-w-6xl mx-auto px-4 py-16">
   <div class="text-center max-w-2xl mx-auto">
-    <h2 class="font-serif font-bold text-3xl md:text-4xl text-navydark">Fitur Lengkap</h2>
-    <p class="text-stone-600 mt-3">Bukan sekadar kartu online — satu sistem untuk undangan dan panitia.</p>
+    <h2 class="font-serif font-bold text-3xl md:text-4xl text-navydark">{{ $sections['fitur_title'] }}</h2>
+    <p class="text-stone-600 mt-3">{{ $sections['fitur_subtitle'] }}</p>
   </div>
   <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-10">
     <div class="bg-white rounded-2xl border border-stone-200/80 p-5">
@@ -298,20 +281,24 @@ tailwind.config = {
 <section id="cara-pesan" class="bg-cream/60 border-y border-stone-200/70">
   <div class="max-w-6xl mx-auto px-4 py-16">
     <div class="text-center max-w-2xl mx-auto">
-      <h2 class="font-serif font-bold text-3xl md:text-4xl text-navydark">Cara Pesan</h2>
-      <p class="text-stone-600 mt-3">Empat langkah, undanganmu siap dibagikan.</p>
+      <h2 class="font-serif font-bold text-3xl md:text-4xl text-navydark">{{ $sections['cara_title'] }}</h2>
+      <p class="text-stone-600 mt-3">{{ $sections['cara_subtitle'] }}</p>
     </div>
     <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-4 mt-10">
-      @foreach ([
-        ['1', 'Pilih Tema', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>', 'Pilih tema favoritmu dari katalog di atas.'],
-        ['2', 'Isi Form Pesanan', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>', 'Klik Pesan — isi tema, paket, data mempelai, dan metode pembayaran.'],
-        ['3', 'Isi Data & Bayar', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>', 'Lengkapi data acara, foto, dan lakukan pembayaran.'],
-        ['4', 'Undangan Jadi', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>', 'Terima link undangan, bagikan ke tamu lewat WhatsApp.'],
-      ] as $s)
+@php
+  // Ikon per langkah (tetap di Blade — yang bisa diedit admin hanya judul + deskripsi).
+  $stepIcons = [
+    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>',
+    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>',
+    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>',
+    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+  ];
+@endphp
+      @foreach ($steps as $i => $s)
         <div class="bg-white rounded-2xl border border-stone-200/80 p-5 text-center">
-          <span class="relative inline-flex w-12 h-12 rounded-full bg-navy text-gold items-center justify-center">{!! $s[2] !!}<span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gold text-navydark text-[11px] font-extrabold flex items-center justify-center">{{ $s[0] }}</span></span>
-          <h3 class="font-bold text-sm mt-3">{{ $s[1] }}</h3>
-          <p class="text-xs text-stone-600 leading-relaxed mt-1.5">{{ $s[3] }}</p>
+          <span class="relative inline-flex w-12 h-12 rounded-full bg-navy text-gold items-center justify-center">{!! $stepIcons[$i] ?? $stepIcons[3] !!}<span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gold text-navydark text-[11px] font-extrabold flex items-center justify-center">{{ $i + 1 }}</span></span>
+          <h3 class="font-bold text-sm mt-3">{{ $s['title'] }}</h3>
+          <p class="text-xs text-stone-600 leading-relaxed mt-1.5">{{ $s['desc'] }}</p>
         </div>
       @endforeach
     </div>
@@ -323,43 +310,14 @@ tailwind.config = {
 
 <!-- ============ FAQ ============ -->
 <section id="faq" class="max-w-3xl mx-auto px-4 py-16">
-  <h2 class="font-serif font-bold text-3xl md:text-4xl text-navydark text-center">Pertanyaan Umum</h2>
+  <h2 class="font-serif font-bold text-3xl md:text-4xl text-navydark text-center">{{ $sections['faq_title'] }}</h2>
   <div class="space-y-3 mt-8">
+    @foreach ($faqs as $f)
     <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
-      <summary class="font-bold text-sm cursor-pointer">Berapa lama undangan saya jadi?</summary>
-      <p class="text-sm text-stone-600 leading-relaxed mt-2">Umumnya 1 hari setelah data dan pembayaran lengkap. Paket Eksklusif dengan motion custom menyesuaikan antrean.</p>
+      <summary class="font-bold text-sm cursor-pointer">{{ $f['q'] }}</summary>
+      {!! $f['a'] !!}
     </details>
-    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
-      <summary class="font-bold text-sm cursor-pointer">Apakah bisa revisi setelah jadi?</summary>
-      <p class="text-sm text-stone-600 leading-relaxed mt-2">Bisa — perbaikan data (nama, tanggal, foto) dilayani selama masa aktif undangan. Ganti tema bisa dibicarakan saat pemesanan.</p>
-    </details>
-    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
-      <summary class="font-bold text-sm cursor-pointer">Bagaimana tamu menerima undangan?</summary>
-      <p class="text-sm text-stone-600 leading-relaxed mt-2">Tamu menerima link personal lewat WhatsApp — dibuka di browser HP, tanpa install aplikasi. Nama tamu tampil otomatis di undangan.</p>
-    </details>
-    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
-      <summary class="font-bold text-sm cursor-pointer">Bagaimana cara membagikan undangan ke tamu (paket Basic)?</summary>
-      <p class="text-sm text-stone-600 leading-relaxed mt-2">Tambahkan <b class="text-stone-800">?to=nama-tamu</b> di belakang link undangan — contoh: /hawa-adam?to=Budi%20Santoso. Tamu yang membuka link itu disapa dengan namanya.</p>
-    </details>
-    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
-      <summary class="font-bold text-sm cursor-pointer">Apa itu Link Generator tamu (Premium &amp; Eksklusif)?</summary>
-      <p class="text-sm text-stone-600 leading-relaxed mt-2">Link Generator adalah halaman khusus untuk membuat link undangan personal untuk setiap tamu — tamu yang membuka linknya disapa dengan namanya sendiri, lengkap dengan kode QR-nya. Cara pakainya:</p>
-      <ul class="text-sm text-stone-600 leading-relaxed mt-2 ml-4 list-disc space-y-1">
-        <li><b class="text-stone-800">Tambah tamu:</b> satu per satu (nama + nomor WA + kategori opsional seperti Keluarga atau Sahabat) atau massal sekaligus — tempel daftar dengan format <i>Nama, nomor WA, kategori</i> per baris.</li>
-        <li><b class="text-stone-800">Pesan WhatsApp:</b> pakai template Sistem otomatis, atau tulis sendiri dengan kode [nama] dan [link] — ada pratinjau live sebelum dikirim.</li>
-        <li><b class="text-stone-800">Kirim:</b> semua link hasil generate massal bisa disalin sekaligus (Salin Semua Link) atau dikirim per tamu lewat WhatsApp dari kartu tamunya.</li>
-        <li><b class="text-stone-800">Lacak status:</b> jumlah Total Link, Terkirim, dan Belum Kirim tampil di atas halaman; tanggal kirim tercatat di bawah nama tamu.</li>
-        <li><b class="text-stone-800">Edit &amp; unduh:</b> nama tamu bisa diedit tanpa mengubah tautan lama, nama yang sama otomatis memakai link lama supaya tidak dobel, dan daftar tamu bisa dicari, difilter per kategori, serta diunduh sebagai CSV.</li>
-      </ul>
-    </details>
-    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
-      <summary class="font-bold text-sm cursor-pointer">Bagaimana cara pembayarannya?</summary>
-      <p class="text-sm text-stone-600 leading-relaxed mt-2">Pembayaran lunas di awal via <b class="text-stone-800">Transfer Bank, QRIS, DANA, GoPay, atau ShopeePay</b>. Pilih metodenya di halaman pesanan — detail rekening/nomor dikirim via WhatsApp setelah pesanan dikonfirmasi.</p>
-    </details>
-    <details class="bg-white rounded-2xl border border-stone-200/80 p-5">
-      <summary class="font-bold text-sm cursor-pointer">Apa itu check-in QR?</summary>
-      <p class="text-sm text-stone-600 leading-relaxed mt-2">Panitia di pintu masuk cukup scan QR di undangan tamu (atau ketik kode undangan). Kehadiran tercatat otomatis dan tampil di layar monitor acara.</p>
-    </details>
+    @endforeach
   </div>
 </section>
 
@@ -367,57 +325,19 @@ tailwind.config = {
 <section id="syarat" class="bg-[#E8EDF5]">
   <div class="max-w-6xl mx-auto px-4 py-16">
     <p class="text-xs font-extrabold tracking-[0.25em] text-gold">SYARAT &amp; KETENTUAN</p>
-    <h2 class="font-serif font-bold text-3xl md:text-4xl text-navydark mt-2">Syarat &amp; Ketentuan</h2>
-    <p class="text-stone-600 mt-3 text-sm">Dengan memesan undangan di undangankamu, kamu menyetujui ketentuan berikut.</p>
+    <h2 class="font-serif font-bold text-3xl md:text-4xl text-navydark mt-2">{{ $sections['syarat_title'] }}</h2>
+    <p class="text-stone-600 mt-3 text-sm">{{ $sections['syarat_intro'] }}</p>
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-10">
+      @foreach ($terms as $i => $t)
       <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
         <div class="flex items-start justify-between gap-3">
-          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#DCE5F2] text-navydark font-bold flex items-center justify-center">01</span>
-          <span class="text-[13px] font-medium text-stone-700 text-right">Masa Aktif &amp; Kuota</span>
+          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#DCE5F2] text-navydark font-bold flex items-center justify-center">{{ sprintf('%02d', $i + 1) }}</span>
+          <span class="text-[13px] font-medium text-stone-700 text-right">{{ $t['tag'] }}</span>
         </div>
-        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Ketentuan Umum &amp; Masa Aktif</h3>
-        <p class="text-sm text-stone-600 leading-relaxed mt-3">Masa aktif undangan <b class="text-stone-800">6 bulan (Basic)</b> sampai <b class="text-stone-800">1 (satu) tahun (Premium &amp; Eksklusif)</b> sejak tanggal pemesanan/aktivasi, dengan kuota sebar nama tamu <b class="text-stone-800">tanpa batas (unlimited)</b> serta kapasitas foto dan fitur sesuai paket yang dipilih — Link Generator untuk paket Premium dan Eksklusif; check-in QR hanya untuk paket Eksklusif.</p>
+        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">{{ $t['title'] }}</h3>
+        <p class="text-sm text-stone-600 leading-relaxed mt-3">{!! $t['body'] !!}</p>
       </article>
-      <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
-        <div class="flex items-start justify-between gap-3">
-          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#DCE5F2] text-navydark font-bold flex items-center justify-center">02</span>
-          <span class="text-[13px] font-medium text-stone-700 text-right">Pengerjaan &amp; Revisi</span>
-        </div>
-        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Pemesanan &amp; Pengerjaan</h3>
-        <p class="text-sm text-stone-600 leading-relaxed mt-3">Pesan lewat halaman pesanan (diteruskan ke WhatsApp) dengan menyebutkan tema dan paket pilihan. Undangan dikerjakan dalam estimasi <b class="text-stone-800">1 hari</b> setelah data dan pembayaran lengkap (paket Eksklusif dengan motion custom menyesuaikan antrean), termasuk revisi minor &amp; mayor gratis dalam batas ketentuan selama masa aktif.</p>
-      </article>
-      <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
-        <div class="flex items-start justify-between gap-3">
-          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#DCE5F2] text-navydark font-bold flex items-center justify-center">03</span>
-          <span class="text-[13px] font-medium text-stone-700 text-right">Tanggung Jawab Materi</span>
-        </div>
-        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Kelengkapan &amp; Akurasi Data</h3>
-        <p class="text-sm text-stone-600 leading-relaxed mt-3">Pemesan wajib memastikan kebenaran penulisan nama, gelar, tanggal, jam acara, titik koordinat Google Maps, serta resolusi foto sebelum undangan dipublikasikan atau diproses.</p>
-      </article>
-      <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
-        <div class="flex items-start justify-between gap-3">
-          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#DCE5F2] text-navydark font-bold flex items-center justify-center">04</span>
-          <span class="text-[13px] font-medium text-stone-700 text-right">Perlindungan Data</span>
-        </div>
-        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Privasi &amp; Keamanan Data</h3>
-        <p class="text-sm text-stone-600 leading-relaxed mt-3">Kami menjamin kerahasiaan seluruh data pribadi mempelai, nomor rekening amplop digital, maupun daftar tamu undangan dan <b class="text-stone-800">tidak membagikannya ke pihak ketiga</b>.</p>
-      </article>
-      <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
-        <div class="flex items-start justify-between gap-3">
-          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#DCE5F2] text-navydark font-bold flex items-center justify-center">05</span>
-          <span class="text-[13px] font-medium text-stone-700 text-right">Hak Cipta &amp; Etika</span>
-        </div>
-        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Kekayaan Intelektual &amp; Larangan</h3>
-        <p class="text-sm text-stone-600 leading-relaxed mt-3">Seluruh kode sumber, template, ilustrasi, dan animasi motion dilindungi hak cipta. Dilarang memperbanyak template atau mengunggah konten bermuatan SARA/ilegal. Foto, musik, dan data yang dikirim pemesan tetap menjadi milik pemesan.</p>
-      </article>
-      <article class="sk-card bg-white rounded-[20px] shadow-sm p-6">
-        <div class="flex items-start justify-between gap-3">
-          <span class="shrink-0 w-10 h-10 rounded-xl bg-[#DCE5F2] text-navydark font-bold flex items-center justify-center">06</span>
-          <span class="text-[13px] font-medium text-stone-700 text-right">Pembayaran &amp; Refund</span>
-        </div>
-        <h3 class="font-serif font-bold text-[22px] text-stone-900 leading-snug mt-5">Pembayaran &amp; Pengembalian Dana</h3>
-        <p class="text-sm text-stone-600 leading-relaxed mt-3">Pembayaran lunas di awal sebelum aktivasi atau pengerjaan dimulai. Dana yang telah dibayarkan tidak dapat dikembalikan <b class="text-stone-800">(non-refundable)</b> setelah layanan aktif/diproses. Harga dapat berubah — harga yang berlaku adalah yang disepakati saat pemesanan.</p>
-      </article>
+      @endforeach
     </div>
     <p class="text-xs text-stone-500 mt-8 text-center">Ada yang kurang jelas? Tanyakan langsung lewat WhatsApp sebelum memesan.</p>
   </div>
