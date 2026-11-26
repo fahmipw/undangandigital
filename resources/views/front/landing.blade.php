@@ -58,6 +58,39 @@ tailwind.config = {
   .hero-fallback-name { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1rem; font-family: "Playfair Display", Georgia, serif; font-weight: 700; font-size: 1.1rem; color: #E7D9A8; }
   @media (prefers-reduced-motion: reduce) { .hero-col-track { animation: none; } }
 </style>
+<style id="neo-brutalism">
+/* NEO-BRUTALISM — palet tetap navy + emas v1 (#0E2244/#071730/#D4AF37/#E7D9A8) */
+:root { --nb-ink: #071730; --nb-navy: #0E2244; --nb-gold: #D4AF37; --nb-goldsoft: #E7D9A8; }
+* { border-radius: 0 !important; }
+[class*="blur"] { backdrop-filter: none !important; filter: none !important; }
+header { border-bottom: 3px solid var(--nb-gold) !important; background: #071730 !important; }
+footer { border-top: 4px solid var(--nb-gold) !important; }
+section { border-top: 3px solid var(--nb-ink); }
+#beranda { border-top: none; }
+h1, h2, h3 { font-weight: 800 !important; }
+#katalog h2, #harga h2, #fitur h2, #cara-pesan h2, #faq h2, #syarat h2 { text-transform: uppercase !important; }
+.theme-card, #fitur .grid > div, #cara-pesan .grid > div, #harga .grid > div,
+.sk-card, #faq details {
+  border: 3px solid var(--nb-ink) !important;
+  box-shadow: 6px 6px 0 var(--nb-ink) !important;
+}
+#harga .bg-navydark { border: 3px solid var(--nb-gold) !important; box-shadow: 8px 8px 0 var(--nb-gold) !important; }
+a[class*="rounded-full"], button[class*="rounded-full"] {
+  border: 3px solid var(--nb-ink) !important;
+  box-shadow: 4px 4px 0 var(--nb-ink) !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+}
+a[class*="rounded-full"]:hover, button[class*="rounded-full"]:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--nb-ink) !important; }
+a[class*="rounded-full"]:active, button[class*="rounded-full"]:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--nb-ink) !important; }
+.filter-pill { border: 2px solid var(--nb-ink) !important; box-shadow: 3px 3px 0 var(--nb-ink) !important; font-weight: 800 !important; }
+.filter-pill.active { box-shadow: 3px 3px 0 var(--nb-gold) !important; }
+.hero-mini { border: 2px solid var(--nb-gold) !important; }
+.card-disc { border: 2px solid var(--nb-ink) !important; }
+.theme-card .absolute.top-3 { border: 2px solid var(--nb-gold) !important; }
+#harga .absolute.-top-3 { border: 2px solid var(--nb-ink) !important; }
+#faq details summary { font-weight: 800 !important; }
+</style>
 </head>
 <body class="bg-ivory text-stone-800 antialiased">
 
@@ -94,7 +127,6 @@ tailwind.config = {
 
 <!-- ============ HERO ============ -->
 <section id="beranda" class="relative overflow-hidden bg-[#071730]">
-  <div class="pointer-events-none absolute -top-32 right-0 w-[480px] h-[480px] rounded-full bg-gold/10 blur-3xl"></div>
   <div class="relative max-w-6xl mx-auto px-4 pt-14 pb-16 md:pt-20 md:pb-24 grid md:grid-cols-2 gap-10 items-center">
     <div>
       <p class="text-xs font-extrabold tracking-[0.25em] text-gold">UNDANGAN DIGITAL PERNIKAHAN</p>
