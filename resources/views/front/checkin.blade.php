@@ -192,6 +192,7 @@ $ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
   .badge{flex-shrink:0;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;white-space:nowrap}
   .badge.in{background:#dcfce7;color:#166534}
   .badge.out{background:#fef3c7;color:#92400e}
+  .badge.pax{background:#dbeafe;color:#1d4ed8}
   .count{font-size:12px;color:var(--gen-inkSoft);text-align:center;margin-top:8px}
   .subtabs{display:flex;gap:6px;margin-bottom:10px}
   .subtab{flex:1;padding:9px 6px;border-radius:999px;border:1px solid var(--gen-border);background:var(--gen-card);color:var(--gen-inkSoft);font-size:13px;font-weight:700;cursor:pointer}
@@ -213,7 +214,7 @@ $ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
   .stepper button{width:44px;height:44px;border-radius:50%;border:1px solid var(--gen-border);background:var(--gen-soft);color:var(--gen-ink);font-size:24px;font-weight:700;cursor:pointer}
   .stepper b{font-size:26px;min-width:36px;text-align:center;font-variant-numeric:tabular-nums}
   .people-lbl{font-size:12px;color:var(--gen-inkSoft);text-align:center;margin-top:4px}
-  .recent-meta{font-size:11px;color:var(--gen-inkSoft);margin-top:2px}
+  .recent-meta{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gen-inkSoft);margin-top:2px}
   /* Menu bertab */
   .tabs{display:flex;gap:6px;margin:0 0 14px}
   .tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 2px;border:1px solid var(--gen-border);border-radius:12px;background:var(--gen-card);color:var(--gen-inkSoft);font-size:11px;font-weight:700;cursor:pointer}
@@ -748,7 +749,7 @@ async function loadGuests(){
 function guestRow(g, num){
   var done = !!g.checked_in_at;
   var badge = done
-    ? '<span class="badge in">Hadir</span><span class="gtime">' + esc(formatEventTime(g.checked_in_at)) + (g.companions > 0 ? ' • +' + g.companions : '') + '</span>'
+    ? '<span class="badge in">Hadir</span>' + (g.companions > 0 ? '<span class="badge pax">+' + g.companions + ' pendamping</span>' : '') + '<span class="gtime">' + esc(formatEventTime(g.checked_in_at)) + '</span>'
     : '<span class="badge out">Belum</span>';
   return '<div class="guest-item"><span class="gnum">' + num + '.</span><span class="gname">' + esc(g.nama) + '</span>' + badge + '</div>';
 }
@@ -879,9 +880,9 @@ async function refreshStats(){
     document.getElementById('recent').innerHTML = d.recent.length
       ? d.recent.map(function(r,i){
           var meta = [];
-          if(r.companions > 0) meta.push('+' + r.companions + ' pendamping');
-          if(r.checked_in_by) meta.push('Petugas: ' + r.checked_in_by);
-          return '<div class="recent-item"><span><b style="color:var(--gen-accent-text);margin-right:6px">' + (i+1) + '.</b>' + esc(r.nama) + (meta.length ? '<div class="recent-meta">' + esc(meta.join(' • ')) + '</div>' : '') + '</span><small>' + esc(formatEventTime(r.checked_in_at)) + '</small></div>';
+          if(r.companions > 0) meta.push('<span class="badge pax">+' + r.companions + ' pendamping</span>');
+          if(r.checked_in_by) meta.push(esc('Petugas: ' + r.checked_in_by));
+          return '<div class="recent-item"><span><b style="color:var(--gen-accent-text);margin-right:6px">' + (i+1) + '.</b>' + esc(r.nama) + (meta.length ? '<div class="recent-meta">' + meta.join(' ') + '</div>' : '') + '</span><small>' + esc(formatEventTime(r.checked_in_at)) + '</small></div>';
         }).join('')
       : '<div class="empty">Belum ada check-in.</div>';
   }catch(e){}
