@@ -229,7 +229,6 @@ $ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
   .cat-row .cat-head{display:flex;justify-content:space-between;gap:8px;font-size:13px}
   .cat-row .track{display:block;height:10px;border-radius:999px;background:var(--gen-soft);border:1px solid var(--gen-border);overflow:hidden;margin-top:4px}
   .cat-row .hbar{display:block;height:100%;background:var(--gen-pct-fill)}
-  .btn-wa{flex-shrink:0;background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap}
   .vs-group{margin-top:10px;font-size:13px;line-height:1.6}
   .rep-summary b{font-size:18px}
   .op-row{display:flex;justify-content:space-between;gap:8px;padding:9px 2px;border-bottom:1px solid var(--gen-border);font-size:14px}
@@ -766,14 +765,6 @@ async function loadGuests(){
   }catch(e){}
 }
 
-// Nomor WA -> format wa.me (0... jadi 62...).
-function waNumber(n){
-  var d = String(n || '').replace(/\D/g, '');
-  if(!d) return '';
-  if(d.indexOf('62') === 0) return d;
-  if(d.charAt(0) === '0') return '62' + d.slice(1);
-  return d;
-}
 function normName(s){ return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
 
 function guestRow(g, num){
@@ -1036,9 +1027,8 @@ function renderPending(){
     var from = (pendingPage - 1) * PENDING_PER_PAGE;
     pd.innerHTML = pend.slice(from, from + PENDING_PER_PAGE).map(function(p, i){
       var nm = (typeof p === 'string') ? p : (p.nama || '');
-      var wa = (typeof p === 'string') ? '' : waNumber(p.no_hp);
       var cat = (typeof p === 'string' || !p.category) ? '' : String(p.category).trim();
-      return '<div class="guest-item"><span class="gnum">' + (from + i + 1) + '.</span><span class="gname">' + esc(nm) + (cat ? ' <small style="color:var(--gen-inkSoft)">\u2022 ' + esc(cat) + '</small>' : '') + '</span>' + (wa ? '<a class="btn-wa" href="https://wa.me/' + wa + '" target="_blank" rel="noopener">WA</a>' : '') + '</div>';
+      return '<div class="guest-item"><span class="gnum">' + (from + i + 1) + '.</span><span class="gname">' + esc(nm) + (cat ? ' <small style="color:var(--gen-inkSoft)">\u2022 ' + esc(cat) + '</small>' : '') + '</span>' + '</div>';
     }).join('');
   }
   renderPendingPager(pages);
