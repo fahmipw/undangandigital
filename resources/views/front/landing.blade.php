@@ -30,6 +30,9 @@ $waText = fn($msg) => 'https://wa.me/' . $waNumber . '?text=' . urlencode($msg);
 <meta name="description" content="Undangan digital pernikahan: 35 tema cantik, RSVP, galeri, musik, gift QRIS, dan check-in QR untuk panitia. Pesan mudah lewat WhatsApp.">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script>
 tailwind.config = {
   theme: { extend: {
@@ -58,40 +61,91 @@ tailwind.config = {
   .hero-fallback-name { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1rem; font-family: "Playfair Display", Georgia, serif; font-weight: 700; font-size: 1.1rem; color: #E7D9A8; }
   @media (prefers-reduced-motion: reduce) { .hero-col-track { animation: none; } }
 </style>
-<style id="neo-brutalism">
-/* NEO-BRUTALISM — palet tetap navy + emas v1 (#0E2244/#071730/#D4AF37/#E7D9A8) */
-:root { --nb-ink: #071730; --nb-navy: #0E2244; --nb-gold: #D4AF37; --nb-goldsoft: #E7D9A8; }
-* { border-radius: 0 !important; }
-[class*="blur"] { backdrop-filter: none !important; filter: none !important; }
-header { border-bottom: 3px solid var(--nb-gold) !important; background: #071730 !important; }
-footer { border-top: 4px solid var(--nb-gold) !important; }
-section { border-top: 3px solid var(--nb-ink); }
-#beranda { border-top: none; }
-h1, h2, h3 { font-weight: 800 !important; }
-#katalog h2, #harga h2, #fitur h2, #cara-pesan h2, #faq h2, #syarat h2 { text-transform: uppercase !important; }
-.theme-card, #fitur .grid > div, #cara-pesan .grid > div, #harga .grid > div,
-.sk-card, #faq details {
-  border: 3px solid var(--nb-ink) !important;
-  box-shadow: 6px 6px 0 var(--nb-ink) !important;
+<style id="tema-referensi">
+/* TEMA REFERENSI (undangankamu.web.id neo-brutalism): ivory #FFFDF5, krem #FEF3C7,
+   biru #2563EB, kuning #FACC15, pink #FF6B9E, mint #34D399, hitam #111111 */
+:root { --rb-ink:#111111; --rb-ivory:#FFFDF5; --rb-cream:#FEF3C7; --rb-blue:#2563EB;
+  --rb-yellow:#FACC15; --rb-pink:#FF6B9E; --rb-mint:#34D399; }
+body { background:#FFFDF5 !important; color:#111 !important; font-family:'Space Grotesk', system-ui, sans-serif !important; }
+h1, h2, h3 { font-family:'Syne', 'Space Grotesk', sans-serif !important; font-weight:800 !important; color:#111 !important; }
+section { border-top:3px solid #111; }
+#beranda { border-top:none; }
+section h2 { text-transform:uppercase !important; }
+p[class*="tracking-"] { font-family:'JetBrains Mono', monospace !important; color:#2563EB !important; }
+/* grid ornament ala referensi */
+#beranda, #katalog, #syarat {
+  background-image: linear-gradient(to right, rgba(17,17,17,.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17,17,17,.08) 1px, transparent 1px) !important;
+  background-size: 28px 28px !important;
 }
-#harga .bg-navydark { border: 3px solid var(--nb-gold) !important; box-shadow: 8px 8px 0 var(--nb-gold) !important; }
+/* header */
+header { background:#FFFDF5 !important; border-bottom:3px solid #111 !important; }
+header nav a { color:#111 !important; }
+header nav a:hover { background:#FACC15 !important; }
+header a[href="#beranda"] img { background:#071730; padding:4px 10px; border:3px solid #111; box-shadow:3px 3px 0 #111; border-radius:12px; }
+/* hero */
+#beranda { background-color:#FFFDF5 !important; }
+#beranda p.text-gold { background:#FACC15 !important; color:#111 !important; font-family:'JetBrains Mono', monospace !important; padding:6px 12px; border:3px solid #111; box-shadow:3px 3px 0 #111; display:inline-block; border-radius:12px; }
+#beranda h1 { color:#111 !important; text-transform:uppercase !important; }
+#beranda .gold-grad { background:#2563EB !important; color:#fff !important; -webkit-background-clip:initial !important; background-clip:initial !important; padding:0 10px; border:3px solid #111; box-shadow:4px 4px 0 #111; display:inline-block; transform:rotate(-1deg); border-radius:12px; }
+#beranda .text-stone-300, #beranda .text-stone-400 { color:#333 !important; }
+#beranda a[href="#cara-pesan"] { background:#fff !important; color:#111 !important; }
+.hero-mini-box { border:3px solid #111 !important; box-shadow:4px 4px 0 #111 !important; }
+.hero-mini-name { color:#111 !important; }
+/* tombol: brutal-btn ala referensi */
 a[class*="rounded-full"], button[class*="rounded-full"] {
-  border: 3px solid var(--nb-ink) !important;
-  box-shadow: 4px 4px 0 var(--nb-ink) !important;
-  font-weight: 800 !important;
-  text-transform: uppercase !important;
+  border:3px solid #111 !important; box-shadow:4px 4px 0 #111 !important;
+  font-weight:800 !important; text-transform:uppercase !important; border-radius:14px !important;
 }
-a[class*="rounded-full"]:hover, button[class*="rounded-full"]:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--nb-ink) !important; }
-a[class*="rounded-full"]:active, button[class*="rounded-full"]:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--nb-ink) !important; }
-.filter-pill { border: 2px solid var(--nb-ink) !important; box-shadow: 3px 3px 0 var(--nb-ink) !important; font-weight: 800 !important; }
-.filter-pill.active { box-shadow: 3px 3px 0 var(--nb-gold) !important; }
-.hero-mini { border: 2px solid var(--nb-gold) !important; }
-.card-disc { border: 2px solid var(--nb-ink) !important; }
-.theme-card .absolute.top-3 { border: 2px solid var(--nb-gold) !important; }
-#harga .absolute.-top-3 { border: 2px solid var(--nb-ink) !important; }
-#faq details summary { font-weight: 800 !important; }
-</style>
-</head>
+a[class*="rounded-full"]:hover, button[class*="rounded-full"]:hover { transform:translate(-2px,-2px); box-shadow:6px 6px 0 #111 !important; }
+a[class*="rounded-full"]:active, button[class*="rounded-full"]:active { transform:translate(2px,2px); box-shadow:1px 1px 0 #111 !important; }
+header a[href="/pesan"] { background:#FACC15 !important; color:#111 !important; }
+#showMoreBtn { background:#FACC15 !important; color:#111 !important; }
+#cara-pesan a[href="/pesan"] { background:#2563EB !important; color:#fff !important; }
+/* section: selang-seling ivory/putih */
+#katalog { background-color:#FFFDF5 !important; }
+#harga, #fitur, #cara-pesan { background-color:#fff !important; }
+#faq { background-color:#FFFDF5 !important; }
+#syarat { background-color:#FFFDF5 !important; }
+/* kartu: brutal-box */
+.theme-card, #fitur .grid > div, #cara-pesan .grid > div, #harga .grid > div, .sk-card, #faq details {
+  background:#fff !important; border:3px solid #111 !important; box-shadow:5px 5px 0 #111 !important; border-radius:16px !important;
+}
+#harga .grid > div.bg-navydark { background:#2563EB !important; border:3px solid #111 !important; box-shadow:8px 8px 0 #111 !important; }
+#harga .grid > div.bg-navydark h3, #harga .grid > div.bg-navydark li, #harga .grid > div.bg-navydark p { color:#fff !important; }
+#harga .absolute.-top-3 { background:#FACC15 !important; color:#111 !important; border:2px solid #111 !important; }
+#harga a[href*="paket=Basic"], #harga a[href*="paket=Eksklusif"] { background:#fff !important; color:#111 !important; }
+#harga a[href*="paket=Premium"] { background:#FACC15 !important; color:#111 !important; }
+.card-disc { background:#FF6B9E !important; color:#fff !important; border:2px solid #111 !important; }
+.theme-card .absolute.top-3 { background:#111 !important; color:#FACC15 !important; border:2px solid #FACC15 !important; }
+/* filter */
+.filter-pill { background:#fff !important; color:#111 !important; border:2px solid #111 !important; box-shadow:3px 3px 0 #111 !important; font-weight:800 !important; }
+.filter-pill.active { background:#2563EB !important; color:#fff !important; border-color:#111 !important; }
+.filter-pill.active .pill-count { background:#FACC15 !important; color:#111 !important; }
+/* ikon fitur: rotasi warna aksen */
+#fitur .grid > div .w-11 { border:3px solid #111 !important; color:#111 !important; }
+#fitur .grid > div:nth-child(4n+1) .w-11 { background:#FACC15 !important; }
+#fitur .grid > div:nth-child(4n+2) .w-11 { background:#2563EB !important; color:#fff !important; }
+#fitur .grid > div:nth-child(4n+3) .w-11 { background:#FF6B9E !important; color:#fff !important; }
+#fitur .grid > div:nth-child(4n+4) .w-11 { background:#34D399 !important; }
+/* cara pesan: ikon rotasi warna */
+#cara-pesan .grid > div .w-12 { border:3px solid #111 !important; color:#111 !important; }
+#cara-pesan .grid > div:nth-child(1) .w-12 { background:#FACC15 !important; }
+#cara-pesan .grid > div:nth-child(2) .w-12 { background:#2563EB !important; color:#fff !important; }
+#cara-pesan .grid > div:nth-child(3) .w-12 { background:#FF6B9E !important; color:#fff !important; }
+#cara-pesan .grid > div:nth-child(4) .w-12 { background:#34D399 !important; }
+#cara-pesan .w-5 { border:2px solid #111 !important; }
+/* S&K: nomor rotasi warna */
+#syarat .sk-card .w-10 { border:2px solid #111 !important; color:#111 !important; }
+#syarat .sk-card:nth-child(3n+1) .w-10 { background:#FACC15 !important; }
+#syarat .sk-card:nth-child(3n+2) .w-10 { background:#2563EB !important; color:#fff !important; }
+#syarat .sk-card:nth-child(3n+3) .w-10 { background:#34D399 !important; }
+#faq details summary { font-weight:800 !important; color:#111 !important; }
+/* footer hitam ala referensi */
+footer { background:#111 !important; color:#FFFDF5 !important; border-top:4px solid #FACC15 !important; }
+footer a { color:#FFFDF5 !important; }
+a.fixed[href*="wa.me"] { border:3px solid #111 !important; box-shadow:4px 4px 0 #111 !important; }
+</style></head>
 <body class="bg-ivory text-stone-800 antialiased">
 
 <!-- ============ NAV ============ -->
