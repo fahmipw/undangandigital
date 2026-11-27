@@ -79,7 +79,7 @@ p[class*="tracking-"] { font-family:'JetBrains Mono', monospace !important; colo
   background-size: 28px 28px !important;
 }
 /* header */
-header { background:#071730 !important; border-bottom:3px solid #111 !important; }
+header { background:#111 !important; border-bottom:3px solid #111 !important; }
 header nav a { color:#FFFDF5 !important; }
 header nav a:hover { background:#FACC15 !important; color:#111 !important; }
 header a[href="#beranda"] img { background:transparent !important; padding:0 !important; border:none !important; box-shadow:none !important; }
