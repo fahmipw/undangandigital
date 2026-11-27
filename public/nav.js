@@ -31,14 +31,12 @@
           mainContent.classList.remove("opacity-0", "scale-110");
         }
 
-        // Show header, dot nav, scroll progress
+        // Show header and scroll progress
         setTimeout(function () {
           var header = document.querySelector(".top-header");
-          var dotNav = document.getElementById("dot-nav");
           var scrollProg = document.getElementById("scroll-progress");
 
           if (header) header.classList.add("visible");
-          if (dotNav) dotNav.classList.add("active");
           if (scrollProg) scrollProg.classList.add("active");
 
           // Start music
@@ -227,59 +225,6 @@ window.prewedPauseMusic=prewedPauseMusic;
   window.prewedPauseVideo = prewedPauseVideo;
   window.prewedPauseMusic = prewedPauseMusic;
 
-  /* =============================================
-     DOT NAVIGATION
-     ============================================= */
-  /* =============================================
-     DOT NAVIGATION WITH ICONS
-     ============================================= */
-  var DOT_SECTIONS = [
-    { id: "mempelai", label: "Mempelai", icon: "favorite" },
-    { id: "gallery", label: "Galeri", icon: "photo_library" },
-    { id: "kisah", label: "Kisah", icon: "auto_stories" },
-    { id: "quotes", label: "Quotes", icon: "format_quote" },
-    { id: "acara", label: "Acara", icon: "event" },
-    { id: "rsvp", label: "RSVP", icon: "how_to_reg" },
-    { id: "gift", label: "Gift", icon: "featured_seasonal_and_gifts" },
-    { id: "guestbook", label: "Ucapan", icon: "chat" }
-  ];
-
-  function buildDotNav() {
-    var nav = document.getElementById("dot-nav");
-    if (!nav) return;
-
-    var track = document.createElement("div");
-    track.className = "dot-track";
-
-    DOT_SECTIONS.forEach(function (sec, i) {
-      var item = document.createElement("div");
-      item.className = "dot-item";
-      item.dataset.target = sec.id;
-
-      var icon = document.createElement("span");
-      icon.className = "material-symbols-outlined dot-icon";
-      icon.textContent = sec.icon;
-
-      var label = document.createElement("span");
-      label.className = "dot-label";
-      label.textContent = sec.label;
-
-      item.appendChild(icon);
-      item.appendChild(label);
-
-      item.addEventListener("click", function () {
-        var target = document.getElementById(sec.id);
-        if (target) {
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      });
-
-      track.appendChild(item);
-    });
-
-    nav.appendChild(track);
-  }
-
   function initHeaderMenu() {
     var menuItems = document.querySelectorAll(".header-menu a");
     menuItems.forEach(function (item) {
@@ -291,58 +236,6 @@ window.prewedPauseMusic=prewedPauseMusic;
           target.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       });
-    });
-  }
-
-  function initDotObserver() {
-    var dots = document.querySelectorAll(".dot-item");
-    if (!dots.length) return;
-
-    var sectionEls = DOT_SECTIONS.map(function (sec) {
-      return document.getElementById(sec.id);
-    }).filter(Boolean);
-
-    var currentActive = null;
-
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          // Detect when a section is sufficiently visible in the middle of the screen
-          if (entry.isIntersecting) {
-            var id = entry.target.id;
-            if (currentActive === id) return;
-            currentActive = id;
-
-            // Update dots
-            dots.forEach(function (dot) {
-              if (dot.dataset.target === id) {
-                dot.classList.add("active");
-              } else {
-                dot.classList.remove("active");
-              }
-            });
-
-            // Update header menu (if any)
-            var menuItems = document.querySelectorAll(".header-menu a");
-            menuItems.forEach(function (item) {
-              if (item.dataset.section === id) {
-                item.classList.add("active");
-              } else {
-                item.classList.remove("active");
-              }
-            });
-          }
-        });
-      },
-      {
-        // Observe when the section crosses the 40% - 60% viewport area
-        threshold: [0, 0.1, 0.2, 0.3],
-        rootMargin: "-30% 0px -40% 0px"
-      }
-    );
-
-    sectionEls.forEach(function (el) {
-      observer.observe(el);
     });
   }
 
@@ -482,7 +375,6 @@ window.prewedPauseMusic=prewedPauseMusic;
     scrollToTop();
 
     initCoverGate();
-    buildDotNav();
     initHeaderMenu();
     loadMusicConfig(); // Load music configuration first
     initMusicToggle();
@@ -490,12 +382,6 @@ window.prewedPauseMusic=prewedPauseMusic;
     initScrollProgress();
     initParallax();
 
-    // Dot observer and scroll reveal start after gate opens
-    // (called from initCoverGate after transition)
-    // But also set up dot observer in case
-    setTimeout(function () {
-      initDotObserver();
-    }, 500);
   });
 
 })();

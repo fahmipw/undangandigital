@@ -127,19 +127,6 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
     }
 
     /* Override static stylesheet rules with user's theme colors */
-    .dot-item.active {
-      border-color: var(--secondary-color) !important;
-    }
-
-    .dot-item .dot-icon,
-    .dot-item .dot-label {
-      color: var(--secondary-color) !important;
-    }
-
-    .dot-track {
-      border-color: rgba(119, 90, 25, 0.15) !important;
-    }
-
     .header-menu a:hover,
     .header-menu a.active {
       color: var(--secondary-color) !important;
@@ -701,9 +688,6 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
       </div>
     </div>
   </header>
-
-  <!-- DOT NAV -->
-  <nav id="dot-nav"></nav>
 
   <!-- MENU BAWAH PILL KLASIK EMAS -->
   <nav id="bottomNav" aria-label="Menu undangan" hidden>
@@ -1740,8 +1724,6 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           // Hide navigations
           const topHeader = document.querySelector('.top-header');
           if (topHeader) topHeader.style.display = 'none';
-          const dotNav = document.querySelector('#dot-nav');
-          if (dotNav) dotNav.style.display = 'none';
           var _bn=document.getElementById('bottomNav');if(_bn)_bn.hidden=true;
 
           lbCollect(); var _li=lbList.indexOf(src); lbIdx=_li<0?0:_li; lbShow();
@@ -1773,8 +1755,6 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             // Show navigations back
             const topHeader = document.querySelector('.top-header');
             if (topHeader) topHeader.style.display = '';
-            const dotNav = document.querySelector('#dot-nav');
-            if (dotNav) dotNav.style.display = '';
             var _bn2=document.getElementById('bottomNav');if(_bn2)_bn2.hidden=false;
           }, 300);
         }
@@ -2061,13 +2041,11 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             }
           }
 
-          // Hide header, dot nav, scroll progress
+          // Hide header and scroll progress
           var header = document.querySelector(".top-header");
-          var dotNav = document.getElementById("dot-nav");
           var scrollProg = document.getElementById("scroll-progress");
 
           if (header) header.classList.remove("visible");
-          if (dotNav) dotNav.classList.remove("active");
           var _bn=document.getElementById("bottomNav");if(_bn)_bn.hidden=true;
           var _qr=document.getElementById("qrFloatBtn");if(_qr)_qr.hidden=true;
           if (scrollProg) scrollProg.classList.remove("active");
