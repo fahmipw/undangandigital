@@ -195,6 +195,8 @@ tailwind.config = {
   .btn-gold:hover{transform:translateY(-2px)}
   .btn-outline{border:1px solid rgba(201,162,39,.75);color:#1E4D33;transition:all .25s;background:rgba(201,162,39,.05)}
   .btn-outline:hover{background:rgba(201,162,39,.14)}
+  .btn-outline-light{border:1px solid rgba(212,175,106,.8);color:#E9D9A6;transition:all .25s;background:rgba(212,175,106,.08)}
+  .btn-outline-light:hover{background:rgba(212,175,106,.18)}
   .hairline{height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,39,.7),transparent)}
   .field-betawi{width:100%;background:#FAF9F4;border:1px solid rgba(201,162,39,.45);
     border-radius:.8rem;color:#1F2A24;padding:.8rem 1rem;font-size:.9rem;outline:none;transition:border-color .25s}
@@ -377,7 +379,7 @@ tailwind.config = {
       <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(201,162,39,.5);box-shadow:0 12px 24px -12px rgba(30,77,51,.35)"><div class="font-serif text-[1.6rem] font-bold text-betawi-ink" id="cd-m">00</div><div class="text-[8px] tracking-[0.22em] text-betawi-soft mt-1 font-medium">MENIT</div></div>
       <div class="py-4 rounded-xl bg-white" style="border:1px solid rgba(201,162,39,.5);box-shadow:0 12px 24px -12px rgba(30,77,51,.35)"><div class="font-serif text-[1.6rem] font-bold text-betawi-ink" id="cd-s">00</div><div class="text-[8px] tracking-[0.22em] text-betawi-soft mt-1 font-medium">DETIK</div></div>
     </div>
-    <a href="{{ $gcalUrl }}" target="_blank" rel="noopener" class="anim-fade btn-outline relative z-10 text-[10px] tracking-[0.25em] px-7 py-3 rounded-full mt-7 font-medium">+ SIMPAN KE GOOGLE CALENDAR</a>
+    <a href="{{ $gcalUrl }}" target="_blank" rel="noopener" class="anim-fade btn-outline-light relative z-10 text-[10px] tracking-[0.25em] px-7 py-3 rounded-full mt-7 font-medium">+ SIMPAN KE GOOGLE CALENDAR</a>
   </section>
 
   <!-- ================= 6. MEMPELAI ================= -->
