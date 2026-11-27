@@ -336,6 +336,7 @@ $ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
   <div class="card">
     <h3>Cari Tamu</h3>
     <input class="search" id="guest-search" type="search" placeholder="Cari nama tamu..." autocomplete="off" oninput="renderGuestSearch(true)">
+    <select class="search" id="guest-cat" onchange="setGuestCategory(this.value)" style="display:none"></select>
     <div class="subtabs">
       <button type="button" class="subtab active" data-gf="semua" onclick="setGuestFilter('semua')">Semua <span id="cnt-semua"></span></button>
       <button type="button" class="subtab" data-gf="hadir" onclick="setGuestFilter('hadir')">Hadir <span id="cnt-hadir"></span></button>
@@ -787,9 +788,45 @@ function setGuestFilter(f){
   renderGuestSearch();
 }
 
+var guestCat = '';
+var lastCatSig = null;
+
+function setGuestCategory(v){
+  guestCat = v || '';
+  guestPage = 1;
+  renderGuestSearch();
+}
+
+// Opsi dropdown dibangun dari kategori yang BENAR-BENAR ada di data tamu
+// (bukan hardcode) — kategori ketik-bebas dari Link Generator ikut muncul.
+// Sembunyi bila belum ada tamu berkategori (mis. migrasi kategori belum jalan).
+// Rebuild di-skip bila daftar kategori + pilihan tak berubah (polling 5 dtk).
+function refreshGuestCatOptions(){
+  var sel = document.getElementById('guest-cat');
+  var cats = [];
+  guestsCache.forEach(function(g){
+    var c = (g.category || '').trim();
+    if(c && cats.indexOf(c) === -1) cats.push(c);
+  });
+  cats.sort(function(a, b){ return a.localeCompare(b); });
+  var sig = cats.join('|') + '::' + guestCat;
+  if(sig === lastCatSig) return;
+  lastCatSig = sig;
+  if(!cats.length){ sel.style.display = 'none'; sel.innerHTML = ''; return; }
+  var cur = guestCat;
+  var h = '<option value="">Semua Kategori</option>';
+  cats.forEach(function(c){
+    h += '<option value="' + esc(c) + '"' + (c === cur ? ' selected' : '') + '>' + esc(c) + '</option>';
+  });
+  sel.innerHTML = h;
+  sel.style.display = '';
+  if(cur && cats.indexOf(cur) === -1){ guestCat = ''; lastCatSig = null; }
+}
+
 function renderGuestSearch(resetPage){
   if(resetPage) guestPage = 1;
   var q = (document.getElementById('guest-search').value || '').trim().toLowerCase();
+  refreshGuestCatOptions();
   var hadir = guestsCache.filter(function(g){ return !!g.checked_in_at; });
   var belum = guestsCache.filter(function(g){ return !g.checked_in_at; });
   document.getElementById('cnt-semua').textContent = '(' + guestsCache.length + ')';
@@ -797,7 +834,8 @@ function renderGuestSearch(resetPage){
   document.getElementById('cnt-belum').textContent = '(' + belum.length + ')';
   var list = guestsCache.filter(function(g){
     var okStatus = guestFilter === 'semua' ? true : guestFilter === 'hadir' ? !!g.checked_in_at : !g.checked_in_at;
-    return okStatus && (!q || String(g.nama).toLowerCase().indexOf(q) !== -1);
+    var okCat = !guestCat || (g.category || '') === guestCat;
+    return okStatus && okCat && (!q || String(g.nama).toLowerCase().indexOf(q) !== -1);
   });
   var pages = Math.max(1, Math.ceil(list.length / GUESTS_PER_PAGE));
   if(guestPage > pages) guestPage = pages;
@@ -806,6 +844,7 @@ function renderGuestSearch(resetPage){
     box.innerHTML = '<div class="empty">Belum ada tamu.</div>';
   }else if(!list.length){
     box.innerHTML = '<div class="empty">' + (q ? 'Tidak ada tamu bernama "' + esc(q) + '".'
+      : guestCat ? 'Tidak ada tamu kategori "' + esc(guestCat) + '".'
       : guestFilter === 'semua' ? 'Belum ada tamu.'
       : guestFilter === 'hadir' ? 'Belum ada tamu yang hadir.' : 'Semua tamu sudah hadir.') + '</div>';
   }else{

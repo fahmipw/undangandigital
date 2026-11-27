@@ -179,16 +179,21 @@ class ApiController extends Controller
         if (!$this->checkinAuthorized($inv_id, $request->query('token', $request->input('token', '')))) {
             return response()->json(['success' => false, 'message' => 'Token tidak valid.'], 403);
         }
+        $cols = ['nama', 'qr_code', 'checked_in_at', 'companions', 'checked_in_by'];
+        $hasCat = \Illuminate\Support\Facades\Schema::hasColumn('guests', 'category');
+        if ($hasCat) $cols[] = 'category';
         $rows = \App\Models\Guest::where('invitation_id', $inv_id)
-            ->orderBy('nama', 'ASC')->get(['nama', 'qr_code', 'checked_in_at', 'companions', 'checked_in_by'])
-            ->map(function ($g) {
-                return [
+            ->orderBy('nama', 'ASC')->get($cols)
+            ->map(function ($g) use ($hasCat) {
+                $r = [
                     'nama' => $g->nama,
                     'qr_code' => $g->qr_code,
                     'checked_in_at' => $this->waIso($g->checked_in_at),
                     'companions' => (int) ($g->companions ?? 0),
                     'checked_in_by' => $g->checked_in_by,
                 ];
+                if ($hasCat) $r['category'] = $g->category;
+                return $r;
             })->values();
 
         return response()->json([
