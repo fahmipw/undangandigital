@@ -777,7 +777,7 @@ async function startMusic(){
   try{
     var r = await fetch('/api/music?inv_id=' + INV_ID);
     var d = await r.json();
-    var url = (d.music && d.music.file_path) || (d.data && (d.data.file_path || d.data.url)) || "{{ $musicUrl }}";
+    var url = "{{ $musicUrl }}" || (d.music && d.music.file_path) || (d.data && (d.data.file_path || d.data.url)); // demo landing: musik Blade didahulukan
     var autoplay = true;
     try{
       var s = await fetch('/api/get_settings?inv_id=' + INV_ID); var sd = await s.json();

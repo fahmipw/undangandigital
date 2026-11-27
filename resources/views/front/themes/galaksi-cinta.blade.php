@@ -737,6 +737,7 @@ var NL = String.fromCharCode(10);
 })();
 
 var bgMus = null, musPlaying = false, musCfg = { file_path:'', volume:.5, autoplay:true };
+var BLADE_MUSIC_URL = @json($musicUrl); // musik demo landing (Blade) didahulukan dari API
 async function initMus(){
   var btn = document.getElementById('musBtn');
   try{
@@ -745,6 +746,7 @@ async function initMus(){
     if (d.success && d.music && d.music.file_path) { musCfg = d.music; }
     else { if(btn) btn.style.display='none'; return; }
   }catch(e){ if(btn) btn.style.display='none'; return; }
+  if (BLADE_MUSIC_URL) musCfg.file_path = BLADE_MUSIC_URL; // demo landing: musik tema didahulukan
   bgMus = new Audio(musCfg.file_path); bgMus.loop = true; bgMus.volume = 0;
   window.bgMusic = bgMus;
   if(btn) btn.style.display = 'flex';

@@ -1067,7 +1067,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch('/api/music?inv_id=' + (typeof INV_ID !== 'undefined' ? INV_ID : ''));
       const data = await res.json();
       const fp = data && data.music ? data.music.file_path : (data ? data.file_path : null);
-      if (fp) {
+      if (fp && !MUSIC_URL) { // demo landing: musik Blade didahulukan
         audioEl.src = (fp.startsWith('http') || fp.startsWith('/')) ? fp : '/' + fp.replace(/^\//, '');
         audioEl.load();
       }
