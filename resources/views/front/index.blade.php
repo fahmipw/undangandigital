@@ -551,6 +551,9 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
 #bottomNav a.active span{max-width:90px;opacity:1;margin-left:6px}
 #bottomNav a.active{background:rgba(151,128,69,.14)!important;box-shadow:inset 0 0 0 1.5px #b8934a!important;color:#7c652f!important}
 #bottomNav[hidden]{display:none!important}
+/* Tombol QR melayang di kanan bawah, seperti tema lain (di atas menu pill) */
+#qrFloatBtn{position:fixed;right:14px;bottom:84px;z-index:47;width:48px;height:48px;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:#775a19;color:#fff;border:1px solid rgba(255,255,255,.25);box-shadow:0 10px 24px rgba(78,52,46,.35);cursor:pointer}
+#qrFloatBtn[hidden]{display:none!important}
 @media (max-width:400px){
 #bottomNav a{padding:7px 6px}
 #bottomNav a svg{width:20px;height:20px}
@@ -691,16 +694,6 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         </h1>
       </div>
       <div class="header-right" style="display:flex;gap:10px;align-items:center">
-        <?php if (getSet('guest_qr_enabled') && !empty($guestQrCode)): ?>
-        <!-- Menu QR: tema default tidak punya menu bawah seperti tema lain,
-             jadi entri QR-nya ada di header, di samping tombol musik.
-             Syarat tampil sama dengan section QR: QR diaktifkan + tamu punya QR. -->
-        <button onclick="openQrModal()"
-          aria-label="QR Check-in" title="QR Check-in"
-          style="width:2.25rem;height:2.25rem;border-radius:9999px;background:#775a19;color:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(78,52,46,.2);cursor:pointer">
-          <span class="material-symbols-outlined" style="font-size:1.25rem">qr_code</span>
-        </button>
-        <?php endif; ?>
         <button id="music-toggle" aria-label="Toggle Musik">
           <span class="material-symbols-outlined">music_note</span>
           <div class="ping-ring"></div>
@@ -723,6 +716,13 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         <a href="#rsvp" data-sec="rsvp"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg><span>RSVP</span></a>
         <a href="#guestbook" data-sec="guestbook"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span>Ucapan</span></a>
   </nav>
+
+  <?php if (getSet('guest_qr_enabled') && !empty($guestQrCode)): ?>
+  <!-- Tombol QR melayang di kanan bawah, seperti tema lain; tampil sesudah Buka Undangan -->
+  <button id="qrFloatBtn" type="button" onclick="openQrModal()" aria-label="QR Check-in" title="QR Check-in" hidden>
+    <span class="material-symbols-outlined" style="font-size:1.35rem">qr_code</span>
+  </button>
+  <?php endif; ?>
 
   <!-- SCROLL PROGRESS -->
   <div id="scroll-progress-container" class="fixed top-0 left-0 w-full h-1 z-50">
@@ -1220,13 +1220,31 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           </div>
 
           <?php if (getSet('live_stream_link')): ?>
+          <?php
+            $liveUrl = getSet('live_stream_link');
+            $liveId = null;
+            if (preg_match('~(?:youtube\.com/(?:watch\?v=|live/|shorts/|embed/)|youtu\.be/)([\w-]{6,})~', (string)$liveUrl, $lm)) { $liveId = $lm[1]; }
+            $liveThumb = $liveId ? 'https://i.ytimg.com/vi/' . $liveId . '/hqdefault.jpg' : '';
+          ?>
+          <?php if ($liveId): ?>
+          <div class="mt-6" style="max-width:560px;margin-left:auto;margin-right:auto">
+            <p class="font-label-caps text-label-caps text-secondary mb-3 tracking-[0.3em]">LIVE STREAMING</p>
+            <div style="position:relative;padding-top:56.25%;border-radius:16px;overflow:hidden;border:1px solid rgba(151,128,69,.45);box-shadow:0 18px 40px rgba(78,52,46,.25)">
+              <button type="button" onclick="playLive(this, '<?php echo $liveId; ?>')" aria-label="Putar Live Streaming" style="position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000">
+                <img src="<?php echo $liveThumb; ?>" alt="Live Streaming" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85">
+                <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:12px;background:rgba(204,0,0,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.45)"><span style="width:0;height:0;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px"></span></span>
+              </button>
+            </div>
+          </div>
+          <?php else: ?>
           <div class="mt-4 flex justify-center">
-            <a href="<?php echo getSet('live_stream_link'); ?>" target="_blank" rel="noopener noreferrer"
+            <a href="<?php echo htmlspecialchars($liveUrl); ?>" target="_blank" rel="noopener noreferrer"
               class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary text-on-secondary text-xs font-bold uppercase tracking-widest hover:shadow-lg transition-all active:scale-95 animate-pulse">
               <span class="material-symbols-outlined text-base">tv</span>
               <span>Tonton Live Streaming</span>
             </a>
           </div>
+          <?php endif; ?>
           <?php endif; ?>
         </div>
       </section>
@@ -1235,6 +1253,11 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         var wrap = btn.parentNode;
         wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&enablejsapi=1" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video Prewedding"></iframe>';
       if(window.prewedPauseMusic) window.prewedPauseMusic();
+      }
+      function playLive(btn, id){
+        var wrap = btn.parentNode;
+        wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Live Streaming"></iframe>';
+        if(window.prewedPauseMusic) window.prewedPauseMusic();
       }
       </script>
       <section class="px-margin-page mb-12 reveal">
@@ -1664,24 +1687,6 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
         </div>
       </section>
       <?php endif; ?>
-      <footer class="spa-footer">
-        <div class="font-label-caps text-[10px] text-secondary tracking-[0.2em] opacity-80">
-          &copy; <?php echo date('Y'); ?> <?php echo (getSet('bride_nickname') ?: getSet('bride_name', 'Hawa')) . ' & ' . (getSet('groom_nickname') ?: getSet('groom_name', 'Adam')); ?>. All Rights Reserved.
-        </div>
-
-        <div
-          class="mt-2 flex items-center justify-center gap-1 font-body-md text-[9px] text-on-surface-variant opacity-60">
-          <span>Design by</span>
-
-          <a href="https://instagram.com/fahmiprdn16" target="_blank"
-            class="flex items-center gap-1 font-semibold hover:text-secondary transition-colors">
-
-            fahmiprdn16
-          </a>
-        </div>
-      </footer>
-
-
       <!-- Lightbox Modal -->
       <div id="lightbox"
         class="fixed inset-0 bg-black/90 hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300"
@@ -2064,6 +2069,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           if (header) header.classList.remove("visible");
           if (dotNav) dotNav.classList.remove("active");
           var _bn=document.getElementById("bottomNav");if(_bn)_bn.hidden=true;
+          var _qr=document.getElementById("qrFloatBtn");if(_qr)_qr.hidden=true;
           if (scrollProg) scrollProg.classList.remove("active");
 
           // Show cover gate again
@@ -2115,6 +2121,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
             btnBuka.addEventListener('click', function() {
               startLeafFall();
               var _bn=document.getElementById('bottomNav');if(_bn)_bn.hidden=false;
+              var _qr=document.getElementById('qrFloatBtn');if(_qr)_qr.hidden=false;
               // Restart SVG animation so it grows exactly when opened
               var svgs = document.querySelectorAll('img[src*="bunga_animasi2.svg"], img[src*="bingkai_animasi.svg"]');
               svgs.forEach(function(img) {
@@ -2228,7 +2235,7 @@ $mainMapLink = trim((string) ($settings['wedding_map_link'] ?? '')) ?: trim((str
           var nav=document.getElementById('bottomNav');if(!nav)return;
           // Bila gerbang sudah terbuka (bypass), tampilkan langsung
           var gate=document.getElementById('opening-overlay');
-          if(!gate||gate.classList.contains('opened')){nav.hidden=false;}
+          if(!gate||gate.classList.contains('opened')){nav.hidden=false;var _qr=document.getElementById('qrFloatBtn');if(_qr)_qr.hidden=false;}
           var items=[];
           function smoothScrollTo(el){
             if(!el)return;
