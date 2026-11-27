@@ -225,6 +225,12 @@ $ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
   .tabpanel{display:none}
   .tabpanel.active{display:block}
   .rep-summary{font-size:14px;line-height:1.7}
+  .cat-row{margin-top:12px}
+  .cat-row .cat-head{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+  .cat-row .track{display:block;height:10px;border-radius:999px;background:var(--gen-soft);border:1px solid var(--gen-border);overflow:hidden;margin-top:4px}
+  .cat-row .hbar{display:block;height:100%;background:var(--gen-pct-fill)}
+  .btn-wa{flex-shrink:0;background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap}
+  .vs-group{margin-top:10px;font-size:13px;line-height:1.6}
   .rep-summary b{font-size:18px}
   .op-row{display:flex;justify-content:space-between;gap:8px;padding:9px 2px;border-bottom:1px solid var(--gen-border);font-size:14px}
   .op-row:last-child{border-bottom:none}
@@ -362,10 +368,18 @@ $ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
       <div id="rep-summary" class="rep-summary"><div class="empty">Memuat laporan...</div></div>
       <a id="report-csv" class="btn btn-gold" style="text-decoration:none;text-align:center;display:block" href="#">Unduh CSV</a>
     </div>
+    <div class="card" id="rep-cats-card" style="display:none">
+      <h3>Per Kategori</h3>
+      <div id="rep-cats"></div>
+    </div>
     <div class="card">
       <h3>RSVP</h3>
       <div id="rep-rsvp"><div class="empty">Memuat RSVP...</div></div>
       <div class="pager" id="rsvp-pager" style="display:none"></div>
+    </div>
+    <div class="card" id="rep-vs-card" style="display:none">
+      <h3>RSVP vs Kehadiran</h3>
+      <div id="rep-vs"><div class="empty">Memuat...</div></div>
     </div>
     <div class="card">
       <h3>Per Petugas</h3>
@@ -378,6 +392,7 @@ $ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
     <div class="card">
       <h3>Belum Hadir</h3>
       <div id="rep-pending"><div class="empty">Memuat laporan...</div></div>
+      <div class="pager" id="pending-pager" style="display:none"></div>
       <div class="count" id="rep-pending-count"></div>
     </div>
   </div>
@@ -733,6 +748,7 @@ function switchCamera(){
 
 // --- Daftar tamu: dimuat sekali, difilter client-side ---
 var guestsCache = [], guestsSig = '';
+var guestsLoaded = false;
 var lastRecent = [];
 
 async function loadGuests(){
@@ -744,9 +760,21 @@ async function loadGuests(){
     if(sig === guestsSig) return; // tidak ada perubahan: jangan render ulang
     guestsSig = sig;
     guestsCache = d.guests;
+    guestsLoaded = true;
     renderGuestSearch();
+    renderRsvpVsActual();
   }catch(e){}
 }
+
+// Nomor WA -> format wa.me (0... jadi 62...).
+function waNumber(n){
+  var d = String(n || '').replace(/\D/g, '');
+  if(!d) return '';
+  if(d.indexOf('62') === 0) return d;
+  if(d.charAt(0) === '0') return '62' + d.slice(1);
+  return d;
+}
+function normName(s){ return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
 
 function guestRow(g, num){
   var done = !!g.checked_in_at;
@@ -927,8 +955,30 @@ function renderReport(){
   var d = reportData;
   if(!d) return;
   document.getElementById('rep-summary').innerHTML =
-    '<b>' + d.checked_in + '</b> dari <b>' + d.total + '</b> tamu hadir (<b>' + d.percent + '%</b>)<br>' +
-    'Total orang hadir: <b>' + d.total_people + '</b> orang';
+    '<div class="stats">' +
+    '<div class="stat"><b>' + d.total + '</b><span>Total Tamu</span></div>' +
+    '<div class="stat"><b style="color:var(--gen-pct)">' + d.checked_in + '</b><span>Hadir</span></div>' +
+    '<div class="stat"><b style="color:var(--gen-amber)">' + (d.total - d.checked_in) + '</b><span>Belum</span></div>' +
+    '</div>' +
+    '<div class="progress"><div class="bar"><div class="fill" style="width:' + d.percent + '%"></div></div>' +
+    '<div class="lbl"><span class="pct">' + d.percent + '%</span> (' + d.checked_in + ' dari ' + d.total + ' tamu sudah hadir)</div>' +
+    '<div class="people-lbl">Total orang hadir: <b>' + d.total_people + '</b> orang</div></div>';
+  // Per kategori.
+  var catsEl = document.getElementById('rep-cats');
+  var catsCard = document.getElementById('rep-cats-card');
+  var cats = d.by_category || [];
+  if(cats.length){
+    catsCard.style.display = '';
+    catsEl.innerHTML = cats.map(function(c){
+      var pct = c.total ? Math.round(c.checked_in / c.total * 100) : 0;
+      return '<div class="cat-row"><div class="cat-head"><span>' + esc(c.category) + '</span><b>' + c.checked_in + ' dari ' + c.total + ' hadir (' + pct + '%) &bull; ' + c.people + ' orang</b></div>' +
+        '<div class="track"><span class="hbar" style="width:' + pct + '%"></span></div></div>';
+    }).join('');
+  }else{
+    catsCard.style.display = 'none';
+  }
+  renderPending();
+  renderRsvpVsActual();
   var ops = document.getElementById('rep-operators');
   if(d.by_operator && d.by_operator.length){
     ops.innerHTML = d.by_operator.map(function(o){
@@ -947,16 +997,83 @@ function renderReport(){
   }else{
     hr.innerHTML = '<div class="empty">Belum ada check-in.</div>';
   }
-  var pd = document.getElementById('rep-pending');
-  var pend = d.pending_list || [];
-  if(pend.length){
-    pd.innerHTML = pend.map(function(n){
-      return '<div class="guest-item"><span class="gname">' + esc(n) + '</span></div>';
-    }).join('');
-  }else{
-    pd.innerHTML = '<div class="empty">Semua tamu sudah hadir.</div>';
+  renderPending();
+}
+
+// --- Belum Hadir: bernomor + paginasi 10/hal + tombol WA + kategori ---
+var pendingPage = 1;
+var PENDING_PER_PAGE = 10;
+
+function goPendingPage(p){
+  pendingPage = p;
+  renderPending();
+}
+
+function renderPendingPager(pages){
+  var pg = document.getElementById('pending-pager');
+  if(!pg) return;
+  if(pages <= 1){ pg.style.display = 'none'; pg.innerHTML = ''; return; }
+  pg.style.display = 'flex';
+  var h = '<button type="button" onclick="goPendingPage(' + (pendingPage - 1) + ')"' + (pendingPage <= 1 ? ' disabled' : '') + '>&#8249;</button>';
+  var start = Math.max(1, Math.min(pendingPage - 2, pages - 4));
+  var end = Math.min(pages, start + 4);
+  for(var i = start; i <= end; i++){
+    h += '<button type="button" class="' + (i === pendingPage ? 'on' : '') + '" onclick="goPendingPage(' + i + ')">' + i + '</button>';
   }
+  h += '<button type="button" onclick="goPendingPage(' + (pendingPage + 1) + ')"' + (pendingPage >= pages ? ' disabled' : '') + '>&#8250;</button>';
+  pg.innerHTML = h;
+}
+
+function renderPending(){
+  var pd = document.getElementById('rep-pending');
+  if(!pd || !reportData) return;
+  var pend = reportData.pending_list || [];
+  var pages = Math.max(1, Math.ceil(pend.length / PENDING_PER_PAGE));
+  if(pendingPage > pages) pendingPage = pages;
+  if(!pend.length){
+    pd.innerHTML = '<div class="empty">Semua tamu sudah hadir.</div>';
+  }else{
+    var from = (pendingPage - 1) * PENDING_PER_PAGE;
+    pd.innerHTML = pend.slice(from, from + PENDING_PER_PAGE).map(function(p, i){
+      var nm = (typeof p === 'string') ? p : (p.nama || '');
+      var wa = (typeof p === 'string') ? '' : waNumber(p.no_hp);
+      var cat = (typeof p === 'string' || !p.category) ? '' : String(p.category).trim();
+      return '<div class="guest-item"><span class="gnum">' + (from + i + 1) + '.</span><span class="gname">' + esc(nm) + (cat ? ' <small style="color:var(--gen-inkSoft)">\u2022 ' + esc(cat) + '</small>' : '') + '</span>' + (wa ? '<a class="btn-wa" href="https://wa.me/' + wa + '" target="_blank" rel="noopener">WA</a>' : '') + '</div>';
+    }).join('');
+  }
+  renderPendingPager(pages);
   document.getElementById('rep-pending-count').textContent = pend.length ? pend.length + ' tamu belum hadir' : '';
+}
+
+// --- RSVP vs Kehadiran: cocokkan nama (frontend-only) ---
+function vsGroup(title, names){
+  if(!names.length) return '';
+  return '<div class="vs-group"><b>' + title + ' (' + names.length + '):</b><br>' + names.map(esc).join(', ') + '</div>';
+}
+
+function renderRsvpVsActual(){
+  var box = document.getElementById('rep-vs');
+  var card = document.getElementById('rep-vs-card');
+  if(!box || !card) return;
+  if(!rsvpData || !guestsLoaded){ card.style.display = 'none'; return; }
+  var checked = {};
+  guestsCache.forEach(function(g){ if(g.checked_in_at) checked[normName(g.nama)] = g.nama; });
+  var rsvpHadir = [], rsvpTidak = [];
+  rsvpData.forEach(function(r){
+    if(r.status === 'hadir') rsvpHadir.push(r.nama); else rsvpTidak.push(r.nama);
+  });
+  var hadirSet = {}, tidakSet = {};
+  rsvpHadir.forEach(function(n){ hadirSet[normName(n)] = 1; });
+  rsvpTidak.forEach(function(n){ tidakSet[normName(n)] = 1; });
+  var a = rsvpHadir.filter(function(n){ return !checked[normName(n)]; });
+  var b = rsvpTidak.filter(function(n){ return checked[normName(n)]; });
+  var c = Object.keys(checked).filter(function(k){ return !hadirSet[k] && !tidakSet[k]; }).map(function(k){ return checked[k]; });
+  var html = '<div class="rep-summary">RSVP hadir: <b>' + rsvpHadir.length + '</b> &bull; Sudah datang: <b>' + (rsvpHadir.length - a.length) + '</b> &bull; Belum datang: <b>' + a.length + '</b></div>';
+  html += vsGroup('RSVP hadir, belum datang', a);
+  html += vsGroup('RSVP berhalangan, tapi datang', b);
+  html += vsGroup('Datang tanpa RSVP', c);
+  box.innerHTML = html;
+  card.style.display = '';
 }
 // --- RSVP di Laporan (endpoint api/rsvp GET, daftar konfirmasi undangan) ---
 var RSVP_PER_PAGE = 10, rsvpPage = 1;
@@ -1009,10 +1126,11 @@ function renderRsvpReport(){
     if(r.status === 'hadir'){
       return '<div class="guest-item"><span class="gname">' + esc(r.nama) + '</span><span class="badge in">Hadir</span><span class="gtime">' + (parseInt(r.jumlah_tamu, 10) || 1) + ' orang</span></div>';
     }
-    return '<div class="guest-item"><span class="gname">' + esc(r.nama) + '</span><span class="badge out">Berhalangan</span><span class="gtime">' + (r.alasan ? 'Alasan: ' + esc(r.alasan) : '') + '</span></div>';
+    return '<div class="guest-item"><span class="gname">' + esc(r.nama) + (r.alasan ? '<span style="display:block;font-size:11px;color:var(--gen-inkSoft)">Alasan: ' + esc(r.alasan) + '</span>' : '') + '</span><span class="badge out">Berhalangan</span></div>';
   }).join('');
   box.innerHTML = html;
   renderRsvpPager(pages);
+  renderRsvpVsActual();
 }
 // --- Petugas aktif: dari laporan bila sudah dimuat, fallback dari recent ---
 function renderActiveOperators(){

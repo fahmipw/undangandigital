@@ -285,8 +285,35 @@ class ApiController extends Controller
                 ];
             })->values();
 
+        $hasCat = \Illuminate\Support\Facades\Schema::hasColumn('guests', 'category');
+        $pendingCols = ['nama', 'no_hp'];
+        if ($hasCat) $pendingCols[] = 'category';
         $pending = \App\Models\Guest::where('invitation_id', $inv_id)->whereNull('checked_in_at')
-            ->orderBy('nama', 'ASC')->pluck('nama')->values();
+            ->orderBy('nama', 'ASC')->get($pendingCols)
+            ->map(function ($g) use ($hasCat) {
+                $r = ['nama' => $g->nama, 'no_hp' => $g->no_hp];
+                if ($hasCat) $r['category'] = $g->category;
+                return $r;
+            })->values();
+
+        // Rekap per kategori (agregasi PHP, bukan SQL — aman lintas DB).
+        $byCategory = [];
+        if ($hasCat) {
+            $catRows = \App\Models\Guest::where('invitation_id', $inv_id)->get(['category', 'checked_in_at', 'companions']);
+            $map = [];
+            foreach ($catRows as $g) {
+                $c = trim((string) ($g->category ?? ''));
+                if ($c === '') $c = 'Tanpa Kategori';
+                if (!isset($map[$c])) $map[$c] = ['category' => $c, 'total' => 0, 'checked_in' => 0, 'people' => 0];
+                $map[$c]['total']++;
+                if ($g->checked_in_at) {
+                    $map[$c]['checked_in']++;
+                    $map[$c]['people'] += 1 + (int) ($g->companions ?? 0);
+                }
+            }
+            $byCategory = array_values($map);
+            usort($byCategory, function ($a, $b) { return $b['total'] <=> $a['total']; });
+        }
 
         // Kedatangan per jam dalam zona waktu acara (bukan UTC).
         $tzLabel = Setting::where('invitation_id', $inv_id)->where('key_name', 'wedding_timezone')->value('key_value') ?: 'WIB';
@@ -308,6 +335,7 @@ class ApiController extends Controller
             'percent' => $total ? (int) round($checked / $total * 100) : 0,
             'total_people' => $totalPeople,
             'by_operator' => $byOperator,
+            'by_category' => $byCategory,
             'pending_list' => $pending,
             'hourly_buckets' => $hourly,
         ]);
