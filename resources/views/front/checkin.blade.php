@@ -189,6 +189,8 @@ $ckGroomInitial = mb_strtoupper(mb_substr($groom ?? '', 0, 1));
   .guest-item .gname{flex:1;min-width:0;overflow-wrap:anywhere}
   .guest-item .gnum{flex-shrink:0;color:var(--gen-accent-text);font-weight:700;min-width:22px;font-variant-numeric:tabular-nums}
   .guest-item .gtime{color:var(--gen-inkSoft);font-size:11px;white-space:nowrap}
+  .guest-item .gmeta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+  .guest-item .gbadges{display:flex;gap:6px}
   .badge{flex-shrink:0;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;white-space:nowrap}
   .badge.in{background:#dcfce7;color:#166534}
   .badge.out{background:#fef3c7;color:#92400e}
@@ -749,7 +751,7 @@ async function loadGuests(){
 function guestRow(g, num){
   var done = !!g.checked_in_at;
   var badge = done
-    ? '<span class="badge in">Hadir</span>' + (g.companions > 0 ? '<span class="badge pax">+' + g.companions + ' pendamping</span>' : '') + '<span class="gtime">' + esc(formatEventTime(g.checked_in_at)) + '</span>'
+    ? '<span class="gmeta"><span class="gbadges"><span class="badge in">Hadir</span>' + (g.companions > 0 ? '<span class="badge pax">+' + g.companions + ' pendamping</span>' : '') + '</span><span class="gtime">' + esc(formatEventTime(g.checked_in_at)) + '</span></span>'
     : '<span class="badge out">Belum</span>';
   return '<div class="guest-item"><span class="gnum">' + num + '.</span><span class="gname">' + esc(g.nama) + '</span>' + badge + '</div>';
 }
