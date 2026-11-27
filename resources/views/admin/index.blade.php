@@ -2019,9 +2019,31 @@
             document.querySelector('.admin-sidebar-backdrop')?.classList.remove('is-visible');
         }
 
+        // Pengaman data hilang: tandai apakah settings berhasil dimuat.
+        // saveSettings() menolak menyimpan bila data belum pernah berhasil
+        // dimuat — supaya form yang gagal terisi (kosong) tidak menimpa
+        // data asli di database dengan nilai kosong.
+        let settingsLoaded = false;
+        // Peringatan pengaman: tetap jalan meski CDN SweetAlert gagal dimuat.
+        function warnSwal(title, text) {
+            if (window.Swal && Swal.fire) { showSwalInfo(title, text); }
+            else { alert(title + '\n\n' + text); }
+        }
+        function setSaveButtonsEnabled(enabled) {
+            document.querySelectorAll('button[onclick="saveSettings()"]').forEach(function (b) {
+                b.disabled = !enabled;
+                b.style.opacity = enabled ? '' : '.45';
+                b.style.cursor = enabled ? '' : 'not-allowed';
+            });
+        }
         async function loadSettings() {
+            settingsLoaded = false;
+            setSaveButtonsEnabled(false);
+            try {
             const res = await fetch(`api/admin_api?action=get_settings&inv_id=${currentInvId}`);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
             const data = await res.json();
+            if (!data || !data.success) throw new Error('get_settings gagal');
             const keys = ['theme', 'groom_name', 'groom_nickname', 'groom_child_of', 'groom_parents', 'groom_photo', 'groom_instagram', 'bride_name', 'bride_nickname', 'bride_child_of', 'bride_parents', 'bride_photo', 'bride_instagram', 'og_preview_photo', 'event_location_mode', 'wedding_date', 'wedding_time_start', 'wedding_time_end', 'wedding_timezone', 'wedding_location', 'wedding_map_link', 'reception_date', 'reception_time_start', 'reception_time_end', 'reception_timezone', 'reception_location', 'reception_map_link', 'live_stream_link', 'prewedding_video_file', 'prewedding_video_link', 'gift_address', 'gift_maps_link', 'gift_recipient_name', 'gift_qris_enabled', 'gift_qris_image', 'gift_qris_name', 'rsvp_whatsapp', 'quotes', 'wa_template', 'music_volume', 'music_autoplay'];
             keys.forEach(k => {
                 const el = document.getElementById('set-' + k);
@@ -2084,6 +2106,13 @@
             updateLocationModeStatus();
             updateQrisIcon();
             updateInvHeaderFromForm();
+            settingsLoaded = true;
+            setSaveButtonsEnabled(true);
+            } catch (e) {
+                settingsLoaded = false;
+                setSaveButtonsEnabled(false);
+                warnSwal('Data Gagal Dimuat', 'Pengaturan undangan gagal dimuat dari server. JANGAN menyimpan dulu — muat ulang halaman dan pastikan server Laravel masih jalan.');
+            }
         }
 
         function updateLocationModeStatus() {
@@ -2108,6 +2137,10 @@
         }
 
         async function saveSettings() {
+            if (!settingsLoaded) {
+                warnSwal('Data Belum Dimuat', 'Pengaturan belum berhasil dimuat dari server, jadi penyimpanan dibatalkan supaya data lama tidak tertimpa kosong. Muat ulang halaman lalu coba lagi.');
+                return;
+            }
             const settings = {};
             document.querySelectorAll('[id^="set-"]').forEach(el => {
                 settings[el.id.replace('set-', '')] = el.value;
@@ -2129,6 +2162,8 @@
                 loadInvitations();
                 updateInvHeaderFromForm();
                 showSwalSuccess('Perubahan Disimpan!', 'Pengaturan undangan berhasil disimpan.');
+            } else {
+                warnSwal('Penyimpanan Ditolak', data.message || 'Penyimpanan ditolak oleh server.');
             }
         }
         // ===== Landing Page (tab Penjualan) =====

@@ -258,6 +258,30 @@ class LegacyApiController extends Controller
             case 'update_settings':
                 $postData = $request->all();
                 unset($postData['action'], $postData['inv_id']);
+                // Pengaman data hilang: tolak penyimpanan yang mengosongkan
+                // identitas undangan sekaligus (nama mempelai + tanggal acara)
+                // sementara database masih menyimpan nilainya. Payload
+                // saveLanding() tidak memuat kunci-kunci ini sehingga tidak kena.
+                $coreKeys = ['bride_name', 'groom_name', 'wedding_date'];
+                $hasCore = false;
+                $allCoreEmpty = true;
+                foreach ($coreKeys as $ck) {
+                    if (array_key_exists($ck, $postData)) {
+                        $hasCore = true;
+                        if (trim((string) $postData[$ck]) !== '') $allCoreEmpty = false;
+                    }
+                }
+                if ($hasCore && $allCoreEmpty) {
+                    $existing = \Illuminate\Support\Facades\DB::table('settings')
+                        ->where('invitation_id', $inv_id)
+                        ->whereIn('key_name', $coreKeys)
+                        ->where('key_value', '!=', '')
+                        ->whereNotNull('key_value')
+                        ->count();
+                    if ($existing > 0) {
+                        return response()->json(['success' => false, 'message' => 'Penyimpanan ditolak: nama mempelai dan tanggal acara kosong padahal data sudah ada di database. Muat ulang halaman admin lalu coba lagi.']);
+                    }
+                }
                 
                 $newSlug = null;
                 if (!empty($postData['bride_nickname']) && !empty($postData['groom_nickname'])) {
