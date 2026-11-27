@@ -79,10 +79,10 @@ p[class*="tracking-"] { font-family:'JetBrains Mono', monospace !important; colo
   background-size: 28px 28px !important;
 }
 /* header */
-header { background:#FFFDF5 !important; border-bottom:3px solid #111 !important; }
-header nav a { color:#111 !important; }
-header nav a:hover { background:#FACC15 !important; }
-header a[href="#beranda"] img { background:#071730; padding:4px 10px; border:3px solid #111; box-shadow:3px 3px 0 #111; border-radius:12px; }
+header { background:#071730 !important; border-bottom:3px solid #111 !important; }
+header nav a { color:#FFFDF5 !important; }
+header nav a:hover { background:#FACC15 !important; color:#111 !important; }
+header a[href="#beranda"] img { background:transparent !important; padding:0 !important; border:none !important; box-shadow:none !important; }
 /* hero */
 #beranda { background-color:#FFFDF5 !important; }
 #beranda p.text-gold { background:#FACC15 !important; color:#111 !important; font-family:'JetBrains Mono', monospace !important; padding:6px 12px; border:3px solid #111; box-shadow:3px 3px 0 #111; display:inline-block; border-radius:12px; }
