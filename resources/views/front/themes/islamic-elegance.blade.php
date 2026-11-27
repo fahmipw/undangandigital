@@ -237,6 +237,54 @@ body.locked #fmenu,body.locked #musBtn,body.locked #qrFloatBtn,body.locked .pbar
 <body>
 <div class="pbar"><i id="pbarFill"></i></div>
 <div id="glow"></div>
+<!-- Bintang & bulan sabit berjatuhan (khusus tema Islamic Elegance) -->
+<div id="bintangJatuh" aria-hidden="true"></div>
+<style>
+  #bintangJatuh{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:40}
+  #bintangJatuh .bj{position:absolute;top:-8vh;will-change:transform;animation:bj-fall linear infinite}
+  #bintangJatuh .bj-sw{display:block;width:100%;height:100%;animation:bj-sway ease-in-out infinite alternate}
+  #bintangJatuh .bj svg{display:block;width:100%;height:100%;filter:drop-shadow(0 0 6px rgba(240,217,140,.55))}
+  #bintangJatuh .bj.star svg{animation:bj-spin 20s linear infinite}
+  #bintangJatuh .bj.moon svg{animation:bj-rock 6s ease-in-out infinite alternate}
+  @keyframes bj-fall{to{transform:translateY(118vh)}}
+  @keyframes bj-sway{from{transform:translateX(-16px)}to{transform:translateX(16px)}}
+  @keyframes bj-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  @keyframes bj-rock{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+  @media (prefers-reduced-motion:reduce){#bintangJatuh{display:none}}
+</style>
+<script>
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var box=document.getElementById('bintangJatuh'); if(!box) return;
+  var STAR='M12 1 L15 9 L23 12 L15 15 L12 23 L9 15 L1 12 L9 9 Z';
+  var MOON='M21 13 A9 9 0 1 1 11 3 A7 7 0 0 0 21 13 Z';
+  var N=14;
+  for(var k=0;k<N;k++){
+    var isMoon=(k%4===0);
+    var el=document.createElement('span');
+    el.className='bj '+(isMoon?'moon':'star');
+    var size=isMoon?14+Math.random()*8:10+Math.random()*8;
+    el.style.left=(Math.random()*100)+'vw';
+    el.style.width=size+'px'; el.style.height=size+'px';
+    var fall=16+Math.random()*10;
+    el.style.animationDuration=fall+'s';
+    el.style.animationDelay=(-Math.random()*fall)+'s';
+    var sw=document.createElement('span');
+    sw.className='bj-sw';
+    sw.style.animationDuration=(2.4+Math.random()*2)+'s';
+    sw.style.animationDelay=(-Math.random()*3)+'s';
+    var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 24 24');
+    var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', isMoon?MOON:STAR);
+    path.setAttribute('fill', isMoon?'#f0d98c':'#c9a24b');
+    svg.appendChild(path);
+    sw.appendChild(svg);
+    el.appendChild(sw);
+    box.appendChild(el);
+  }
+})();
+</script>
 <div class="wrap">
 
 <div id="cover">
