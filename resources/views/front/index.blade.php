@@ -2318,7 +2318,7 @@ function gal3dConvert(grid, prev, next, dotsBox, itemSel){
   }
 })( );
        </script>
-<p class="uk-copyright" style="text-align:center;font-size:11px;line-height:1.6;opacity:.6;padding:14px 16px 96px;margin:0;">© 2026 UndanganKamu — Dibuat dengan ♥ untuk Momen Istimewa.</p>
+<p class="uk-copyright" style="text-align:center;font-size:11px;line-height:1.6;opacity:.6;padding:14px 16px 96px;margin:0;">© 2026 <a href="https://undangankamu.web.id" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">UndanganKamu</a> — Dibuat dengan ♥ untuk Momen Istimewa.</p>
 </body>
 
 </html>
