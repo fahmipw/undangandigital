@@ -450,7 +450,7 @@ function withEnvelope(fn){
       </div>
       <h4 class="font-display text-3xl text-ivory mt-6">{{ $brideFull }}</h4>
       <p class="text-gold tracking-[.25em] text-xs mt-2 mb-3">MEMPELAI WANITA</p>
-      <p class="text-ivory/70 font-serif italic">{{ jwcGet('bride_parents', jwcGet('bride_child_of','')) }}</p>
+      <p class="text-ivory/70 font-serif italic">{{ jwcGet('bride_child_of', 'Putri') }} dari {{ jwcGet('bride_parents', '') }}</p>
       @if(jwcGet('bride_instagram'))
       <a href="https://instagram.com/{{ ltrim(jwcGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" class="btn-ghost inline-block mt-4 text-xs tracking-[.2em] px-6 py-2.5 rounded-full"><svg class="inline-block w-[13px] h-[13px] mr-1 -mt-[2px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>{{ '@'.ltrim(jwcGet('bride_instagram'),'@') }}</a>
       @endif
@@ -468,7 +468,7 @@ function withEnvelope(fn){
       </div>
       <h4 class="font-display text-3xl text-ivory mt-6">{{ $groomFull }}</h4>
       <p class="text-gold tracking-[.25em] text-xs mt-2 mb-3">MEMPELAI PRIA</p>
-      <p class="text-ivory/70 font-serif italic">{{ jwcGet('groom_parents', jwcGet('groom_child_of','')) }}</p>
+      <p class="text-ivory/70 font-serif italic">{{ jwcGet('groom_child_of', 'Putra') }} dari {{ jwcGet('groom_parents', '') }}</p>
       @if(jwcGet('groom_instagram'))
       <a href="https://instagram.com/{{ ltrim(jwcGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="btn-ghost inline-block mt-4 text-xs tracking-[.2em] px-6 py-2.5 rounded-full"><svg class="inline-block w-[13px] h-[13px] mr-1 -mt-[2px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>{{ '@'.ltrim(jwcGet('groom_instagram'),'@') }}</a>
       @endif

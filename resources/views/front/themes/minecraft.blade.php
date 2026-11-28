@@ -323,7 +323,7 @@ body:not(.gate-open) #bottomNav{display:none!important}
         <canvas class="face" id="faceBride" width="8" height="8"></canvas>
         <h3>{{ $brideFull }}</h3>
         <span class="player-tag">PLAYER 1 &mdash; MEMPELAI WANITA</span>
-        <p>{{ mcGet('bride_parents', mcGet('bride_child_of', '')) }}</p>
+        <p>{{ mcGet('bride_child_of', 'Putri') }} dari {{ mcGet('bride_parents', '') }}</p>
         @if(mcGet('bride_instagram'))<a href="https://instagram.com/{{ ltrim(mcGet('bride_instagram'),'@') }}" target="_blank" rel="noopener" class="" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.12em;text-decoration:none;opacity:.85"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(mcGet('bride_instagram'),'@') }}</span></a>@endif
       </div>
       <div class="heart-sep"><canvas id="bigHeart" width="14" height="12"></canvas></div>
@@ -331,7 +331,7 @@ body:not(.gate-open) #bottomNav{display:none!important}
         <canvas class="face" id="faceGroom" width="8" height="8"></canvas>
         <h3>{{ $groomFull }}</h3>
         <span class="player-tag">PLAYER 2 &mdash; MEMPELAI PRIA</span>
-        <p>{{ mcGet('groom_parents', mcGet('groom_child_of', '')) }}</p>
+        <p>{{ mcGet('groom_child_of', 'Putra') }} dari {{ mcGet('groom_parents', '') }}</p>
         @if(mcGet('groom_instagram'))<a href="https://instagram.com/{{ ltrim(mcGet('groom_instagram'),'@') }}" target="_blank" rel="noopener" class="" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:.12em;text-decoration:none;opacity:.85"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg><span>&#64;{{ ltrim(mcGet('groom_instagram'),'@') }}</span></a>@endif
       </div>
     </div>
